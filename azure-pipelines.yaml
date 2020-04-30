@@ -2,6 +2,11 @@ trigger:
   - master
 pr:
   - master
+variables:
+  location: UK South
+  env: sbox
+  stack: application
+  service: 01-cvp-audio-ingress
 steps:
   - task: TerraformInstaller@0
     displayName: Install Terraform
@@ -18,6 +23,18 @@ steps:
       commandOptions: '-no-color'
   - script: terraform fmt -check=true
     displayName: Check Formatting
+
+  - task: TerraformCLI@0
+    inputs:
+      command: 'init'
+      backendType: 'azurerm'
+      backendServiceArm: '$(subscriptionName)'
+      ensureBackend: true
+      backendAzureRmResourceGroupName: 'cvp-sbox-rg'
+      backendAzureRmResourceGroupLocation: '$(location)'
+      backendAzureRmStorageAccountName: 'cvpsboxterraform'
+      backendAzureRmContainerName: 'terraform-state'
+      backendAzureRmKey: '$(location)/$(env)/$(stack)/$(service)/terraform.tfstate'
   - task: TerraformCLI@0
     displayName: Plan
     inputs:
