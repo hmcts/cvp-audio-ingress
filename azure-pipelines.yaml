@@ -9,15 +9,6 @@ variables:
   stack: application
   service: 01-cvp-audio-ingress
   product: cvp
-  dnsTenantId: oops
-  dnsClientId: dummy
-  dnsClientSecret: data
-  dnsSubscriptionId: a8140a9e-f1b0-481f-a4de-09e2ee23f7ab
-  addressSpace:
-  common_tags:
-    environment: $(env)
-    '"Team Name"': cvp
-    BuiltFrom: 'https://github.com/hmcts/cvp-audio-ingress'
   service_certificate_kv_url: foo
   service_certificate_thumbprint: foo
   key_vault_id: foo
@@ -27,8 +18,6 @@ variables:
   dns_client_id: dummy
   dns_client_secret: data
   dns_subscription_id: a8140a9e-f1b0-481f-a4de-09e2ee23f7ab
-  workspace_to_address_space_map:
-    sbox: 10.50.11.0/28
 
 steps:
   - task: TerraformInstaller@0
