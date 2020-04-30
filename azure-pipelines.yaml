@@ -3,19 +3,32 @@ trigger:
 pr:
   - master
 variables:
-  location: 'UK South'
-  locationCanonical: uksouth
+  locationEng: 'UK South'
+  location: uksouth
   env: sbox
   stack: application
   service: 01-cvp-audio-ingress
   product: cvp
-  dnsZoneName: shared-services.uk.south.sbox.hmcts.internal
-  dnsRg: shared-services_sbox_network_resource_group
   dnsTenantId: oops
   dnsClientId: dummy
   dnsClientSecret: data
   dnsSubscriptionId: a8140a9e-f1b0-481f-a4de-09e2ee23f7ab
-  addressSpace: 10.50.11.0/28
+  addressSpace:
+  common_tags:
+    environment: $(env)
+    '"Team Name"': cvp
+    BuiltFrom: 'https://github.com/hmcts/cvp-audio-ingress'
+  service_certificate_kv_url: foo
+  service_certificate_thumbprint: foo
+  key_vault_id: foo
+  dns_zone_name: shared-services.uk.south.sbox.hmcts.internal
+  dns_resource_group: shared-services_sbox_network_resource_group
+  dns_tenant_id: oops
+  dns_client_id: dummy
+  dns_client_secret: data
+  dns_subscription_id: a8140a9e-f1b0-481f-a4de-09e2ee23f7ab
+  workspace_to_address_space_map:
+    sbox: 10.50.11.0/28
 
 steps:
   - task: TerraformInstaller@0
@@ -41,28 +54,12 @@ steps:
       backendServiceArm: '$(subscriptionName)'
       ensureBackend: true
       backendAzureRmResourceGroupName: 'cvp-sbox-rg'
-      backendAzureRmResourceGroupLocation: '$(locationCanonical)'
+      backendAzureRmResourceGroupLocation: '$(location)'
       backendAzureRmStorageAccountName: 'cvpsboxterraform'
       backendAzureRmContainerName: 'terraform-state'
-      backendAzureRmKey: '$(location)/$(env)/$(stack)/$(service)/terraform.tfstate'
+      backendAzureRmKey: '$(locationEng)/$(env)/$(stack)/$(service)/terraform.tfstate'
   - task: TerraformCLI@0
     displayName: Plan
     inputs:
       command: 'plan'
       environmentServiceName: $(subscriptionName)
-      commandOptions: |
-        -var 'location=$(locationCanonical)'
-        -var 'env=$(env)'
-        -var 'common_tags[foo]=bar'
-        -var 'common_tags[biz]=baz'
-        -var 'product=$(product)'
-        -var 'service_certificate_kv_url=foo'
-        -var 'service_certificate_thumbprint=foo'
-        -var 'key_vault_id=foo'
-        -var 'dns_zone_name=$(dnsZoneName)'
-        -var 'dns_resource_group=$(dnsRg)'
-        -var 'dns_tenant_id=$(dnsTenantId)'
-        -var 'dns_client_id=$(dnsClientId)'
-        -var 'dns_client_secret=$(dnsClientSecret)'
-        -var 'dns_subscription_id=$(dnsSubscriptionId)'
-        -var 'workspace_to_address_space_map[sbox]=$(addressSpace)'
