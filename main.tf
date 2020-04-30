@@ -18,9 +18,9 @@ module "wowza" {
 }
 
 resource "azurerm_dns_a_record" "wowza" {
-  provider = azurerm.dns
+  //  provider = azurerm.dns
 
-  name                = "vh-wowza-${terraform.workspace}"
+  name                = "${var.product}-media-service-${var.env}"
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_resource_group
   ttl                 = 300
