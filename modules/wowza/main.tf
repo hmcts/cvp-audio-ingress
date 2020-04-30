@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_storage_account" "sa" {
-  name                = "${replace(lower(local.service_name), "-", "")}-sa"
+  name                = "${replace(lower(local.service_name), "-", "")}sa"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tags                = var.common_tags
@@ -79,7 +79,7 @@ resource "azurerm_private_dns_a_record" "sa_a_record" {
   zone_name           = azurerm_private_dns_zone.blob.name
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
-  records             = [azurerm_private_endpoint.endpoint.private_service_connection.0.private_ip_address]
+  records             = [azurerm_private_endpoint.endpoint.private_service_connection.private_ip_address]
 }
 
 # resource "azurerm_storage_account_network_rules" "wowza" {
