@@ -8,7 +8,7 @@ common_tags = {
 }
 service_certificate_kv_url     = "foo"
 service_certificate_thumbprint = "foo"
-key_vault_id                   = "foo"
+key_vault_id                   = "/subscriptions/b72ab7b7-723f-4b18-b6f6-03b0f2c6a1bb/resourceGroups/core-infra-sbox-rg/providers/Microsoft.KeyVault/vaults/cftapps-sbox"
 dns_zone_name                  = "shared-services.uk.south.sbox.hmcts.internal"
 dns_resource_group             = "shared-services_sbox_network_resource_group"
 dns_tenant_id                  = "oops"
