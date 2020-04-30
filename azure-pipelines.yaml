@@ -18,3 +18,7 @@ steps:
       commandOptions: '-no-color'
   - script: terraform fmt -check=true
     displayName: Check Formatting
+  - task: TerraformCLI@0
+    displayName: Plan
+    inputs:
+      command: 'plan'
