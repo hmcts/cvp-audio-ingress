@@ -255,12 +255,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   provision_vm_agent = true
-  secret {
-    certificate {
-      url = var.service_certificate_kv_url
-    }
-    key_vault_id = var.key_vault_id
-  }
+//  secret {
+//    certificate {
+//      url = var.service_certificate_kv_url
+//    }
+//    key_vault_id = var.key_vault_id
+//  }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
 

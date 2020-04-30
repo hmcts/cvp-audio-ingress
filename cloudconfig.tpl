@@ -755,10 +755,10 @@ write_files:
       wowza ${streamPassword}
 runcmd:
   - 'sudo mkdir /mnt/blobfusetmp'
-  - 'secretsname=$(find /var/lib/waagent/ -name "${certThumbprint}.prv" | cut -c -57)'
-  - 'openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}'
-  - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'
-  - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}'
+{*  - 'secretsname=$(find /var/lib/waagent/ -name "${certThumbprint}.prv" | cut -c -57)'*}
+{*  - 'openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}'*}
+{*  - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'*}
+{*  - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}'*}
   - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content'
   - 'service WowzaStreamingEngine stop'
   - 'service WowzaStreamingEngine start'

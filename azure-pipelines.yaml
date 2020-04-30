@@ -8,6 +8,15 @@ variables:
   env: sbox
   stack: application
   service: 01-cvp-audio-ingress
+  product: cvp
+  dnsZoneName: shared-services.uk.south.sbox.hmcts.internal
+  dnsRg: shared-services_sbox_network_resource_group
+  dnsTenantId: oops
+  dnsClientId: dummy
+  dnsClientSecret: data
+  dnsSubscriptionId: a8140a9e-f1b0-481f-a4de-09e2ee23f7ab
+  addressSpace: 10.50.11.0/28
+
 steps:
   - task: TerraformInstaller@0
     displayName: Install Terraform
@@ -41,3 +50,20 @@ steps:
     inputs:
       command: 'plan'
       environmentServiceName: $(subscriptionName)
+      commandOptions: |
+        -var 'location=$(locationCanonical)'
+        -var 'env=$(env)'
+        -var 'common_tags[foo]=bar'
+        -var 'common_tags[biz]=baz'
+        -var 'product=$(product)'
+#        -var 'admin_ssh_key_path='
+        -var 'service_certificate_kv_url=foo'
+        -var 'service_certificate_thumbprint=foo'
+        -var 'key_vault_id=foo'
+        -var 'dns_zone_name=$(dnsZoneName)'
+        -var 'dns_resource_group=$(dnsRg)'
+        -var 'dns_tenant_id=$(dnsTenantId)'
+        -var 'dns_client_id=$(dnsClientId)'
+        -var 'dns_client_secret=$(dnsClientSecret)'
+        -var 'dns_subscription_id=$(dnsSubscriptionId)'
+        -var 'workspace_to_address_space_map[sbox]=$(addressSpace)'
