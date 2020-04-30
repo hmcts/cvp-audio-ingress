@@ -3,7 +3,8 @@ trigger:
 pr:
   - master
 variables:
-  location: UK South
+  location: 'UK South'
+  locationCanonical: uksouth
   env: sbox
   stack: application
   service: 01-cvp-audio-ingress
@@ -31,7 +32,7 @@ steps:
       backendServiceArm: '$(subscriptionName)'
       ensureBackend: true
       backendAzureRmResourceGroupName: 'cvp-sbox-rg'
-      backendAzureRmResourceGroupLocation: '$(location)'
+      backendAzureRmResourceGroupLocation: '$(locationCanonical)'
       backendAzureRmStorageAccountName: 'cvpsboxterraform'
       backendAzureRmContainerName: 'terraform-state'
       backendAzureRmKey: '$(location)/$(env)/$(stack)/$(service)/terraform.tfstate'
