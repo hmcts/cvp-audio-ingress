@@ -52,3 +52,4 @@ steps:
     inputs:
       command: 'plan'
       environmentServiceName: $(subscriptionName)
+      commandOptions: '-var-file="sbox.tfvars"'
