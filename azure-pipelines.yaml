@@ -63,6 +63,14 @@ steps:
       environmentServiceName: $(subscriptionName)
       commandOptions: '-var-file="sbox.tfvars" -out="sbox.tfplan" -no-color -input=false'
 
+  - task: AzureCLI@2
+    displayName: Accept Terms of Wowza VM in Marketplace
+    inputs:
+      azureSubscription: '$(subscriptionName)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: az vm image terms accept --urn wowza:wowzastreamingengine:linux-paid:4.7.7
+
   - task: TerraformCLI@0
     displayName: Apply
     inputs:
