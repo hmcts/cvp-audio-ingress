@@ -7,7 +7,7 @@ common_tags = {
   BuiltFrom   = "https://github.com/hmcts/cvp-audio-ingress"
 }
 service_certificate_kv_url     = "https://cftapps-sbox.vault.azure.net/certificates/STAR-sandbox-platform-hmcts-net"
-service_certificate_thumbprint = "P3f6unZNo0qryLcHOhItln3o+2E="
+service_certificate_thumbprint = "3F77FABA764DA34AABC8B7073A122D967DE8FB61"
 key_vault_id                   = "/subscriptions/b72ab7b7-723f-4b18-b6f6-03b0f2c6a1bb/resourceGroups/core-infra-sbox-rg/providers/Microsoft.KeyVault/vaults/cftapps-sbox"
 dns_zone_name                  = "shared-services.uk.south.sbox.hmcts.internal"
 dns_resource_group             = "shared-services_sbox_network_resource_group"

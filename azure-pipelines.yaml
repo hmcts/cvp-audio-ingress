@@ -36,14 +36,17 @@ steps:
   - script: terraform fmt -check=true
     displayName: Check Formatting
 
-#  - task: AzureCLI@2
-#    inputs:
-#      azureSubscription: '$(subscriptionName)'
-#      scriptType: 'bash'
-#      scriptLocation: 'inlineScript'
-#      inlineScript: |
-#        az keyvault certificate list --vault-name cftapps-sbox
-#        az keyvault secret list --vault-name cftapps-sbox
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: '$(subscriptionName)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az keyvault certificate download --id https://cftapps-sbox.vault.azure.net/certificates/STAR-sandbox-platform-hmcts-net -f cert.pem && \
+          openssl x509 -in cert.pem -inform PEM -noout -sha1 -fingerprint
+        certPath=`pwd`/cert.pem
+
+        echo "##vso[task.setvariable variable=certPath]$certPath"
 
   - task: TerraformCLI@0
     inputs:
@@ -56,12 +59,18 @@ steps:
       backendAzureRmStorageAccountName: 'cvpsboxterraform'
       backendAzureRmContainerName: 'terraform-state'
       backendAzureRmKey: '$(locationEng)/$(env)/$(stack)/$(service)/terraform.tfstate'
+
+#  - task: TerraformCLI@0
+#    inputs:
+#      command: 'destroy'
+#      environmentServiceName: $(subscriptionName)
+
   - task: TerraformCLI@0
     displayName: Plan
     inputs:
       command: 'plan'
       environmentServiceName: $(subscriptionName)
-      commandOptions: '-var-file="sbox.tfvars" -out="sbox.tfplan" -no-color -input=false'
+      commandOptions: '-var-file="sbox.tfvars" -var "cert_path=$(certPath)" -out="sbox.tfplan" -no-color -input=false'
 
   - task: AzureCLI@2
     displayName: Accept Terms of Wowza VM in Marketplace

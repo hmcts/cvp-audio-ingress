@@ -63,3 +63,7 @@ variable "dns_subscription_id" {
 variable "address_space" {
   type = string
 }
+
+variable "cert_path" {
+  type = string
+}

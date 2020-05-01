@@ -1,5 +1,5 @@
 locals {
-  service_name  = "${var.product}-wowza-${var.env}"
+  service_name  = "${var.product}-recordings-${var.env}"
   wowza_sku     = "linux-paid"
   wowza_version = "4.7.7"
 }
@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_storage_account" "sa" {
-  name                = "${replace(lower(local.service_name), "-", "")}sa"
+  name                = "${replace(lower(local.service_name), "-", "")}sa2"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tags                = var.common_tags
@@ -144,8 +144,20 @@ resource "azurerm_network_security_group" "sg" {
   }
 
   security_rule {
-    name                       = "HTTPS"
+    name                       = "AdminUI"
     priority                   = 1040
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "8088"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "HTTPS"
+    priority                   = 1050
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -157,7 +169,7 @@ resource "azurerm_network_security_group" "sg" {
 
   security_rule {
     name                       = "SSH"
-    priority                   = 1050
+    priority                   = 1060
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -227,6 +239,11 @@ data "template_cloudinit_config" "wowza_setup" {
   }
 }
 
+resource "tls_private_key" "tf_ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "azurerm_linux_virtual_machine" "vm" {
   name = "${local.service_name}-vm"
 
@@ -247,6 +264,11 @@ resource "azurerm_linux_virtual_machine" "vm" {
   admin_ssh_key {
     username   = var.admin_user
     public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDc8ujPUBBo2fG8QrDHFHamZ6AOeTOVP7lmQ95hWufzAy03MbMufshkp2xkpBYrm9WQf9mDWqqDa5rBF7LoqJT7vRKuDbn04B/puwIHnVEVb9ROGXJ61tUURIsrQ5H4PtdluVrNpqJT/vFZBbat2ewrq8idXGGrHlcZovGpm0GOBvnDLAEfP3MXb5FqgWWikpsIMaJMF79fvw1W59uC5Wlo7HaKaAIk6Klp5EFM1TKDHj8I9cAc8XHilM3/JvjG2gCm4JMxMnIS7pRBISgSlZK16ALteaQTkO7OgkmaANqT2t1l64vCpxtRyccpvFnIKvseiRwXXFuLjFjy238b7eOU6Ktfb4RHaOIRvt/EEi9GXnrMSjEBgx5PKiCKuwFhpH6EL0I0B/CCb9h8k19ZA0FIGhH/ZHFJ2WdAIzKYbjXDCNHOejs4B+UUqcY6e/s9C4dLap+fCpXKRSwsRG0inRkttAcuyPu1ewtOE/qeSl5DN2fqKV6r0Gm4lQfdHUMTrcU="
+  }
+
+  admin_ssh_key {
+    username   = var.admin_user
+    public_key = tls_private_key.tf_ssh_key.public_key_openssh
   }
 
   os_disk {
@@ -279,5 +301,111 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   identity {
     type = "SystemAssigned"
+  }
+}
+
+resource "null_resource" "cert" {
+
+  depends_on = [
+    azurerm_linux_virtual_machine.vm
+  ]
+
+  triggers = {
+    cert_path = file(var.cert_path)
+    vm = azurerm_linux_virtual_machine.vm.id
+  }
+
+  provisioner "file" {
+    content = file(var.cert_path)
+    destination = "/home/wowza/cert.pem"
+
+    connection {
+      type = "ssh"
+      user = var.admin_user
+      private_key = tls_private_key.tf_ssh_key.private_key_pem
+      host = azurerm_public_ip.pip.ip_address
+      port = "22"
+      timeout = "1m"
+    }
+  }
+
+  provisioner "remote-exec" {
+
+    connection {
+      type        = "ssh"
+      user        = var.admin_user
+      private_key = tls_private_key.tf_ssh_key.private_key_pem
+      host        = azurerm_public_ip.pip.ip_address
+      port        = "22"
+      timeout     = "1m"
+    }
+
+    inline = [
+      "cd /home/wowza",
+      "export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin",
+      "openssl x509 -outform der -in cert.pem -out cert.der",
+      "keytool -import -alias sandbox -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -file cert.der -storepass  ${random_password.certPassword.result} -noprompt",
+      "sudo service WowzaStreamingEngine stop",
+      "sudo service WowzaStreamingEngine start"
+    ]
+  }
+}
+
+resource "null_resource" "wowza_applications" {
+
+  depends_on = [
+    azurerm_linux_virtual_machine.vm
+  ]
+
+  triggers = {
+    num_applications = var.num_applications
+    vm = azurerm_linux_virtual_machine.vm.id
+  }
+
+  provisioner "file" {
+    content     = file("modules/wowza/wowza-applications/dir-creator.sh")
+    destination = "/home/wowza/dir-creator.sh"
+
+    connection {
+      type        = "ssh"
+      user        = var.admin_user
+      private_key = tls_private_key.tf_ssh_key.private_key_pem
+      host        = azurerm_public_ip.pip.ip_address
+      port        = "22"
+      timeout     = "1m"
+    }
+  }
+
+  provisioner "file" {
+    content     = file("modules/wowza/wowza-applications/Application.xml")
+    destination = "/home/wowza/Application.xml"
+
+    connection {
+      type        = "ssh"
+      user        = var.admin_user
+      private_key = tls_private_key.tf_ssh_key.private_key_pem
+      host        = azurerm_public_ip.pip.ip_address
+      port        = "22"
+      timeout     = "1m"
+    }
+  }
+
+  provisioner "remote-exec" {
+
+    connection {
+      type        = "ssh"
+      user        = var.admin_user
+      private_key = tls_private_key.tf_ssh_key.private_key_pem
+      host        = azurerm_public_ip.pip.ip_address
+      port        = "22"
+      timeout     = "1m"
+    }
+
+    inline = [
+      "chmod 775 ./dir-creator.sh",
+      "./dir-creator.sh ${var.num_applications}",
+      "sudo service WowzaStreamingEngine stop",
+      "sudo service WowzaStreamingEngine start"
+    ]
   }
 }

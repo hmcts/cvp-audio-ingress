@@ -1,7 +1,8 @@
 locals {
-  rg_name      = "${var.product}-media-service-${var.env}"
-  sa_name      = "${var.product}mediaservice${var.env}"
-  service_name = "${var.product}mediaservice${var.env}"
+  rg_name          = "${var.product}-media-service-${var.env}"
+  sa_name          = "${var.product}mediaservice${var.env}"
+  service_name     = "${var.product}mediaservice${var.env}"
+  num_applications = 9
 }
 
 module "wowza" {
@@ -15,6 +16,8 @@ module "wowza" {
   service_certificate_thumbprint = var.service_certificate_thumbprint
   key_vault_id                   = var.key_vault_id
   address_space                  = var.address_space
+  num_applications               = local.num_applications
+  cert_path                      = var.cert_path
 }
 
 resource "azurerm_dns_a_record" "wowza" {
