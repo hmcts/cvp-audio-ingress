@@ -14,7 +14,7 @@ module "wowza" {
   service_certificate_kv_url     = var.service_certificate_kv_url
   service_certificate_thumbprint = var.service_certificate_thumbprint
   key_vault_id                   = var.key_vault_id
-  address_space                  = lookup(var.workspace_to_address_space_map, terraform.workspace, "")
+  address_space                  = var.address_space
 }
 
 resource "azurerm_dns_a_record" "wowza" {

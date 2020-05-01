@@ -60,6 +60,6 @@ variable "dns_subscription_id" {
   type = string
 }
 
-variable "workspace_to_address_space_map" {
-  default = ""
+variable "address_space" {
+  type = string
 }

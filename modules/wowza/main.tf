@@ -79,7 +79,7 @@ resource "azurerm_private_dns_a_record" "sa_a_record" {
   zone_name           = azurerm_private_dns_zone.blob.name
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
-  records             = [azurerm_private_endpoint.endpoint.private_service_connection[0].private_connection_resource_id]
+  records             = [azurerm_private_endpoint.endpoint.private_service_connection.0.private_ip_address]
 }
 
 # resource "azurerm_storage_account_network_rules" "wowza" {
@@ -212,7 +212,7 @@ data "template_file" "cloudconfig" {
     certThumbprint     = upper(var.service_certificate_thumbprint)
     storageAccountName = azurerm_storage_account.sa.name
     storageAccountKey  = azurerm_storage_account.sa.primary_access_key
-    restPassword       = md5(":Wowzawowza:${random_password.restPassword.result}")
+    restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
   }
 }
@@ -246,7 +246,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = file(var.admin_ssh_key_path)
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDc8ujPUBBo2fG8QrDHFHamZ6AOeTOVP7lmQ95hWufzAy03MbMufshkp2xkpBYrm9WQf9mDWqqDa5rBF7LoqJT7vRKuDbn04B/puwIHnVEVb9ROGXJ61tUURIsrQ5H4PtdluVrNpqJT/vFZBbat2ewrq8idXGGrHlcZovGpm0GOBvnDLAEfP3MXb5FqgWWikpsIMaJMF79fvw1W59uC5Wlo7HaKaAIk6Klp5EFM1TKDHj8I9cAc8XHilM3/JvjG2gCm4JMxMnIS7pRBISgSlZK16ALteaQTkO7OgkmaANqT2t1l64vCpxtRyccpvFnIKvseiRwXXFuLjFjy238b7eOU6Ktfb4RHaOIRvt/EEi9GXnrMSjEBgx5PKiCKuwFhpH6EL0I0B/CCb9h8k19ZA0FIGhH/ZHFJ2WdAIzKYbjXDCNHOejs4B+UUqcY6e/s9C4dLap+fCpXKRSwsRG0inRkttAcuyPu1ewtOE/qeSl5DN2fqKV6r0Gm4lQfdHUMTrcU="
   }
 
   os_disk {

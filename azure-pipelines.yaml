@@ -36,12 +36,14 @@ steps:
   - script: terraform fmt -check=true
     displayName: Check Formatting
 
-  - task: AzureCLI@2
-    inputs:
-      azureSubscription: '$(subscriptionName)'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: 'az keyvault certificate list --vault-name cftapps-sbox'
+#  - task: AzureCLI@2
+#    inputs:
+#      azureSubscription: '$(subscriptionName)'
+#      scriptType: 'bash'
+#      scriptLocation: 'inlineScript'
+#      inlineScript: |
+#        az keyvault certificate list --vault-name cftapps-sbox
+#        az keyvault secret list --vault-name cftapps-sbox
 
   - task: TerraformCLI@0
     inputs:
@@ -54,9 +56,16 @@ steps:
       backendAzureRmStorageAccountName: 'cvpsboxterraform'
       backendAzureRmContainerName: 'terraform-state'
       backendAzureRmKey: '$(locationEng)/$(env)/$(stack)/$(service)/terraform.tfstate'
-#  - task: TerraformCLI@0
-#    displayName: Plan
-#    inputs:
-#      command: 'plan'
-#      environmentServiceName: $(subscriptionName)
-#      commandOptions: '-var-file="sbox.tfvars"'
+  - task: TerraformCLI@0
+    displayName: Plan
+    inputs:
+      command: 'plan'
+      environmentServiceName: $(subscriptionName)
+      commandOptions: '-var-file="sbox.tfvars" -out="sbox.tfplan" -no-color -input=false'
+
+  - task: TerraformCLI@0
+    displayName: Apply
+    inputs:
+      command: 'apply'
+      environmentServiceName: $(subscriptionName)
+      commandOptions: 'sbox.tfplan -no-color'
