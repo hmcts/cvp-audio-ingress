@@ -44,7 +44,7 @@ steps:
           --object-id $oid
 
         # copy the cert from ctfapps
-        az keyvault secret download --id https://cftapps-${{ parameters.env }}.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pfx
+        az keyvault secret download --id https://cftapps-${{ parameters.env }}.vault.azure.net/secrets/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pfx
 
         cat cert.pfx
         base64 -d cert.pfx > cert-up.pfx
