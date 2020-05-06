@@ -45,7 +45,6 @@ stages:
         - template: pipeline/variables-prod.yaml
     jobs:
       - job: DeployToEnv
-        displayName: 'Deploy to ${{ variables.envLong }}'
         steps:
           - template: pipeline/steps/tf-init.yaml
             parameters:

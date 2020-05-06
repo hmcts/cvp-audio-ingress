@@ -6,17 +6,17 @@ locals {
 }
 
 module "wowza" {
-  source                         = "./modules/wowza"
-  location                       = var.location
-  product                        = var.product
-  env                            = var.env
-  common_tags                    = var.common_tags
-  admin_ssh_key_path             = var.admin_ssh_key_path
-  service_certificate_kv_url     = var.service_certificate_kv_url
-  key_vault_id                   = var.key_vault_id
-  address_space                  = var.address_space
-  num_applications               = local.num_applications
-  cert_path                      = var.cert_path
+  source                     = "./modules/wowza"
+  location                   = var.location
+  product                    = var.product
+  env                        = var.env
+  common_tags                = var.common_tags
+  admin_ssh_key_path         = var.admin_ssh_key_path
+  service_certificate_kv_url = var.service_certificate_kv_url
+  key_vault_id               = var.key_vault_id
+  address_space              = var.address_space
+  num_applications           = local.num_applications
+  cert_path                  = var.cert_path
 }
 
 resource "azurerm_dns_a_record" "wowza" {
