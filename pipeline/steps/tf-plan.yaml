@@ -46,8 +46,10 @@ steps:
         # copy the cert from ctfapps
         az keyvault certificate backup --id https://cftapps-${{ parameters.env }}.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.bak
 
+        cat cert.bak
+
         # import cert
-        az keyvault certificate restore --file cert.bak --vault-name $kvName
+        az keyvault certificate restore --file cert.bak --vault-name $kvName --verbose
 
         az keyvault certificate download --id https://$kvName.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pem
         certPath=`pwd`/cert.pem
