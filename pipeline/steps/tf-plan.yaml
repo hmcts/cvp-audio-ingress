@@ -16,8 +16,8 @@ steps:
       azureSubscription: 'DTS-SHAREDSERVICES-SBOX'
       ScriptType: 'InlineScript'
       Inline: |
-        $Context = Get-AzureRmContext
-        $AzureDevOpsServicePrincipal = Get-AzureRmADServicePrincipal -ApplicationId $Context.Account.Id
+        $Context = Get-AzContext
+        $AzureDevOpsServicePrincipal = Get-AzADServicePrincipal -ApplicationId $Context.Account.Id
         $ObjectId = $AzureDevOpsServicePrincipal.Id
 
         echo "##vso[task.setvariable variable=oid]$ObjectId"
