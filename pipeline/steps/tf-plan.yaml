@@ -67,5 +67,5 @@ steps:
     inputs:
       command: 'plan'
       environmentServiceName: ${{ parameters.subscriptionName }}
-      commandOptions: '-var-file="${{ parameters.env}}.tfvars" -var "cert_path=$(certPath)" -var "service_certificate_kv_url=$(secretId)" -var "key_vault_id=$kvId" -out="${{ parameters.env }}.tfplan" -no-color -input=false'
+      commandOptions: '-var-file="${{ parameters.env}}.tfvars" -var "cert_path=$(certPath)" -var "service_certificate_kv_url=$(secretId)" -var "key_vault_id=$(kvId)" -out="${{ parameters.env }}.tfplan" -no-color -input=false'
       # @todo move the tfvars file into pipeline vars and pass in here
