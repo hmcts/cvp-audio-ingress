@@ -41,7 +41,7 @@ stages:
         - template: pipeline/variables-test.yaml
       - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
         - template: pipeline/variables-stg.yaml
-      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/tags'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test') }}:
+      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/tags'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
     jobs:
       - job: DeployToEnv
         displayName: 'Deploy to $(envLong)'
