@@ -11,26 +11,26 @@ parameters:
     type: string
   - name: serviceName
     type: string
-    default: '01-$(product)-audio-ingress'
+    default: '01-${{ parameters.product }}-audio-ingress'
   - name: storageAccountName
     type: string
-    default: '$(product)$(env)terraform'
+    default: '${{ parameters.product }}${{ parameters.env }}terraform'
   - name: containerName
     type: string
     default: 'terraform-state'
   - name: rgName
     type: string
-    default: '$(product)-($env)-rg'
+    default: '${{ parameters.product }}-($env)-rg'
 
 steps:
   - task: TerraformCLI@0
     inputs:
       command: 'init'
       backendType: 'azurerm'
-      backendServiceArm: $(subscriptionName)
+      backendServiceArm: ${{ parameters.subscriptionName }}
       ensureBackend: true
-      backendAzureRmResourceGroupName: $(rgName)
-      backendAzureRmResourceGroupLocation: $(location)
-      backendAzureRmStorageAccountName: $(storageAccountName)
-      backendAzureRmContainerName: $(containerName)
-      backendAzureRmKey: '$(locationEng)/$(env)/application/$(serviceName)/terraform.tfstate'
+      backendAzureRmResourceGroupName: ${{ parameters.rgName }}
+      backendAzureRmResourceGroupLocation: ${{ parameters.location }}
+      backendAzureRmStorageAccountName: ${{ parameters.storageAccountName }}
+      backendAzureRmContainerName: ${{ parameters.containerName }}
+      backendAzureRmKey: '${{ parameters.locationEng }}/${{ parameters.env }}/application/${{ parameters.serviceName }}/terraform.tfstate'

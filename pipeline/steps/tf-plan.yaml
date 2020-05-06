@@ -9,11 +9,11 @@ parameters:
 steps:
   - task: AzureCLI@2
     inputs:
-      azureSubscription: '$(subscriptionName)'
+      azureSubscription: '${{ parameters.subscriptionName}}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        az keyvault certificate download --id https://cftapps-$(env).vault.azure.net/certificates/STAR-$(envLong)-platform-hmcts-net -f cert.pem && \
+        az keyvault certificate download --id https://cftapps-${{ parameters.env}}.vault.azure.net/certificates/STAR-${{ parameters.envLong}}-platform-hmcts-net -f cert.pem && \
           openssl x509 -in cert.pem -inform PEM -noout -sha1 -fingerprint
         certPath=`pwd`/cert.pem
 
@@ -23,6 +23,6 @@ steps:
     displayName: Plan
     inputs:
       command: 'plan'
-      environmentServiceName: $(subscriptionName)
-      commandOptions: '-var-file="$(env).tfvars" -var "cert_path=$(certPath)" -out="$(env).tfplan" -no-color -input=false'
+      environmentServiceName: ${{ parameters.subscriptionName}}
+      commandOptions: '-var-file="${{ parameters.env}}.tfvars" -var "cert_path=${{ parameters.certPath}}" -out="${{ parameters.env}}.tfplan" -no-color -input=false'
       # @todo move the tfvars file into pipeline vars and pass in here
