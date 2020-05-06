@@ -38,7 +38,10 @@ steps:
         echo "Logged in as oid $oid"
         az group create --location ${{ parameters.location }} --name ${{ parameters.product }}-sharedinfra-${{ parameters.env }}  --subscription ${{ parameters.subscriptionName }}
         az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }}
-        az keyvault set-policy --name $kvName --certificate-permissions restore --object-id $oid
+        az keyvault set-policy --name $kvName \
+          --certificate-permissions backup create get import list listissuers recover restore update \
+          --secret-permissions backup delete get list recover restore set \
+          --object-id $oid
 
         # copy the cert from ctfapps
         az keyvault certificate backup --id https://cftapps-${{ parameters.env }}.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.bak
