@@ -3,10 +3,10 @@ trigger:
 pr:
   - master
 variables:
-  locationEng: 'UK South'
-  location: 'uksouth'
-  env: 'sbox'
-  envLong: 'sandbox'
+  locationEng: 'UK South' # add coalese
+  location: 'uksouth' # add coalese
+  env: 'sbox' # add coalese
+  envLong: 'sandbox' # add coalese
   wowza_sku: 'linux-paid'
   wowza_version: '4.7.7'
   wowza_publisher: 'wowza'
