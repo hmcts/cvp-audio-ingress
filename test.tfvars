@@ -6,7 +6,6 @@ common_tags = {
   teamName    = "cvp"
   BuiltFrom   = "https://github.com/hmcts/cvp-audio-ingress"
 }
-service_certificate_kv_url = "https://cftapps-test.vault.azure.net/certificates/STAR-test-platform-hmcts-net"
 key_vault_id               = "/subscriptions/3eec5bde-7feb-4566-bfb6-805df6e10b90/resourceGroups/core-infra-test-rg/providers/Microsoft.KeyVault/vaults/cftapps-test"
 dns_zone_name              = "shared-services.uk.south.test.hmcts.internal"
 dns_resource_group         = "shared-services_test_network_resource_group"
