@@ -13,6 +13,7 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
+        echo "az keyvault certificate download --id https://cftapps-${{ parameters.env }}.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net"
         az keyvault certificate download --id https://cftapps-${{ parameters.env }}.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pem && \
           openssl x509 -in cert.pem -inform PEM -noout -sha1 -fingerprint
         certPath=`pwd`/cert.pem
