@@ -37,7 +37,7 @@ steps:
         oid=$(oid)
         echo "Logged in as oid $oid"
         az group create --location ${{ parameters.location }} --name ${{ parameters.product }}-sharedinfra-${{ parameters.env }}  --subscription ${{ parameters.subscriptionName }}
-        $newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }})
+        newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }})
         az keyvault set-policy --name $kvName \
           --certificate-permissions backup create get import list listissuers recover restore update \
           --secret-permissions backup delete get list recover restore set \
@@ -46,7 +46,6 @@ steps:
         # copy the cert from ctfapps
         az keyvault secret download --id https://cftapps-${{ parameters.env }}.vault.azure.net/secrets/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pfx
 
-        cat cert.pfx
         base64 -d cert.pfx > cert-up.pfx
 
         # import cert
