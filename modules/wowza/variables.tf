@@ -64,10 +64,6 @@ variable "service_certificate_kv_url" {
   type = string
 }
 
-variable "service_certificate_thumbprint" {
-  type = string
-}
-
 variable "cert_path" {
   type = string
 }

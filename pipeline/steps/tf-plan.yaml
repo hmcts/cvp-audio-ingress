@@ -1,0 +1,28 @@
+parameters:
+  - name: subscriptionName
+    type: string
+  - name: env
+    type: string
+  - name: envLong
+    type: string
+
+steps:
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: '$(subscriptionName)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az keyvault certificate download --id https://cftapps-$(env).vault.azure.net/certificates/STAR-$(envLong)-platform-hmcts-net -f cert.pem && \
+          openssl x509 -in cert.pem -inform PEM -noout -sha1 -fingerprint
+        certPath=`pwd`/cert.pem
+
+        echo "##vso[task.setvariable variable=certPath]$certPath"
+
+  - task: TerraformCLI@0
+    displayName: Plan
+    inputs:
+      command: 'plan'
+      environmentServiceName: $(subscriptionName)
+      commandOptions: '-var-file="$(env).tfvars" -var "cert_path=$(certPath)" -out="$(env).tfplan" -no-color -input=false'
+      # @todo move the tfvars file into pipeline vars and pass in here

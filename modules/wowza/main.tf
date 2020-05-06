@@ -221,7 +221,6 @@ data "template_file" "cloudconfig" {
   template = file(var.cloud_init_file)
   vars = {
     certPassword       = random_password.certPassword.result
-    certThumbprint     = upper(var.service_certificate_thumbprint)
     storageAccountName = azurerm_storage_account.sa.name
     storageAccountKey  = azurerm_storage_account.sa.primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
@@ -277,12 +276,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   provision_vm_agent = true
-//  secret {
-//    certificate {
-//      url = var.service_certificate_kv_url
-//    }
-//    key_vault_id = var.key_vault_id
-//  }
+  secret {
+    certificate {
+      url = var.service_certificate_kv_url
+    }
+    key_vault_id = var.key_vault_id
+  }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
 

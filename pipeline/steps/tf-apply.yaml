@@ -1,0 +1,34 @@
+parameters:
+  - name: subscriptionName
+    type: string
+  - name: env
+    type: string
+  - name: wowza_sku
+    type: string
+    default: 'linux-paid'
+  - name: wowza_version
+    type: string
+    default: '4.7.7'
+  - name: wowza_publisher
+    type: string
+    default: 'wowza'
+  - name: wowza_offer
+    type: string
+    default: 'wowzastreamingengine'
+
+steps:
+  - task: AzureCLI@2
+    displayName: Accept Terms of Wowza VM in Marketplace
+    inputs:
+      azureSubscription: '$(subscriptionName)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az vm image terms accept --urn $(wowza_publisher):$(wowza_offer):$(wowza_sku):$(wowza_version)
+
+  - task: TerraformCLI@0
+    displayName: Apply
+    inputs:
+      command: 'apply'
+      environmentServiceName: $(subscriptionName)
+      commandOptions: '$(env).tfplan -no-color'
