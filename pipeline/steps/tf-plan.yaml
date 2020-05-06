@@ -50,7 +50,7 @@ steps:
         base64 -d cert.pfx > cert-up.pfx
 
         # import cert
-        az keyvault certificate import --file cert-up.pfx --vault-name $kvName --verbose
+        az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name STAR-${{ parameters.envLong }}-platform-hmcts-net --verbose
 
         az keyvault certificate download --id https://$kvName.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pem
         certPath=`pwd`/cert.pem
