@@ -3,14 +3,15 @@ trigger:
 pr:
   - master
 variables:
-  locationEng: coalesce(variables.locationEng, 'UK South')
-  location: coalesce(variables.location, 'uksouth')
-  env: coalesce(variables.env, 'sbox')
-  envLong: coalesce(variables.envLong, 'sandbox')
+  locationEng: 'UK South'
+  location: 'uksouth'
+  env: 'sbox'
+  envLong: 'sandbox'
   wowza_sku: 'linux-paid'
   wowza_version: '4.7.7'
   wowza_publisher: 'wowza'
   wowza_offer: 'wowzastreamingengine'
+  product: 'cvp'
 
 stages:
   - stage: Build
