@@ -11,6 +11,19 @@ parameters:
     type: string
 
 steps:
+  - task: AzurePowerShell@5
+    inputs:
+      azureSubscription: 'DTS-SHAREDSERVICES-SBOX'
+      ScriptType: 'InlineScript'
+      Inline: |
+        $Context = Get-AzureRmContext
+        $AzureDevOpsServicePrincipal = Get-AzureRmADServicePrincipal -ApplicationId $Context.Account.Id
+        $ObjectId = $AzureDevOpsServicePrincipal.Id
+
+        echo "##vso[task.setvariable variable=oid]$ObjectId"
+      azurePowerShellVersion: 'LatestVersion'
+      pwsh: true
+
   - task: AzureCLI@2
     inputs:
       azureSubscription: '${{ parameters.subscriptionName}}'
@@ -21,7 +34,7 @@ steps:
         # ensure KV exists in same sub we are working in
         rgName="${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
         kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
-        oid=$(az ad signed-in-user show --query objectId --output tsv)
+        oid=$(oid)
         echo "Logged in as oid $oid"
         az group create --location ${{ parameters.location }} --name ${{ parameters.product }}-sharedinfra-${{ parameters.env }}  --subscription ${{ parameters.subscriptionName }}
         az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }}
