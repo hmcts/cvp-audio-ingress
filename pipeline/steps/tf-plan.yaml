@@ -56,7 +56,12 @@ steps:
         certPath=`pwd`/cert.pem
 
         secretId=$(az keyvault certificate show --id https://$kvName.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net | jq .sid)
+
+        echo $newKv
+
         kvId=$(echo $newKv | jq .id)
+
+        echo $kvId
 
         echo "##vso[task.setvariable variable=certPath]$certPath"
         echo "##vso[task.setvariable variable=secretId]$secretId"
