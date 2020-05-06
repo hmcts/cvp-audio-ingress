@@ -62,7 +62,7 @@ steps:
 
         echo "##vso[task.setvariable variable=certPath]$certPath"
         echo "##vso[task.setvariable variable=secretId]$secretId"
-        echo "##vso[task.setvariable variable=thumbprint]thumbprint"
+        echo "##vso[task.setvariable variable=thumbprint]$thumbprint"
         echo "##vso[task.setvariable variable=kvId]$kvId"
 
   - task: TerraformCLI@0
