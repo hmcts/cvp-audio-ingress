@@ -48,17 +48,17 @@ stages:
         steps:
           - template: pipeline/steps/tf-init.yaml
             parameters:
-              subscriptionName: $(subscriptionName)
-              product: $(product)
-              locationEng: $(locationEng)
-              location: $(location)
-              env: $(env)
+              subscriptionName: ${{ variables.subscriptionName }}
+              product: ${{ variables.product }}
+              locationEng: ${{ variables.locationEng }}
+              location: ${{ variables.location }}
+              env: ${{ variables.env }}
           - template: pipeline/steps/tf-plan.yaml
             parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
-              envLong: $(envLong)
+              subscriptionName: ${{ variables.subscriptionName }}
+              env: ${{ variables.env }}
+              envLong: ${{ variables.envLong }}
           - template: pipeline/steps/tf-apply.yaml
             parameters:
-              subscriptionName: $(subscriptionName)
+              subscriptionName: ${{ variables.subscriptionName }}
               env: $(env)
