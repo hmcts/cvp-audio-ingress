@@ -17,7 +17,7 @@ stages:
     jobs:
       - job: BasicValidation
         steps:
-          - template: ./steps/tf-install.yaml
+          - template: pipeline/steps/tf-install.yaml
           - task: TerraformCLI@0
             inputs:
               command: 'init'
@@ -46,19 +46,19 @@ stages:
       - job: DeployToEnv
         displayName: 'Deploy to $(envLong)'
         steps:
-          - template: ./steps/tf-init.yaml
+          - template: pipeline/steps/tf-init.yaml
             parameters:
               subscriptionName: $(subscriptionName)
               product: $(product)
               locationEng: $(locationEng)
               location: $(location)
               env: $(env)
-          - template: ./steps/tf-plan.yaml
+          - template: pipeline/steps/tf-plan.yaml
             parameters:
               subscriptionName: $(subscriptionName)
               env: $(env)
               envLong: $(envLong)
-          - template: ./steps/tf-apply.yaml
+          - template: pipeline/steps/tf-apply.yaml
             parameters:
               subscriptionName: $(subscriptionName)
               env: $(env)
