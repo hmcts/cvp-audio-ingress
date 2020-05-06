@@ -36,7 +36,7 @@ stages:
       - ${{ if eq(variables['env'], 'sbox') }}:
         # Only run when dev has specifically requested sandbox
         - template: pipeline/variables-sbox.yaml
-      - ${{ if eq(variables['Build.Reason'], 'PullRequest'), eq(variables['env'], 'test')) }}:
+      - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['env'], 'test'))) }}:
         # Deploy PRs here or if specifically targetted
         - template: pipeline/variables-test.yaml
       - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
