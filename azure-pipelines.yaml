@@ -59,6 +59,8 @@ stages:
               subscriptionName: $(subscriptionName)
               env: $(env)
               envLong: $(envLong)
+              location: $(location)
+              product: $(product)
           - template: pipeline/steps/tf-apply.yaml
             parameters:
               subscriptionName: $(subscriptionName)
