@@ -20,7 +20,7 @@ steps:
       backendType: 'azurerm'
       backendServiceArm: ${{ parameters.subscriptionName }}
       ensureBackend: true
-      backendAzureRmResourceGroupName: '${{ parameters.product }}-($env)-rg'
+      backendAzureRmResourceGroupName: '${{ parameters.product }}-${{ parameters.env }}-rg'
       backendAzureRmResourceGroupLocation: ${{ parameters.location }}
       backendAzureRmStorageAccountName: '${{ parameters.product }}${{ parameters.env }}terraform'
       backendAzureRmContainerName: ${{ parameters.containerName }}
