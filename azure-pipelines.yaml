@@ -48,17 +48,17 @@ stages:
         steps:
           - template: steps/tf-init.yaml
             parameters:
-              - subscriptionName: $(subscriptionName)
-              - product: $(product)
-              - locationEng: $(locationEng)
-              - location: $(location)
-              - env: $(env)
+              subscriptionName: $(subscriptionName)
+              product: $(product)
+              locationEng: $(locationEng)
+              location: $(location)
+              env: $(env)
           - template: steps/tf-plan.yaml
             parameters:
-              - subscriptionName: $(subscriptionName)
-              - env: $(env)
-              - envLong: $(envLong)
+              subscriptionName: $(subscriptionName)
+              env: $(env)
+              envLong: $(envLong)
           - template: steps/tf-apply.yaml
             parameters:
-              - subscriptionName: $(subscriptionName)
-              - env: $(env)
+              subscriptionName: $(subscriptionName)
+              env: $(env)
