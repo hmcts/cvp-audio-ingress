@@ -63,3 +63,7 @@ variable "address_space" {
 variable "cert_path" {
   type = string
 }
+
+variable "thumbprint" {
+  type = string
+}

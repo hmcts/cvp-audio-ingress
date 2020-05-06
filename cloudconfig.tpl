@@ -133,59 +133,6 @@ write_files:
                       <Description></Description>
                       <HostPortList>
                               <HostPort>
-                                      <Name>Default Streaming</Name>
-                                      <Type>Streaming</Type>
-                                      <ProcessorCount>$${com.wowza.wms.TuningAuto}</ProcessorCount>
-                                      <IpAddress>*</IpAddress>
-                                      <!-- Separate multiple ports with commas -->
-                                      <!-- 80: HTTP, RTMPT -->
-                                      <!-- 554: RTSP -->
-                                      <Port>1935,80,554</Port>
-                                      <!--changed for default cloud install. <Port>1935</Port>-->
-                                      <HTTPIdent2Response></HTTPIdent2Response>
-                                      <SocketConfiguration>
-                                              <ReuseAddress>true</ReuseAddress>
-                                              <!-- suggested settings for video on demand applications -->
-                                              <ReceiveBufferSize>65000</ReceiveBufferSize>
-                                              <ReadBufferSize>65000</ReadBufferSize>
-                                              <SendBufferSize>65000</SendBufferSize>
-                                              <!-- suggest settings for low latency chat and video recording applications
-                                              <ReceiveBufferSize>32000</ReceiveBufferSize>
-                                              <ReadBufferSize>32000</ReadBufferSize>
-                                              <SendBufferSize>32000</SendBufferSize>
-                                              -->
-                                              <KeepAlive>true</KeepAlive>
-                                              <!-- <TrafficClass>0</TrafficClass> -->
-                                              <!-- <OobInline>false</OobInline> -->
-                                              <!-- <SoLingerTime>-1</SoLingerTime> -->
-                                              <!-- <TcpNoDelay>false</TcpNoDelay> -->
-                                              <AcceptorBackLog>100</AcceptorBackLog>
-                                      </SocketConfiguration>
-                                      <HTTPStreamerAdapterIDs>cupertinostreaming,smoothstreaming,sanjosestreaming,dvrchunkstreaming,mpegdashstreaming</HTTPStreamerAdapterIDs>
-                                      <HTTPProviders>
-                                              <HTTPProvider>
-                                                      <BaseClass>com.wowza.wms.http.HTTPCrossdomain</BaseClass>
-                                                      <RequestFilters>*crossdomain.xml</RequestFilters>
-                                                      <AuthenticationMethod>none</AuthenticationMethod>
-                                              </HTTPProvider>
-                                              <HTTPProvider>
-                                                      <BaseClass>com.wowza.wms.http.HTTPClientAccessPolicy</BaseClass>
-                                                      <RequestFilters>*clientaccesspolicy.xml</RequestFilters>
-                                                      <AuthenticationMethod>none</AuthenticationMethod>
-                                              </HTTPProvider>
-                                              <HTTPProvider>
-                                                      <BaseClass>com.wowza.wms.http.HTTPProviderMediaList</BaseClass>
-                                                      <RequestFilters>*jwplayer.rss|*jwplayer.smil|*medialist.smil|*manifest-rtmp.f4m</RequestFilters>
-                                                      <AuthenticationMethod>none</AuthenticationMethod>
-                                              </HTTPProvider>
-                                              <HTTPProvider>
-                                                      <BaseClass>com.wowza.wms.http.HTTPServerVersion</BaseClass>
-                                                      <RequestFilters>*</RequestFilters>
-                                                      <AuthenticationMethod>none</AuthenticationMethod>
-                                              </HTTPProvider>
-                                      </HTTPProviders>
-                              </HostPort>
-                              <HostPort>
                                       <Name>Default SSL Streaming</Name>
                                       <Type>Streaming</Type>
                                       <ProcessorCount>$${com.wowza.wms.TuningAuto}</ProcessorCount>
@@ -193,7 +140,8 @@ write_files:
                                       <Port>443</Port>
                                       <HTTPIdent2Response></HTTPIdent2Response>
                                       <SSLConfig>
-                                              <KeyStorePath>$${com.wowza.wms.context.VHostConfigHome}/conf/ssl.wowza.jks</KeyStorePath>
+                                              <Enable>true</Enable>
+                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks</KeyStorePath>
                                               <KeyStorePassword>${certPassword}</KeyStorePassword>
                                               <KeyStoreType>JKS</KeyStoreType>
                                               <DomainToKeyStoreMapPath></DomainToKeyStoreMapPath>
@@ -486,10 +434,9 @@ write_files:
       #
       # By default this script does nothing.
 
-      sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content
+      sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
 
       exit 0
-
   - owner: wowza:wowza
     path: /home/wowza/mount.sh
     content: |
@@ -513,11 +460,14 @@ write_files:
       # Publish password file (format [username][space][password])
       #username password
       wowza ${streamPassword}
-
 runcmd:
   - 'sudo mkdir /mnt/blobfusetmp'
-  - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content'
-  - 'sudo service WowzaStreamingEngine stop'
-  - 'sudo service WowzaStreamingEngine start'
+  - 'sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy'
+  - 'secretsname=$(find /var/lib/waagent/ -name "${certThumbprint}.prv" | cut -c -57)'
+  - 'openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}'
+  - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'
+  - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}'
+  - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy'
+  - 'service WowzaStreamingEngine restart'
 
 final_message: "The system is finally up, after $UPTIME seconds"

@@ -68,6 +68,10 @@ variable "cert_path" {
   type = string
 }
 
+variable "thumbprint" {
+  type = string
+}
+
 variable "key_vault_id" {
   type = string
 }

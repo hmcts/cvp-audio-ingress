@@ -17,6 +17,7 @@ module "wowza" {
   address_space              = var.address_space
   num_applications           = local.num_applications
   cert_path                  = var.cert_path
+  thumbprint                 = var.thumbprint
 }
 
 resource "azurerm_dns_a_record" "wowza" {

@@ -221,6 +221,7 @@ data "template_file" "cloudconfig" {
   template = file(var.cloud_init_file)
   vars = {
     certPassword       = random_password.certPassword.result
+    certThumbprint     = var.thumbprint
     storageAccountName = azurerm_storage_account.sa.name
     storageAccountKey  = azurerm_storage_account.sa.primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
