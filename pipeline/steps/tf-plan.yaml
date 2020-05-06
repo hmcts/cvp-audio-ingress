@@ -25,10 +25,12 @@ steps:
         az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }}
 
         # copy the cert from ctfapps
-        az keyvault certificate download --id https://cftapps-${{ parameters.env }}.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pem
+        az keyvault certificate backup --id https://cftapps-${{ parameters.env }}.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.bak
 
         # import cert
-        az keyvault certificate import --file cert.pem --vault-name $kvName -n STAR-${{ parameters.envLong }}-platform-hmcts-net
+        az keyvault certificate restore --file cert.pem --vault-name $kvName
+
+        az keyvault certificate download --id https://$kvName.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pem
         certPath=`pwd`/cert.pem
 
         secretId=$(az keyvault certificate show --id https://$kvName.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net | jq .sid)
