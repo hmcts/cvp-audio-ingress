@@ -4,16 +4,6 @@ pr:
   - master
 variables:
   - template: pipeline/variables-common.yaml
-  - ${{ if eq(variables['env'], 'sbox') }}:
-  # Only run when dev has specifically requested sandbox
-    - template: pipeline/variables-sbox.yaml
-  - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['env'], 'test')) }}:
-      # Deploy PRs here or if specifically targetted
-    - template: pipeline/variables-test.yaml
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
-    - template: pipeline/variables-stg.yaml
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/tags'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
-    - template: pipeline/variables-prod.yaml
 
 stages:
   - stage: Build
@@ -37,6 +27,17 @@ stages:
     dependsOn: Build
     jobs:
       - job: DeployToEnv
+        variables:
+        - ${{ if eq(variables['env'], 'sbox') }}:
+            # Only run when dev has specifically requested sandbox
+            - template: pipeline/variables-sbox.yaml
+        - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['env'], 'test')) }}:
+            # Deploy PRs here or if specifically targetted
+            - template: pipeline/variables-test.yaml
+        - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
+            - template: pipeline/variables-stg.yaml
+        - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/tags'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
+            - template: pipeline/variables-prod.yaml
         steps:
           - template: pipeline/steps/tf-init.yaml
             parameters:
