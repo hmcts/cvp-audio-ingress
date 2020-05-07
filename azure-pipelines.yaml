@@ -15,6 +15,16 @@ parameters:
 
 variables:
   - template: pipeline/variables-common.yaml
+  - ${{ if eq(parameters.env, 'sbox') }}:
+    # Only run when dev has specifically requested sandbox
+    - template: pipeline/variables-sbox.yaml
+  - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.env, 'test')) }}:
+    # Deploy PRs here or if specifically targetted
+    - template: pipeline/variables-test.yaml
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.env, 'sbox'), ne(parameters.env, 'test')) }}:
+    - template: pipeline/variables-stg.yaml
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/tags'), ne(parameters.env, 'sbox'), ne(parameters.env, 'test')) }}:
+    - template: pipeline/variables-prod.yaml
 
 stages:
   - stage: Build
@@ -39,16 +49,6 @@ stages:
     jobs:
       - job: DeployToEnv
         variables:
-        - ${{ if eq(parameters.env, 'sbox') }}:
-            # Only run when dev has specifically requested sandbox
-            - template: pipeline/variables-sbox.yaml
-        - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.env, 'test')) }}:
-            # Deploy PRs here or if specifically targetted
-            - template: pipeline/variables-test.yaml
-        - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.env, 'sbox'), ne(parameters.env, 'test')) }}:
-            - template: pipeline/variables-stg.yaml
-        - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/tags'), ne(parameters.env, 'sbox'), ne(parameters.env, 'test')) }}:
-            - template: pipeline/variables-prod.yaml
         steps:
           - script: |
               echo "env $(env)"
