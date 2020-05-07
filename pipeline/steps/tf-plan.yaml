@@ -3,7 +3,7 @@ parameters:
     type: string
   - name: env
     type: string
-  - name: envLong
+  - name: certName
     type: string
   - name: location
     type: string
@@ -30,6 +30,7 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       failOnStandardError: true
+      continueOnError: false
       inlineScript: |
 
         # ensure KV exists in same sub we are working in
@@ -50,17 +51,17 @@ steps:
         az keyvault certificate list --vault-name cftapps-${{ parameters.env }}
 
         # copy the cert from ctfapps
-        az keyvault secret download --id https://cftapps-${{ parameters.env }}.vault.azure.net/secrets/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pfx
+        az keyvault secret download --id https://cftapps-${{ parameters.env }}.vault.azure.net/secrets/${{ parameters.certName }} -f cert.pfx
 
         base64 -d cert.pfx > cert-up.pfx
 
         # import cert
-        az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name STAR-${{ parameters.envLong }}-platform-hmcts-net --verbose
+        az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name ${{ parameters.certName }} --verbose
 
-        az keyvault certificate download --id https://$kvName.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net -f cert.pem
+        az keyvault certificate download --id https://$kvName.vault.azure.net/certificates/${{ parameters.certName }} -f cert.pem
         certPath=`pwd`/cert.pem
 
-        cert=$(az keyvault certificate show --id https://$kvName.vault.azure.net/certificates/STAR-${{ parameters.envLong }}-platform-hmcts-net)
+        cert=$(az keyvault certificate show --id https://$kvName.vault.azure.net/certificates/${{ parameters.certName }})
         thumbprint=$(echo $cert | jq .x509ThumbprintHex)
         secretId=$(echo $cert | jq .sid)
 

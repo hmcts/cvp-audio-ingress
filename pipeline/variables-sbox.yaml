@@ -1,4 +1,4 @@
 variables:
   env: 'sbox'
-  envLong: 'sandbox'
+  certName: 'STAR-sandbox-platform-hmcts-net'
   subscriptionName: 'DTS-SHAREDSERVICES-STG'

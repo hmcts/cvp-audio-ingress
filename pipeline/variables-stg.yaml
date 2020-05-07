@@ -1,4 +1,4 @@
 variables:
   env: 'stg'
-  envLong: 'staging'
+  certName: 'STAR-aat-platform-hmcts-net'
   subscriptionName: 'DTS-SHAREDSERVICES-STG'
