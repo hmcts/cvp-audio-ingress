@@ -18,7 +18,7 @@ steps:
     inputs:
       command: 'init'
       backendType: 'azurerm'
-      backendServiceArm: ${{ parameters.subscriptionName }}
+      backendServiceArm: $(subscriptionName)
       ensureBackend: true
       backendAzureRmResourceGroupName: "${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
       backendAzureRmResourceGroupLocation: ${{ parameters.location }}

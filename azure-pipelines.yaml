@@ -40,7 +40,7 @@ stages:
         steps:
           - template: pipeline/steps/tf-init.yaml
             parameters:
-              subscriptionName: $(variables['subscriptionName'])
+              subscriptionName: $(subscriptionName)
               product: $(product)
               locationEng: $(locationEng)
               location: $(location)
