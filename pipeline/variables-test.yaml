@@ -1,3 +1,4 @@
 variables:
   env: 'test'
   envLong: 'testing'
+  subscriptionName: 'DTS-SHAREDSERVICES-TEST'

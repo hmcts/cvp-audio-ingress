@@ -1,3 +1,4 @@
 variables:
   env: 'stg'
   envLong: 'staging'
+  subscriptionName: 'DTS-SHAREDSERVICES-STG'

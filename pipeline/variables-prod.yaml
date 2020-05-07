@@ -1,3 +1,4 @@
 variables:
   env: 'prod'
   envLong: 'production'
+  subscriptionName: 'DTS-SHAREDSERVICES-PROD' # @todo Check this

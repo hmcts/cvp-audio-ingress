@@ -6,7 +6,6 @@ common_tags = {
   teamName    = "cvp"
   BuiltFrom   = "https://github.com/hmcts/cvp-audio-ingress"
 }
-key_vault_id        = "/subscriptions/74dacd4f-a248-45bb-a2f0-af700dc4cf68/resourceGroups/core-infra-stg-rg/providers/Microsoft.KeyVault/vaults/cftapps-stg"
 dns_zone_name       = "shared-services.uk.south.stg.hmcts.internal"
 dns_resource_group  = "shared-services_stg_network_resource_group"
 dns_tenant_id       = "oops"

@@ -1,3 +1,4 @@
 variables:
   env: 'sbox'
   envLong: 'sandbox'
+  subscriptionName: 'DTS-SHAREDSERVICES-STG'

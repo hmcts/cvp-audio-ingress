@@ -304,52 +304,52 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 }
 
-resource "null_resource" "cert" {
-
-  depends_on = [
-    azurerm_linux_virtual_machine.vm
-  ]
-
-  triggers = {
-    cert_path = file(var.cert_path)
-    vm = azurerm_linux_virtual_machine.vm.id
-  }
-
-  provisioner "file" {
-    content = file(var.cert_path)
-    destination = "/home/wowza/cert.pem"
-
-    connection {
-      type = "ssh"
-      user = var.admin_user
-      private_key = tls_private_key.tf_ssh_key.private_key_pem
-      host = azurerm_public_ip.pip.ip_address
-      port = "22"
-      timeout = "1m"
-    }
-  }
-
-  provisioner "remote-exec" {
-
-    connection {
-      type        = "ssh"
-      user        = var.admin_user
-      private_key = tls_private_key.tf_ssh_key.private_key_pem
-      host        = azurerm_public_ip.pip.ip_address
-      port        = "22"
-      timeout     = "1m"
-    }
-
-    inline = [
-      "cd /home/wowza",
-      "export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin",
-      "openssl x509 -outform der -in cert.pem -out cert.der",
-      "keytool -import -alias sandbox -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -file cert.der -storepass  ${random_password.certPassword.result} -noprompt",
-      "sudo service WowzaStreamingEngine stop",
-      "sudo service WowzaStreamingEngine start"
-    ]
-  }
-}
+//resource "null_resource" "cert" {
+//
+//  depends_on = [
+//    azurerm_linux_virtual_machine.vm
+//  ]
+//
+//  triggers = {
+//    cert_path = file(var.cert_path)
+//    vm = azurerm_linux_virtual_machine.vm.id
+//  }
+//
+//  provisioner "file" {
+//    content = file(var.cert_path)
+//    destination = "/home/wowza/cert.pem"
+//
+//    connection {
+//      type = "ssh"
+//      user = var.admin_user
+//      private_key = tls_private_key.tf_ssh_key.private_key_pem
+//      host = azurerm_public_ip.pip.ip_address
+//      port = "22"
+//      timeout = "1m"
+//    }
+//  }
+//
+//  provisioner "remote-exec" {
+//
+//    connection {
+//      type        = "ssh"
+//      user        = var.admin_user
+//      private_key = tls_private_key.tf_ssh_key.private_key_pem
+//      host        = azurerm_public_ip.pip.ip_address
+//      port        = "22"
+//      timeout     = "1m"
+//    }
+//
+//    inline = [
+//      "cd /home/wowza",
+//      "export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin",
+//      "openssl x509 -outform der -in cert.pem -out cert.der",
+//      "keytool -import -alias sandbox -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -file cert.der -storepass  ${random_password.certPassword.result} -noprompt",
+//      "sudo service WowzaStreamingEngine stop",
+//      "sudo service WowzaStreamingEngine start"
+//    ]
+//  }
+//}
 
 resource "null_resource" "wowza_applications" {
 
