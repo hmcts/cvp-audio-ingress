@@ -6,6 +6,7 @@ parameters:
   - name: env
     displayName: Env
     type: string
+    default: Choose
     values:
       - sbox
       - stg

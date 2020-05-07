@@ -29,8 +29,6 @@ steps:
       azureSubscription: '${{ parameters.subscriptionName}}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
-      failOnStandardError: true
-      continueOnError: false
       inlineScript: |
 
         # ensure KV exists in same sub we are working in
