@@ -49,26 +49,21 @@ stages:
     jobs:
       - job: DeployToEnv
         steps:
-          - script: |
-              echo "env $(env)"
-              echo "envLong $(envLong)"
-              echo "locationEng $(locationEng)"
-              echo "location $(location)"
-#          - template: pipeline/steps/tf-init.yaml
-#            parameters:
-#              subscriptionName: $(subscriptionName)
-#              product: $(product)
-#              locationEng: $(locationEng)
-#              location: $(location)
-#              env: $(env)
-#          - template: pipeline/steps/tf-plan.yaml
-#            parameters:
-#              subscriptionName: $(subscriptionName)
-#              env: $(env)
-#              envLong: $(envLong)
-#              location: $(location)
-#              product: $(product)
-#          - template: pipeline/steps/tf-apply.yaml
-#            parameters:
-#              subscriptionName: $(subscriptionName)
-#              env: $(env)
+          - template: pipeline/steps/tf-init.yaml
+            parameters:
+              subscriptionName: $(subscriptionName)
+              product: $(product)
+              locationEng: $(locationEng)
+              location: $(location)
+              env: $(env)
+          - template: pipeline/steps/tf-plan.yaml
+            parameters:
+              subscriptionName: $(subscriptionName)
+              env: $(env)
+              envLong: $(envLong)
+              location: $(location)
+              product: $(product)
+          - template: pipeline/steps/tf-apply.yaml
+            parameters:
+              subscriptionName: $(subscriptionName)
+              env: $(env)
