@@ -3,15 +3,17 @@ trigger:
 pr:
   - master
 variables:
-  locationEng: 'UK South' # add coalese
-  location: 'uksouth' # add coalese
-  env: 'sbox' # add coalese
-  envLong: 'sandbox' # add coalese
-  wowza_sku: 'linux-paid'
-  wowza_version: '4.7.7'
-  wowza_publisher: 'wowza'
-  wowza_offer: 'wowzastreamingengine'
-  product: 'cvp'
+  - template: pipeline/variables-common.yaml
+- ${{ if eq(variables['env'], 'sbox') }}:
+# Only run when dev has specifically requested sandbox
+  - template: pipeline/variables-sbox.yaml
+- ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['env'], 'test')) }}:
+    # Deploy PRs here or if specifically targetted
+  - template: pipeline/variables-test.yaml
+- ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
+  - template: pipeline/variables-stg.yaml
+- ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/tags'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
+  - template: pipeline/variables-prod.yaml
 
 stages:
   - stage: Build
@@ -33,17 +35,6 @@ stages:
 
   - stage: Deploy
     dependsOn: Build
-    variables:
-      - ${{ if eq(variables['env'], 'sbox') }}:
-        # Only run when dev has specifically requested sandbox
-        - template: pipeline/variables-sbox.yaml
-      - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['env'], 'test')) }}:
-        # Deploy PRs here or if specifically targetted
-        - template: pipeline/variables-test.yaml
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
-        - template: pipeline/variables-stg.yaml
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/tags'), ne(variables['env'], 'sbox'), ne(variables['env'], 'test')) }}:
-        - template: pipeline/variables-prod.yaml
     jobs:
       - job: DeployToEnv
         steps:
