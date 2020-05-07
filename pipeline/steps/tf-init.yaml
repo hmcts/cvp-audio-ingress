@@ -14,18 +14,12 @@ parameters:
     default: 'terraform-state'
 
 steps:
-  - task: AzureCLI@2
-    inputs:
-      azureSubscription: '${{ parameters.subscriptionName}}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: az storage account show --name cvpsboxterraform --resource-group cvp-sharedinfra-sbox
 
   - task: TerraformCLI@0
     inputs:
       command: 'init'
       backendType: 'azurerm'
-      backendServiceArm: '${{ parameters.subscriptionName}}'
+      backendServiceArm: '${{ parameters.subscriptionName }}'
       ensureBackend: true
       backendAzureRmResourceGroupName: "${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
       backendAzureRmResourceGroupLocation: ${{ parameters.location }}
