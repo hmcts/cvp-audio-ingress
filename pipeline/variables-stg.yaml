@@ -1,4 +1,4 @@
 variables:
   env: 'stg'
-  certName: 'STAR-aat-platform-hmcts-net'
+  certName: 'wildcard-aat-platform-hmcts-net'
   subscriptionName: 'DTS-SHAREDSERVICES-STG'
