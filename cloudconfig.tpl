@@ -523,7 +523,7 @@ runcmd:
   - 'openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}'
   - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'
   - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword} -trustcacerts'
-  - 'sudo c_rehash'
+{*  - 'sudo c_rehash'*}
   - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy'
   - 'service WowzaStreamingEngine restart'
 
