@@ -315,7 +315,7 @@ resource "null_resource" "cert" {
   }
 
   provisioner "file" {
-    content = file('modules/wowza/wowza-applications/GandiStandardSSLCA2.pem')
+    content = file("modules/wowza/wowza-applications/GandiStandardSSLCA2.pem")
     destination = "/etc/ssl/GandiStandardSSLCA2.pem"
 
     connection {
