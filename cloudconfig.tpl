@@ -512,10 +512,10 @@ write_files:
       # Publish password file (format [username][space][password])
       #username password
       wowza ${streamPassword}
-  - owner: root:root
-    path: /etc/ssl/certs/GandiStandardSSLCA2.pem
-    content: !!binary |
-      ${gandiCert}
+{*  - owner: root:root*}
+{*    path: /etc/ssl/certs/GandiStandardSSLCA2.pem*}
+{*    content: !!binary |*}
+{*      ${gandiCert}*}
 runcmd:
   - 'sudo mkdir /mnt/blobfusetmp'
   - 'sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy'
