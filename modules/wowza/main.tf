@@ -340,10 +340,8 @@ resource "null_resource" "cert" {
     }
 
     inline = [
-      "sudo mv /home/wowza/GandiStandardSSLCA2.pem /etc/ssl/GandiStandardSSLCA2.pem",
-      "sudo c_rehash",
-      "sudo service WowzaStreamingEngine stop",
-      "sudo service WowzaStreamingEngine start"
+      "sudo cp -uv /home/wowza/GandiStandardSSLCA2.pem /etc/ssl/GandiStandardSSLCA2.pem",
+      "sudo c_rehash"
     ]
   }
 }

@@ -512,6 +512,7 @@ write_files:
       # Publish password file (format [username][space][password])
       #username password
       wowza ${streamPassword}
+
 runcmd:
   - 'sudo mkdir /mnt/blobfusetmp'
   - 'sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy'
