@@ -512,6 +512,10 @@ write_files:
       # Publish password file (format [username][space][password])
       #username password
       wowza ${streamPassword}
+  - owner: root:root
+    path: /etc/ssl/certs/GandiStandardSSLCA2.pem
+    content: !!binary |
+      ${gandiCert}
 runcmd:
   - 'sudo mkdir /mnt/blobfusetmp'
   - 'sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy'
@@ -519,7 +523,13 @@ runcmd:
   - 'openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}'
   - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'
   - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword} -trustcacerts'
+  - 'sudo c_rehash'
   - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy'
   - 'service WowzaStreamingEngine restart'
+
+{*wget -P /tmp/ -nv https://www.digicert.com/CACerts/DigiCertSHA2SecureServerCA.crt*}
+{*openssl x509 -in /tmp/DigiCertSHA2SecureServerCA.crt -inform DER -out /tmp/DigiCertSHA2SecureServerCA.pem -outform PEM*}
+{*sudo cp -uv /tmp/DigiCertSHA2SecureServerCA.pem /etc/ssl/certs*}
+{*sudo c_rehash*}
 
 final_message: "The system is finally up, after $UPTIME seconds"

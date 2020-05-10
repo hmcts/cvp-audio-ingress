@@ -226,6 +226,7 @@ data "template_file" "cloudconfig" {
     storageAccountKey  = azurerm_storage_account.sa.primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
+    gandiCert          = file('modules/wowza-applications/GandiStandardSSLCA2.pem')
   }
 }
 
