@@ -135,7 +135,7 @@ write_files:
                               <HostPort>
                                       <Name>Default Streaming</Name>
                                       <Type>Streaming</Type>
-                                      <ProcessorCount>${com.wowza.wms.TuningAuto}</ProcessorCount>
+                                      <ProcessorCount>$${com.wowza.wms.TuningAuto}</ProcessorCount>
                                       <IpAddress>*</IpAddress>
                                       <!-- Separate multiple ports with commas -->
                                       <!-- 80: HTTP, RTMPT -->
