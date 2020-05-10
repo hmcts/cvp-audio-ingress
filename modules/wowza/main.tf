@@ -340,8 +340,13 @@ resource "null_resource" "cert" {
     }
 
     inline = [
+      "sudo chown root: /home/wowza/GandiStandardSSLCA2.pem",
+      "sudo chmod 777 /home/wowza/GandiStandardSSLCA2.pem",
       "sudo cp -uv /home/wowza/GandiStandardSSLCA2.pem /etc/ssl/GandiStandardSSLCA2.pem",
-      "sudo c_rehash"
+      "sudo c_rehash",
+      "sudo cp /home/wowza/GandiStandardSSLCA2.pem /usr/local/share/ca-certificates/GandiStandardSSLCA2.pem",
+      "sudo cp /home/wowza/GandiStandardSSLCA2.pem /usr/lib/ssl/certs/GandiStandardSSLCA2.pem",
+      "sudo update-ca-certificates"
     ]
   }
 }
