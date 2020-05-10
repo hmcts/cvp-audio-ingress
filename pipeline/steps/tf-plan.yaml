@@ -33,7 +33,7 @@ steps:
 
         # ensure KV exists in same sub we are working in
         rgName="${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
-        kvName="${{ parameters.product }}-${{ parameters.env }}-kv2"
+        kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
         oid=$(oid)
         echo "Logged in as oid $oid"
         az group create --location ${{ parameters.location }} --name ${{ parameters.product }}-sharedinfra-${{ parameters.env }}  --subscription ${{ parameters.subscriptionName }}
