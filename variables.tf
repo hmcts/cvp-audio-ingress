@@ -40,22 +40,6 @@ variable "dns_resource_group" {
   type = string
 }
 
-variable "dns_tenant_id" {
-  type = string
-}
-
-variable "dns_client_id" {
-  type = string
-}
-
-variable "dns_client_secret" {
-  type = string
-}
-
-variable "dns_subscription_id" {
-  type = string
-}
-
 variable "address_space" {
   type = string
 }
