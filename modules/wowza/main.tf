@@ -400,54 +400,6 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   }
 }
 
-//resource "null_resource" "cert1" {
-//
-//  depends_on = [
-//    azurerm_linux_virtual_machine.vm1
-//  ]
-//
-//  triggers = {
-//    vm = azurerm_linux_virtual_machine.vm1.id
-//  }
-//
-//  provisioner "file" {
-//    content = file("modules/wowza/wowza-applications/GandiStandardSSLCA2.pem")
-//    destination = "/home/wowza/GandiStandardSSLCA2.pem"
-//
-//    connection {
-//      type = "ssh"
-//      user = var.admin_user
-//      private_key = tls_private_key.tf_ssh_key.private_key_pem
-//      host = azurerm_public_ip.pip_vm1.ip_address
-//      port = "22"
-//      timeout = "1m"
-//    }
-//  }
-//
-//  provisioner "remote-exec" {
-//
-//    connection {
-//      type        = "ssh"
-//      user        = var.admin_user
-//      private_key = tls_private_key.tf_ssh_key.private_key_pem
-//      host        = azurerm_public_ip.pip_vm1.ip_address
-//      port        = "22"
-//      timeout     = "1m"
-//    }
-//
-//    inline = [
-//      "sudo chown root: /home/wowza/GandiStandardSSLCA2.pem",
-//      "sudo chmod 777 /home/wowza/GandiStandardSSLCA2.pem",
-//      "sudo cp -uv /home/wowza/GandiStandardSSLCA2.pem /etc/ssl/certs/GandiStandardSSLCA2.pem",
-//      "sudo cp /home/wowza/GandiStandardSSLCA2.pem /usr/local/share/ca-certificates/GandiStandardSSLCA2.pem",
-//      "sudo cp /home/wowza/GandiStandardSSLCA2.pem /usr/lib/ssl/certs/GandiStandardSSLCA2.pem",
-//      "sudo update-ca-certificates",
-//      "cd /etc/ssl/certs",
-//      "sudo c_rehash"
-//    ]
-//  }
-//}
-
 resource "null_resource" "wowza_applications1" {
 
   depends_on = [
@@ -566,53 +518,6 @@ resource "azurerm_linux_virtual_machine" "vm2" {
     type = "SystemAssigned"
   }
 }
-
-//resource "null_resource" "cert2" {
-//
-//  depends_on = [
-//    azurerm_linux_virtual_machine.vm2
-//  ]
-//
-//  triggers = {
-//    vm = azurerm_linux_virtual_machine.vm2.id
-//  }
-//
-//  provisioner "file" {
-//    content = file("modules/wowza/wowza-applications/GandiStandardSSLCA2.pem")
-//    destination = "/home/wowza/GandiStandardSSLCA2.pem"
-//
-//    connection {
-//      type = "ssh"
-//      user = var.admin_user
-//      private_key = tls_private_key.tf_ssh_key.private_key_pem
-//      host = azurerm_public_ip.pip_vm2.ip_address
-//      port = "22"
-//      timeout = "1m"
-//    }
-//  }
-//
-//  provisioner "remote-exec" {
-//
-//    connection {
-//      type        = "ssh"
-//      user        = var.admin_user
-//      private_key = tls_private_key.tf_ssh_key.private_key_pem
-//      host        = azurerm_public_ip.pip_vm2.ip_address
-//      port        = "22"
-//      timeout     = "1m"
-//    }
-//
-//    inline = [
-//      "sudo chown root: /home/wowza/GandiStandardSSLCA2.pem",
-//      "sudo chmod 777 /home/wowza/GandiStandardSSLCA2.pem",
-//      "sudo cp -uv /home/wowza/GandiStandardSSLCA2.pem /etc/ssl/GandiStandardSSLCA2.pem",
-//      "sudo c_rehash",
-//      "sudo cp /home/wowza/GandiStandardSSLCA2.pem /usr/local/share/ca-certificates/GandiStandardSSLCA2.pem",
-//      "sudo cp /home/wowza/GandiStandardSSLCA2.pem /usr/lib/ssl/certs/GandiStandardSSLCA2.pem",
-//      "sudo update-ca-certificates"
-//    ]
-//  }
-//}
 
 resource "null_resource" "wowza_applications2" {
 

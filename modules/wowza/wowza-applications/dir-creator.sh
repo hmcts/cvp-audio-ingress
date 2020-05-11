@@ -1,8 +1,8 @@
 #!/bin/bash
 
 max=$1
-prefix="hmcts"
-suffix="@meet.video.justice.gov.uk"
+prefix="audiostream"
+suffix=""
 
 echo "Ensuring there are ${max} Applications setup"
 
