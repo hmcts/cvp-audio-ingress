@@ -26,3 +26,15 @@ steps:
       backendAzureRmStorageAccountName: '${{ parameters.product }}${{ parameters.env }}terraform'
       backendAzureRmContainerName: ${{ parameters.containerName }}
       backendAzureRmKey: '${{ parameters.locationEng }}/${{ parameters.env }}/application/01-${{ parameters.product }}-audio-ingress/terraform.tfstate'
+
+  - task: TerraformCLI@0
+    inputs:
+      command: 'destroy'
+      backendType: 'azurerm'
+      backendServiceArm: '${{ parameters.subscriptionName }}'
+      ensureBackend: true
+      backendAzureRmResourceGroupName: "${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
+      backendAzureRmResourceGroupLocation: ${{ parameters.location }}
+      backendAzureRmStorageAccountName: '${{ parameters.product }}${{ parameters.env }}terraform'
+      backendAzureRmContainerName: ${{ parameters.containerName }}
+      backendAzureRmKey: '${{ parameters.locationEng }}/${{ parameters.env }}/application/01-${{ parameters.product }}-audio-ingress/terraform.tfstate'
