@@ -1,5 +1,3 @@
-env     = "stg"
-product = "cvp"
 common_tags = {
   environment = "stg"
   teamName    = "cvp"
