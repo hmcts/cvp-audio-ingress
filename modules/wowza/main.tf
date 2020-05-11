@@ -314,7 +314,7 @@ resource "azurerm_lb_rule" "rtmps_lb_rule" {
 resource "azurerm_lb_nat_rule" "nat_rtmps" {
   resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.lb.id
-  name                           = "RTMPS"
+  name                           = "RTMPS_NAT"
   protocol                       = "Tcp"
   frontend_port                  = 443
   backend_port                   = 443
