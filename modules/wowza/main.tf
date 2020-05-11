@@ -115,7 +115,7 @@ resource "azurerm_public_ip" "pip_vm1" {
   location            = azurerm_resource_group.rg.location
 
   allocation_method = "Static"
-  sku               = "Standard"
+//  sku               = "Standard"
 }
 
 resource "azurerm_public_ip" "pip_vm2" {
@@ -242,6 +242,7 @@ resource "azurerm_network_interface" "nic" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
+//    public_ip_address_id          = azurerm_public_ip.pip_vm1.id
   }
 }
 
