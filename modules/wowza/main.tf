@@ -99,6 +99,7 @@ resource "azurerm_public_ip" "pip" {
   location            = azurerm_resource_group.rg.location
 
   allocation_method = "Static"
+  sku               = "Standard"
 }
 
 resource "azurerm_public_ip" "pip_vm1" {
