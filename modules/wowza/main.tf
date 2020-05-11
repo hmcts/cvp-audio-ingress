@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_storage_account" "sa" {
-  name                = "${replace(lower(local.service_name), "-", "")}sa2"
+  name                = "${replace(lower(local.service_name), "-", "")}sa"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tags                = var.common_tags
