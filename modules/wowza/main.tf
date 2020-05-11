@@ -203,45 +203,51 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-//resource "azurerm_lb" "lb" {
-//  name                = "${local.service_name}-lb"
-//  location            = azurerm_resource_group.rg.location
-//  resource_group_name = azurerm_resource_group.rg.name
-//
-//  frontend_ip_configuration {
-//    name                 = "PublicIPAddress"
-//    public_ip_address_id = azurerm_public_ip.pip.id
-//  }
-//}
-//
-//resource "azurerm_lb_backend_address_pool" "be_add_pool" {
-//  resource_group_name = azurerm_resource_group.rg.name
-//  loadbalancer_id     = azurerm_lb.lb.id
-//  name                = "BackEndAddressPool"
-//}
-//
-//resource "azurerm_lb_rule" "rtmp_lb_rule" {
-//  resource_group_name            = azurerm_resource_group.rg.name
-//  loadbalancer_id                = azurerm_lb.lb.id
-//  name                           = "RTMP"
-//  protocol                       = "Tcp"
-//  frontend_port                  = 1935
-//  backend_port                   = 1935
-//  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.name
-//}
-//
-//resource "azurerm_lb_probe" "lb_probe" {
-//  resource_group_name = azurerm_resource_group.rg.name
-//  loadbalancer_id     = azurerm_lb.lb.id
-//  name                = "wowza-running-probe"
-//  port                = 8087
-//  protocol            = "Https"
-//  request_path        = "/diag"
-//}
+resource "azurerm_lb" "lb" {
+  name                = "${local.service_name}-lb"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = azurerm_public_ip.pip.id
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "be_add_pool" {
+  resource_group_name = azurerm_resource_group.rg.name
+  loadbalancer_id     = azurerm_lb.lb.id
+  name                = "BackEndAddressPool"
+}
+
+resource "azurerm_lb_rule" "rtmp_lb_rule" {
+  resource_group_name            = azurerm_resource_group.rg.name
+  loadbalancer_id                = azurerm_lb.lb.id
+  name                           = "RTMP"
+  protocol                       = "Tcp"
+  frontend_port                  = 1935
+  backend_port                   = 1935
+  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.name
+}
+
+resource "azurerm_lb_probe" "lb_probe" {
+  resource_group_name = azurerm_resource_group.rg.name
+  loadbalancer_id     = azurerm_lb.lb.id
+  name                = "wowza-running-probe"
+  port                = 8087
+  protocol            = "Https"
+  request_path        = "/diag"
+}
 
 resource "azurerm_network_interface_security_group_association" "sg_assoc" {
   network_interface_id      = azurerm_network_interface.nic.id
   network_security_group_id = azurerm_network_security_group.sg.id
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "be_add_pool_assoc_vm1" {
+  network_interface_id    = azurerm_network_interface.nic.id
+  ip_configuration_name   = azurerm_network_interface.nic.ip_configuration.name
+  backend_address_pool_id = azurerm_lb_backend_address_pool.be_add_pool.id
 }
 
 resource "random_password" "certPassword" {
