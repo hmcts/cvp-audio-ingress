@@ -448,7 +448,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   }
 }
 
-resource "null_resource" "cert" {
+resource "null_resource" "cert1" {
 
   depends_on = [
     azurerm_linux_virtual_machine.vm1
@@ -495,7 +495,7 @@ resource "null_resource" "cert" {
   }
 }
 
-resource "null_resource" "wowza_applications" {
+resource "null_resource" "wowza_applications1" {
 
   depends_on = [
     azurerm_linux_virtual_machine.vm1
@@ -614,7 +614,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 }
 
-resource "null_resource" "cert" {
+resource "null_resource" "cert2" {
 
   depends_on = [
     azurerm_linux_virtual_machine.vm2
@@ -661,7 +661,7 @@ resource "null_resource" "cert" {
   }
 }
 
-resource "null_resource" "wowza_applications" {
+resource "null_resource" "wowza_applications2" {
 
   depends_on = [
     azurerm_linux_virtual_machine.vm2
