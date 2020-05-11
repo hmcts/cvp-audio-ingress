@@ -52,7 +52,7 @@ stages:
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                az storage account delete --name cvpsboxterraform --resource-group cvp-sharedinfra-sbox --yes
+                az keyvault purge --name cvp-sbox-kv2 --location uksouth --subscription $(subscriptionName)
                 az group delete --name $(product)-sharedinfra-$(env) --subscription $(subscriptionName) --yes
 
 #          - template: pipeline/steps/tf-init.yaml
