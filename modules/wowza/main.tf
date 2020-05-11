@@ -133,56 +133,7 @@ resource "azurerm_network_security_group" "sg" {
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-
-//  Turn on after testing complete
-//  security_rule {
-//    name                       = "REST"
-//    priority                   = 1030
-//    direction                  = "Inbound"
-//    access                     = "Allow"
-//    protocol                   = "Tcp"
-//    source_port_range          = "*"
-//    destination_port_range     = "8087"
-//    source_address_prefix      = "*"
-//    destination_address_prefix = "*"
-//  }
-//
-//  security_rule {
-//    name                       = "RTMPS"
-//    priority                   = 1040
-//    direction                  = "Inbound"
-//    access                     = "Allow"
-//    protocol                   = "Tcp"
-//    source_port_range          = "*"
-//    destination_port_range     = "443"
-//    source_address_prefix      = "*"
-//    destination_address_prefix = "*"
-//  }
-
-  security_rule {
-    name                       = "Server"
-    priority                   = 1010
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "1935"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "RTSP"
-    priority                   = 1020
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "554"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
+  
   security_rule {
     name                       = "REST"
     priority                   = 1030
@@ -282,21 +233,8 @@ resource "azurerm_lb_probe" "lb_probe" {
   resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "wowza-running-probe"
-  port                = 8087
-  protocol            = "Https"
-  request_path        = "/diag"
-}
-
-resource "azurerm_lb_rule" "rtmp_lb_rule" {
-  resource_group_name            = azurerm_resource_group.rg.name
-  loadbalancer_id                = azurerm_lb.lb.id
-  name                           = "RTMP"
-  protocol                       = "Tcp"
-  frontend_port                  = 1935
-  backend_port                   = 1935
-  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.be_add_pool.id
-  probe_id                       = azurerm_lb_probe.lb_probe.id
+  port                = 443
+  protocol            = "Tcp"
 }
 
 resource "azurerm_lb_rule" "rtmps_lb_rule" {
@@ -309,16 +247,6 @@ resource "azurerm_lb_rule" "rtmps_lb_rule" {
   frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
   backend_address_pool_id        = azurerm_lb_backend_address_pool.be_add_pool.id
   probe_id                       = azurerm_lb_probe.lb_probe.id
-}
-
-resource "azurerm_lb_nat_rule" "nat_rtmps" {
-  resource_group_name            = azurerm_resource_group.rg.name
-  loadbalancer_id                = azurerm_lb.lb.id
-  name                           = "RTMPS_NAT"
-  protocol                       = "Tcp"
-  frontend_port                  = 443
-  backend_port                   = 443
-  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
 }
 
 resource "azurerm_network_interface_security_group_association" "sg_assoc1" {
