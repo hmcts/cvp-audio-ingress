@@ -6,7 +6,10 @@ suffix=""
 
 echo "Ensuring there are ${max} Applications setup"
 
-currentAppCount=$(ls -d /usr/local/WowzaStreamingEngine/applications/hmcts* | wc -l)
+echo "Removing legacy applications"
+rm -Rf /usr/local/WowzaStreamingEngine/applications/hmcts*
+
+currentAppCount=$(ls -d /usr/local/WowzaStreamingEngine/applications/${prefix}* | wc -l)
 
 echo "Currently ${currentAppCount} applications defined."
 
