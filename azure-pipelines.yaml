@@ -63,11 +63,11 @@ stages:
               location: $(location)
               env: $(env)
 
-#          - task: TerraformCLI@0
-#            displayName: Destroy
-#            inputs:
-#              command: 'destroy'
-#              environmentServiceName: $(subscriptionName)
+          - task: TerraformCLI@0
+            displayName: Destroy
+            inputs:
+              command: 'destroy'
+              environmentServiceName: $(subscriptionName)
 
           - template: pipeline/steps/tf-plan.yaml
             parameters:
