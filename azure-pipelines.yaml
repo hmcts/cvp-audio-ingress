@@ -46,31 +46,31 @@ stages:
     jobs:
       - job: DeployToEnv
         steps:
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: 'DTS-SHAREDSERVICES-SBOX'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                az keyvault list-deleted
-                az keyvault purge --name cvp-sbox-kv --location uksouth --subscription DTS-SHAREDSERVICES-SBOX
+#          - task: AzureCLI@2
+#            inputs:
+#              azureSubscription: 'DTS-SHAREDSERVICES-SBOX'
+#              scriptType: 'bash'
+#              scriptLocation: 'inlineScript'
+#              inlineScript: |
+#                az keyvault list-deleted
+#                az keyvault purge --name cvp-sbox-kv --location uksouth --subscription DTS-SHAREDSERVICES-SBOX
 
-#          - template: pipeline/steps/tf-init.yaml
-#            parameters:
-#              subscriptionName: $(subscriptionName)
-#              product: $(product)
-#              locationEng: $(locationEng)
-#              location: $(location)
-#              env: $(env)
-#
-#          - template: pipeline/steps/tf-plan.yaml
-#            parameters:
-#              subscriptionName: $(subscriptionName)
-#              env: $(env)
-#              certName: $(certName)
-#              location: $(location)
-#              product: $(product)
-#          - template: pipeline/steps/tf-apply.yaml
-#            parameters:
-#              subscriptionName: $(subscriptionName)
-#              env: $(env)
+          - template: pipeline/steps/tf-init.yaml
+            parameters:
+              subscriptionName: $(subscriptionName)
+              product: $(product)
+              locationEng: $(locationEng)
+              location: $(location)
+              env: $(env)
+
+          - template: pipeline/steps/tf-plan.yaml
+            parameters:
+              subscriptionName: $(subscriptionName)
+              env: $(env)
+              certName: $(certName)
+              location: $(location)
+              product: $(product)
+          - template: pipeline/steps/tf-apply.yaml
+            parameters:
+              subscriptionName: $(subscriptionName)
+              env: $(env)
