@@ -1,4 +1,3 @@
-location = "uksouth"
 env      = "stg"
 product  = "cvp"
 common_tags = {

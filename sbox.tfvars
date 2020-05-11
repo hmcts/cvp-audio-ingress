@@ -1,4 +1,3 @@
-location = "uksouth"
 env      = "sbox"
 product  = "cvp"
 common_tags = {
