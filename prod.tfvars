@@ -1,5 +1,5 @@
-env      = "prod"
-product  = "cvp"
+env     = "prod"
+product = "cvp"
 common_tags = {
   environment = "prod"
   teamName    = "cvp"
