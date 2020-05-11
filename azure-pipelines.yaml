@@ -48,12 +48,18 @@ stages:
         steps:
 #          - task: AzureCLI@2
 #            inputs:
-#              azureSubscription: 'DTS-SHAREDSERVICES-SBOX'
+#              azureSubscription: $(subscriptionName)
 #              scriptType: 'bash'
 #              scriptLocation: 'inlineScript'
 #              inlineScript: |
 #                az keyvault list-deleted
 #                az keyvault purge --name cvp-sbox-kv --location uksouth --subscription DTS-SHAREDSERVICES-SBOX
+
+          - task: TerraformCLI@0
+              displayName: Destroy
+              inputs:
+                command: 'destroy'
+                environmentServiceName: $(subscriptionName)
 
           - template: pipeline/steps/tf-init.yaml
             parameters:

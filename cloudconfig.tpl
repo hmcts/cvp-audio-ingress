@@ -499,7 +499,7 @@ write_files:
     content: |
       accountName ${storageAccountName}
       accountKey ${storageAccountKey}
-      containerName recordings
+      containerName ${containerName}
   - owner: wowza:wowza
     path: /usr/local/WowzaStreamingEngine/conf/admin.password
     content: |
