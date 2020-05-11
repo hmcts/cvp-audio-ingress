@@ -311,6 +311,16 @@ resource "azurerm_lb_rule" "rtmps_lb_rule" {
   probe_id                       = azurerm_lb_probe.lb_probe.id
 }
 
+resource "azurerm_lb_nat_rule" "nat_rtmps" {
+  resource_group_name            = azurerm_resource_group.rg.name
+  loadbalancer_id                = azurerm_lb.lb.id
+  name                           = "RTMPS"
+  protocol                       = "Tcp"
+  frontend_port                  = 443
+  backend_port                   = 443
+  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
+}
+
 resource "azurerm_network_interface_security_group_association" "sg_assoc1" {
   network_interface_id      = azurerm_network_interface.nic1.id
   network_security_group_id = azurerm_network_security_group.sg.id
