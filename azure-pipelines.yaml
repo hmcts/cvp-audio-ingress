@@ -48,21 +48,12 @@ stages:
         steps:
           - task: AzureCLI@2
             inputs:
-              azureSubscription: 'DTS-SHAREDSERVICES-STG'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                az keyvault list-deleted
-#                az keyvault purge --name cvp-sbox-kv2 --location uksouth --subscription $(subscriptionName)
-
-          - task: AzureCLI@2
-            inputs:
               azureSubscription: 'DTS-SHAREDSERVICES-SBOX'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az keyvault list-deleted
-#                az keyvault purge --name cvp-sbox-kv2 --location uksouth --subscription $(subscriptionName)
+                az keyvault purge --name cvp-sbox-kv --location uksouth --subscription DTS-SHAREDSERVICES-SBOX
 
 #          - template: pipeline/steps/tf-init.yaml
 #            parameters:
