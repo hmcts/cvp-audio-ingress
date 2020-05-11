@@ -227,7 +227,7 @@ resource "azurerm_lb_rule" "rtmp_lb_rule" {
   protocol                       = "Tcp"
   frontend_port                  = 1935
   backend_port                   = 1935
-  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.name
+  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
 }
 
 resource "azurerm_lb_probe" "lb_probe" {
@@ -246,7 +246,7 @@ resource "azurerm_network_interface_security_group_association" "sg_assoc" {
 
 resource "azurerm_network_interface_backend_address_pool_association" "be_add_pool_assoc_vm1" {
   network_interface_id    = azurerm_network_interface.nic.id
-  ip_configuration_name   = azurerm_network_interface.nic.ip_configuration.name
+  ip_configuration_name   = azurerm_network_interface.nic.ip_configuration.0.name
   backend_address_pool_id = azurerm_lb_backend_address_pool.be_add_pool.id
 }
 
