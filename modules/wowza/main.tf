@@ -299,6 +299,7 @@ data "template_file" "cloudconfig1" {
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
     containerName      = azurerm_storage_container.media_container_01.name
+    numApplications    = var.num_applications
   }
 }
 
@@ -312,6 +313,7 @@ data "template_file" "cloudconfig2" {
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
     containerName      = azurerm_storage_container.media_container_02.name
+    numApplications    = var.num_applications
   }
 }
 
@@ -439,24 +441,24 @@ resource "null_resource" "wowza_applications1" {
     }
   }
 
-  provisioner "remote-exec" {
-
-    connection {
-      type        = "ssh"
-      user        = var.admin_user
-      private_key = tls_private_key.tf_ssh_key.private_key_pem
-      host        = azurerm_public_ip.pip_vm1.ip_address
-      port        = "22"
-      timeout     = "1m"
-    }
-
-    inline = [
-      "chmod 775 ./dir-creator.sh",
-      "./dir-creator.sh ${var.num_applications}",
-      "sudo service WowzaStreamingEngine stop",
-      "sudo service WowzaStreamingEngine start"
-    ]
-  }
+//  provisioner "remote-exec" {
+//
+//    connection {
+//      type        = "ssh"
+//      user        = var.admin_user
+//      private_key = tls_private_key.tf_ssh_key.private_key_pem
+//      host        = azurerm_public_ip.pip_vm1.ip_address
+//      port        = "22"
+//      timeout     = "1m"
+//    }
+//
+//    inline = [
+//      "chmod 775 ./dir-creator.sh",
+//      "./dir-creator.sh ${var.num_applications}",
+//      "sudo service WowzaStreamingEngine stop",
+//      "sudo service WowzaStreamingEngine start"
+//    ]
+//  }
 }
 
 resource "azurerm_linux_virtual_machine" "vm2" {

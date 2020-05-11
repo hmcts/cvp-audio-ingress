@@ -461,6 +461,7 @@ write_files:
       # username password
       wowza ${streamPassword}
   - owner: wowza:wowza
+    permissions: 0775
     path: /home/wowza/dir-creator2.sh
     content: |
       #!/bin/bash
@@ -515,7 +516,7 @@ write_files:
       mkdir -p "$@"
       # Copy Applications.xml file
       cd /usr/local/WowzaStreamingEngine/conf/ || exit
-      appDirs=$(ls -d hmcts*)
+      appDirs=$(ls -d $${prefix}*)
       echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
 
 runcmd:
@@ -526,6 +527,7 @@ runcmd:
   - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'
   - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}'
   - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy'
+  - '/home/wowza/dir-creator2.sh ${numApplications}'
   - 'sudo service WowzaStreamingEngine restart'
 
 final_message: "The system is finally up, after $UPTIME seconds"
