@@ -46,29 +46,37 @@ stages:
     jobs:
       - job: DeployToEnv
         steps:
-          - template: pipeline/steps/tf-init.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              product: $(product)
-              locationEng: $(locationEng)
-              location: $(location)
-              env: $(env)
-
-          - task: TerraformCLI@0
-            displayName: Destroy
+          - task: AzureCLI@2
             inputs:
-              command: 'destroy'
-              commandOptions: '-no-color'
-              environmentServiceName: $(subscriptionName)
+              azureSubscription: '${{ parameters.subscriptionName}}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az storage account show --name cvpsboxterraform --resource-group cvp-sharedinfra-sbox
 
-          - template: pipeline/steps/tf-plan.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
-              certName: $(certName)
-              location: $(location)
-              product: $(product)
-          - template: pipeline/steps/tf-apply.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
+#          - template: pipeline/steps/tf-init.yaml
+#            parameters:
+#              subscriptionName: $(subscriptionName)
+#              product: $(product)
+#              locationEng: $(locationEng)
+#              location: $(location)
+#              env: $(env)
+#
+#          - task: TerraformCLI@0
+#            displayName: Destroy
+#            inputs:
+#              command: 'destroy'
+#              commandOptions: '-no-color'
+#              environmentServiceName: $(subscriptionName)
+#
+#          - template: pipeline/steps/tf-plan.yaml
+#            parameters:
+#              subscriptionName: $(subscriptionName)
+#              env: $(env)
+#              certName: $(certName)
+#              location: $(location)
+#              product: $(product)
+#          - template: pipeline/steps/tf-apply.yaml
+#            parameters:
+#              subscriptionName: $(subscriptionName)
+#              env: $(env)

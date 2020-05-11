@@ -22,8 +22,14 @@ resource "azurerm_storage_account" "sa" {
   enable_https_traffic_only = true
 }
 
-resource "azurerm_storage_container" "media_container" {
-  name                  = "recordings"
+resource "azurerm_storage_container" "media_container_01" {
+  name                  = "recordings-01"
+  storage_account_name  = azurerm_storage_account.sa.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "media_container_02" {
+  name                  = "recordings-02"
   storage_account_name  = azurerm_storage_account.sa.name
   container_access_type = "private"
 }
@@ -104,6 +110,16 @@ resource "azurerm_public_ip" "pip" {
 
 resource "azurerm_public_ip" "pip_vm1" {
   name = "${local.service_name}-pipvm1"
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  allocation_method = "Static"
+  sku               = "Standard"
+}
+
+resource "azurerm_public_ip" "pip_vm2" {
+  name = "${local.service_name}-pipvm2"
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
