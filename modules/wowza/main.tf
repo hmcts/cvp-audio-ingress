@@ -115,7 +115,7 @@ resource "azurerm_public_ip" "pip_vm1" {
   location            = azurerm_resource_group.rg.location
 
   allocation_method = "Static"
-//  sku               = "Standard"
+  sku               = "Standard"
 }
 
 resource "azurerm_public_ip" "pip_vm2" {
@@ -232,8 +232,8 @@ resource "azurerm_network_security_group" "sg" {
   }
 }
 
-resource "azurerm_network_interface" "nic" {
-  name = "${local.service_name}-nic"
+resource "azurerm_network_interface" "nic1" {
+  name = "${local.service_name}-nic1"
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -242,7 +242,21 @@ resource "azurerm_network_interface" "nic" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
-//    public_ip_address_id          = azurerm_public_ip.pip_vm1.id
+    public_ip_address_id          = azurerm_public_ip.pip_vm1.id
+  }
+}
+
+resource "azurerm_network_interface" "nic2" {
+  name = "${local.service_name}-nic2"
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  ip_configuration {
+    name                          = "wowzaConfiguration"
+    subnet_id                     = azurerm_subnet.sn.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip_vm2.id
   }
 }
 
@@ -283,14 +297,25 @@ resource "azurerm_lb_probe" "lb_probe" {
   request_path        = "/diag"
 }
 
-resource "azurerm_network_interface_security_group_association" "sg_assoc" {
-  network_interface_id      = azurerm_network_interface.nic.id
+resource "azurerm_network_interface_security_group_association" "sg_assoc1" {
+  network_interface_id      = azurerm_network_interface.nic1.id
+  network_security_group_id = azurerm_network_security_group.sg.id
+}
+
+resource "azurerm_network_interface_security_group_association" "sg_assoc2" {
+  network_interface_id      = azurerm_network_interface.nic2.id
   network_security_group_id = azurerm_network_security_group.sg.id
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "be_add_pool_assoc_vm1" {
-  network_interface_id    = azurerm_network_interface.nic.id
-  ip_configuration_name   = azurerm_network_interface.nic.ip_configuration.0.name
+  network_interface_id    = azurerm_network_interface.nic1.id
+  ip_configuration_name   = azurerm_network_interface.nic1.ip_configuration.0.name
+  backend_address_pool_id = azurerm_lb_backend_address_pool.be_add_pool.id
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "be_add_pool_assoc_vm2" {
+  network_interface_id    = azurerm_network_interface.nic2.id
+  ip_configuration_name   = azurerm_network_interface.nic2.ip_configuration.0.name
   backend_address_pool_id = azurerm_lb_backend_address_pool.be_add_pool.id
 }
 
@@ -353,7 +378,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   size           = var.vm_size
   admin_username = var.admin_user
   network_interface_ids = [
-    azurerm_network_interface.nic.id,
+    azurerm_network_interface.nic1.id,
   ]
 
   admin_ssh_key {
