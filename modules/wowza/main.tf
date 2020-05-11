@@ -299,7 +299,7 @@ resource "azurerm_lb_rule" "rtmp_lb_rule" {
   probe_id                       = azurerm_lb_probe.lb_probe.id
 }
 
-resource "azurerm_lb_rule" "rtmp_lb_rule" {
+resource "azurerm_lb_rule" "rtmps_lb_rule" {
   resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.lb.id
   name                           = "RTMPS"
