@@ -101,6 +101,15 @@ resource "azurerm_public_ip" "pip" {
   allocation_method = "Static"
 }
 
+resource "azurerm_public_ip" "pip_vm1" {
+  name = "${local.service_name}-pipvm1"
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  allocation_method = "Static"
+}
+
 resource "azurerm_network_security_group" "sg" {
   name = "${local.service_name}-sg"
 
@@ -190,7 +199,7 @@ resource "azurerm_network_interface" "nic" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip.id
+    public_ip_address_id          = azurerm_public_ip.pip_vm1.id
   }
 }
 
@@ -339,7 +348,7 @@ resource "null_resource" "cert" {
       type = "ssh"
       user = var.admin_user
       private_key = tls_private_key.tf_ssh_key.private_key_pem
-      host = azurerm_public_ip.pip.ip_address
+      host = azurerm_public_ip.pip_vm1.ip_address
       port = "22"
       timeout = "1m"
     }
@@ -351,7 +360,7 @@ resource "null_resource" "cert" {
       type        = "ssh"
       user        = var.admin_user
       private_key = tls_private_key.tf_ssh_key.private_key_pem
-      host        = azurerm_public_ip.pip.ip_address
+      host        = azurerm_public_ip.pip_vm1.ip_address
       port        = "22"
       timeout     = "1m"
     }
@@ -387,7 +396,7 @@ resource "null_resource" "wowza_applications" {
       type        = "ssh"
       user        = var.admin_user
       private_key = tls_private_key.tf_ssh_key.private_key_pem
-      host        = azurerm_public_ip.pip.ip_address
+      host        = azurerm_public_ip.pip_vm1.ip_address
       port        = "22"
       timeout     = "1m"
     }
@@ -401,7 +410,7 @@ resource "null_resource" "wowza_applications" {
       type        = "ssh"
       user        = var.admin_user
       private_key = tls_private_key.tf_ssh_key.private_key_pem
-      host        = azurerm_public_ip.pip.ip_address
+      host        = azurerm_public_ip.pip_vm1.ip_address
       port        = "22"
       timeout     = "1m"
     }
@@ -413,7 +422,7 @@ resource "null_resource" "wowza_applications" {
       type        = "ssh"
       user        = var.admin_user
       private_key = tls_private_key.tf_ssh_key.private_key_pem
-      host        = azurerm_public_ip.pip.ip_address
+      host        = azurerm_public_ip.pip_vm1.ip_address
       port        = "22"
       timeout     = "1m"
     }
