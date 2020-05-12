@@ -44,7 +44,7 @@ steps:
           --object-id $oid
 
         # white list this build agent
-        agentIp=$(curl http://ifconfig.me/ip)
+        agentIp=$(curl http://ifconfig.me/ip)/32
         az keyvault network-rule add \
           --resource-group $rgName \
           --name $kvName \
@@ -52,9 +52,9 @@ steps:
         echo "Adding agent ip $agentIp to KV"
 
         # Whitelist the subnet the VMs are on (if they are there)
-        subnetid=$(az network vnet subnet show --resource-group "cvp-recordings-${{ parameters.env }}-rg" --vnet-name "cvp-recordings-${{ parameters.env }}-vnet" --name "wowza" --query id --output tsv)
-        az keyvault network-rule add --resource-group $rgName --name $kvName --subnet $subnetid
-        echo "Adding vm address space $(address_space) to KV"
+        subnetId=$(az network vnet subnet show --resource-group "cvp-recordings-${{ parameters.env }}-rg" --vnet-name "cvp-recordings-${{ parameters.env }}-vnet" --name "wowza" --query id --output tsv)
+        az keyvault network-rule add --resource-group $rgName --name $kvName --subnet $subnetId
+        echo "Adding vm subnet ${subnetId} to KV"
 
         az keyvault update \
           --resource-group $rgName \
@@ -101,7 +101,7 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        agentIp=$(curl http://ifconfig.me/ip)
+        agentIp=$(curl http://ifconfig.me/ip)/32
         echo "Removing agent ip $agentIp from KV"
         rgName="${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
         kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
