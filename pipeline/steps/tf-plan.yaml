@@ -99,6 +99,8 @@ steps:
           az keyvault secret set --name ${sshPrivKeyName} --vault-name ${kvName} --file ./cvp
           az keyvault secret set --name ${sshPubKeyName} --vault-name ${kvName} --file ./cvp.pub
           pubKey=`cat ./cvp.pub`
+        else
+          pubKey=$(echo $pubKey | jq .value)
         fi
 
         echo "pubKey = ${pubKey}"
