@@ -49,11 +49,13 @@ steps:
           --resource-group $rgName \
           --name $kvName \
           --ip-address $agentIp
+        echo "Adding agent ip $agentIp to KV"
         # Whitelist the address space for the VMs as we may not know the subnet id yet
         az keyvault network-rule add \
           --resource-group $rgName \
           --name $kvName \
           --ip-address $(address_space)
+        echo "Adding vm address space $(address_space) to KV"
 
         az keyvault update \
           --resource-group $rgName \
@@ -101,6 +103,7 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
         agentIp=$(curl http://ifconfig.me/ip)
+        echo "Removing agent ip $agentIp from KV"
         rgName="${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
         kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
         az keyvault network-rule remove \
