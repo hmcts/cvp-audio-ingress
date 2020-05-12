@@ -464,7 +464,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 }
 
-esource "null_resource" "wowza_applications1" {
+resource "null_resource" "wowza_applications1" {
 
   depends_on = [
     azurerm_linux_virtual_machine.vm1
@@ -495,7 +495,7 @@ esource "null_resource" "wowza_applications1" {
   }
 }
 
-esource "null_resource" "wowza_applications2" {
+resource "null_resource" "wowza_applications2" {
 
   depends_on = [
     azurerm_linux_virtual_machine.vm2
