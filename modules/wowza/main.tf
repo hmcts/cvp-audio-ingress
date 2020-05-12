@@ -489,7 +489,8 @@ resource "null_resource" "wowza_applications1" {
     inline = [
       "chmod 775 ./dir-creator.sh",
       "./dir-creator.sh ${var.num_applications}",
-      "sudo service WowzaStreamingEngine restart"
+      "sudo service WowzaStreamingEngine restart",
+      "sudo service WowzaStreamingEngine start"
     ]
   }
 }
