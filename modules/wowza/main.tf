@@ -453,7 +453,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 }
 
 resource "azurerm_virtual_machine_extension" "wowza_app_config_vm1" {
-  name                 = "wowza_applications1"
+  name                 = "wowza_app_config_vm1"
   virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
   publisher            = "Microsoft.Azure.Extensions"
   type                 = "CustomScript"
@@ -467,63 +467,17 @@ SETTINGS
 
 }
 
-//resource "null_resource" "wowza_applications1" {
-//
-//  depends_on = [
-//    azurerm_linux_virtual_machine.vm1
-//  ]
-//
-//  triggers = {
-//    num_applications = var.num_applications
-//    vm = azurerm_linux_virtual_machine.vm1.id
-//  }
-//
-//  provisioner "remote-exec" {
-//
-//    connection {
-//      type        = "ssh"
-//      user        = var.admin_user
-//      private_key = tls_private_key.tf_ssh_key.private_key_pem
-//      host        = azurerm_public_ip.pip_vm1.ip_address
-//      port        = "22"
-//      timeout     = "1m"
-//    }
-//
-//    inline = [
-//      "chmod 775 ./dir-creator.sh",
-//      "./dir-creator.sh ${var.num_applications}",
-//      "sudo service WowzaStreamingEngine restart",
-//      "sudo service WowzaStreamingEngine start"
-//    ]
-//  }
-//}
-//
-//resource "null_resource" "wowza_applications2" {
-//
-//  depends_on = [
-//    azurerm_linux_virtual_machine.vm2
-//  ]
-//
-//  triggers = {
-//    num_applications = var.num_applications
-//    vm = azurerm_linux_virtual_machine.vm2.id
-//  }
-//
-//  provisioner "remote-exec" {
-//
-//    connection {
-//      type        = "ssh"
-//      user        = var.admin_user
-//      private_key = tls_private_key.tf_ssh_key.private_key_pem
-//      host        = azurerm_public_ip.pip_vm2.ip_address
-//      port        = "22"
-//      timeout     = "1m"
-//    }
-//
-//    inline = [
-//      "chmod 775 ./dir-creator.sh",
-//      "./dir-creator.sh ${var.num_applications}",
-//      "sudo service WowzaStreamingEngine restart"
-//    ]
-//  }
-//}
+resource "azurerm_virtual_machine_extension" "wowza_app_config_vm2" {
+  name                 = "wowza_app_config_vm2"
+  virtual_machine_id   = azurerm_linux_virtual_machine.vm2.id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+
+  settings = <<SETTINGS
+    {
+        "commandToExecute": "/home/wowza/dir-creator.sh ${var.num_applications} && sudo service WowzaStreamingEngine restart"
+    }
+SETTINGS
+
+}
