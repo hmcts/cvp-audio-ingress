@@ -86,19 +86,28 @@ steps:
 
         # check if the ssh keypair is there, else generate one
         sshPrivKeyName="cvp-ssh-priv-key"
-        sshPrivKeyName="cvp-ssh-pub-key"
+        sshPubKeyName="cvp-ssh-pub-key"
 
-        sshResult=$(az keyvault secret show --name ${sshPrivKeyName} --vault-name ${kvName})
-        echo "az keyvault secret show --name ${sshPrivKeyName} --vault-name ${kvName}"
+        sshResult=$(az keyvault secret show --name ${sshPubKeyName} --vault-name ${kvName})
+        echo "az keyvault secret show --name ${sshPubKeyName} --vault-name ${kvName}"
         echo "sshResult = ${sshResult}"
 
+        pubKey=$sshResult
 
-        # ssh-keygen -f ~/tatu-key-ecdsa -t ecdsa -b 521
+        if [[ $sshResult -eq "" ]]: then
+          ssh-keygen -f ./cvp -t rsa -b 4096
+          az keyvault secret set --name ${sshPrivKeyName} --vault-name ${kvName} --file ./cvp
+          az keyvault secret set --name ${sshPubKeyName} --vault-name ${kvName} --file ./cvp.pub
+          pubKey=`cat ./cvp.pub`
+        fi
+
+        echo "pubKey = ${pubKey}"
 
         echo "##vso[task.setvariable variable=certPath]$certPath"
         echo "##vso[task.setvariable variable=secretId]$secretId"
         echo "##vso[task.setvariable variable=thumbprint]$thumbprint"
         echo "##vso[task.setvariable variable=kvId]$kvId"
+        echo "##vso[task.setvariable variable=pubKey]$pubKey"
 
   - task: AzureCLI@2
     condition: always()
