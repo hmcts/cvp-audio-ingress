@@ -279,6 +279,7 @@ data "template_file" "cloudconfig1" {
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
     containerName      = azurerm_storage_container.media_container_01.name
+    numApplications    = var.num_applications
   }
 }
 
@@ -292,6 +293,7 @@ data "template_file" "cloudconfig2" {
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
     containerName      = azurerm_storage_container.media_container_02.name
+    numApplications    = var.num_applications
   }
 }
 
