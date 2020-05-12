@@ -394,7 +394,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = var.ssh_public_key
+    public_key = base64decode(var.ssh_public_key)
   }
 
   os_disk {
