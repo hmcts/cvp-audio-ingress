@@ -45,6 +45,7 @@ resource "azurerm_subnet" "sn" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefix       = var.address_space
+  service_endpoints    = ["Microsoft.KeyVault"]
 
   enforce_private_link_endpoint_network_policies = true
 }
@@ -254,6 +255,11 @@ resource "azurerm_network_interface_security_group_association" "sg_assoc1" {
 
 resource "azurerm_network_interface_security_group_association" "sg_assoc2" {
   network_interface_id      = azurerm_network_interface.nic2.id
+  network_security_group_id = azurerm_network_security_group.sg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "sg_assoc_subnet" {
+  subnet_id                 = azurerm_subnet.sn.id
   network_security_group_id = azurerm_network_security_group.sg.id
 }
 
