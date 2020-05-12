@@ -461,7 +461,7 @@ resource "azurerm_virtual_machine_extension" "wowza_applications1" {
 
   settings = <<SETTINGS
     {
-        "commandToExecute": "./dir-creator.sh ${var.num_applications} && sudo service WowzaStreamingEngine restart"
+        "commandToExecute": "/home/wowza/dir-creator.sh ${var.num_applications} && sudo service WowzaStreamingEngine restart"
     }
 SETTINGS
 
