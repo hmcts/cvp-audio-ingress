@@ -452,7 +452,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 }
 
-resource "azurerm_virtual_machine_extension" "wowza_applications1" {
+resource "azurerm_virtual_machine_extension" "wowza_app_config_vm1" {
   name                 = "wowza_applications1"
   virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
   publisher            = "Microsoft.Azure.Extensions"
