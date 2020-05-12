@@ -95,7 +95,7 @@ steps:
         pubKey=$sshResult
 
         if [ "$sshResult" = "" ]; then
-          ssh-keygen -f ./cvp -t rsa -b 4096
+          ssh-keygen -f ./cvp -t rsa -b 4096 -q -N ""
           az keyvault secret set --name ${sshPrivKeyName} --vault-name ${kvName} --file ./cvp
           az keyvault secret set --name ${sshPubKeyName} --vault-name ${kvName} --file ./cvp.pub
           pubKey=`cat ./cvp.pub`
