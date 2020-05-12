@@ -101,6 +101,8 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
         agentIp=$(curl http://ifconfig.me/ip)
+        rgName="${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
+        kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
         az keyvault network-rule remove \
           --resource-group $rgName \
           --name $kvName \
