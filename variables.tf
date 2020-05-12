@@ -51,3 +51,19 @@ variable "cert_path" {
 variable "thumbprint" {
   type = string
 }
+
+variable "wowza_publisher" {
+  type = string
+}
+
+variable "wowza_offer" {
+  type = string
+}
+
+variable "wowza_version" {
+  type = string
+}
+
+variable "wowza_sku" {
+  type = string
+}
