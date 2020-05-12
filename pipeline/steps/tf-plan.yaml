@@ -43,6 +43,24 @@ steps:
           --secret-permissions backup delete get list recover restore set \
           --object-id $oid
 
+        # white list this build agent
+        agentIp=$(curl http://ifconfig.me/ip)
+        az keyvault network-rule add \
+          --resource-group $rgName \
+          --name $kvName \
+          --ip-address $agentIp
+        # Whitelist the address space for the VMs as we may not know the subnet id yet
+        az keyvault network-rule add \
+          --resource-group $rgName \
+          --name $kvName \
+          --ip-address $(address_space)
+
+        az keyvault update \
+          --resource-group $rgName \
+          --name $kvName \
+          --bypass AzureServices \
+          --default-action Deny
+
         # echo "SECRETS ###########"
         # az keyvault secret list --vault-name cftapps-${{ parameters.env }}
         # echo "CERTS ###########"
@@ -73,6 +91,20 @@ steps:
         echo "##vso[task.setvariable variable=secretId]$secretId"
         echo "##vso[task.setvariable variable=thumbprint]$thumbprint"
         echo "##vso[task.setvariable variable=kvId]$kvId"
+
+  - task: AzureCLI@2
+    condition: always()
+    displayName: Remove Build Agent IP from KV whitelist
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName}}'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        agentIp=$(curl http://ifconfig.me/ip)
+        az keyvault network-rule remove \
+          --resource-group $rgName \
+          --name $kvName \
+          --ip-address $agentIp
 
   - task: TerraformCLI@0
     displayName: Plan
