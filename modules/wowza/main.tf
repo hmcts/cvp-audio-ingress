@@ -146,25 +146,13 @@ resource "azurerm_network_security_group" "sg" {
   }
 
   security_rule {
-    name                       = "HTTPS"
-    priority                   = 1050
+    name                       = "RTMPS"
+    priority                   = 1040
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "SSH"
-    priority                   = 1060
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -351,12 +339,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDc8ujPUBBo2fG8QrDHFHamZ6AOeTOVP7lmQ95hWufzAy03MbMufshkp2xkpBYrm9WQf9mDWqqDa5rBF7LoqJT7vRKuDbn04B/puwIHnVEVb9ROGXJ61tUURIsrQ5H4PtdluVrNpqJT/vFZBbat2ewrq8idXGGrHlcZovGpm0GOBvnDLAEfP3MXb5FqgWWikpsIMaJMF79fvw1W59uC5Wlo7HaKaAIk6Klp5EFM1TKDHj8I9cAc8XHilM3/JvjG2gCm4JMxMnIS7pRBISgSlZK16ALteaQTkO7OgkmaANqT2t1l64vCpxtRyccpvFnIKvseiRwXXFuLjFjy238b7eOU6Ktfb4RHaOIRvt/EEi9GXnrMSjEBgx5PKiCKuwFhpH6EL0I0B/CCb9h8k19ZA0FIGhH/ZHFJ2WdAIzKYbjXDCNHOejs4B+UUqcY6e/s9C4dLap+fCpXKRSwsRG0inRkttAcuyPu1ewtOE/qeSl5DN2fqKV6r0Gm4lQfdHUMTrcU="
-  }
-
-  admin_ssh_key {
-    username   = var.admin_user
-    public_key = tls_private_key.tf_ssh_key.public_key_openssh
+    public_key = var.ssh_public_key
   }
 
   os_disk {
@@ -411,12 +394,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDc8ujPUBBo2fG8QrDHFHamZ6AOeTOVP7lmQ95hWufzAy03MbMufshkp2xkpBYrm9WQf9mDWqqDa5rBF7LoqJT7vRKuDbn04B/puwIHnVEVb9ROGXJ61tUURIsrQ5H4PtdluVrNpqJT/vFZBbat2ewrq8idXGGrHlcZovGpm0GOBvnDLAEfP3MXb5FqgWWikpsIMaJMF79fvw1W59uC5Wlo7HaKaAIk6Klp5EFM1TKDHj8I9cAc8XHilM3/JvjG2gCm4JMxMnIS7pRBISgSlZK16ALteaQTkO7OgkmaANqT2t1l64vCpxtRyccpvFnIKvseiRwXXFuLjFjy238b7eOU6Ktfb4RHaOIRvt/EEi9GXnrMSjEBgx5PKiCKuwFhpH6EL0I0B/CCb9h8k19ZA0FIGhH/ZHFJ2WdAIzKYbjXDCNHOejs4B+UUqcY6e/s9C4dLap+fCpXKRSwsRG0inRkttAcuyPu1ewtOE/qeSl5DN2fqKV6r0Gm4lQfdHUMTrcU="
-  }
-
-  admin_ssh_key {
-    username   = var.admin_user
-    public_key = tls_private_key.tf_ssh_key.public_key_openssh
+    public_key = var.ssh_public_key
   }
 
   os_disk {
@@ -450,34 +428,4 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   identity {
     type = "SystemAssigned"
   }
-}
-
-resource "azurerm_virtual_machine_extension" "wowza_app_config_vm1" {
-  name                 = "wowza_app_config_vm1"
-  virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
-
-  settings = <<SETTINGS
-    {
-        "commandToExecute": "/home/wowza/dir-creator.sh ${var.num_applications} && sudo service WowzaStreamingEngine restart"
-    }
-SETTINGS
-
-}
-
-resource "azurerm_virtual_machine_extension" "wowza_app_config_vm2" {
-  name                 = "wowza_app_config_vm2"
-  virtual_machine_id   = azurerm_linux_virtual_machine.vm2.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
-
-  settings = <<SETTINGS
-    {
-        "commandToExecute": "/home/wowza/dir-creator.sh ${var.num_applications} && sudo service WowzaStreamingEngine restart"
-    }
-SETTINGS
-
 }

@@ -743,6 +743,7 @@ runcmd:
   - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'
   - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}'
   - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy'
-  - 'service WowzaStreamingEngine restart'
+  - '/home/wowza/dir-creator.sh ${numApplications}'
+  - 'sudo service WowzaStreamingEngine restart'
 
 final_message: "The system is finally up, after $UPTIME seconds"

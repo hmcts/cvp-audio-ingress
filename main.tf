@@ -21,6 +21,7 @@ module "wowza" {
   wowza_version              = var.wowza_version
   wowza_publisher            = var.wowza_publisher
   wowza_offer                = var.wowza_offer
+  ssh_public_key             = var.ssh_public_key
 }
 
 resource "azurerm_dns_a_record" "wowza" {
