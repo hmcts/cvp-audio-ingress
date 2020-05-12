@@ -69,6 +69,6 @@ variable "wowza_sku" {
 }
 
 variable "num_applications" {
-  type = number
+  type    = number
   default = 1
 }
