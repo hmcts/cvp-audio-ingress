@@ -127,6 +127,26 @@ resource "azurerm_public_ip" "pip_vm2" {
   sku               = "Standard"
 }
 
+resource "azurerm_public_ip" "pip_vm1" {
+  name = "${local.service_name}-pipvm1"
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  allocation_method = "Static"
+  sku               = "Standard"
+}
+
+resource "azurerm_public_ip" "pip_vm2" {
+  name = "${local.service_name}-pipvm2"
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  allocation_method = "Static"
+  sku               = "Standard"
+}
+
 resource "azurerm_network_security_group" "sg" {
   name = "${local.service_name}-sg"
 
@@ -153,7 +173,7 @@ resource "azurerm_network_security_group" "sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = "*"
+    source_address_prefixes    = var.rtmps_source_address_prefixes
     destination_address_prefix = "*"
   }
 
@@ -317,7 +337,7 @@ data "template_cloudinit_config" "wowza_setup1" {
 
   part {
     content_type = "text/cloud-config"
-    content      = data.template_file.cloudconfig1.rendered
+    content      = data.template_file.cloudconfig2.rendered
   }
 }
 

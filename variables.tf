@@ -76,3 +76,7 @@ variable "num_applications" {
 variable "ssh_public_key" {
   type = string
 }
+
+variable "rtmps_source_address_prefixes" {
+  type = list(string)
+}
