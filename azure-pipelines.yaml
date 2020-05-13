@@ -24,22 +24,22 @@ variables:
     - template: pipeline/variables-prod.yaml
 
 stages:
-  - stage: Build
-    jobs:
-      - job: BasicValidation
-        steps:
-          - template: pipeline/steps/tf-install.yaml
-          - task: TerraformCLI@0
-            inputs:
-              command: 'init'
-              commandOptions: '-backend=false'
-          - task: TerraformCLI@0
-            displayName: Validate Terraform
-            inputs:
-              command: 'validate'
-              commandOptions: '-no-color'
-          - script: terraform fmt -check=true
-            displayName: Check Formatting
+#  - stage: Build
+#    jobs:
+#      - job: BasicValidation
+#        steps:
+#          - template: pipeline/steps/tf-install.yaml
+#          - task: TerraformCLI@0
+#            inputs:
+#              command: 'init'
+#              commandOptions: '-backend=false'
+#          - task: TerraformCLI@0
+#            displayName: Validate Terraform
+#            inputs:
+#              command: 'validate'
+#              commandOptions: '-no-color'
+#          - script: terraform fmt -check=true
+#            displayName: Check Formatting
 
   - stage: Deploy
     dependsOn: Build
