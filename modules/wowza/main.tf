@@ -158,8 +158,8 @@ resource "azurerm_network_security_group" "sg_internal" {
   }
 }
 
-resource "azurerm_network_security_group" "sg_external" {
-  name = "${local.service_name}-sg-ext"
+resource "azurerm_network_security_group" "sg" {
+  name = "${local.service_name}-sg"
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -267,7 +267,7 @@ resource "azurerm_network_interface_security_group_association" "sg_assoc2" {
 
 resource "azurerm_subnet_network_security_group_association" "sg_assoc_subnet" {
   subnet_id                 = azurerm_subnet.sn.id
-  network_security_group_id = azurerm_network_security_group.sg_external.id
+  network_security_group_id = azurerm_network_security_group.sg.id
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "be_add_pool_assoc_vm1" {
