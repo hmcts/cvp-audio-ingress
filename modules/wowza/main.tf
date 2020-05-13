@@ -127,77 +127,6 @@ resource "azurerm_public_ip" "pip_vm2" {
   sku               = "Standard"
 }
 
-
-
-resource "azurerm_lb" "lb" {
-  name                = "${local.service_name}-lb"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  sku                 = "Standard"
-
-  frontend_ip_configuration {
-    name                 = "PublicIPAddress"
-    public_ip_address_id = azurerm_public_ip.pip.id
-  }
-}
-
-resource "azurerm_lb_backend_address_pool" "be_add_pool" {
-  resource_group_name = azurerm_resource_group.rg.name
-  loadbalancer_id     = azurerm_lb.lb.id
-  name                = "BackEndAddressPool"
-}
-
-resource "azurerm_lb_probe" "lb_probe" {
-  resource_group_name = azurerm_resource_group.rg.name
-  loadbalancer_id     = azurerm_lb.lb.id
-  name                = "wowza-running-probe"
-  port                = 443
-  protocol            = "Tcp"
-}
-
-resource "azurerm_lb_rule" "rtmps_lb_rule" {
-  resource_group_name            = azurerm_resource_group.rg.name
-  loadbalancer_id                = azurerm_lb.lb.id
-  name                           = "RTMPS"
-  protocol                       = "Tcp"
-  frontend_port                  = 443
-  backend_port                   = 443
-  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.be_add_pool.id
-  probe_id                       = azurerm_lb_probe.lb_probe.id
-}
-
-resource "azurerm_network_security_group" "sg_internal" {
-  name = "${local.service_name}-sg-int"
-
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-
-  security_rule {
-    name                       = "REST"
-    priority                   = 1030
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "8087"
-    source_address_prefix      = "${azurerm_lb.lb.private_ip_addresses}/32"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "RTMPS"
-    priority                   = 1040
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "443"
-    source_address_prefix      = "${azurerm_lb.lb.private_ip_addresses}/32"
-    destination_address_prefix = "*"
-  }
-}
-
 resource "azurerm_network_security_group" "sg" {
   name = "${local.service_name}-sg"
 
@@ -239,7 +168,6 @@ resource "azurerm_network_interface" "nic1" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip_vm1.id
   }
 }
 
@@ -253,18 +181,55 @@ resource "azurerm_network_interface" "nic2" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip_vm2.id
   }
+}
+
+resource "azurerm_lb" "lb" {
+  name                = "${local.service_name}-lb"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "Standard"
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = azurerm_public_ip.pip.id
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "be_add_pool" {
+  resource_group_name = azurerm_resource_group.rg.name
+  loadbalancer_id     = azurerm_lb.lb.id
+  name                = "BackEndAddressPool"
+}
+
+resource "azurerm_lb_probe" "lb_probe" {
+  resource_group_name = azurerm_resource_group.rg.name
+  loadbalancer_id     = azurerm_lb.lb.id
+  name                = "wowza-running-probe"
+  port                = 443
+  protocol            = "Tcp"
+}
+
+resource "azurerm_lb_rule" "rtmps_lb_rule" {
+  resource_group_name            = azurerm_resource_group.rg.name
+  loadbalancer_id                = azurerm_lb.lb.id
+  name                           = "RTMPS"
+  protocol                       = "Tcp"
+  frontend_port                  = 443
+  backend_port                   = 443
+  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.be_add_pool.id
+  probe_id                       = azurerm_lb_probe.lb_probe.id
 }
 
 resource "azurerm_network_interface_security_group_association" "sg_assoc1" {
   network_interface_id      = azurerm_network_interface.nic1.id
-  network_security_group_id = azurerm_network_security_group.sg_internal.id
+  network_security_group_id = azurerm_network_security_group.sg.id
 }
 
 resource "azurerm_network_interface_security_group_association" "sg_assoc2" {
   network_interface_id      = azurerm_network_interface.nic2.id
-  network_security_group_id = azurerm_network_security_group.sg_internal.id
+  network_security_group_id = azurerm_network_security_group.sg.id
 }
 
 resource "azurerm_subnet_network_security_group_association" "sg_assoc_subnet" {
