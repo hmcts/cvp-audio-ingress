@@ -181,7 +181,7 @@ resource "azurerm_network_security_group" "sg_internal" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "8087"
-    source_address_prefix      = azurerm_lb.lb.private_ip_address
+    source_address_prefix      = "${azurerm_lb.lb.private_ip_addresses}/32"
     destination_address_prefix = "*"
   }
 
@@ -193,7 +193,7 @@ resource "azurerm_network_security_group" "sg_internal" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = azurerm_lb.lb.private_ip_address
+    source_address_prefix      = "${azurerm_lb.lb.private_ip_addresses}/32"
     destination_address_prefix = "*"
   }
 }
