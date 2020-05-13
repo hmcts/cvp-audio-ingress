@@ -88,7 +88,7 @@ steps:
         sshPrivKeyName="cvp-ssh-priv-key"
         sshPubKeyName="cvp-ssh-pub-key"
 
-        sshResult=$(az keyvault secret show --name ${sshPubKeyName} --vault-name ${kvName})
+        sshResult=$(az keyvault secret show --name ${sshPubKeyName} --vault-name ${kvName} --query '.value')
         echo "az keyvault secret show --name ${sshPubKeyName} --vault-name ${kvName} --query '.value'"
         echo "sshResult = ${sshResult}"
 
