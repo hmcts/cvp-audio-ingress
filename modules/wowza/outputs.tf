@@ -17,3 +17,13 @@ output "lb_pip" {
   description = "Public IP for LB - This needs to be added to https://github.com/hmcts/azure-public-dns"
   value       = azurerm_public_ip.pip.ip_address
 }
+
+output "vm1_pip" {
+  description = "Public IP for VM1 - This needs to be added to https://github.com/hmcts/azure-public-dns"
+  value       = azurerm_public_ip.pip_vm1.ip_address
+}
+
+output "vm2_pip" {
+  description = "Public IP for VM2 - This needs to be added to https://github.com/hmcts/azure-public-dns"
+  value       = azurerm_public_ip.pip_vm2.ip_address
+}
