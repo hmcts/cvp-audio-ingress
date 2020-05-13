@@ -317,11 +317,6 @@ data "template_cloudinit_config" "wowza_setup2" {
   }
 }
 
-resource "tls_private_key" "tf_ssh_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
 resource "azurerm_linux_virtual_machine" "vm1" {
   name = "${local.service_name}-vm1"
 
@@ -341,7 +336,8 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = var.ssh_public_key
+//    public_key = var.ssh_public_key
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3NuHwIf+yhPOxgVlr9H0SjbSMox/dhuuUeitGWkkbSUtHlw8IGb0MmMJ6/K6KzTmmH6SwIB/LyRkWMwv6idCQVuodBSENtr7Dn5YCViM9ED7jJusGj12KiTNC24OsPbJergpkF/RaTczHxhggDa/bn7X0kPxUJq1GvQgRrnlwefWT9Dw/o/IduWv2u0rUTa+EL/8WZZL8mIpug2t5dU4Fe+orJX43Gz7uMo6tmoYuJ9KWgdJQ5Rl7FRBQfeQTbif2YwxPX+kN5za7C7jSx5ImLJzZZocNVA09n3i3LHtroiEPreNio8zGRSOzQ1rKrfrk8YXiWv+hp04ZlelZ5MWt68RYEwlI91CnRWegN3XaWBEpqdi1T6REsH8W9O2cUgJXgi3C4gQ87p+QCu6PNxJzse7sH0fTrkNVK0GQcLJaQjEUqZin5G5g9YQLfnNr3pzaoOOVghX0RDdSs4pwYC12s67+Yiz0HWsb1a1g3dPEz/PcmA1UwbSPNSfwYMQF6G+Sp97nuys1mTk/7ET/4XEjmY0CtU0BPeGFwAf8oV+7F+2bUFVXncqLdWjb0IYcAoNa6D8P3JZkVk7S5OZt36JdCnodozmwJwhvZtA69wSpNkvmWG6m+lFgeOReFOfEQuB/MGLAk67husJkXpu1hZ1eP7o8N7QhBx7yhOZiUZZ0DQ== vsts@fv-az14\n"
   }
 
   os_disk {
@@ -396,7 +392,8 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = base64decode(var.ssh_public_key)
+//    public_key = base64decode(var.ssh_public_key)
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3NuHwIf+yhPOxgVlr9H0SjbSMox/dhuuUeitGWkkbSUtHlw8IGb0MmMJ6/K6KzTmmH6SwIB/LyRkWMwv6idCQVuodBSENtr7Dn5YCViM9ED7jJusGj12KiTNC24OsPbJergpkF/RaTczHxhggDa/bn7X0kPxUJq1GvQgRrnlwefWT9Dw/o/IduWv2u0rUTa+EL/8WZZL8mIpug2t5dU4Fe+orJX43Gz7uMo6tmoYuJ9KWgdJQ5Rl7FRBQfeQTbif2YwxPX+kN5za7C7jSx5ImLJzZZocNVA09n3i3LHtroiEPreNio8zGRSOzQ1rKrfrk8YXiWv+hp04ZlelZ5MWt68RYEwlI91CnRWegN3XaWBEpqdi1T6REsH8W9O2cUgJXgi3C4gQ87p+QCu6PNxJzse7sH0fTrkNVK0GQcLJaQjEUqZin5G5g9YQLfnNr3pzaoOOVghX0RDdSs4pwYC12s67+Yiz0HWsb1a1g3dPEz/PcmA1UwbSPNSfwYMQF6G+Sp97nuys1mTk/7ET/4XEjmY0CtU0BPeGFwAf8oV+7F+2bUFVXncqLdWjb0IYcAoNa6D8P3JZkVk7S5OZt36JdCnodozmwJwhvZtA69wSpNkvmWG6m+lFgeOReFOfEQuB/MGLAk67husJkXpu1hZ1eP7o8N7QhBx7yhOZiUZZ0DQ== vsts@fv-az14\n"
   }
 
   os_disk {
