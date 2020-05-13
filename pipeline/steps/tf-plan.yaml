@@ -102,8 +102,6 @@ steps:
         fi
 
         echo "pubKey = ${pubKey}"
-        #        pubKey=$(echo $pubKey | base64)
-        echo "pubKey = ${pubKey}"
 
         echo "##vso[task.setvariable variable=certPath]$certPath"
         echo "##vso[task.setvariable variable=secretId]$secretId"
