@@ -104,6 +104,8 @@ steps:
         fi
 
         echo "pubKey = ${pubKey}"
+        pubKey="${pubKey}" | cut -d '"' -f 2
+        echo "pubKey = ${pubKey}"
         pubKey=$(echo $pubKey | base64)
         echo "pubKey = ${pubKey}"
 
