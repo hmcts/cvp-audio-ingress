@@ -42,7 +42,7 @@ stages:
 #            displayName: Check Formatting
 
   - stage: Deploy
-    dependsOn: Build
+#    dependsOn: Build
     jobs:
       - job: DeployToEnv
         steps:
