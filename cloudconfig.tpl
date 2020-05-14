@@ -493,7 +493,7 @@ write_files:
 
                 -->
                         <Streams>
-                                <StreamType>live</StreamType>
+                                <StreamType>live-record</StreamType>
                                 <StorageDir>$${com.wowza.wms.context.VHostConfigHome}/content/$${com.wowza.wms.context.Application}</StorageDir>
                                 <KeyDir>$${com.wowza.wms.context.VHostConfigHome}/keys</KeyDir>
                                 <!-- LiveStreamPacketizers (separate with commas): cupertinostreamingpacketizer, smoothstreamingpacketizer, sanjosestreamingpacketizer, mpegdashstreamingpacketizer, cupertinostreamingrepeater, smoothstreamingrepeater, sanjosestreamingrepeater, mpegdashstreamingrepeater, dvrstreamingpacketizer, dvrstreamingrepeater -->
@@ -561,12 +561,12 @@ write_files:
                         <RTP>
                                 <!-- RTP/Authentication/[type]Methods defined in Authentication.xml. Default setup includes; none, basic, digest -->
                                 <Authentication>
-                                        <PublishMethod>digestfile</PublishMethod>
+                                        <PublishMethod>block</PublishMethod>
                                         <PlayMethod>none</PlayMethod>
                                 </Authentication>
                                 <!-- RTP/AVSyncMethod. Valid values are: senderreport, systemclock, rtptimecode -->
                                 <AVSyncMethod>senderreport</AVSyncMethod>
-                                <MaxRTCPWaitTime>12000</MaxRTCPWaitTime>
+                                <MaxRTCPWaitTime>0</MaxRTCPWaitTime>
                                 <IdleFrequency>75</IdleFrequency>
                                 <RTSPSessionTimeout>90000</RTSPSessionTimeout>
                                 <RTSPMaximumPendingWriteBytes>0</RTSPMaximumPendingWriteBytes>
@@ -642,15 +642,10 @@ write_files:
                         </Repeater>
                         <StreamRecorder>
                                 <Properties>
-                                        <Property>
-                                                <Name>streamRecorderFileVersionTemplate</Name>
-                                                <Value>$${SourceStreamName}_$${RecordingStartTime}</Value>
-                                                <Type>String</Type>
-                                        </Property>
                                 </Properties>
                         </StreamRecorder>
                         <Modules>
-                                <Module>Module
+                                <Module>
                                         <Name>base</Name>
                                         <Description>Base</Description>
                                         <Class>com.wowza.wms.module.ModuleCore</Class>
@@ -680,27 +675,27 @@ write_files:
                         <Properties>
                                 <Property>
                                         <Name>securityPublishRequirePassword</Name>
+                                        <Value>false</Value>
+                                        <Type>Boolean</Type>
+                                </Property>
+                                <Property>
+                                        <Name>securityPublishBlockDuplicateStreamNames</Name>
                                         <Value>true</Value>
                                         <Type>Boolean</Type>
                                 </Property>
                                 <Property>
                                         <Name>fileMoverDestinationPath</Name>
-                                        <Value>$${com.wowza.wms.context.VHostConfigHome}/content/azurecopy</Value>
+                                        <Value>$${com.wowza.wms.context.VHostConfigHome}/content/azurecopy/$${com.wowza.wms.context.Application}</Value>
                                 </Property>
                                 <Property>
                                         <Name>fileMoverDeleteOriginal</Name>
-                                        <Value>false</Value>
+                                        <Value>true</Value>
                                         <Type>Boolean</Type>
                                 </Property>
                                 <Property>
                                         <Name>fileMoverVersionFile</Name>
                                         <Value>true</Value>
                                         <Type>Boolean</Type>
-                                </Property>
-                                <Property>
-                                    <Name>fileMoverFileExtension</Name>
-                                    <Value>mp4</Value>
-                                    <Type>String</Type>
                                 </Property>
                         </Properties>
                 </Application>
