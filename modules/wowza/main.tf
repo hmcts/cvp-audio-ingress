@@ -180,7 +180,7 @@ resource "azurerm_network_interface" "nic1" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
-//    public_ip_address_id          = azurerm_public_ip.pip_vm1.id
+    public_ip_address_id          = azurerm_public_ip.pip_vm1.id
   }
 }
 
@@ -194,7 +194,7 @@ resource "azurerm_network_interface" "nic2" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
-//    public_ip_address_id          = azurerm_public_ip.pip_vm2.id
+    public_ip_address_id          = azurerm_public_ip.pip_vm2.id
   }
 }
 
