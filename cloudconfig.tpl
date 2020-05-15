@@ -725,6 +725,7 @@ write_files:
                         </Properties>
                 </Application>
         </Root>
+
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/dir-creator.sh
