@@ -690,6 +690,11 @@ write_files:
                                         <Description>ModuleMediaWriterFileMover</Description>
                                         <Class>com.wowza.wms.module.ModuleMediaWriterFileMover</Class>
                                 </Module>
+                                <Module>
+                                        <Name>ModuleAutoRecord</Name>
+                                        <Description>Auto-record streams that are published to this application instance.</Description>
+                                        <Class>com.wowza.wms.plugin.ModuleAutoRecord</Class>
+                                </Module>
                         </Modules>
                         <!-- Properties defined here will be added to the IApplication.getProperties() and IApplicationInstance.getProperties() collections -->
                         <Properties>
