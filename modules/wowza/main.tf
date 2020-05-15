@@ -234,6 +234,8 @@ resource "azurerm_lb_rule" "rtmps_lb_rule" {
   frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
   backend_address_pool_id        = azurerm_lb_backend_address_pool.be_add_pool.id
   probe_id                       = azurerm_lb_probe.lb_probe.id
+  load_distribution              = "SourceIPProtocol"
+  idle_timeout_in_minutes        = 30
 }
 
 resource "azurerm_network_interface_security_group_association" "sg_assoc1" {
