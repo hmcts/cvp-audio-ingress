@@ -327,7 +327,7 @@ data "template_cloudinit_config" "wowza_setup2" {
 
   part {
     content_type = "text/cloud-config"
-    content      = data.template_file.cloudconfig1.rendered
+    content      = data.template_file.cloudconfig2.rendered
   }
 }
 
