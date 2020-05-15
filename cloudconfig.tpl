@@ -493,7 +493,7 @@ write_files:
 
                 -->
                         <Streams>
-                                <StreamType>live-record</StreamType>
+                                <StreamType>live</StreamType>
                                 <StorageDir>$${com.wowza.wms.context.VHostConfigHome}/content/$${com.wowza.wms.context.Application}</StorageDir>
                                 <KeyDir>$${com.wowza.wms.context.VHostConfigHome}/keys</KeyDir>
                                 <!-- LiveStreamPacketizers (separate with commas): cupertinostreamingpacketizer, smoothstreamingpacketizer, sanjosestreamingpacketizer, mpegdashstreamingpacketizer, cupertinostreamingrepeater, smoothstreamingrepeater, sanjosestreamingrepeater, mpegdashstreamingrepeater, dvrstreamingpacketizer, dvrstreamingrepeater -->
@@ -642,6 +642,26 @@ write_files:
                         </Repeater>
                         <StreamRecorder>
                                 <Properties>
+                                    <Property>
+                                        <Name>streamRecorderFileVersionDelegate</Name>
+                                        <Value>LiveStreamRecordFileVersionDelegate</Value>
+                                        <Type>String</Type>
+                                    </Property>
+                                    <Property>
+                                        <Name>streamRecorderFileVersionTemplate</Name>
+                                        <Value>${SourceStreamName}_${RecordingStartTime}_${SegmentNumber}</Value>
+                                        <Type>String</Type>
+                                    </Property>
+                                    <Property>
+                                        <Name>streamRecorderSegmentationType</Name>
+                                        <Value>duration</Value>
+                                        <Type>String</Type>
+                                    </Property>
+                                    <Property>
+                                        <Name>streamRecorderSegmentDuration</Name>
+                                        <Value>20000000</Value> <!-- milliseconds -->
+                                        <Type>long</Type>
+                                    </Property>
                                 </Properties>
                         </StreamRecorder>
                         <Modules>
@@ -773,6 +793,7 @@ write_files:
 
 
 runcmd:
+  - 'wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar'
   - 'sudo mkdir /mnt/blobfusetmp'
   - 'sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy'
   - 'secretsname=$(find /var/lib/waagent/ -name "${certThumbprint}.prv" | cut -c -57)'
