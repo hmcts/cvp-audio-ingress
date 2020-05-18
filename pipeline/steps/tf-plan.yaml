@@ -31,10 +31,10 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
 
-        echo "SECRETS ###########"
-        az keyvault secret list --vault-name cft-apps-${{ parameters.env }}
-        echo "CERTS ###########"
-        az keyvault certificate list --vault-name cft-apps-${{ parameters.env }}
+        # echo "SECRETS ###########"
+        # az keyvault secret list --vault-name cft-apps-${{ parameters.env }}
+        # echo "CERTS ###########"
+        # az keyvault certificate list --vault-name cft-apps-${{ parameters.env }}
 
         # ensure KV exists in same sub we are working in
         rgName="${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
