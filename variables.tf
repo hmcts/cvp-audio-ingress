@@ -78,6 +78,6 @@ variable "ssh_public_key" {
 }
 
 variable "rtmps_source_address_prefixes" {
-  type    = list(number)
-  default = [*]
+  type    = list(string)
+  default = ["*"]
 }
