@@ -42,7 +42,7 @@ steps:
       inlineScript: |
         rgName="cvp-recordings-$(env)-rg"
 
-        wsId=$(az monitor log-analytics workspace show --resource-group $(ws_rg) --workspace-name $(ws_name) | jq .id)
+        wsId=$(az monitor log-analytics workspace show --resource-group $(ws_rg) --workspace-name $(ws_name) --subscription $(ws_subscription) | jq .id)
         kvId=$(az keyvault show --name "cvp-$(env)-kv" --resource-group cvp-sharedinfra-$(env) | jq .id)
 
         az monitor diagnostic-settings create \
@@ -131,7 +131,7 @@ steps:
           --name cvp-nic2-$(env)-diag-set \
           --resource $nic2Id \
           --metrics  '[{"category": "AllMetrics","enabled": true}' \
-          --workspace $wsId
+          --workspace $wsIdoms-automation
 
         lbId=$(az network lb show -g $rgName -n cvp-recordings-$(env)-lb | jq .id)
         az monitor diagnostic-settings create \
@@ -140,3 +140,11 @@ steps:
           --logs    '[{"category": "LoadBalancerAlertEvent","enabled": true},{"category": "LoadBalancerProbeHealthStatus","enabled": true}]' \
           --metrics '[{"category": "AllMetrics","enabled": true}]' \
           --workspace $wsId
+
+        az vm extension set \
+          --resource-group $rgName \
+          --vm-name cvp-recordings-$(env)-vm1 \
+          --name OmsAgentForLinux \
+          --publisher Microsoft.EnterpriseCloud.Monitoring \
+          --version 1.10.1 --protected-settings '{"workspaceKey":"myWorkspaceKey"}' \
+          --settings '{"workspaceId":"${wsId}"}'
