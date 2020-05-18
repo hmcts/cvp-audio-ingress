@@ -20,8 +20,8 @@ steps:
       inlineScript: |
         rgName="cvp-recordings-$(env)-rg"
 
-        wsId=$(az monitor log-analytics workspace show --resource-group $(ws_rg) --workspace-name $(ws_name) --subscription $(ws_subscription) | jq .id)
-        kvId=$(az keyvault show --name "cvp-$(env)-kv" --resource-group cvp-sharedinfra-$(env) | jq .id)
+        wsId=$(az monitor log-analytics workspace show --resource-group $(ws_rg) --workspace-name $(ws_name) --subscription $(ws_subscription) -otsv  | jq .id)
+        kvId=$(az keyvault show --name "cvp-$(env)-kv" --resource-group cvp-sharedinfra-$(env) -otsv | jq .id)
 
         echo "wsId=${wsId}"
         echo "kvId=${kvId}"
@@ -42,7 +42,7 @@ steps:
         #          --workspace "${wsId}" \
         #          --debug
 
-        vm1Id=$(az vm show -g $rgName -n cvp-recordings-$(env)-vm1 | jq .id)
+        vm1Id=$(az vm show -g $rgName -n cvp-recordings-$(env)-vm1 -otsv | jq .id)
         az monitor diagnostic-settings create \
           --name cvp-vm1-$(env)-diag-set \
           --resource $vm1Id \
