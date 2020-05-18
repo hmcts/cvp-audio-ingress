@@ -136,7 +136,7 @@ steps:
         az monitor diagnostic-settings create \
           --name cvp-privep-$(env)-diag-set \
           --resource $privateEndpointId \
-          --metrics  '[{"category": "AllMetrics","enabled": true}' \
+          --metrics  '[{"category": "AllMetrics","enabled": true}]' \
           --workspace $wsId
 
         nic1Id=$(az network nic show -g $rgName -n cvp-recordings-$(env)-nic1 --query id -o tsv)
@@ -144,7 +144,7 @@ steps:
         az monitor diagnostic-settings create \
           --name cvp-nic1-$(env)-diag-set \
           --resource $nic1Id \
-          --metrics  '[{"category": "AllMetrics","enabled": true}' \
+          --metrics  '[{"category": "AllMetrics","enabled": true}]' \
           --workspace $wsId
 
         nic2Id=$(az network nic show -g $rgName -n cvp-recordings-$(env)-nic2 --query id -o tsv)
@@ -152,7 +152,7 @@ steps:
         az monitor diagnostic-settings create \
           --name cvp-nic2-$(env)-diag-set \
           --resource $nic2Id \
-          --metrics  '[{"category": "AllMetrics","enabled": true}' \
+          --metrics  '[{"category": "AllMetrics","enabled": true}]' \
           --workspace $wsIdoms-automation
 
         lbId=$(az network lb show -g $rgName -n cvp-recordings-$(env)-lb --query id -o tsv)

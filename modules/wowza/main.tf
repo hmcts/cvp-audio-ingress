@@ -459,8 +459,27 @@ SETTINGS
     }
 SETTINGS
 
+  tags = var.common_tags
+}
 
-  tags = {
-    environment = "Production"
-  }
+resource "azurerm_virtual_machine_extension" "vm2_ext" {
+  name                 = "${local.service_name}-vm2-ext"
+  virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
+  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
+  type                 = "OmsAgentForLinux"
+  type_handler_version = "1.7"
+
+  settings = <<SETTINGS
+    {
+        "workspaceId": "${var.ws_id}"
+    }
+SETTINGS
+
+  protected_settings = <<SETTINGS
+    {
+        "workspaceId": "${var.ws_key}"
+    }
+SETTINGS
+
+  tags = var.common_tags
 }
