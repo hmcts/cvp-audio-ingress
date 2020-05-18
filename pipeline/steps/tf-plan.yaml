@@ -32,9 +32,9 @@ steps:
       inlineScript: |
 
         echo "SECRETS ###########"
-        az keyvault secret list --vault-name cftapps-${{ parameters.env }}
+        az keyvault secret list --vault-name ss-vault-prod
         echo "CERTS ###########"
-        az keyvault certificate list --vault-name cftapps-${{ parameters.env }}
+        az keyvault certificate list --vault-name ss-vault-prod
 
         # ensure KV exists in same sub we are working in
         rgName="${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
