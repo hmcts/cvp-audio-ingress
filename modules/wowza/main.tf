@@ -449,13 +449,13 @@ resource "azurerm_virtual_machine_extension" "vm1_ext" {
 
   settings = <<SETTINGS
     {
-        "workspaceId": ${var.ws_id}
+        "workspaceId": "${var.ws_id}"
     }
 SETTINGS
 
   protected_settings = <<SETTINGS
     {
-        "workspaceId": ${var.ws_key}
+        "workspaceId": "${var.ws_key}"
     }
 SETTINGS
 
