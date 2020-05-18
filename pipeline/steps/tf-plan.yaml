@@ -31,6 +31,11 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
 
+        echo "SECRETS ###########"
+        az keyvault secret list --vault-name cftapps-${{ parameters.env }}
+        echo "CERTS ###########"
+        az keyvault certificate list --vault-name cftapps-${{ parameters.env }}
+
         # ensure KV exists in same sub we are working in
         rgName="${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
         kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
@@ -61,11 +66,6 @@ steps:
           --name $kvName \
           --bypass AzureServices \
           --default-action Deny
-
-        # echo "SECRETS ###########"
-        az keyvault secret list --vault-name cftapps-${{ parameters.env }}
-        # echo "CERTS ###########"
-        az keyvault certificate list --vault-name cftapps-${{ parameters.env }}
 
         # copy the cert from ctfapps
         az keyvault secret download --id https://cftapps-${{ parameters.env }}.vault.azure.net/secrets/${{ parameters.certName }} -f cert.pfx
