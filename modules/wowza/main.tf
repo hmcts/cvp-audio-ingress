@@ -141,7 +141,8 @@ resource "azurerm_network_security_group" "sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefixes    = var.rtmps_source_address_prefixes
+    source_address_prefix      = "*"
+//    source_address_prefixes    = var.rtmps_source_address_prefixes
     destination_address_prefix = "*"
   }
 
