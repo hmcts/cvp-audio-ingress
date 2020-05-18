@@ -439,28 +439,50 @@ resource "azurerm_linux_virtual_machine" "vm2" {
     type = "SystemAssigned"
   }
 }
-
-resource "azurerm_virtual_machine_extension" "vm1_ext" {
-  name                 = "${local.service_name}-vm1-ext"
-  virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
-  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
-  type                 = "OmsAgentForLinux"
-  type_handler_version = "1.7"
-
-  settings = <<SETTINGS
-    {
-        "workspaceId": "${var.ws_id}"
-    }
-SETTINGS
-
-  protected_settings = <<SETTINGS
-    {
-        "workspaceId": "${var.ws_key}"
-    }
-SETTINGS
-
-  tags = var.common_tags
-}
+// need to manually remove the one that's there first!!
+//az vm extension list --resource-group cvp-recordings-prod-rg --vm-name cvp-recordings-prod-vm1
+//[
+//{
+//"autoUpgradeMinorVersion": true,
+//"forceUpdateTag": null,
+//"id": "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-recordings-prod-rg/providers/Microsoft.Compute/virtualMachines/cvp-recordings-prod-vm1/extensions/OmsAgentForLinux",
+//"instanceView": null,
+//"location": "uksouth",
+//"name": "OmsAgentForLinux",
+//"protectedSettings": null,
+//"provisioningState": "Failed",
+//"publisher": "Microsoft.EnterpriseCloud.Monitoring",
+//"resourceGroup": "cvp-recordings-prod-rg",
+//"settings": {
+//"workspaceId": "${wsId}"
+//},
+//"tags": null,
+//"type": "Microsoft.Compute/virtualMachines/extensions",
+//"typeHandlerVersion": "1.10",
+//"virtualMachineExtensionType": "OmsAgentForLinux"
+//}
+//]
+//resource "azurerm_virtual_machine_extension" "vm1_ext" {
+//  name                 = "${local.service_name}-vm1-ext"
+//  virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
+//  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
+//  type                 = "OmsAgentForLinux"
+//  type_handler_version = "1.7"
+//
+//  settings = <<SETTINGS
+//    {
+//        "workspaceId": "${var.ws_id}"
+//    }
+//SETTINGS
+//
+//  protected_settings = <<SETTINGS
+//    {
+//        "workspaceId": "${var.ws_key}"
+//    }
+//SETTINGS
+//
+//  tags = var.common_tags
+//}
 
 resource "azurerm_virtual_machine_extension" "vm2_ext" {
   name                 = "${local.service_name}-vm2-ext"
