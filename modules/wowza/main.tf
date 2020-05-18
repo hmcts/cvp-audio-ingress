@@ -433,10 +433,18 @@ resource "azurerm_monitor_diagnostic_setting" "sa_diagnostic_settings" {
 
   log {
     category = "AuditEvent"
+    retention_policy {
+      enabled = true
+      days    = 90
+    }
   }
 
   metric {
     category = "AllMetrics"
+    retention_policy {
+      enabled = true
+      days    = 90
+    }
   }
 }
 
@@ -448,10 +456,18 @@ resource "azurerm_monitor_diagnostic_setting" "vm1_diagnostic_settings" {
 
   log {
     category = "AuditEvent"
+    retention_policy {
+      enabled = true
+      days    = 90
+    }
   }
 
   metric {
     category = "AllMetrics"
+    retention_policy {
+      enabled = true
+      days    = 90
+    }
   }
 }
 
@@ -463,10 +479,18 @@ resource "azurerm_monitor_diagnostic_setting" "vm2_diagnostic_settings" {
 
   log {
     category = "AuditEvent"
+    retention_policy {
+      enabled = true
+      days    = 90
+    }
   }
 
   metric {
     category = "AllMetrics"
+    retention_policy {
+      enabled = true
+      days    = 90
+    }
   }
 }
 
@@ -484,9 +508,17 @@ resource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_settings" {
 
   log {
     category = "AuditEvent"
+    retention_policy {
+      enabled = true
+      days    = 90
+    }
   }
 
   metric {
     category = "AllMetrics"
+    retention_policy {
+      enabled = true
+      days    = 90
+    }
   }
 }
