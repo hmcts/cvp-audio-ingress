@@ -66,6 +66,7 @@ variable "wowza_version" {
 
 variable "wowza_sku" {
   type = string
+  default = "linux-paid"
 }
 
 variable "num_applications" {
