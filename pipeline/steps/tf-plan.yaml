@@ -25,22 +25,22 @@ steps:
 
         echo "wsId=${wsId}"
         echo "kvId=${kvId}"
-#        az monitor diagnostic-settings create \
-#          --name "cvp-kv-$(env)-diag-set" \
-#          --resource "${kvId}" \
-#          --logs    '[ \
-#            { \
-#              "category": "AuditEvent", \
-#              "enabled": true, \
-#              "retentionPolicy": { \
-#                "enabled": true, \
-#                "days": 90 \
-#              } \
-#            } \
-#          ]' \
-#          --metrics '[{"category": "AllMetrics","enabled": true}]' \
-#          --workspace "${wsId}" \
-#          --debug
+        #        az monitor diagnostic-settings create \
+        #          --name "cvp-kv-$(env)-diag-set" \
+        #          --resource "${kvId}" \
+        #          --logs    '[ \
+        #            { \
+        #              "category": "AuditEvent", \
+        #              "enabled": true, \
+        #              "retentionPolicy": { \
+        #                "enabled": true, \
+        #                "days": 90 \
+        #              } \
+        #            } \
+        #          ]' \
+        #          --metrics '[{"category": "AllMetrics","enabled": true}]' \
+        #          --workspace "${wsId}" \
+        #          --debug
 
         vm1Id=$(az vm show -g $rgName -n cvp-recordings-$(env)-vm1 | jq .id)
         az monitor diagnostic-settings create \
