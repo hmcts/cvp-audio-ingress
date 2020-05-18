@@ -127,26 +127,6 @@ resource "azurerm_public_ip" "pip_vm2" {
   sku               = "Standard"
 }
 
-resource "azurerm_public_ip" "pip_vm1" {
-  name = "${local.service_name}-pipvm1"
-
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-
-  allocation_method = "Static"
-  sku               = "Standard"
-}
-
-resource "azurerm_public_ip" "pip_vm2" {
-  name = "${local.service_name}-pipvm2"
-
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-
-  allocation_method = "Static"
-  sku               = "Standard"
-}
-
 resource "azurerm_network_security_group" "sg" {
   name = "${local.service_name}-sg"
 
