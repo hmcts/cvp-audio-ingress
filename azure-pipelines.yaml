@@ -28,6 +28,8 @@ stages:
     jobs:
       - job: BasicValidation
         steps:
+          - script: |
+              echo $(rtmps_source_address_prefixes)
           - template: pipeline/steps/tf-install.yaml
           - task: TerraformCLI@0
             inputs:
