@@ -6,3 +6,5 @@ variables:
   dns_resource_group: 'shared-services_prod_network_resource_group'
   address_space: '10.50.11.48/28'
   num_applications: 2000
+  storage_account: '/subscriptions/8999dec3-0104-4a27-94ee-6588559729d1/resourcegroups/oms-automation/providers/microsoft.operationalinsights/workspaces/hmcts-prod'
+  logging_enabled: true

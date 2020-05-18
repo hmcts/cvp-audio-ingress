@@ -110,3 +110,13 @@ variable "ssh_public_key" {
 variable "rtmps_source_address_prefixes" {
   type = list(string)
 }
+
+variable "logging_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "storage_account" {
+  type    = string
+  default = ""
+}

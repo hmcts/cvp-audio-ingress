@@ -134,18 +134,6 @@ resource "azurerm_network_security_group" "sg" {
   location            = azurerm_resource_group.rg.location
 
   security_rule {
-    name                       = "REST"
-    priority                   = 1030
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "8087"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
     name                       = "RTMPS"
     priority                   = 1040
     direction                  = "Inbound"
@@ -157,17 +145,6 @@ resource "azurerm_network_security_group" "sg" {
     destination_address_prefix = "*"
   }
 
-  security_rule {
-    name                       = "SSH"
-    priority                   = 1060
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
 }
 
 resource "azurerm_network_interface" "nic1" {
@@ -353,11 +330,6 @@ resource "azurerm_linux_virtual_machine" "vm1" {
     public_key = var.ssh_public_key
   }
 
-  admin_ssh_key {
-    username   = var.admin_user
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDc8ujPUBBo2fG8QrDHFHamZ6AOeTOVP7lmQ95hWufzAy03MbMufshkp2xkpBYrm9WQf9mDWqqDa5rBF7LoqJT7vRKuDbn04B/puwIHnVEVb9ROGXJ61tUURIsrQ5H4PtdluVrNpqJT/vFZBbat2ewrq8idXGGrHlcZovGpm0GOBvnDLAEfP3MXb5FqgWWikpsIMaJMF79fvw1W59uC5Wlo7HaKaAIk6Klp5EFM1TKDHj8I9cAc8XHilM3/JvjG2gCm4JMxMnIS7pRBISgSlZK16ALteaQTkO7OgkmaANqT2t1l64vCpxtRyccpvFnIKvseiRwXXFuLjFjy238b7eOU6Ktfb4RHaOIRvt/EEi9GXnrMSjEBgx5PKiCKuwFhpH6EL0I0B/CCb9h8k19ZA0FIGhH/ZHFJ2WdAIzKYbjXDCNHOejs4B+UUqcY6e/s9C4dLap+fCpXKRSwsRG0inRkttAcuyPu1ewtOE/qeSl5DN2fqKV6r0Gm4lQfdHUMTrcU="
-  }
-
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = var.os_disk_type
@@ -413,11 +385,6 @@ resource "azurerm_linux_virtual_machine" "vm2" {
     public_key = var.ssh_public_key
   }
 
-  admin_ssh_key {
-    username   = var.admin_user
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDc8ujPUBBo2fG8QrDHFHamZ6AOeTOVP7lmQ95hWufzAy03MbMufshkp2xkpBYrm9WQf9mDWqqDa5rBF7LoqJT7vRKuDbn04B/puwIHnVEVb9ROGXJ61tUURIsrQ5H4PtdluVrNpqJT/vFZBbat2ewrq8idXGGrHlcZovGpm0GOBvnDLAEfP3MXb5FqgWWikpsIMaJMF79fvw1W59uC5Wlo7HaKaAIk6Klp5EFM1TKDHj8I9cAc8XHilM3/JvjG2gCm4JMxMnIS7pRBISgSlZK16ALteaQTkO7OgkmaANqT2t1l64vCpxtRyccpvFnIKvseiRwXXFuLjFjy238b7eOU6Ktfb4RHaOIRvt/EEi9GXnrMSjEBgx5PKiCKuwFhpH6EL0I0B/CCb9h8k19ZA0FIGhH/ZHFJ2WdAIzKYbjXDCNHOejs4B+UUqcY6e/s9C4dLap+fCpXKRSwsRG0inRkttAcuyPu1ewtOE/qeSl5DN2fqKV6r0Gm4lQfdHUMTrcU="
-  }
-
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = var.os_disk_type
@@ -448,5 +415,70 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   identity {
     type = "SystemAssigned"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "sa_diagnostic_settings" {
+  enabled            = var.logging_enabled
+  name               = "${local.service_name}-sa-diag"
+  target_resource_id = azurerm_storage_account.sa.id
+  storage_account_id = var.storage_account
+
+  log {
+    category = "AuditEvent"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "vm1_diagnostic_settings" {
+  enabled            = var.logging_enabled
+  name               = "${local.service_name}-vm1-diag"
+  target_resource_id = azurerm_linux_virtual_machine.vm1.id
+  storage_account_id = var.storage_account
+
+  log {
+    category = "AuditEvent"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "vm2_diagnostic_settings" {
+  enabled            = var.logging_enabled
+  name               = "${local.service_name}-vm2-diag"
+  target_resource_id = azurerm_linux_virtual_machine.vm2.id
+  storage_account_id = var.storage_account
+
+  log {
+    category = "AuditEvent"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}
+
+data "azurerm_key_vault" "cvp-kv" {
+  name                = "cvp-${env}-kv"
+  resource_group_name = "cvp-sharedinfra-${env}"
+}
+
+resource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_settings" {
+  enabled            = var.logging_enabled
+  name               = "${local.service_name}-kv-diag"
+  target_resource_id = data.azurerm_key_vault.cvp-kv.id
+  storage_account_id = var.storage_account
+
+  log {
+    category = "AuditEvent"
+  }
+
+  metric {
+    category = "AllMetrics"
   }
 }

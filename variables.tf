@@ -81,3 +81,13 @@ variable "rtmps_source_address_prefixes" {
   type    = list(string)
   default = ["*"]
 }
+
+variable "logging_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "storage_account" {
+  type    = string
+  default = ""
+}
