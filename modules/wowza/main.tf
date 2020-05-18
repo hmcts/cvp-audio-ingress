@@ -440,11 +440,32 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 }
 
-//data "azurerm_log_analytics_workspace" "la_ws" {
-//  name                = "hmcts-prod"
-//  location            = azurerm_resource_group.rg.location
-//  resource_group_name = azurerm_resource_group.rg.name
-//  sku                 = "PerGB2018"
-//  retention_in_days   = 30
-//}
+data "azurerm_log_analytics_workspace" "la_ws" {
+  name                = var.ws_name
+  resource_group_name = var.ws_rg
+}
 
+resource "azurerm_virtual_machine_extension" "vm1_ext" {
+  name                 = "${local.service_name}-vm1-ext"
+  virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
+  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
+  type                 = "OmsAgentForLinux"
+  type_handler_version = "1.7"
+
+  settings = <<SETTINGS
+    {
+        "workspaceId": ${data.azurerm_log_analytics_workspace.la_ws.id}
+    }
+SETTINGS
+
+  protectedSettings = <<SETTINGS
+    {
+        "workspaceId": ${data.azurerm_log_analytics_workspace.la_ws.primary_shared_key}
+    }
+SETTINGS
+
+
+  tags = {
+    environment = "Production"
+  }
+}
