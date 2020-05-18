@@ -33,21 +33,21 @@ steps:
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: '${{ parameters.env }}.tfplan -no-color'
 
-  - task: AzureCLI@2
-    displayName: 'Turn on Diagnostic settings'
-    inputs:
-      azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        set -eu
-        storaccts=$(az storage account list --query [].name -o tsv)
-        for acct in $storaccts
-        {
-          if [[  $acct =~ '${{ parameters.environment }}'$ ]]; then
-            echo "Setting Storage Analytics for $acct"
-            az storage logging update --log rwd --retention 90 --services b --account-name $acct 2> /dev/null
-          else
-            echo "Ignored Storage Analytics for $acct"
-          fi
-        }
+#  - task: AzureCLI@2
+#    displayName: 'Turn on Diagnostic settings'
+#    inputs:
+#      azureSubscription: '${{ parameters.subscriptionName }}'
+#      scriptType: 'bash'
+#      scriptLocation: 'inlineScript'
+#      inlineScript: |
+#        set -eu
+#        storaccts=$(az storage account list --query [].name -o tsv)
+#        for acct in $storaccts
+#        {
+#          if [[  $acct =~ '${{ parameters.environment }}'$ ]]; then
+#            echo "Setting Storage Analytics for $acct"
+#            az storage logging update --log rwd --retention 90 --services b --account-name $acct 2> /dev/null
+#          else
+#            echo "Ignored Storage Analytics for $acct"
+#          fi
+#        }
