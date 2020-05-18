@@ -98,9 +98,9 @@ variable "ws_rg" {
 }
 
 variable "ws_id" {
-  type    = string
+  type = string
 }
 
 variable "ws_key" {
-  type    = string
+  type = string
 }
