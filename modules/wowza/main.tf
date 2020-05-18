@@ -458,7 +458,7 @@ resource "azurerm_virtual_machine_extension" "vm1_ext" {
     }
 SETTINGS
 
-  protectedSettings = <<SETTINGS
+  protected_settings = <<SETTINGS
     {
         "workspaceId": ${data.azurerm_log_analytics_workspace.la_ws.primary_shared_key}
     }
