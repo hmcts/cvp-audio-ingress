@@ -428,7 +428,7 @@ resource "azurerm_monitor_diagnostic_setting" "sa_diagnostic_settings" {
   count              = var.logging_enabled ? 1 : 0
   name               = "${local.service_name}-sa-diag"
   target_resource_id = azurerm_storage_account.sa.id
-  storage_account_id = data.azurerm_log_analytics_workspace.workspace.id
+  storage_account_id = data.azurerm_log_analytics_workspace.workspace.0.id
 
   log {
     category = "AuditEvent"
@@ -443,7 +443,7 @@ resource "azurerm_monitor_diagnostic_setting" "vm1_diagnostic_settings" {
   count              = var.logging_enabled ? 1 : 0
   name               = "${local.service_name}-vm1-diag"
   target_resource_id = azurerm_linux_virtual_machine.vm1.id
-  storage_account_id = data.azurerm_log_analytics_workspace.workspace.id
+  storage_account_id = data.azurerm_log_analytics_workspace.workspace.0.id
 
   log {
     category = "AuditEvent"
@@ -458,7 +458,7 @@ resource "azurerm_monitor_diagnostic_setting" "vm2_diagnostic_settings" {
   count              = var.logging_enabled ? 1 : 0
   name               = "${local.service_name}-vm2-diag"
   target_resource_id = azurerm_linux_virtual_machine.vm2.id
-  storage_account_id = data.azurerm_log_analytics_workspace.workspace.id
+  storage_account_id = data.azurerm_log_analytics_workspace.workspace.0.id
 
   log {
     category = "AuditEvent"
@@ -478,8 +478,8 @@ data "azurerm_key_vault" "cvp-kv" {
 resource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_settings" {
   count              = var.logging_enabled ? 1 : 0
   name               = "${local.service_name}-kv-diag"
-  target_resource_id = data.azurerm_key_vault.cvp-kv.id
-  storage_account_id = data.azurerm_log_analytics_workspace.workspace.id
+  target_resource_id = data.azurerm_key_vault.cvp-kv.0.id
+  storage_account_id = data.azurerm_log_analytics_workspace.workspace.0.id
 
   log {
     category = "AuditEvent"
