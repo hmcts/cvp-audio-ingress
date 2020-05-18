@@ -683,14 +683,6 @@ resource "azurerm_monitor_diagnostic_setting" "vm1_diagnostic_settings" {
   target_resource_id = azurerm_linux_virtual_machine.vm1.id
   storage_account_id = data.azurerm_log_analytics_workspace.workspace.0.id
 
-  log {
-    category = "AuditEvent"
-    retention_policy {
-      enabled = true
-      days    = 90
-    }
-  }
-
   metric {
     category = "AllMetrics"
     retention_policy {
@@ -705,43 +697,6 @@ resource "azurerm_monitor_diagnostic_setting" "vm2_diagnostic_settings" {
   name               = "${local.service_name}-vm2-diag"
   target_resource_id = azurerm_linux_virtual_machine.vm2.id
   storage_account_id = data.azurerm_log_analytics_workspace.workspace.0.id
-
-  log {
-    category = "AuditEvent"
-    retention_policy {
-      enabled = true
-      days    = 90
-    }
-  }
-
-  metric {
-    category = "AllMetrics"
-    retention_policy {
-      enabled = true
-      days    = 90
-    }
-  }
-}
-
-data "azurerm_key_vault" "cvp-kv" {
-  count               = var.logging_enabled ? 1 : 0
-  name                = "cvp-${var.env}-kv"
-  resource_group_name = "cvp-sharedinfra-${var.env}"
-}
-
-resource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_settings" {
-  count              = var.logging_enabled ? 1 : 0
-  name               = "${local.service_name}-kv-diag"
-  target_resource_id = data.azurerm_key_vault.cvp-kv.0.id
-  storage_account_id = data.azurerm_log_analytics_workspace.workspace.0.id
-
-  log {
-    category = "AuditEvent"
-    retention_policy {
-      enabled = true
-      days    = 90
-    }
-  }
 
   metric {
     category = "AllMetrics"
