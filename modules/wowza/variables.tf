@@ -118,5 +118,5 @@ variable "logging_enabled" {
 
 variable "storage_account" {
   type    = string
-  default = ""
+  default = "/subscriptions/74dacd4f-a248-45bb-a2f0-af700dc4cf68/resourcegroups/defaultresourcegroup-suk/providers/microsoft.operationalinsights/workspaces/defaultworkspace-74dacd4f-a248-45bb-a2f0-af700dc4cf68-suk"
 }

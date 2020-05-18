@@ -420,66 +420,71 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "sa_diagnostic_settings" {
-  enabled            = var.logging_enabled
+
   name               = "${local.service_name}-sa-diag"
   target_resource_id = azurerm_storage_account.sa.id
   storage_account_id = var.storage_account
 
   log {
+    enabled  = var.logging_enabled
     category = "AuditEvent"
   }
 
   metric {
+    enabled  = var.logging_enabled
     category = "AllMetrics"
   }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "vm1_diagnostic_settings" {
-  enabled            = var.logging_enabled
   name               = "${local.service_name}-vm1-diag"
   target_resource_id = azurerm_linux_virtual_machine.vm1.id
   storage_account_id = var.storage_account
 
   log {
+    enabled  = var.logging_enabled
     category = "AuditEvent"
   }
 
   metric {
+    enabled  = var.logging_enabled
     category = "AllMetrics"
   }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "vm2_diagnostic_settings" {
-  enabled            = var.logging_enabled
   name               = "${local.service_name}-vm2-diag"
   target_resource_id = azurerm_linux_virtual_machine.vm2.id
   storage_account_id = var.storage_account
 
   log {
+    enabled  = var.logging_enabled
     category = "AuditEvent"
   }
 
   metric {
+    enabled  = var.logging_enabled
     category = "AllMetrics"
   }
 }
 
 data "azurerm_key_vault" "cvp-kv" {
-  name                = "cvp-${env}-kv"
-  resource_group_name = "cvp-sharedinfra-${env}"
+  name                = "cvp-${var.env}-kv"
+  resource_group_name = "cvp-sharedinfra-${var.env}"
 }
 
 resource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_settings" {
-  enabled            = var.logging_enabled
   name               = "${local.service_name}-kv-diag"
   target_resource_id = data.azurerm_key_vault.cvp-kv.id
   storage_account_id = var.storage_account
 
   log {
+    enabled  = var.logging_enabled
     category = "AuditEvent"
   }
 
   metric {
+    enabled  = var.logging_enabled
     category = "AllMetrics"
   }
 }
