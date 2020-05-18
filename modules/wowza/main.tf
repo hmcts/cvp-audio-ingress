@@ -439,28 +439,3 @@ resource "azurerm_linux_virtual_machine" "vm2" {
     type = "SystemAssigned"
   }
 }
-
-//data "azurerm_log_analytics_workspace" "workspace" {
-//  count               = var.logging_enabled ? 1 : 0
-//  name                = var.ws_name
-//  resource_group_name = var.ws_rg
-//}
-
-//resource "azurerm_virtual_machine_extension" "vm1_ext" {
-//  name                 = "hostname"
-//  virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
-//  publisher            = "Microsoft.Azure.Diagnostics"
-//  type                 = "LinuxDiagnostic"
-//  type_handler_version = "3.0"
-//
-//  settings = <<SETTINGS
-//    {
-//        "commandToExecute": "hostname && uptime"
-//    }
-//SETTINGS
-//
-//
-//  tags = {
-//    environment = "Production"
-//  }
-//}
