@@ -87,7 +87,12 @@ variable "logging_enabled" {
   default = false
 }
 
-variable "storage_account" {
+variable "ws_name" {
   type    = string
-  default = ""
+  default = "hmcts-prod"
+}
+
+variable "ws_rg" {
+  type    = string
+  default = "oms-automation"
 }

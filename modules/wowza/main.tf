@@ -141,7 +141,6 @@ resource "azurerm_network_security_group" "sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = "*"
     source_address_prefixes    = var.rtmps_source_address_prefixes
     destination_address_prefix = "*"
   }
@@ -419,72 +418,74 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 }
 
-resource "azurerm_monitor_diagnostic_setting" "sa_diagnostic_settings" {
+data "azurerm_log_analytics_workspace" "workspace" {
+  count               = var.logging_enabled ? 1 : 0
+  name                = var.ws_name
+  resource_group_name = var.ws_rg
+}
 
+resource "azurerm_monitor_diagnostic_setting" "sa_diagnostic_settings" {
+  count              = var.logging_enabled ? 1 : 0
   name               = "${local.service_name}-sa-diag"
   target_resource_id = azurerm_storage_account.sa.id
-  storage_account_id = var.storage_account
+  storage_account_id = data.azurerm_log_analytics_workspace.workspace.id
 
   log {
-    enabled  = var.logging_enabled
     category = "AuditEvent"
   }
 
   metric {
-    enabled  = var.logging_enabled
     category = "AllMetrics"
   }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "vm1_diagnostic_settings" {
+  count              = var.logging_enabled ? 1 : 0
   name               = "${local.service_name}-vm1-diag"
   target_resource_id = azurerm_linux_virtual_machine.vm1.id
-  storage_account_id = var.storage_account
+  storage_account_id = data.azurerm_log_analytics_workspace.workspace.id
 
   log {
-    enabled  = var.logging_enabled
     category = "AuditEvent"
   }
 
   metric {
-    enabled  = var.logging_enabled
     category = "AllMetrics"
   }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "vm2_diagnostic_settings" {
+  count              = var.logging_enabled ? 1 : 0
   name               = "${local.service_name}-vm2-diag"
   target_resource_id = azurerm_linux_virtual_machine.vm2.id
-  storage_account_id = var.storage_account
+  storage_account_id = data.azurerm_log_analytics_workspace.workspace.id
 
   log {
-    enabled  = var.logging_enabled
     category = "AuditEvent"
   }
 
   metric {
-    enabled  = var.logging_enabled
     category = "AllMetrics"
   }
 }
 
 data "azurerm_key_vault" "cvp-kv" {
+  count               = var.logging_enabled ? 1 : 0
   name                = "cvp-${var.env}-kv"
   resource_group_name = "cvp-sharedinfra-${var.env}"
 }
 
 resource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_settings" {
+  count              = var.logging_enabled ? 1 : 0
   name               = "${local.service_name}-kv-diag"
   target_resource_id = data.azurerm_key_vault.cvp-kv.id
-  storage_account_id = var.storage_account
+  storage_account_id = data.azurerm_log_analytics_workspace.workspace.id
 
   log {
-    enabled  = var.logging_enabled
     category = "AuditEvent"
   }
 
   metric {
-    enabled  = var.logging_enabled
     category = "AllMetrics"
   }
 }
