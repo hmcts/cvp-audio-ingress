@@ -440,11 +440,6 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 }
 
-data "azurerm_log_analytics_workspace" "la_ws" {
-  name                = var.ws_name
-  resource_group_name = var.ws_rg
-}
-
 resource "azurerm_virtual_machine_extension" "vm1_ext" {
   name                 = "${local.service_name}-vm1-ext"
   virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
@@ -454,13 +449,13 @@ resource "azurerm_virtual_machine_extension" "vm1_ext" {
 
   settings = <<SETTINGS
     {
-        "workspaceId": ${data.azurerm_log_analytics_workspace.la_ws.id}
+        "workspaceId": ${var.ws_id}
     }
 SETTINGS
 
   protected_settings = <<SETTINGS
     {
-        "workspaceId": ${data.azurerm_log_analytics_workspace.la_ws.primary_shared_key}
+        "workspaceId": ${var.ws_key}
     }
 SETTINGS
 
