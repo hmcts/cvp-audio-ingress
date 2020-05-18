@@ -64,6 +64,7 @@ steps:
           --workspace "${wsId}"
 
         vm1Id=$(az vm show -g $rgName -n cvp-recordings-$(env)-vm1 --query id -o tsv)
+        echo "vm1Id=${vm1Id}"
         az monitor diagnostic-settings create \
           --name cvp-vm1-$(env)-diag-set \
           --resource $vm1Id \
@@ -71,6 +72,7 @@ steps:
           --workspace $wsId
 
         vm2Id=$(az vm show -g $rgName -n cvp-recordings-$(env)-vm2 --query id -o tsv)
+        echo "vm2Id=${vm2Id}"
         az monitor diagnostic-settings create \
           --name cvp-vm2-$(env)-diag-set \
           --resource $vm2Id \
@@ -78,6 +80,7 @@ steps:
           --workspace $wsId
 
         saId=$(az storage account show -g $rgName -n cvprecordings$(env)sa --query id -o tsv)
+        echo "saId=${saId}"
         az monitor diagnostic-settings create \
           --name cvp-sa-$(env)-diag-set \
           --resource $saId \
@@ -85,6 +88,7 @@ steps:
           --workspace $wsId
 
         blobId=$(az storage account blob-service-properties show -g $rgName -n cvprecordings$(env)sa --query id -o tsv)
+        echo "blobId=${blobId}"
         az monitor diagnostic-settings create \
           --name cvp-blob-$(env)-diag-set \
           --resource $blobId \
@@ -93,6 +97,7 @@ steps:
           --workspace $wsId
 
         pipId=$(az network public-ip show -g $rgName -n cvp-recordings-$(env)-pip --query id -o tsv)
+        echo "pipId=${pipId}"
         az monitor diagnostic-settings create \
           --name cvp-pip-$(env)-diag-set \
           --resource $pipId \
@@ -101,6 +106,7 @@ steps:
           --workspace $wsId
 
         pipVm1Id=$(az network public-ip show -g $rgName -n cvp-recordings-$(env)-pipvm1 --query id -o tsv)
+        echo "pipVm1Id=${pipVm1Id}"
         az monitor diagnostic-settings create \
           --name cvp-pipvm1-$(env)-diag-set \
           --resource $pipVm1Id \
@@ -109,6 +115,7 @@ steps:
           --workspace $wsId
 
         pipVm2Id=$(az network public-ip show -g $rgName -n cvp-recordings-$(env)-pipvm2 --query id -o tsv)
+        echo "pipVm2Id=${pipVm2Id}"
         az monitor diagnostic-settings create \
           --name cvp-pipvm2-$(env)-diag-set \
           --resource $pipVm2Id \
@@ -117,6 +124,7 @@ steps:
           --workspace $wsId
 
         nsgId=$(az network nsg show -g $rgName -n cvp-recordings-$(env)-sg --query id -o tsv)
+        echo "nsgId=${nsgId}"
         az monitor diagnostic-settings create \
           --name cvp-nsg-$(env)-diag-set \
           --resource $nsgId \
@@ -124,6 +132,7 @@ steps:
           --workspace $wsId
 
         privateEndpointId=$(az network private-endpoint show -g $rgName -n cvprecordings($env)sa-endpoint --query id -o tsv)
+        echo "private endpoint=${privateEndpointId}"
         az monitor diagnostic-settings create \
           --name cvp-privep-$(env)-diag-set \
           --resource $privateEndpointId \
@@ -131,6 +140,7 @@ steps:
           --workspace $wsId
 
         nic1Id=$(az network nic show -g $rgName -n cvp-recordings-$(env)-nic1 --query id -o tsv)
+        echo "nic1Id=${nic1Id}"
         az monitor diagnostic-settings create \
           --name cvp-nic1-$(env)-diag-set \
           --resource $nic1Id \
@@ -138,6 +148,7 @@ steps:
           --workspace $wsId
 
         nic2Id=$(az network nic show -g $rgName -n cvp-recordings-$(env)-nic2 --query id -o tsv)
+        echo "nic2Id=${nic2Id}"
         az monitor diagnostic-settings create \
           --name cvp-nic2-$(env)-diag-set \
           --resource $nic2Id \
@@ -145,6 +156,7 @@ steps:
           --workspace $wsIdoms-automation
 
         lbId=$(az network lb show -g $rgName -n cvp-recordings-$(env)-lb --query id -o tsv)
+        echo "lbId=${lbId}"
         az monitor diagnostic-settings create \
           --name cvp-lb-$(env)-diag-set \
           --resource $lbId \
@@ -152,10 +164,10 @@ steps:
           --metrics '[{"category": "AllMetrics","enabled": true}]' \
           --workspace $wsId
 
-        az vm extension set \
-          --resource-group $rgName \
-          --vm-name cvp-recordings-$(env)-vm1 \
-          --name OmsAgentForLinux \
-          --publisher Microsoft.EnterpriseCloud.Monitoring \
-          --version 1.10.1 --protected-settings '{"workspaceKey":"myWorkspaceKey"}' \
-          --settings '{"workspaceId":"${wsId}"}'
+#        az vm extension set \
+#          --resource-group $rgName \
+#          --vm-name cvp-recordings-$(env)-vm1 \
+#          --name OmsAgentForLinux \
+#          --publisher Microsoft.EnterpriseCloud.Monitoring \
+#          --version 1.10.1 --protected-settings '{"workspaceKey":"myWorkspaceKey"}' \
+#          --settings '{"workspaceId":"${wsId}"}'
