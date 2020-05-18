@@ -22,7 +22,8 @@ variables:
   - ${{ if eq(parameters.env, 'stg') }}:
     - template: pipeline/variables-stg.yaml
     - group: cvp-stg
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.env, 'sbox'), ne(parameters.env, 'test')) }}:
+  - ${{ if eq(parameters.env, 'prod') }}:
+#  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/release'), ne(parameters.env, 'sbox'), ne(parameters.env, 'test')) }}:
     - template: pipeline/variables-prod.yaml
     - group: cvp-prod
 

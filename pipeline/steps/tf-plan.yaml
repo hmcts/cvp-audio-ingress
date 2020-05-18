@@ -63,9 +63,9 @@ steps:
           --default-action Deny
 
         # echo "SECRETS ###########"
-        # az keyvault secret list --vault-name cftapps-${{ parameters.env }}
+        az keyvault secret list --vault-name cftapps-${{ parameters.env }}
         # echo "CERTS ###########"
-        # az keyvault certificate list --vault-name cftapps-${{ parameters.env }}
+        az keyvault certificate list --vault-name cftapps-${{ parameters.env }}
 
         # copy the cert from ctfapps
         az keyvault secret download --id https://cftapps-${{ parameters.env }}.vault.azure.net/secrets/${{ parameters.certName }} -f cert.pfx
