@@ -26,8 +26,8 @@ steps:
         echo "wsId=${wsId}"
         echo "kvId=${kvId}"
         az monitor diagnostic-settings create \
-          --name cvp-kv-$(env)-diag-set \
-          --resource $kvId \
+          --name "cvp-kv-$(env)-diag-set" \
+          --resource "${kvId}" \
           --logs    '[ \
             { \
               "category": "AuditEvent", \
@@ -39,7 +39,7 @@ steps:
             } \
           ]' \
           --metrics '[{"category": "AllMetrics","enabled": true}]' \
-          --workspace $wsId \
+          --workspace "${wsId}" \
           --debug
 
 #        vm1Id=$(az vm show -g $rgName -n cvp-recordings-$(env)-vm1 | jq .id)
