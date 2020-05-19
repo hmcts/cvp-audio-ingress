@@ -5,7 +5,7 @@ provider "azurerm" {
 
 provider "azurerm" {
   alias           = "secops"
-  subscription_id = "DCD-CNP-${var.env}"
+  subscription_id = "DCD-CNP-Prod"
   version         = ">= 2.7.0"
   features {}
 }
