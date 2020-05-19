@@ -417,8 +417,16 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 }
 
-resource "azurerm_virtual_machine_extension" "vm1_ext" {
+data "azurerm_log_analytics_workspace" "log_analytics" {
+  name                = var.ws_name
+  resource_group_name = var.ws_rg
+}
+
+resource "azurerm_virtual_machine_extension" "log_analytics_vm1" {
   name                 = "${local.service_name}-vm1-ext"
+  location             = azurerm_resource_group.rg.location
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_machine_name = azurerm_linux_virtual_machine.vm1.name
   virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
   publisher            = "Microsoft.EnterpriseCloud.Monitoring"
   type                 = "OmsAgentForLinux"
@@ -426,21 +434,23 @@ resource "azurerm_virtual_machine_extension" "vm1_ext" {
 
   settings = <<SETTINGS
     {
-        "workspaceId": "${var.ws_id}"
+        "workspaceId": "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
     }
 SETTINGS
 
-  protected_settings = <<SETTINGS
+  protected_settings = <<PROTECTEDSETTINGS
     {
-        "workspaceId": "${var.ws_key}"
+        "workspaceKey": "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
     }
-SETTINGS
+PROTECTEDSETTINGS
 
-  tags = var.common_tags
 }
 
-resource "azurerm_virtual_machine_extension" "vm2_ext" {
+resource "azurerm_virtual_machine_extension" "log_analytics_vm2" {
   name                 = "${local.service_name}-vm2-ext"
+  location             = azurerm_resource_group.rg.location
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_machine_name = azurerm_linux_virtual_machine.vm2.name
   virtual_machine_id   = azurerm_linux_virtual_machine.vm2.id
   publisher            = "Microsoft.EnterpriseCloud.Monitoring"
   type                 = "OmsAgentForLinux"
@@ -448,15 +458,14 @@ resource "azurerm_virtual_machine_extension" "vm2_ext" {
 
   settings = <<SETTINGS
     {
-        "workspaceId": "${var.ws_id}"
+        "workspaceId": "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
     }
 SETTINGS
 
-  protected_settings = <<SETTINGS
+  protected_settings = <<PROTECTEDSETTINGS
     {
-        "workspaceId": "${var.ws_key}"
+        "workspaceKey": "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
     }
-SETTINGS
+PROTECTEDSETTINGS
 
-  tags = var.common_tags
 }
