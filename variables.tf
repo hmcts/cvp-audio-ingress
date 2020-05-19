@@ -96,3 +96,7 @@ variable "ws_rg" {
   type    = string
   default = "oms-automation"
 }
+
+variable "ws_sub_id" {
+  type = "string"
+}
