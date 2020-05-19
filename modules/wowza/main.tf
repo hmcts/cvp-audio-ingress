@@ -420,6 +420,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 data "azurerm_log_analytics_workspace" "log_analytics" {
   name                = var.ws_name
   resource_group_name = var.ws_rg
+  provider            = "azurerm.secops"
 }
 
 resource "azurerm_virtual_machine_extension" "log_analytics_vm1" {
