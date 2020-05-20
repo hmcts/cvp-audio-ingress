@@ -141,6 +141,8 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
         subscriptionId=$(az account show -s $(ws_sub_name) --query id -o tsv)
+
+        echo "$(ws_sub_name) == ${subscriptionId}"
         echo "##vso[task.setvariable variable=ws_sub_id]$subscriptionId"
 
   - task: TerraformCLI@0
