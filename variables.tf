@@ -88,7 +88,7 @@ variable "logging_enabled" {
 }
 
 variable "ws_name" {
-  type    = string
+  type = string
 }
 
 variable "ws_rg" {
