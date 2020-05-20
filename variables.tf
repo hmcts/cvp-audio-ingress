@@ -89,7 +89,6 @@ variable "logging_enabled" {
 
 variable "ws_name" {
   type    = string
-  default = "hmcts-prod"
 }
 
 variable "ws_rg" {
