@@ -316,7 +316,11 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = var.os_disk_type
+<<<<<<< HEAD
     disk_size_gb         = var.os_disk_size
+=======
+    disk_size_gb         = 64
+>>>>>>> d77f1dc7469ac135f21a195d8fb06bc25c8aa265
   }
 
   provision_vm_agent = true
