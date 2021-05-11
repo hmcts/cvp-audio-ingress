@@ -55,7 +55,7 @@ resource "azurerm_storage_container" "media_container_02" {
 
 resource "azurerm_virtual_network" "vnet" {
   name          = "${local.service_name}-vnet"
-  address_space = var.address_space
+  address_space = [var.address_space]
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
