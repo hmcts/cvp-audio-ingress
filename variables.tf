@@ -41,7 +41,7 @@ variable "dns_resource_group" {
 }
 
 variable "address_space" {
-  type = list(string)
+  type = string
 }
 
 variable "lb_IPaddress" {
