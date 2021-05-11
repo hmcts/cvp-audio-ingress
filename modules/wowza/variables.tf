@@ -36,8 +36,8 @@ variable "sa_account_replication_type" {
 }
 
 variable "address_space" {
-  type    = string
-  default = [10.0.0.0/16]
+  type    = list(string)
+  default = ["10.0.0.0/16"]
 }
 
 variable "vm_size" {
