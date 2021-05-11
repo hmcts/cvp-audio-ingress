@@ -36,7 +36,7 @@ variable "sa_account_replication_type" {
 }
 
 variable "address_space" {
-  type    = list
+  type    = string
   default = [10.0.0.0/16]
 }
 
