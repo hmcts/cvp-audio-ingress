@@ -67,11 +67,30 @@ stages:
               location: $(location)
               product: $(product)
 
+  - stage: Wait
+    dependsOn: Deploy
+    jobs:
+      - job: waitForValidation        
+        displayName: 'Wait for external validation'
+        pool: server
+        timeoutInMinutes: 4320 # job times out in 3 days
+        steps:
+        - task: ManualValidation@0
+          timeoutInMinutes: 1440 # task times out in 1 day
+          inputs:
+            instructions: 'Please validate the Terraform Plan for PROD environment to resume'
+            onTimeout: 'resume'
+
+  - stage: Apply
+    dependsOn: Build
+    jobs:
+      - job: ApplytoEnv
+        steps:
           - template: pipeline/steps/tf-apply.yaml
             parameters:
               subscriptionName: $(subscriptionName)
               env: $(env)
-          
+
           - template: pipeline/steps/tf-dynatrace.yaml
             parameters:
               subscriptionName: $(subscriptionName)
