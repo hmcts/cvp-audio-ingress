@@ -82,7 +82,9 @@ stages:
             onTimeout: 'reject'
 
   - stage: Apply
-    dependsOn: Wait
+    dependsOn: 
+    - Build
+    - Wait
     jobs:
       - job: ApplytoEnv
         steps:
