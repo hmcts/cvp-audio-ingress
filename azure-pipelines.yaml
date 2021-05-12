@@ -84,7 +84,7 @@ stages:
   - stage: Apply
     dependsOn: Build
     jobs:
-      - job: Apply to Env
+      - job: ApplytoEnv
         steps:
           - template: pipeline/steps/tf-apply.yaml
             parameters:
