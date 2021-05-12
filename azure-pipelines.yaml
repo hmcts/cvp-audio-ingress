@@ -80,20 +80,20 @@ stages:
           inputs:
             instructions: 'Please validate the Terraform Plan for PROD environment to resume'
             onTimeout: 'resume'
-            
+
   - stage: Apply
-    depondsOn: Wait
+    depondsOn: Build
     jobs:
       - job: Apply to Env
-
-        - template: pipeline/steps/tf-apply.yaml
-          parameters:
-            subscriptionName: $(subscriptionName)
-            env: $(env)
-        
-        - template: pipeline/steps/tf-dynatrace.yaml
-          parameters:
-            subscriptionName: $(subscriptionName)
-            env: $(env)
-            location: $(location)
-            product: $(product)
+        steps:
+          - template: pipeline/steps/tf-apply.yaml
+            parameters:
+              subscriptionName: $(subscriptionName)
+              env: $(env)
+          
+          - template: pipeline/steps/tf-dynatrace.yaml
+            parameters:
+              subscriptionName: $(subscriptionName)
+              env: $(env)
+              location: $(location)
+              product: $(product)
