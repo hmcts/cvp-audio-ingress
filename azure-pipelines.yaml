@@ -67,7 +67,7 @@ stages:
               location: $(location)
               product: $(product)
 
-  - stage: Apply
+  - stage: Wait
     dependsOn: Deploy
     jobs:
       - job: waitForValidation        
@@ -80,7 +80,12 @@ stages:
           inputs:
             instructions: 'Please validate the Terraform Plan for PROD environment to resume'
             onTimeout: 'resume'
-        
+            
+  - stage: Apply
+    depondsOn: Wait
+    jobs:
+      - job: Apply to Env
+
         - template: pipeline/steps/tf-apply.yaml
           parameters:
             subscriptionName: $(subscriptionName)
