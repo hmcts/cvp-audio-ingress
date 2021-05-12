@@ -67,6 +67,9 @@ stages:
               location: $(location)
               product: $(product)
 
+  - stage: Apply
+    dependsOn: Deploy
+    jobs:
       - job: waitForValidation        
         displayName: 'Wait for external validation'
         pool: server
