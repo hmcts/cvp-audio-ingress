@@ -79,7 +79,7 @@ stages:
           timeoutInMinutes: 1440 # task times out in 1 day
           inputs:
             instructions: 'Please validate the Terraform Plan for PROD environment to resume'
-            onTimeout: 'resume'
+            onTimeout: 'reject'
 
   - stage: Apply
     dependsOn: Wait
