@@ -1,3 +1,8 @@
+variable "address_space" {
+  type = string
+}
+
+
 variable "location" {
   type        = string
   description = "The azure resource location"
@@ -40,10 +45,6 @@ variable "dns_resource_group" {
   type = string
 }
 
-variable "address_space" {
-  type = string
-}
-
 variable "lb_IPaddress" {
   type = string
 }
@@ -58,10 +59,12 @@ variable "thumbprint" {
 
 variable "wowza_publisher" {
   type = string
+  default = "wowza"
 }
 
 variable "wowza_offer" {
   type = string
+  default = "wowzastreamingengine"
 }
 
 variable "wowza_version" {
@@ -70,7 +73,6 @@ variable "wowza_version" {
 
 variable "wowza_sku" {
   type    = string
-  default = "linux-paid"
 }
 
 variable "num_applications" {
@@ -87,12 +89,11 @@ variable "rtmps_source_address_prefixes" {
 }
 
 variable "ws_name" {
-  type = string
+  type = string  
 }
 
 variable "ws_rg" {
   type    = string
-  default = "oms-automation"
 }
 
 variable "ws_sub_id" {

@@ -2,6 +2,7 @@ locals {
   rg_name      = "${var.product}-media-service-${var.env}"
   sa_name      = "${var.product}mediaservice${var.env}"
   service_name = "${var.product}mediaservice${var.env}"
+  env_vars     = try(yamldecode(file("${path.root}/pipeline/variables-sbox.yaml")), {})
 }
 
 module "wowza" {
