@@ -82,7 +82,7 @@ stages:
             onTimeout: 'resume'
 
   - stage: Apply
-    dependsOn: Build
+    dependsOn: Wait
     jobs:
       - job: ApplytoEnv
         steps:
