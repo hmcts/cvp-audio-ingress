@@ -78,6 +78,9 @@ stages:
                 instructions: 'Please validate the Terraform Plan for PROD environment to resume'
                 onTimeout: 'resume'
 
+      - job: ApplyToEnv
+        steps:
+        
           - template: pipeline/steps/tf-apply.yaml
             parameters:
               subscriptionName: $(subscriptionName)
