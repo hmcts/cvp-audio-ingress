@@ -82,7 +82,7 @@ stages:
             onTimeout: 'resume'
 
   - stage: Apply
-    depondsOn: Build
+    dependsOn: Build
     jobs:
       - job: Apply to Env
         steps:
@@ -90,7 +90,7 @@ stages:
             parameters:
               subscriptionName: $(subscriptionName)
               env: $(env)
-          
+
           - template: pipeline/steps/tf-dynatrace.yaml
             parameters:
               subscriptionName: $(subscriptionName)
