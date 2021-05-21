@@ -18,7 +18,7 @@ parameters:
   - name: workingDirectory
     type: string
     default: $(system.defaultWorkingDirectory)
-    
+
 steps:
   - task: AzureCLI@2
     displayName: Accept Terms of Wowza VM in Marketplace
@@ -29,12 +29,11 @@ steps:
       inlineScript: |
         az vm image terms accept --urn ${{ parameters.wowza_publisher }}:${{ parameters.wowza_offer }}:${{ parameters.wowza_sku }}:${{ parameters.wowza_version }}
 
-  - task: ExtractFiles@1
-    displayName: 'Extract Plan Artifact'
+  - task: DownloadPipelineArtifact@2
+    displayName: Download Terraform Plan
     inputs:
-      archiveFilePatterns: '${{ parameters.workingDirectory }}/${{ parameters.env }}.tfplan'
-      destinationFolder: '${{ parameters.workingDirectory }}'
-      cleanDestinationFolder: false
+      artifactName: ${{ parameters.env }}.tfplan
+      targetPath: ${{ parameters.workingDirectory }}
 
   - bash: chmod a+x '${{ parameters.workingDirectory }}/${{ parameters.env }}.tfplan' && ls -ltra     
     displayName: 'Download Plan and change perms'
