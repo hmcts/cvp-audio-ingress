@@ -15,7 +15,10 @@ parameters:
   - name: wowza_offer
     type: string
     default: 'wowzastreamingengine'
-
+  - name: workingDirectory
+    type: string
+    default: $(system.defaultWorkingDirectory)
+    
 steps:
   - task: AzureCLI@2
     displayName: Accept Terms of Wowza VM in Marketplace

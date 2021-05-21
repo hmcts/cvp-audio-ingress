@@ -9,6 +9,9 @@ parameters:
     type: string
   - name: product
     type: string
+  - name: workingDirectory
+    type: string
+    default: $(system.defaultWorkingDirectory)
 
 steps:
   - task: AzurePowerShell@5
