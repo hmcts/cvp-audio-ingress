@@ -15,8 +15,20 @@ parameters:
   - name: wowza_offer
     type: string
     default: 'wowzastreamingengine'
+  - name: workingDirectory
+    type: string
+    default: $(system.defaultWorkingDirectory)
 
 steps:
+
+  - template: tf-init.yaml
+    parameters:
+      subscriptionName: $(subscriptionName)
+      product: $(product)
+      locationEng: $(locationEng)
+      location: $(location)
+      env: $(env)
+
   - task: AzureCLI@2
     displayName: Accept Terms of Wowza VM in Marketplace
     inputs:
@@ -25,6 +37,15 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
         az vm image terms accept --urn ${{ parameters.wowza_publisher }}:${{ parameters.wowza_offer }}:${{ parameters.wowza_sku }}:${{ parameters.wowza_version }}
+
+  - task: DownloadPipelineArtifact@2
+    displayName: Download Terraform Plan
+    inputs:
+      artifactName: ${{ parameters.env }}.tfplan
+      targetPath: ${{ parameters.workingDirectory }}
+
+  - bash: chmod a+x '${{ parameters.workingDirectory }}/${{ parameters.env }}.tfplan' && ls -ltra     
+    displayName: 'Download Plan and change perms'
 
   - task: TerraformCLI@0
     displayName: Apply
