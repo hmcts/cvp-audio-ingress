@@ -22,7 +22,7 @@ variables:
     # Staging (stg)
     - template: pipeline/variables-stg.yaml
     - group: cvp-stg
-  - ${{ if and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod')) }}:
+  - ${{ if and(contains(variables['Build.SourceBranch'], 'master'), eq(parameters.env, 'prod')) }}:
     # Production (prod)
     - template: pipeline/variables-prod.yaml
     - group: cvp-prod
