@@ -20,6 +20,16 @@ parameters:
     default: $(system.defaultWorkingDirectory)
 
 steps:
+
+  - template: tf-init.yaml
+      displayName: 'TF init'
+      parameters:
+        subscriptionName: $(subscriptionName)
+        product: $(product)
+        locationEng: $(locationEng)
+        location: $(location)
+        env: $(env)
+
   - task: AzureCLI@2
     displayName: Accept Terms of Wowza VM in Marketplace
     inputs:
