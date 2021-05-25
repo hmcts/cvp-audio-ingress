@@ -86,6 +86,16 @@ stages:
     - Build
     - Wait
     jobs:
+      - job: TF init
+        steps:
+          - template: pipeline/steps/tf-init.yaml
+                 parameters:
+                   subscriptionName: $(subscriptionName)
+                   product: $(product)
+                   locationEng: $(locationEng)
+                   location: $(location)
+                   env: $(env)
+
       - job: ApplytoEnv
         steps:
           - template: pipeline/steps/tf-apply.yaml
