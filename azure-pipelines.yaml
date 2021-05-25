@@ -86,7 +86,7 @@ stages:
     - Build
     - Wait
     jobs:
-      - job: TF init
+      - job: TF_init
         steps:
           - template: pipeline/steps/tf-init.yaml
             parameters:
