@@ -22,7 +22,6 @@ parameters:
 steps:
 
   - template: tf-init.yaml
-    displayName: 'TF init'
     parameters:
       subscriptionName: $(subscriptionName)
       product: $(product)
