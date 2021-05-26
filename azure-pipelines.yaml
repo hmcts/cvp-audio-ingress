@@ -96,7 +96,7 @@ stages:
     dependsOn: 
     - Apply
     jobs:
-        - job: Deploy Dynatrace
+        - job: DeployDynatrace
           steps:
           - template: pipeline/steps/tf-dynatrace.yaml
             parameters:
