@@ -7,4 +7,4 @@ steps:
   - task: TerraformInstaller@0
     displayName: Install Terraform
     inputs:
-      terraformVersion: ${{ parameters.version }}
+      terraformVersion: 0.15.3
