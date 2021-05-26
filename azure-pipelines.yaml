@@ -85,8 +85,7 @@ stages:
     dependsOn: 
     - Build
     - Wait
-    jobs:
-     
+    jobs:     
       - job: ApplytoEnv
         steps:
           - template: pipeline/steps/tf-apply.yaml
@@ -97,6 +96,7 @@ stages:
     dependsOn: 
     - Apply
     jobs:
+        - job: Deploy Dynatrace
           - template: pipeline/steps/tf-dynatrace.yaml
             parameters:
               subscriptionName: $(subscriptionName)
