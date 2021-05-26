@@ -51,9 +51,9 @@ steps:
           --certificate-permissions backup create get import list listissuers recover restore update \
           --secret-permissions backup delete get list recover restore set \
           --object-id $oid
-
-        echo "Add build agent ip $agentIp to KV $kvName"
+        
         agentIp=$(curl http://ifconfig.me/ip)/32
+        echo "Add build agent ip $agentIp to KV $kvName"
         az keyvault network-rule add \
           --resource-group $rgName \
           --name $kvName \
