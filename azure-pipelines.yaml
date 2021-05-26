@@ -48,7 +48,7 @@ stages:
   - stage: Deploy
     dependsOn: Build
     jobs:
-      - job: DeployToEnv
+      - job: PlanTFRun
         steps:
 
           - template: pipeline/steps/tf-init.yaml
