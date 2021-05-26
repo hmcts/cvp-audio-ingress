@@ -97,6 +97,7 @@ stages:
     - Apply
     jobs:
         - job: Deploy Dynatrace
+          steps:
           - template: pipeline/steps/tf-dynatrace.yaml
             parameters:
               subscriptionName: $(subscriptionName)
