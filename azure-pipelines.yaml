@@ -66,11 +66,15 @@ stages:
               certName: $(certName)
               location: $(location)
               product: $(product)
+              builtFrom: $(Build.Repository.Name)
+              # Manually passed in for use in scripts where resources are tagged
+              businessArea: $(businessArea)
+              application: $(application)
 
   - stage: Wait
     dependsOn: Deploy
     jobs:
-      - job: waitForValidation        
+      - job: waitForValidation
         displayName: 'Wait for external validation'
         pool: server
         timeoutInMinutes: 4320 # job times out in 3 days
@@ -82,11 +86,10 @@ stages:
             onTimeout: 'reject'
 
   - stage: Apply
-    dependsOn: 
+    dependsOn:
     - Build
     - Wait
     jobs:
-     
       - job: ApplytoEnv
         steps:
           - template: pipeline/steps/tf-apply.yaml

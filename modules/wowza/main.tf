@@ -59,13 +59,14 @@ resource "azurerm_virtual_network" "vnet" {
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
+  tags                = var.common_tags
 }
 
 resource "azurerm_subnet" "sn" {
   name                 = "wowza"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefix       = var.address_space
+  address_prefixes     = [var.address_space]
   service_endpoints    = ["Microsoft.KeyVault"]
 
   enforce_private_link_endpoint_network_policies = true
@@ -85,11 +86,13 @@ resource "azurerm_private_endpoint" "endpoint" {
     subresource_names              = ["Blob"]
     is_manual_connection           = false
   }
+  tags = var.common_tags
 }
 
 resource "azurerm_private_dns_zone" "blob" {
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = azurerm_resource_group.rg.name
+  tags                = var.common_tags
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
@@ -98,6 +101,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   private_dns_zone_name = azurerm_private_dns_zone.blob.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
   registration_enabled  = true
+  tags = var.common_tags
 }
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
@@ -106,6 +110,7 @@ resource "azurerm_private_dns_a_record" "sa_a_record" {
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
   records             = [azurerm_private_endpoint.endpoint.private_service_connection.0.private_ip_address]
+  tags                = var.common_tags
 }
 
 resource "azurerm_public_ip" "pip_vm1" {
@@ -116,6 +121,7 @@ resource "azurerm_public_ip" "pip_vm1" {
 
   allocation_method = "Static"
   sku               = "Standard"
+  tags              = var.common_tags
 }
 
 resource "azurerm_public_ip" "pip_vm2" {
@@ -126,6 +132,7 @@ resource "azurerm_public_ip" "pip_vm2" {
 
   allocation_method = "Static"
   sku               = "Standard"
+  tags              = var.common_tags
 }
 
 resource "azurerm_network_security_group" "sg" {
@@ -146,7 +153,7 @@ resource "azurerm_network_security_group" "sg" {
     source_address_prefixes    = var.rtmps_source_address_prefixes
     destination_address_prefix = "*"
   }
-  #egress rules 
+  #egress rules
   security_rule {
     name                       = "Required_Packages_443"
     priority                   = 1041
@@ -213,6 +220,7 @@ resource "azurerm_network_security_group" "sg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+  tags = var.common_tags
 }
 
 resource "azurerm_network_interface" "nic1" {
@@ -227,6 +235,7 @@ resource "azurerm_network_interface" "nic1" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.pip_vm1.id
   }
+  tags = var.common_tags
 }
 
 resource "azurerm_network_interface" "nic2" {
@@ -241,6 +250,7 @@ resource "azurerm_network_interface" "nic2" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.pip_vm2.id
   }
+  tags = var.common_tags
 }
 
 resource "azurerm_lb" "lb" {
@@ -255,6 +265,7 @@ resource "azurerm_lb" "lb" {
     private_ip_address            = var.lb_IPaddress
     private_ip_address_allocation = "Static"
   }
+  tags = var.common_tags
 }
 
 resource "azurerm_lb_backend_address_pool" "be_add_pool" {
@@ -408,6 +419,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   identity {
     type = "SystemAssigned"
   }
+  tags = var.common_tags
 }
 
 resource "azurerm_linux_virtual_machine" "vm2" {
@@ -464,6 +476,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   identity {
     type = "SystemAssigned"
   }
+  tags = var.common_tags
 }
 
 data "azurerm_log_analytics_workspace" "log_analytics" {
@@ -491,6 +504,7 @@ SETTINGS
     }
 PROTECTEDSETTINGS
 
+  tags = var.common_tags
 }
 
 resource "azurerm_virtual_machine_extension" "log_analytics_vm2" {
@@ -512,4 +526,5 @@ SETTINGS
     }
 PROTECTEDSETTINGS
 
+  tags = var.common_tags
 }
