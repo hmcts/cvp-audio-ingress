@@ -9,7 +9,7 @@ variable "env" {
 }
 
 variable "environment" {
-  type = string
+  type        = string
   description = "The platform environment. Used as tag value"
 }
 
