@@ -10,6 +10,30 @@ parameters:
 
 steps:
   - task: AzureCLI@2
+    displayName: Add KeyVault FW Exception
+    inputs:
+      azureSubscription: ${{ parameters.subscription }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
+        while ( !$ip ) { $ip = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content }
+        az keyvault network-rule add --name ${{ parameters.product }}-${{ parameters.env }}-kv --ip-address "$IP/32"
+
+        $ready = $false; $retry = 0
+        while($ready -eq $false -and $retry -lt 10) {
+          sleep (15 * $retry++)
+
+          try {
+            write-host "checking keyvault access. Count: $retry"
+            az keyvault secret list --vault-name ${{ parameters.product }}-${{ parameters.env }}-kv | out-null
+            $ready = $true
+          } catch {
+            $ready = $false
+          }
+        }
+
+  - task: AzureCLI@2
     displayName: Deploy Dynatrace
     inputs:
       azureSubscription: '${{ parameters.subscriptionName }}'
@@ -19,6 +43,7 @@ steps:
         rgName="${{ parameters.product }}-recordings-${{ parameters.env }}-rg"
         rgNameCom="${{ parameters.product }}-recordings-${{ parameters.env }}"
         kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
+
         echo "our KV is here: https://$kvName.vault.azure.net/secrets/ looking for $(dynatrace_token)"
         dtToken=$(az keyvault secret show --id https://$kvName.vault.azure.net/secrets/$(dynatrace_token) | jq ".value" | sed -e 's/"//g')
         # delete ext for vm1
