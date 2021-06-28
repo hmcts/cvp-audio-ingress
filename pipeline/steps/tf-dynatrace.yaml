@@ -19,6 +19,7 @@ steps:
         rgName="${{ parameters.product }}-recordings-${{ parameters.env }}-rg"
         rgNameCom="${{ parameters.product }}-recordings-${{ parameters.env }}"
         kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
+        echo "our KV is here: https://$kvName.vault.azure.net/secrets/ looking for $(dynatrace_token)"
         dtToken=$(az keyvault secret show --id https://$kvName.vault.azure.net/secrets/$(dynatrace_token) | jq ".value" | sed -e 's/"//g')
         # delete ext for vm1
         az vm extension delete --subscription ${{ parameters.subscriptionName }} -g $rgName --vm-name $rgNameCom-vm1 -n oneAgentLinux || true
