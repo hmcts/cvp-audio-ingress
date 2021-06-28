@@ -101,6 +101,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   private_dns_zone_name = azurerm_private_dns_zone.blob.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
   registration_enabled  = true
+  tags = var.common_tags
 }
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
