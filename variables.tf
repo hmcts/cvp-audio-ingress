@@ -8,6 +8,11 @@ variable "env" {
   description = "The platform environment"
 }
 
+variable "environment" {
+  type = string
+  description = "The platform environment. Used as tag value"
+}
+
 variable "builtFrom" {
   type        = string
   description = "Build pipeline"
