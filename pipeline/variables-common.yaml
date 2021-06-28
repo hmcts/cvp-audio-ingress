@@ -7,5 +7,4 @@ variables:
   wowza_offer: 'wowzastreamingengine'
   product: 'cvp'
   businessArea: 'Cross-Cutting'
-  criticality: 'Low'
   application: 'Cloud Video Platform'
