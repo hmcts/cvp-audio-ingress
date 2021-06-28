@@ -67,6 +67,10 @@ stages:
               location: $(location)
               product: $(product)
               builtFrom: $(Build.Repository.Name)
+              # Manually passed in for use in scripts where resources are tagged
+              businessArea: $(businessArea)
+              criticality: $(criticality)
+              application: $(application)
 
   - stage: Wait
     dependsOn: Deploy

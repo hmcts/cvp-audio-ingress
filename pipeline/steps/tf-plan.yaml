@@ -11,6 +11,12 @@ parameters:
     type: string
   - name: builtFrom
     type: string
+  - name: businessArea
+    type: string
+  - name: criticality
+    type: string
+  - name: application
+    type: string
   - name: workingDirectory
     type: string
     default: $(system.defaultWorkingDirectory)
@@ -43,10 +49,11 @@ steps:
         echo "Logged in as oid $oid"
 
         echo "Creating Shared RG $rgName"
-        az group create --location ${{ parameters.location }} --name $rgName  --subscription ${{ parameters.subscriptionName }}
+        tags="businessArea=${{ parameters.businessArea }} criticality=${{ parameters.criticality }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
+        az group create --location ${{ parameters.location }} --name $rgName  --subscription ${{ parameters.subscriptionName }} --tags $tags
 
         echo "Creating Shared KV $kvName"
-        newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true)
+        newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
 
         echo "Grant Service connection permissions on the KV"
         az keyvault set-policy --name $kvName \
