@@ -8,9 +8,9 @@ variable "env" {
   description = "The platform environment"
 }
 
-variable "common_tags" {
-  type        = map(string)
-  description = "Tags for the Azure resources"
+variable "builtFrom" {
+  type        = string
+  description = "Build pipeline"
 }
 
 variable "product" {

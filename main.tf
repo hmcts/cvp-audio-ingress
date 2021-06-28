@@ -2,6 +2,14 @@ locals {
   rg_name      = "${var.product}-media-service-${var.env}"
   sa_name      = "${var.product}mediaservice${var.env}"
   service_name = "${var.product}mediaservice${var.env}"
+  common_tags  = module.ctags.common_tags
+}
+
+module "ctags" {
+  source      = "git::https://github.com/hmcts/terraform-module-common-tags.git?ref=master"
+  environment = var.env
+  product     = var.product
+  builtFrom   = var.builtFrom
 }
 
 module "wowza" {
@@ -9,7 +17,7 @@ module "wowza" {
   location                      = var.location
   product                       = var.product
   env                           = var.env
-  common_tags                   = var.common_tags
+  common_tags                   = local.common_tags
   admin_ssh_key_path            = var.admin_ssh_key_path
   service_certificate_kv_url    = var.service_certificate_kv_url
   key_vault_id                  = var.key_vault_id
@@ -35,4 +43,5 @@ resource "azurerm_dns_a_record" "wowza" {
   resource_group_name = var.dns_resource_group
   ttl                 = 300
   records             = [var.lb_IPaddress]
+  tags                = local.common_tags
 }
