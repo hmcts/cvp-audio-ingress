@@ -12,7 +12,7 @@ steps:
   - task: AzureCLI@2
     displayName: Add KeyVault FW Exception
     inputs:
-      azureSubscription: ${{ parameters.subscription }}
+      azureSubscription: ${{ parameters.subscriptionName }}
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
