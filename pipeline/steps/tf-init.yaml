@@ -23,7 +23,7 @@ parameters:
 
 steps:
 
-  - ${{ if eq(parameter.useBackend, true)}}:
+  - ${{ if eq(parameters.useBackend, true)}}:
     - task: TerraformCLI@0
       displayName: 'Terraform init'
       inputs:
@@ -38,7 +38,7 @@ steps:
         backendAzureRmContainerName: ${{ parameters.containerName }}
         backendAzureRmKey: '${{ parameters.locationEng }}/${{ parameters.env }}/application/01-${{ parameters.product }}-audio-ingress/terraform.tfstate'
 
-  - ${{ if eq(parameter.useBackend, false)}}:
+  - ${{ if eq(parameters.useBackend, false)}}:
     - task: TerraformCLI@0
       displayName: 'Terraform init'
       inputs:
