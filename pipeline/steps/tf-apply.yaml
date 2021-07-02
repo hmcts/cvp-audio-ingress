@@ -48,7 +48,7 @@ steps:
     inputs:
       command: 'apply'
       environmentServiceName: ${{ parameters.subscriptionName }}
-      commandOptions: '${{ parameters.env }}.tfplan -no-color -input=false'
+      commandOptions: '${{ parameters.env }}.tfplan -no-color'
 
   # - task: AzureCLI@2
   #   displayName: 'Enable Logging'
