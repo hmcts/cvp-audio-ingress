@@ -23,11 +23,7 @@ steps:
 
   - template: tf-init.yaml
     parameters:
-      subscriptionName: $(subscriptionName)
-      product: $(product)
-      locationEng: $(locationEng)
-      location: $(location)
-      env: $(env)
+      useBackend: true
 
   - task: AzureCLI@2
     displayName: Accept Terms of Wowza VM in Marketplace
@@ -52,7 +48,7 @@ steps:
     inputs:
       command: 'apply'
       environmentServiceName: ${{ parameters.subscriptionName }}
-      commandOptions: '${{ parameters.env }}.tfplan -no-color'
+      commandOptions: '${{ parameters.env }}.tfplan -no-color -input=false'
 
   # - task: AzureCLI@2
   #   displayName: 'Enable Logging'
