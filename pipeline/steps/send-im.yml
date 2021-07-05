@@ -15,8 +15,8 @@ parameters:
       - ':sos:'
       - ':speech_balloon:'
   - name: conditionAction
-    type: boolean
-    default: true
+    type: string
+    default: 'true'
 
 steps:
   - powershell: | 
@@ -33,4 +33,4 @@ steps:
       Invoke-WebRequest -Method Post -Uri $Url -Body $body -ContentType 'application/json'
       Write-Host "Message has been sent"
     displayName: 'Send Slack Message'
-    condition: eq(parameters.conditionAction, true)
+    condition: eq(parameters.conditionAction, 'true')

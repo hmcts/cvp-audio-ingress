@@ -106,4 +106,4 @@ stages:
               title: "Terraform Changes in ${{parameters.env}}"
               message: "$(terraChanges.msg)"
               emojiIcon: ":heavy_exclamation_mark:"
-              conditionAction: eq(terraChanges.sendMsg, 'true')
+              conditionAction: '$(terraChanges.sendMsg)'
