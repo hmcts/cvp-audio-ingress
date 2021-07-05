@@ -76,5 +76,5 @@ steps:
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Terraform Plan'
     inputs:
-      targetPath: '${{ parameters.workingDirectory }}/${{ parameters.env }}.tfplan'
-      artifact: ${{ parameters.env }}.tfplan
+      targetPath: '${{ parameters.workingDirectory }}/${{ parameters.env }}.${{parameters.planExtention}}'
+      artifact: ${{ parameters.env }}.${{parameters.planExtention}}
