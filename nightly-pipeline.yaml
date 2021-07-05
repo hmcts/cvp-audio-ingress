@@ -98,7 +98,7 @@ stages:
             name: 'terraChanges'
             displayName: 'Validate any changes'
           
-          - ${{ if eq(terraChanges.sendMsg, 'true') }}:
+          - ${{ if eq($(terraChanges.sendMsg), 'true') }}:
             - template: pipeline/steps/send-im.yml
               parameters:
                 hookUrl:
