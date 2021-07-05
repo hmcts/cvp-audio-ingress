@@ -1,7 +1,11 @@
-trigger:
-  - master
-pr:
-  - master
+trigger: none
+schedules:
+- cron: '0 1 * * *'
+  displayName: 'daily run'
+  branches:
+    include: [ 'refs/heads/master' ]
+  always: true
+
 parameters:
   - name: env
     displayName: Environment to Deploy to
@@ -61,37 +65,22 @@ stages:
               # Manually passed in for use in scripts where resources are tagged
               businessArea: $(businessArea)
               application: $(application)
-
-  - stage: Wait
+              additionalTerraformCommands: "-json"
+  
+  - stage: Validate
     dependsOn: Plan
     jobs:
-      - job: waitForValidation
-        displayName: 'Wait for external validation'
-        pool: server
-        timeoutInMinutes: 4320 # job times out in 3 days
-        steps:
-        - task: ManualValidation@0
-          timeoutInMinutes: 1440 # task times out in 1 day
-          inputs:
-            instructions: 'Please validate the Terraform Plan for PROD environment to resume'
-            onTimeout: 'reject'
+      - job: ValidateChanges
+        displayName: 'Validate outstanding changes'
+        steps: 
+          - download: current
+            artifact: '${{ parameters.env }}.tfplan'
+            displayName: 'Download ${{ parameters.env }} Plan file'
+            
+          - powershell: |
+              $planObj = Get-Content ${{parameters.planLocation}} | ConvertFrom-Json
 
-  - stage: Apply
-    dependsOn:
-    - Build
-    - Wait
-    jobs:
-      - job: ApplytoEnv
-        displayName: 'Apply to ${{parameters.env}}'
-        steps:
-          - template: pipeline/steps/tf-apply.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
-
-          - template: pipeline/steps/az-dynatrace.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
-              location: $(location)
-              product: $(product)
+              $addChanges = $planObj.changes.add
+              $changeChanges = $planObj.changes.change
+              $removeChanges = $planObj.changes.remove
+              Write-Host "There are $addChanges to add, $changeChanges to change, $removeChanges to remove"
