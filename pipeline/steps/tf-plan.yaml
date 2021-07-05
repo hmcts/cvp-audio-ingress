@@ -70,11 +70,11 @@ steps:
         -var "ws_name=$(ws_name)"
         -var "ws_rg=$(ws_rg)"
         -var "ws_sub_id=$(ws_sub_id)"
-        -out="${{ parameters.env }}.${{parameters.planExtention}}" -no-color -input=false ${{parameters.additionalTerraformCommands}}
-#      publishPlanResults: ${{ parameters.env }}.${{parameters.planExtention}}
+        -out="${{ parameters.env }}.tfplan" -no-color -input=false
+#      publishPlanResults: ${{ parameters.env }}.tfplan
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Terraform Plan'
     inputs:
-      targetPath: '${{ parameters.workingDirectory }}/${{ parameters.env }}.${{parameters.planExtention}}'
-      artifact: ${{ parameters.env }}.${{parameters.planExtention}}
+      targetPath: '${{ parameters.workingDirectory }}/${{ parameters.env }}.tfplan'
+      artifact: ${{ parameters.env }}.tfplan
