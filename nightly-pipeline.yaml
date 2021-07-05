@@ -65,8 +65,6 @@ stages:
               # Manually passed in for use in scripts where resources are tagged
               businessArea: $(businessArea)
               application: $(application)
-              additionalTerraformCommands: "-json"
-              planExtention: 'json'
   
   - stage: Validate
     dependsOn: Plan
@@ -82,10 +80,10 @@ stages:
           - template: pipeline/steps/tf-show.yml
             parameters: 
               planOrStateFilePath: "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan"
-              outputLocation: "$(Pipeline.Workspace)/output/${{ parameters.env }}.json"
+              outputLocation: "$(Pipeline.Workspace)/${{ parameters.env }}.json"
           - powershell: |
               $environment = "${{parameters.env}}"
-              $planObj = Get-Content "$(Pipeline.Workspace)/output/${{ parameters.env }}.json" | ConvertFrom-Json
+              $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json" | ConvertFrom-Json
               $resourceChanges = $planObj.resource_changes
 
               $addChanges = ($resourceChanges | Where {$_.change.actions -contains "create"}).length
