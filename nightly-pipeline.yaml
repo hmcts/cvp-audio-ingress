@@ -81,6 +81,7 @@ stages:
             parameters: 
               planOrStateFilePath: "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan"
               outputLocation: "$(Pipeline.Workspace)/${{ parameters.env }}.json"
+              
           - powershell: |
               $environment = "${{parameters.env}}"
               $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json" | ConvertFrom-Json

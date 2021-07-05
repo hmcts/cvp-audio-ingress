@@ -11,12 +11,13 @@ steps:
       useBackend: true
 
   - task: TerraformCLI@0
+    displayName: 'Terraform Show '
     inputs:
       command: 'show'
       workingDirectory: '$(System.DefaultWorkingDirectory)'
       commandOptions: '-json -no-color'
       allowTelemetryCollection: true
-      inputTargetPlanOrStateFilePath: '${{parameters.planOrStateFilePath}} > $outputlocation'
+      inputTargetPlanOrStateFilePath: '${{parameters.planOrStateFilePath}} > ${{parameters.outputLocation}}'
 
   #- powershell: |
   #    $outputlocation = "${{parameters.outputLocation}}"
