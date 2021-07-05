@@ -1,4 +1,4 @@
-paramters:
+parameters:
   - name: planOrStateFilePath
     type: string
   - name: outputLocation
