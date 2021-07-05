@@ -71,16 +71,36 @@ stages:
     dependsOn: Plan
     jobs:
       - job: ValidateChanges
-        displayName: 'Validate outstanding changes'
+        displayName: 'Validate outstanding Terraform changes'
         steps: 
           - download: current
             artifact: '${{ parameters.env }}.tfplan'
             displayName: 'Download ${{ parameters.env }} Plan file'
-            
+
           - powershell: |
-              $planObj = Get-Content ${{parameters.planLocation}} | ConvertFrom-Json
+              $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan.json" | ConvertFrom-Json
 
               $addChanges = $planObj.changes.add
               $changeChanges = $planObj.changes.change
               $removeChanges = $planObj.changes.remove
-              Write-Host "There are $addChanges to add, $changeChanges to change, $removeChanges to remove"
+
+              $msg = "There are $addChanges to add, $changeChanges to change, $removeChanges to remove in the ${{parameters.env}} Environment on CVP Audio Ingress"
+              Write-Host $msg
+
+              $sendMsg = (&{If($addChanges -gt 0 -or $changeChanges -gt 0 -or $removeChanges -gt 0) {"true"} Else {"false"}})
+
+              $icon = (&{If("${{parameters.env}}" -eq 'prod' ) {":bangbang:"} Else {":heavy_exclamation_mark:"}})
+
+              Write-Host "##vso[task.setvariable variable=sendMsg]$sendMsg"
+              Write-Host "##vso[task.setvariable variable=msg]$msg"
+              Write-Host "##vso[task.setvariable variable=icon]$icon"
+            name: 'terraChanges'
+            displayName: 'Validate any changes'
+          
+          - template: pipeline/steps/send-im.yml
+            condition: and(succeeded(), eq(terraChanges.sendMsg, 'true'))
+            parameters:
+              hookUrl:
+              username:
+              message: "$(terraChanges.msg)"
+              emojiIcon: "$(terraChanges.icon)"

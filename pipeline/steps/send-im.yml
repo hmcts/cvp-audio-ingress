@@ -1,0 +1,32 @@
+paramters:
+  - name: hookUrl
+    type: string
+  - name: username
+    type: string
+  - name: message
+    type: string
+  - name: emojiIcon
+    type: string
+    default: ':speech_balloon:'
+    values:
+      - ':heavy_exclamation_mark:'
+      - ':bangbang:'
+      - ':white_check_mark:'
+      - ':sos:'
+      - ':speech_balloon:'
+
+steps:
+  - powershell: | 
+      Write-Host "Sending slack message for BUILD: $($env:BUILD_BUILDID)"
+
+      $Url = "${{parameters.hookUrl}}"
+      $body= @"
+        {
+            "username": "${{parameters.username}}",
+            "text": "${{parameters.message}}",
+            "icon_emoji":"${{parameters.emojiIcon}}"
+        }"@
+
+      Invoke-WebRequest -Method Post -Uri $Url -Body $body -ContentType 'application/json'
+      Write-Host "Message has been sent"
+    displayName: 'Send Slack Message'
