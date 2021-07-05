@@ -95,11 +95,8 @@ stages:
 
               $sendMsg = (&{If($addChanges -gt 0 -or $changeChanges -gt 0 -or $removeChanges -gt 0) {"true"} Else {"false"}})
 
-              $icon = (&{If($environment -eq 'prod' ) {":bangbang:"} Else {":heavy_exclamation_mark:"}})
-
               Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$sendMsg"
               Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
-              Write-Host "##vso[task.setvariable variable=icon;isOutput=true]$icon"
             name: 'terraChanges'
             displayName: 'Validate any changes'
           
@@ -108,5 +105,5 @@ stages:
               hookUrl: ${{variables.slackWebHook}}
               title: "Terraform Changes in ${{parameters.env}}"
               message: "$(terraChanges.msg)"
-              emojiIcon: "$(terraChanges.icon)"
+              emojiIcon: ":heavy_exclamation_mark:"
               conditionAction: eq(terraChanges.sendMsg, 'true')
