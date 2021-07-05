@@ -10,19 +10,19 @@ steps:
     parameters:
       useBackend: true
 
-  - task: TerraformCLI@0
-    displayName: 'Terraform Show '
-    inputs:
-      command: 'show'
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
-      commandOptions: '-json -no-color'
-      allowTelemetryCollection: true
-      inputTargetPlanOrStateFilePath: '${{parameters.planOrStateFilePath}} > ${{parameters.outputLocation}}'
+  #- task: TerraformCLI@0
+  #  displayName: 'Terraform Show '
+  #  inputs:
+  #    command: 'show'
+  #    workingDirectory: '$(System.DefaultWorkingDirectory)'
+  #    commandOptions: '-json -no-color'
+  #    allowTelemetryCollection: true
+  #    inputTargetPlanOrStateFilePath: '${{parameters.planOrStateFilePath}} > ${{parameters.outputLocation}}'
 
-  #- powershell: |
-  #    $outputlocation = "${{parameters.outputLocation}}"
-  #    if ($outputlocation -eq "") {
-  #      terraform show ${{parameters.planOrStateFilePath}}
-  #    } else {
-  #      terraform show -json -no-color ${{parameters.planOrStateFilePath}} > $outputlocation
- #     }
+  - powershell: |
+      $outputlocation = "${{parameters.outputLocation}}"
+      if ($outputlocation -eq "") {
+        terraform show ${{parameters.planOrStateFilePath}}
+      } else {
+        terraform show -json -no-color ${{parameters.planOrStateFilePath}} > $outputlocation
+      }
