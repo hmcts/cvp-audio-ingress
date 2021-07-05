@@ -3,7 +3,6 @@ parameters:
     type: string
   - name: outputLocation
     type: string
-    default: ''
 
 steps:
 
@@ -11,10 +10,18 @@ steps:
     parameters:
       useBackend: true
 
-  - powershell: |
-      $outputlocation = "${{parameters.outputLocation}}"
-      if ($outputlocation -eq "") {
-        terraform show ${{parameters.planOrStateFilePath}}
-      } else {
-        terraform show -json -no-color ${{parameters.planOrStateFilePath}} > $outputlocation
-      }
+  - task: TerraformCLI@0
+    inputs:
+      command: 'show'
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      commandOptions: '-json -no-color'
+      allowTelemetryCollection: true
+      inputTargetPlanOrStateFilePath: '${{parameters.planOrStateFilePath}} > $outputlocation'
+
+  #- powershell: |
+  #    $outputlocation = "${{parameters.outputLocation}}"
+  #    if ($outputlocation -eq "") {
+  #      terraform show ${{parameters.planOrStateFilePath}}
+  #    } else {
+  #      terraform show -json -no-color ${{parameters.planOrStateFilePath}} > $outputlocation
+ #     }
