@@ -103,10 +103,10 @@ stages:
             name: 'terraChanges'
             displayName: 'Validate any changes'
           
-          - ${{ if eq(variables['sendMsg'], 'true') }}:
-            - template: pipeline/steps/send-im.yml
-              parameters:
-                hookUrl: ${{variables.slackWebHook}}
-                title: "Terraform Changes in ${{parameters.env}}"
-                message: "$(terraChanges.msg)"
-                emojiIcon: "$(terraChanges.icon)"
+          - template: pipeline/steps/send-im.yml
+            parameters:
+              hookUrl: ${{variables.slackWebHook}}
+              title: "Terraform Changes in ${{parameters.env}}"
+              message: "$(terraChanges.msg)"
+              emojiIcon: "$(terraChanges.icon)"
+              conditionAction: eq(terraChanges.sendMsg, 'true')
