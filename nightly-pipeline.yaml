@@ -92,16 +92,16 @@ stages:
 
               $icon = (&{If("${{parameters.env}}" -eq 'prod' ) {":bangbang:"} Else {":heavy_exclamation_mark:"}})
 
-              Write-Host "##vso[task.setvariable variable=sendMsg]$sendMsg"
-              Write-Host "##vso[task.setvariable variable=msg]$msg"
-              Write-Host "##vso[task.setvariable variable=icon]$icon"
+              Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$sendMsg"
+              Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
+              Write-Host "##vso[task.setvariable variable=icon;isOutput=true]$icon"
             name: 'terraChanges'
             displayName: 'Validate any changes'
           
-          - ${{ if eq($(terraChanges.sendMsg), 'true') }}:
+          - ${{ if eq(sendMsg, 'true') }}:
             - template: pipeline/steps/send-im.yml
               parameters:
                 hookUrl:
                 username:
-                message: "$(terraChanges.msg)"
-                emojiIcon: "$(terraChanges.icon)"
+                message: "$(msg)"
+                emojiIcon: "$(icon)"
