@@ -1,7 +1,7 @@
 paramters:
   - name: hookUrl
     type: string
-  - name: username
+  - name: title
     type: string
   - name: message
     type: string
@@ -22,7 +22,7 @@ steps:
       $Url = "${{parameters.hookUrl}}"
       $body= @"
         {
-            "username": "${{parameters.username}}",
+            "pretext": "${{parameters.title}}",
             "text": "${{parameters.message}}",
             "icon_emoji":"${{parameters.emojiIcon}}"
         }"@

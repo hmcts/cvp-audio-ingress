@@ -1,0 +1,20 @@
+paramters:
+  - name: planOrStateFilePath
+    type: string
+  - name: outputLocation
+    type: string
+    default: ''
+
+steps:
+
+  - template: tf-init.yaml
+    parameters:
+      useBackend: true
+
+  - powershell: |
+      $outputlocation = "${{parameters.outputLocation}}"
+      if ($outputlocation -eq "") {
+        terraform show ${{parameters.planOrStateFilePath}}
+      } else {
+        terraform show -json -no-color ${{parameters.planOrStateFilePath}} > $outputlocation
+      }

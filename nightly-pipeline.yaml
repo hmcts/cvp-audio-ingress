@@ -79,19 +79,25 @@ stages:
             artifact: '${{ parameters.env }}.tfplan'
             displayName: 'Download ${{ parameters.env }} Plan file'
 
+          - template: pipeline/steps/tf-show.yml
+            parameters: 
+              planOrStateFilePath: "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan"
+              outputLocation: "$(Pipeline.Workspace)/output/${{ parameters.env }}.json"
           - powershell: |
-              $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json/${{ parameters.env }}.json" | ConvertFrom-Json
+              $environment = "${{parameters.env}}"
+              $planObj = Get-Content "$(Pipeline.Workspace)/output/${{ parameters.env }}.json" | ConvertFrom-Json
+              $resourceChanges = $planObj.resource_changes
 
-              $addChanges = $planObj.changes.add
-              $changeChanges = $planObj.changes.change
-              $removeChanges = $planObj.changes.remove
+              $addChanges = ($resourceChanges | Where {$_.change.actions -contains "create"}).length
+              $changeChanges = ($resourceChanges | Where {$_.change.actions -contains "update"}).length
+              $removeChanges = ($resourceChanges | Where {$_.change.actions -contains "delete"}).length
 
-              $msg = "There are $addChanges to add, $changeChanges to change, $removeChanges to remove in the ${{parameters.env}} Environment on CVP Audio Ingress"
+              $msg = "There are " + $resourceChanges.length + " ($addChanges to add, $changeChanges to change, $removeChanges to remove) in the $environment Environment on CVP Audio Ingress"
               Write-Host $msg
 
               $sendMsg = (&{If($addChanges -gt 0 -or $changeChanges -gt 0 -or $removeChanges -gt 0) {"true"} Else {"false"}})
 
-              $icon = (&{If("${{parameters.env}}" -eq 'prod' ) {":bangbang:"} Else {":heavy_exclamation_mark:"}})
+              $icon = (&{If($environment -eq 'prod' ) {":bangbang:"} Else {":heavy_exclamation_mark:"}})
 
               Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$sendMsg"
               Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
@@ -102,7 +108,7 @@ stages:
           - ${{ if eq(variables['terraChanges.sendMsg'], 'true') }}:
             - template: pipeline/steps/send-im.yml
               parameters:
-                hookUrl:
-                username:
+                hookUrl: ${{variables.slackWebHook}}
+                title: "Terraform Changes in ${{parameters.env}}"
                 message: "$(terraChanges.msg)"
                 emojiIcon: "$(terraChanges.icon)"
