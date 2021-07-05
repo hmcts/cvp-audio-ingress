@@ -21,6 +21,12 @@ parameters:
   - name: additionalTerraformCommands
     type: string
     default: ''
+  - name: planExtention
+    type: string
+    default: 'tfplan'
+    values:
+      - tfplan
+      - json
 
 steps:
   - template: az-shared-config.yml
@@ -64,8 +70,8 @@ steps:
         -var "ws_name=$(ws_name)"
         -var "ws_rg=$(ws_rg)"
         -var "ws_sub_id=$(ws_sub_id)"
-        -out="${{ parameters.env }}.tfplan" -no-color -input=false ${{parameters.additionalTerraformCommands}}
-#      publishPlanResults: ${{ parameters.env }}.tfplan
+        -out="${{ parameters.env }}.${{parameters.planExtention}}" -no-color -input=false ${{parameters.additionalTerraformCommands}}
+#      publishPlanResults: ${{ parameters.env }}.${{parameters.planExtention}}
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Terraform Plan'

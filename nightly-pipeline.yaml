@@ -66,6 +66,7 @@ stages:
               businessArea: $(businessArea)
               application: $(application)
               additionalTerraformCommands: "-json"
+              planExtention: 'json'
   
   - stage: Validate
     dependsOn: Plan
@@ -79,7 +80,7 @@ stages:
             displayName: 'Download ${{ parameters.env }} Plan file'
 
           - powershell: |
-              $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan.json" | ConvertFrom-Json
+              $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json/${{ parameters.env }}.json" | ConvertFrom-Json
 
               $addChanges = $planObj.changes.add
               $changeChanges = $planObj.changes.change
