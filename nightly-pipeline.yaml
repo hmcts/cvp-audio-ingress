@@ -73,6 +73,7 @@ stages:
       - job: ValidateChanges
         displayName: 'Validate outstanding Terraform changes'
         steps: 
+          - checkout: none
           - download: current
             artifact: '${{ parameters.env }}.tfplan'
             displayName: 'Download ${{ parameters.env }} Plan file'
