@@ -1,4 +1,4 @@
-paramters:
+parameters:
   - name: hookUrl
     type: string
   - name: title
