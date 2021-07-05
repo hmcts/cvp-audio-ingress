@@ -98,10 +98,10 @@ stages:
             name: 'terraChanges'
             displayName: 'Validate any changes'
           
-          - ${{ if eq(sendMsg, 'true') }}:
+          - ${{ if eq(variables['terraChanges.sendMsg'], 'true') }}:
             - template: pipeline/steps/send-im.yml
               parameters:
                 hookUrl:
                 username:
-                message: "$(msg)"
-                emojiIcon: "$(icon)"
+                message: "$(terraChanges.msg)"
+                emojiIcon: "$(terraChanges.icon)"
