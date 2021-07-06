@@ -3,7 +3,8 @@ schedules:
 - cron: '0 1 * * *'
   displayName: 'daily run'
   branches:
-    include: [ 'refs/heads/master' ]
+    include: 
+      - master
   always: true
 
 parameters:
@@ -11,7 +12,7 @@ parameters:
     displayName: Environments
     type: object
     values: []
-    default: ['sbox']
+    default: ['sbox', 'stg', 'prod']
 
 
 
