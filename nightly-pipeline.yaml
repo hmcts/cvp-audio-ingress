@@ -41,7 +41,7 @@ stages:
         - template: pipeline/variables-${{env}}.yaml
         - group: cvp-${{env}}
       jobs:
-        - job: PlanToEnv
+        - job: PlanToEnv${{env}}
           displayName: 'Plan to ${{env}}'
           steps:
 
@@ -70,7 +70,7 @@ stages:
         - template: pipeline/variables-${{env}}.yaml
         - group: cvp-${{env}}
       jobs:
-        - job: ValidateChanges
+        - job: ValidateChanges${{env}}
           displayName: '${{env}} Terraform changes'
           steps: 
             - download: current
