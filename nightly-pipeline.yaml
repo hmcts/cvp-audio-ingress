@@ -6,7 +6,7 @@ schedules:
     include: [ 'refs/heads/master' ]
   always: true
 
-variables:
+parameters:
   - name: envs
     displayName: Environments
     type: object
@@ -32,7 +32,7 @@ stages:
           - script: terraform fmt -check=true
             displayName: Check Formatting
 
-  - ${{each env in variables.envs}}:
+  - ${{each env in parameters.envs}}:
     - stage: 'Plan${{env}}'
       displayName: 'Plan ${{env}}'
       dependsOn: Build
@@ -61,7 +61,7 @@ stages:
                 businessArea: $(businessArea)
                 application: $(application)
   
-  - ${{each env in variables.envs}}:
+  - ${{each env in parameters.envs}}:
     - stage: 'Validate${{env}}'
       displayName: 'Validate ${{env}}'
       dependsOn: 'Plan${{env}}'
