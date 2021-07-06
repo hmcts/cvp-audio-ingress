@@ -86,6 +86,11 @@ stages:
               parameters: 
                 planOrStateFilePath: "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan"
                 outputLocation: "$(Pipeline.Workspace)/${{ parameters.env }}.json"
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+                location: ${{variables.location}}
+                locationEng: ${{variables.locationEng}}
+                product: ${{variables.product}}
 
             - task: PowerShell@2
               name: 'terraChanges'
