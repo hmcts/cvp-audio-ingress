@@ -6,25 +6,14 @@ schedules:
     include: [ 'refs/heads/master' ]
   always: true
 
-parameters:
-  - name: env
-    displayName: Environment to Deploy to
-    type: string
-    default: sbox
-    values:
-      - sbox
-      - stg
-      - prod
-
 variables:
-  - template: pipeline/variables-common.yaml
-  - ${{ if ne(parameters.env, 'prod') }}:
-    - template: pipeline/variables-${{parameters.env}}.yaml
-    - group: cvp-${{parameters.env}}
-  - ${{ if and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod')) }}:
-    # Production (prod)
-    - template: pipeline/variables-prod.yaml
-    - group: cvp-prod
+  - name: envs
+    displayName: Environments
+    type: object
+    values: []
+    default: ['sbox']
+
+
 
 stages:
   - stage: Build
@@ -43,72 +32,84 @@ stages:
           - script: terraform fmt -check=true
             displayName: Check Formatting
 
-  - stage: Plan
-    dependsOn: Build
-    jobs:
-      - job: PlanToEnv
-        displayName: 'Plan to ${{parameters.env}}'
-        steps:
+  - ${{each env in variables.envs}}:
+    - stage: 'Plan${{env}}'
+      displayName: 'Plan ${{env}}'
+      dependsOn: Build
+      variables:
+        - template: pipeline/variables-common.yaml
+        - template: pipeline/variables-${{env}}.yaml
+        - group: cvp-${{env}}
+      jobs:
+        - job: PlanToEnv
+          displayName: 'Plan to ${{env}}'
+          steps:
 
-          - template: pipeline/steps/tf-init.yaml
-            parameters:
-              useBackend: true
+            - template: pipeline/steps/tf-init.yaml
+              parameters:
+                useBackend: true
 
-          - template: pipeline/steps/tf-plan.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
-              certName: $(certName)
-              location: $(location)
-              product: $(product)
-              builtFrom: $(Build.Repository.Name)
-              # Manually passed in for use in scripts where resources are tagged
-              businessArea: $(businessArea)
-              application: $(application)
+            - template: pipeline/steps/tf-plan.yaml
+              parameters:
+                subscriptionName: $(subscriptionName)
+                env: $(env)
+                certName: $(certName)
+                location: $(location)
+                product: $(product)
+                builtFrom: $(Build.Repository.Name)
+                # Manually passed in for use in scripts where resources are tagged
+                businessArea: $(businessArea)
+                application: $(application)
   
-  - stage: Validate
-    dependsOn: Plan
-    jobs:
-      - job: ValidateChanges
-        displayName: 'Validate outstanding Terraform changes'
-        steps: 
-          - download: current
-            artifact: '${{ parameters.env }}.tfplan'
-            displayName: 'Download ${{ parameters.env }} Plan file'
+  - ${{each env in variables.envs}}:
+    - stage: 'Validate${{env}}'
+      displayName: 'Validate ${{env}}'
+      dependsOn: 'Plan${{env}}'
+      variables:
+        - template: pipeline/variables-common.yaml
+        - template: pipeline/variables-${{env}}.yaml
+        - group: cvp-${{env}}
+      jobs:
+        - job: ValidateChanges
+          displayName: '${{env}} Terraform changes'
+          steps: 
+            - download: current
+              artifact: '${{ parameters.env }}.tfplan'
+              displayName: 'Download ${{ parameters.env }} Plan file'
 
-          - template: pipeline/steps/tf-show.yml
-            parameters: 
-              planOrStateFilePath: "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan"
-              outputLocation: "$(Pipeline.Workspace)/${{ parameters.env }}.json"
+            - template: pipeline/steps/tf-show.yml
+              parameters: 
+                planOrStateFilePath: "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan"
+                outputLocation: "$(Pipeline.Workspace)/${{ parameters.env }}.json"
 
-          - task: PowerShell@2
-            name: 'terraChanges'
-            displayName: 'Validate any changes'
-            inputs:
-              targetType: 'inline'
-              script: |
-                $environment = "${{parameters.env}}"
-                $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json" | ConvertFrom-Json
-                $resourceChanges = $planObj.resource_changes
+            - task: PowerShell@2
+              name: 'terraChanges'
+              displayName: 'Validate any changes'
+              inputs:
+                targetType: 'inline'
+                script: |
+                  $environment = "${{env}}"
+                  $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json" | ConvertFrom-Json
+                  $resourceChanges = $planObj.resource_changes
 
-                $addChanges = ($resourceChanges | Where {$_.change.actions -contains "create"}).length
-                $changeChanges = ($resourceChanges | Where {$_.change.actions -contains "update"}).length
-                $removeChanges = ($resourceChanges | Where {$_.change.actions -contains "delete"}).length
-                $totalChanges = $addChanges + $changeChanges + $removeChanges
+                  $addChanges = ($resourceChanges | Where {$_.change.actions -contains "create"}).length
+                  $changeChanges = ($resourceChanges | Where {$_.change.actions -contains "update"}).length
+                  $removeChanges = ($resourceChanges | Where {$_.change.actions -contains "delete"}).length
+                  $totalChanges = $addChanges + $changeChanges + $removeChanges
 
-                $msg = "There are $totalChanges ($addChanges to add, $changeChanges to change, $removeChanges to remove) in the $environment Environment on CVP Audio Ingress"
-                Write-Host $msg
+                  $msg = "There are $totalChanges ($addChanges to add, $changeChanges to change, $removeChanges to remove) in the $environment Environment on CVP Audio Ingress"
+                  Write-Host $msg
 
-                $sendMsg = (&{If($addChanges -gt 0 -or $changeChanges -gt 0 -or $removeChanges -gt 0) {"true"} Else {"false"}})
-                Write-Host "Should send message: $sendMsg"
+                  $sendMsg = (&{If($addChanges -gt 0 -or $changeChanges -gt 0 -or $removeChanges -gt 0) {"true"} Else {"false"}})
+                  Write-Host "Should send message: $sendMsg"
 
-                Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$sendMsg"
-                Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
-          
-          - template: pipeline/steps/send-im.yml
-            parameters:
-              hookUrl: ${{variables.slackWebHook}}
-              title: "Terraform Changes in ${{parameters.env}}"
-              message: "$(terraChanges.msg)"
-              emojiIcon: ":heavy_exclamation_mark:"
-              conditionAction: $(terraChanges.sendMsg)
+                  Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$sendMsg"
+                  Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
+            
+            - template: pipeline/steps/send-im.yml
+              parameters:
+                hookUrl: ${{variables.slackWebHook}}
+                title: "Terraform Changes in ${{env}}"
+                message: "$(terraChanges.msg)"
+                emojiIcon: ":heavy_exclamation_mark:"
+                conditionAction: $(terraChanges.sendMsg)
