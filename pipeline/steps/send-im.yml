@@ -22,7 +22,11 @@ steps:
         $conditionAction = "${{ parameters.conditionAction }}"
         Write-Host "Should send message $conditionAction"
         $logicAppUrl = "${{parameters.logicAppUrl}}"
+        Write-Host "Logic App URL: $logicAppUrl"
         if ($conditionAction -eq 'true' -and $logicAppUrl -ne '') {
+          $title = "${{parameters.title}}"
+          $message = "${{parameters.message}}"
+          $schemaId = "${{parameters.schemaId}}"
 
           $body = @{
               schemaId = "$schemaId"
