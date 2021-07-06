@@ -20,32 +20,32 @@ parameters:
 
 steps:
   - powershell: | 
-      $verrepo = "${{ parameters.conditionAction }}"
-      Write-Host "I got $verrepo"
+      $conditionAction = "${{ parameters.conditionAction }}"
+      Write-Host "Should send slack $conditionAction"
+      if ($conditionAction -eq 'true') {
+        Write-Host "Sending slack message"
 
-      Write-Host "Sending slack message"
+        $url = "${{parameters.hookUrl}}"
+        $title = "${{parameters.title}}"
+        $message = "${{parameters.message}}"
+        $emojiIcon = "${{parameters.emojiIcon}}"
 
-      $url = "${{parameters.hookUrl}}"
-      $title = "${{parameters.title}}"
-      $message = "${{parameters.message}}"
-      $emojiIcon = "${{parameters.emojiIcon}}"
+        try {
 
-      try {
+            $body = 
+            {
+                pretext= "$title",
+                text= "$message",
+                icon_emoji="$emojiIcon"
+            }
 
-          $body = 
-          {
-              pretext= "$title",
-              text= "$message",
-              icon_emoji="$emojiIcon"
-          }
-
-          Invoke-WebRequest -Method Post -Uri $url -Body ($body | ConvertTo-Json) -ContentType 'application/json'
-          Write-Host "Message has been sent"
-      }
-      catch
-      {
-          Write-Host "failed: $_"
-          Write-Host  "##vso[task.LogIssue type=error;]$_."
+            Invoke-WebRequest -Method Post -Uri $url -Body ($body | ConvertTo-Json) -ContentType 'application/json'
+            Write-Host "Message has been sent"
+        }
+        catch
+        {
+            Write-Host "failed: $_"
+            Write-Host  "##vso[task.LogIssue type=error;]$_."
+        }
       }
     displayName: 'Send Slack Message'
-    condition: eq(${{ parameters.conditionAction }}, 'true')
