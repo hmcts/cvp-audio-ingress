@@ -106,6 +106,6 @@ stages:
             parameters:
               hookUrl: ${{variables.slackWebHook}}
               title: "Terraform Changes in ${{parameters.env}}"
-              message: "$(terraChanges.msg)"
+              message: "$(msg)"
               emojiIcon: ":heavy_exclamation_mark:"
-              conditionAction: '$(terraChanges.sendMsg)'
+              conditionAction: '$(sendMsg)'
