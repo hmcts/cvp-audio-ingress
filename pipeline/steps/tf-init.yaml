@@ -1,28 +1,46 @@
 parameters:
   - name: subscriptionName
     type: string
+    default: $(subscriptionName)
   - name: product
     type: string
+    default: $(product)
   - name: locationEng
     type: string
+    default: $(locationEng)
   - name: location
     type: string
+    default: $(location)
   - name: env
     type: string
+    default: $(env)
   - name: containerName
     type: string
     default: 'terraform-state'
+  - name: useBackend
+    type: boolean
+    default: false
 
 steps:
 
-  - task: TerraformCLI@0
-    inputs:
-      command: 'init'
-      backendType: 'azurerm'
-      backendServiceArm: '${{ parameters.subscriptionName }}'
-      ensureBackend: true
-      backendAzureRmResourceGroupName: "${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
-      backendAzureRmResourceGroupLocation: ${{ parameters.location }}
-      backendAzureRmStorageAccountName: '${{ parameters.product }}${{ parameters.env }}terraform'
-      backendAzureRmContainerName: ${{ parameters.containerName }}
-      backendAzureRmKey: '${{ parameters.locationEng }}/${{ parameters.env }}/application/01-${{ parameters.product }}-audio-ingress/terraform.tfstate'
+  - ${{ if eq(parameters.useBackend, true)}}:
+    - task: TerraformCLI@0
+      displayName: 'Terraform init'
+      inputs:
+        command: 'init'
+        commandOptions: '-input=false'
+        backendType: 'azurerm'
+        backendServiceArm: '${{ parameters.subscriptionName }}'
+        ensureBackend: true
+        backendAzureRmResourceGroupName: "${{ parameters.product }}-sharedinfra-${{ parameters.env }}"
+        backendAzureRmResourceGroupLocation: ${{ parameters.location }}
+        backendAzureRmStorageAccountName: '${{ parameters.product }}${{ parameters.env }}terraform'
+        backendAzureRmContainerName: ${{ parameters.containerName }}
+        backendAzureRmKey: '${{ parameters.locationEng }}/${{ parameters.env }}/application/01-${{ parameters.product }}-audio-ingress/terraform.tfstate'
+
+  - ${{ if eq(parameters.useBackend, false)}}:
+    - task: TerraformCLI@0
+      displayName: 'Terraform init'
+      inputs:
+        command: 'init'
+        commandOptions: '-backend=false -input=false'

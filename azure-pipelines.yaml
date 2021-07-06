@@ -4,7 +4,7 @@ pr:
   - master
 parameters:
   - name: env
-    displayName: Env
+    displayName: Environment to Deploy to
     type: string
     default: sbox
     values:
@@ -14,14 +14,9 @@ parameters:
 
 variables:
   - template: pipeline/variables-common.yaml
-  - ${{ if eq(parameters.env, 'sbox') }}:
-    # Sandbox (sbox)
-    - template: pipeline/variables-sbox.yaml
-    - group: cvp-sbox
-  - ${{ if eq(parameters.env, 'stg') }}:
-    # Staging (stg)
-    - template: pipeline/variables-stg.yaml
-    - group: cvp-stg
+  - ${{ if ne(parameters.env, 'prod') }}:
+    - template: pipeline/variables-${{parameters.env}}.yaml
+    - group: cvp-${{parameters.env}}
   - ${{ if and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod')) }}:
     # Production (prod)
     - template: pipeline/variables-prod.yaml
@@ -33,10 +28,9 @@ stages:
       - job: BasicValidation
         steps:
           - template: pipeline/steps/tf-install.yaml
-          - task: TerraformCLI@0
-            inputs:
-              command: 'init'
-              commandOptions: '-backend=false'
+          - template: pipeline/steps/tf-init.yaml
+            parameters:
+              useBackend: false
           - task: TerraformCLI@0
             displayName: Validate Terraform
             inputs:
@@ -49,15 +43,12 @@ stages:
     dependsOn: Build
     jobs:
       - job: DeployToEnv
+        displayName: 'Deploy to ${{parameters.env}}'
         steps:
 
           - template: pipeline/steps/tf-init.yaml
             parameters:
-              subscriptionName: $(subscriptionName)
-              product: $(product)
-              locationEng: $(locationEng)
-              location: $(location)
-              env: $(env)
+              useBackend: true
 
           - template: pipeline/steps/tf-plan.yaml
             parameters:
@@ -91,6 +82,7 @@ stages:
     - Wait
     jobs:
       - job: ApplytoEnv
+        displayName: 'Apply to ${{parameters.env}}'
         steps:
           - template: pipeline/steps/tf-apply.yaml
             parameters:
