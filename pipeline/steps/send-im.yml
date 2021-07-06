@@ -22,17 +22,22 @@ steps:
   - powershell: | 
       $verrepo = "${{ parameters.conditionAction }}"
       Write-Host "I got $verrepo"
-      Write-Host "Sending slack message for BUILD: $($env:BUILD_BUILDID)"
 
-      $Url = "${{parameters.hookUrl}}"
+      Write-Host "Sending slack message"
+
+      $url = "${{parameters.hookUrl}}"
+      $title = "${{parameters.title}}"
+      $message = "${{parameters.message}}"
+      $emojiIcon = "${{parameters.emojiIcon}}"
+      
       $body= @"
         {
-            "pretext": "${{parameters.title}}",
-            "text": "${{parameters.message}}",
-            "icon_emoji":"${{parameters.emojiIcon}}"
+            "pretext": "$title",
+            "text": "$message",
+            "icon_emoji":"$emojiIcon"
         }"@
 
-      Invoke-WebRequest -Method Post -Uri $Url -Body $body -ContentType 'application/json'
+      Invoke-WebRequest -Method Post -Uri $url -Body $body -ContentType 'application/json'
       Write-Host "Message has been sent"
     displayName: 'Send Slack Message'
     #condition: eq(${{ parameters.conditionAction }}, 'true')
