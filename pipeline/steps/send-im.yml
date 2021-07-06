@@ -14,13 +14,11 @@ parameters:
     default: 'true'
 
 steps:
-  - task: AzureCLI@2
+  - task: PowerShell@2
     displayName: 'Trigger Logic App Message'
     inputs:
-      azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: 'ps'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
+      targetType: 'inline'
+      script: |
         $conditionAction = "${{ parameters.conditionAction }}"
         Write-Host "Should send message $conditionAction"
         $logicAppUrl = "${{parameters.logicAppUrl}}"
