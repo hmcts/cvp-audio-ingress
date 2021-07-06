@@ -1,50 +1,39 @@
 parameters:
-  - name: hookUrl
+  - name: logicAppUrl
     type: string
+    default: ''
+  - name: schemaId
+    type: string
+    default: 'Cvp-Pipeline-Alert'
   - name: title
     type: string
   - name: message
     type: string
-  - name: emojiIcon
-    type: string
-    default: ':speech_balloon:'
-    values:
-      - ':heavy_exclamation_mark:'
-      - ':bangbang:'
-      - ':white_check_mark:'
-      - ':sos:'
-      - ':speech_balloon:'
   - name: conditionAction
     type: string
     default: 'true'
 
 steps:
-  - powershell: | 
-      $conditionAction = "${{ parameters.conditionAction }}"
-      Write-Host "Should send slack $conditionAction"
-      if ($conditionAction -eq 'true') {
-        Write-Host "Sending slack message"
+  - task: AzureCLI@2
+    displayName: 'Trigger Logic App Message'
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName }}'
+      scriptType: 'ps'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        $conditionAction = "${{ parameters.conditionAction }}"
+        Write-Host "Should send message $conditionAction"
+        $logicAppUrl = "${{parameters.logicAppUrl}}"
+        if ($conditionAction -eq 'true' -and $logicAppUrl -ne '') {
 
-        $url = "${{parameters.hookUrl}}"
-        $title = "${{parameters.title}}"
-        $message = "${{parameters.message}}"
-        $emojiIcon = "${{parameters.emojiIcon}}"
+          $body = @{
+              schemaId = "$schemaId"
+              data     = @{
+                  title = "$title"
+                  text  = "$message"
+              }
+          }
 
-        try {
-
-            $body = @{
-                pretext= "$title"
-                text= "$message"
-                icon_emoji="$emojiIcon"
-            }
-
-            Invoke-RestMethod -Method Post -Uri $url -Body $body -ContentType 'application/json'
-            Write-Host "Message has been sent"
+          $response = Invoke-RestMethod -Method Post -Uri $logicAppUrl -Body ($body | ConvertTo-Json) -ContentType 'application/json'
+          Write-Host "Message has been sent: $response"
         }
-        catch
-        {
-            Write-Error "failed: $_"
-            Write-Host "##vso[task.complete result=Failed;]$_."
-        }
-      }
-    displayName: 'Send Slack Message'

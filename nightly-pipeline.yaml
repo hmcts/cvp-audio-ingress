@@ -118,8 +118,7 @@ stages:
             
             - template: pipeline/steps/send-im.yml
               parameters:
-                hookUrl: ${{variables.slackWebHook}}
+                logicAppUrl: $(logic_app_url)
                 title: "Terraform Changes in ${{env}}"
                 message: "$(terraChanges.msg)"
-                emojiIcon: ":heavy_exclamation_mark:"
                 conditionAction: $(terraChanges.sendMsg)

@@ -8,4 +8,3 @@ variables:
   product: 'cvp'
   businessArea: 'Cross-Cutting'
   application: 'Cloud Video Platform'
-  slackWebHook: 'https://hooks.slack.com/services/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'
