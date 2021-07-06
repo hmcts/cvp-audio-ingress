@@ -47,6 +47,11 @@ stages:
 
             - template: pipeline/steps/tf-init.yaml
               parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+                location: ${{variables.location}}
+                locationEng: ${{variables.locationEng}}
+                product: ${{variables.product}}
                 useBackend: true
 
             - template: pipeline/steps/tf-plan.yaml
