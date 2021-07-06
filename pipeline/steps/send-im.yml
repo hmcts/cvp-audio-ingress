@@ -29,15 +29,15 @@ steps:
       $title = "${{parameters.title}}"
       $message = "${{parameters.message}}"
       $emojiIcon = "${{parameters.emojiIcon}}"
-      
-      $body= @"
-        {
-            "pretext": "$title",
-            "text": "$message",
-            "icon_emoji":"$emojiIcon"
-        }"@
 
-      Invoke-WebRequest -Method Post -Uri $url -Body $body -ContentType 'application/json'
+      $body= 
+        {
+            pretext= "$title",
+            text= "$message",
+            icon_emoji="$emojiIcon"
+        }
+
+      Invoke-WebRequest -Method Post -Uri $url -Body ($body | ConvertTo-Json) -ContentType 'application/json'
       Write-Host "Message has been sent"
     displayName: 'Send Slack Message'
     #condition: eq(${{ parameters.conditionAction }}, 'true')
