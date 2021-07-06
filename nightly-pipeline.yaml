@@ -79,13 +79,13 @@ stages:
           displayName: '${{env}} Terraform changes'
           steps: 
             - download: current
-              artifact: '${{ parameters.env }}.tfplan'
-              displayName: 'Download ${{ parameters.env }} Plan file'
+              artifact: '${{env}}.tfplan'
+              displayName: 'Download ${{env}} Plan file'
 
             - template: pipeline/steps/tf-show.yml
               parameters: 
-                planOrStateFilePath: "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan"
-                outputLocation: "$(Pipeline.Workspace)/${{ parameters.env }}.json"
+                planOrStateFilePath: "$(Pipeline.Workspace)/${{env}}.tfplan/${{env}}.tfplan"
+                outputLocation: "$(Pipeline.Workspace)/${{env}}.json"
                 subscriptionName: ${{variables.subscriptionName}}
                 env: ${{variables.env}}
                 location: ${{variables.location}}
@@ -99,7 +99,7 @@ stages:
                 targetType: 'inline'
                 script: |
                   $environment = "${{env}}"
-                  $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json" | ConvertFrom-Json
+                  $planObj = Get-Content "$(Pipeline.Workspace)/${{env}}.json" | ConvertFrom-Json
                   $resourceChanges = $planObj.resource_changes
 
                   $addChanges = ($resourceChanges | Where {$_.change.actions -contains "create"}).length
