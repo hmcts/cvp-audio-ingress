@@ -23,11 +23,11 @@ steps:
 
   - template: tf-init.yaml
     parameters:
-      subscriptionName: ${{variables.subscriptionName}}
-      env: ${{variables.env}}
-      location: ${{variables.location}}
-      locationEng: ${{variables.locationEng}}
-      product: ${{variables.product}}
+      subscriptionName: ${{parameters.subscriptionName}}
+      env: ${{parameters.env}}
+      location: ${{parameters.location}}
+      locationEng: ${{parameters.locationEng}}
+      product: ${{parameters.product}}
       useBackend: true
 
   - powershell: |
