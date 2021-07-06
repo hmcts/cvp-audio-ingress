@@ -81,31 +81,34 @@ stages:
               planOrStateFilePath: "$(Pipeline.Workspace)/${{ parameters.env }}.tfplan/${{ parameters.env }}.tfplan"
               outputLocation: "$(Pipeline.Workspace)/${{ parameters.env }}.json"
 
-          - powershell: |
-              $environment = "${{parameters.env}}"
-              $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json" | ConvertFrom-Json
-              $resourceChanges = $planObj.resource_changes
-
-              $addChanges = ($resourceChanges | Where {$_.change.actions -contains "create"}).length
-              $changeChanges = ($resourceChanges | Where {$_.change.actions -contains "update"}).length
-              $removeChanges = ($resourceChanges | Where {$_.change.actions -contains "delete"}).length
-              $totalChanges = $addChanges + $changeChanges + $removeChanges
-
-              $msg = "There are $totalChanges ($addChanges to add, $changeChanges to change, $removeChanges to remove) in the $environment Environment on CVP Audio Ingress"
-              Write-Host $msg
-
-              $sendMsg = (&{If($addChanges -gt 0 -or $changeChanges -gt 0 -or $removeChanges -gt 0) {"true"} Else {"false"}})
-              Write-Host "Should send message: $sendMsg"
-
-              Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$sendMsg"
-              Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
+          - task: PowerShell@2
             name: 'terraChanges'
             displayName: 'Validate any changes'
+            inputs:
+              targetType: 'inline'
+              script: |
+                $environment = "${{parameters.env}}"
+                $planObj = Get-Content "$(Pipeline.Workspace)/${{ parameters.env }}.json" | ConvertFrom-Json
+                $resourceChanges = $planObj.resource_changes
+
+                $addChanges = ($resourceChanges | Where {$_.change.actions -contains "create"}).length
+                $changeChanges = ($resourceChanges | Where {$_.change.actions -contains "update"}).length
+                $removeChanges = ($resourceChanges | Where {$_.change.actions -contains "delete"}).length
+                $totalChanges = $addChanges + $changeChanges + $removeChanges
+
+                $msg = "There are $totalChanges ($addChanges to add, $changeChanges to change, $removeChanges to remove) in the $environment Environment on CVP Audio Ingress"
+                Write-Host $msg
+
+                $sendMsg = (&{If($addChanges -gt 0 -or $changeChanges -gt 0 -or $removeChanges -gt 0) {"true"} Else {"false"}})
+                Write-Host "Should send message: $sendMsg"
+
+                Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$sendMsg"
+                Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
           
           - template: pipeline/steps/send-im.yml
             parameters:
               hookUrl: ${{variables.slackWebHook}}
               title: "Terraform Changes in ${{parameters.env}}"
-              message: "$(msg)"
+              message: "$(terraChanges.msg)"
               emojiIcon: ":heavy_exclamation_mark:"
-              conditionAction: '$(sendMsg)'
+              conditionAction: $(terraChanges.sendMsg)
