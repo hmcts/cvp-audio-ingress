@@ -20,6 +20,7 @@ parameters:
 
 steps:
   - powershell: | 
+      Write-Host "I got ${{ parameters.conditionAction }}"
       Write-Host "Sending slack message for BUILD: $($env:BUILD_BUILDID)"
 
       $Url = "${{parameters.hookUrl}}"
@@ -33,4 +34,4 @@ steps:
       Invoke-WebRequest -Method Post -Uri $Url -Body $body -ContentType 'application/json'
       Write-Host "Message has been sent"
     displayName: 'Send Slack Message'
-    condition: eq('${{ parameters.conditionAction }}', 'true')
+    #condition: eq(${{ parameters.conditionAction }}, 'true')
