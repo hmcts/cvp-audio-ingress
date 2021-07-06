@@ -51,15 +51,15 @@ stages:
 
             - template: pipeline/steps/tf-plan.yaml
               parameters:
-                subscriptionName: $(subscriptionName)
-                env: $(env)
-                certName: $(certName)
-                location: $(location)
-                product: $(product)
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env)
+                certName: ${{variables.certName}}
+                location: ${{variables.location}}
+                product: ${{variables.product}}
                 builtFrom: $(Build.Repository.Name)
                 # Manually passed in for use in scripts where resources are tagged
-                businessArea: $(businessArea)
-                application: $(application)
+                businessArea: ${{variables.businessArea}}
+                application: ${{variables.application}}
   
   - ${{each env in parameters.envs}}:
     - stage: 'Validate${{env}}'
