@@ -30,14 +30,22 @@ steps:
       $message = "${{parameters.message}}"
       $emojiIcon = "${{parameters.emojiIcon}}"
 
-      $body= 
-        {
-            pretext= "$title",
-            text= "$message",
-            icon_emoji="$emojiIcon"
-        }
+      try {
 
-      Invoke-WebRequest -Method Post -Uri $url -Body ($body | ConvertTo-Json) -ContentType 'application/json'
-      Write-Host "Message has been sent"
+          $body = 
+          {
+              pretext= "$title",
+              text= "$message",
+              icon_emoji="$emojiIcon"
+          }
+
+          Invoke-WebRequest -Method Post -Uri $url -Body ($body | ConvertTo-Json) -ContentType 'application/json'
+          Write-Host "Message has been sent"
+      }
+      catch
+      {
+          Write-Host "failed: $_"
+          Write-Host  "##vso[task.LogIssue type=error;]$_."
+      }
     displayName: 'Send Slack Message'
-    #condition: eq(${{ parameters.conditionAction }}, 'true')
+    condition: eq(${{ parameters.conditionAction }}, 'true')
