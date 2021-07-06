@@ -20,7 +20,8 @@ parameters:
 
 steps:
   - powershell: | 
-      Write-Host "I got ${{ parameters.conditionAction }}"
+      $verrepo = "${{ parameters.conditionAction }}"
+      Write-Host "I got $verrepo"
       Write-Host "Sending slack message for BUILD: $($env:BUILD_BUILDID)"
 
       $Url = "${{parameters.hookUrl}}"
