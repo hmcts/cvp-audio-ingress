@@ -39,7 +39,7 @@ steps:
                 icon_emoji="$emojiIcon"
             }
 
-            Invoke-WebRequest -Method Post -Uri $url -Body ($body | ConvertTo-Json) -ContentType 'application/json'
+            Invoke-RestMethod -Method Post -Uri $url -Body ($body | ConvertTo-Json -Depth 9) -ContentType 'application/json'
             Write-Host "Message has been sent"
         }
         catch
