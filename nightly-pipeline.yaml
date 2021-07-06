@@ -122,3 +122,43 @@ stages:
                 title: "Terraform Changes in ${{env}}"
                 message: "$(terraChanges.msg)"
                 conditionAction: $(terraChanges.sendMsg)
+                
+        - job: ValidateWowzaVersion${{env}}
+          displayName: '${{env}} wowza image version'
+          steps: 
+            - checkout: none
+            - download: none
+
+            - task: AzureCLI@2
+              name: 'wowzaCheck'
+              displayName: Check wowza version
+              inputs:
+                azureSubscription: '${{variables.subscriptionName}}'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  $publisher="${{variables.wowza_publisher}}"
+                  $offer="${{variables.wowza_offer}}"
+                  $sku="${{variables.wowza_sku}}"
+
+                  $latest=(az vm image list -p $publisher -s $sku --all --query "[?offer=='$offer'].version" -o json | ConvertFrom-Json)[0]
+                  Write-Host "The Latest version is $latest"
+
+                  $rgName="${{variables.product}}-recordings-${{env}}-rg"
+                  $vmName="${{variables.wowza_publisher}}-vm1"
+                  $current=(az vm show --resource-group $rgName --name $vmName --query "storageProfile.imageReference.version" -o tsv)
+                  Write-Host "The Current version is $current"
+
+                  $upgradeRequired = ([System.Version]$current -lt [System.Version]$latest)
+                  $msg = "The ${{env}} Wowza version needs upgrading from $current to $latest"
+                  Write-Host $msg
+                  
+                  Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$upgradeRequired"
+                  Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
+                  
+            - template: pipeline/steps/send-im.yml
+              parameters:
+                logicAppUrl: $(logic_app_url)
+                title: "Wowza version upgrade in ${{env}}"
+                message: "$(wowzaCheck.msg)"
+                conditionAction: $(wowzaCheck.sendMsg)
