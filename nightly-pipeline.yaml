@@ -3,7 +3,8 @@ schedules:
 - cron: '0 1 * * *'
   displayName: 'daily run'
   branches:
-    include: [ 'refs/heads/master' ]
+    include:
+      - master
   always: true
 
 parameters:
@@ -11,7 +12,7 @@ parameters:
     displayName: Environments
     type: object
     values: []
-    default: ['sbox']
+    default: ['sbox','stg','prod']
 
 
 
@@ -144,8 +145,9 @@ stages:
                   $latest=(az vm image list -p $publisher -s $sku --all --query "[?offer=='$offer'].version" -o json | ConvertFrom-Json)[0]
                   Write-Host "The Latest version is $latest"
 
-                  $rgName="${{variables.product}}-recordings-${{env}}-rg"
-                  $vmName="${{variables.wowza_publisher}}-vm1"
+                  $service_name = "${{variables.product}}-recordings-${{env}}-rg"
+                  $rgName = $service_name+"rg"
+                  $vmName = $service_name+"vm1"
                   $current=(az vm show --resource-group $rgName --name $vmName --query "storageProfile.imageReference.version" -o tsv)
                   Write-Host "The Current version is $current"
 
