@@ -135,28 +135,36 @@ stages:
               displayName: Check wowza version
               inputs:
                 azureSubscription: '${{variables.subscriptionName}}'
-                scriptType: 'ps'
+                scriptType: 'bash'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
-                  $publisher="${{variables.wowza_publisher}}"
-                  $offer="${{variables.wowza_offer}}"
-                  $sku="${{variables.wowza_sku}}"
+                  publisher="${{variables.wowza_publisher}}"
+                  offer="${{variables.wowza_offer}}"
+                  sku="${{variables.wowza_sku}}"
 
-                  $latest=(az vm image list -p $publisher -s $sku --all --query "[?offer=='$offer'].version" -o json | ConvertFrom-Json)[0]
-                  Write-Host "The Latest version is $latest"
+                  latest=$(az vm image list -p $publisher -s $sku --all --query "([?offer=='$offer'].version)[0]" -o tsv)
+                  echo "The Latest version is ${latest}"
 
-                  $service_name = "${{variables.product}}-recordings-${{env}}-rg"
-                  $rgName = $service_name+"rg"
-                  $vmName = $service_name+"vm1"
-                  $current=(az vm show --resource-group $rgName --name $vmName --query "storageProfile.imageReference.version" -o tsv)
-                  Write-Host "The Current version is $current"
+                  service_name="${{variables.product}}-recordings-${{env}}-"
+                  rgName="${service_name}rg"
+                  vmName="${service_name}vm1"
+                  current=$(az vm show --resource-group $rgName --name $vmName --query "storageProfile.imageReference.version" -o tsv)
+                  echo "The Current version is ${current}"
 
-                  $upgradeRequired = ([System.Version]$current -lt [System.Version]$latest)
-                  $msg = "The ${{env}} Wowza version needs upgrading from $current to $latest"
-                  Write-Host $msg
-                  
-                  Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$upgradeRequired"
-                  Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
+                  verlte() {
+                      [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+                  }
+                  verlt() {
+                      [ "$1" = "$2" ] && return 1 || verlte $1 $2
+                  }
+                  verlt $current $latest && upgradeRequired=true || upgradeRequired=false
+
+
+                  msg="The ${{env}} Wowza version needs upgrading from ${current} to ${latest}"
+                  echo $msg
+
+                  echo "##vso[task.setvariable variable=sendMsg;isOutput=true]${upgradeRequired}"
+                  echo "##vso[task.setvariable variable=msg;isOutput=true]${msg}"
                   
             - template: pipeline/steps/send-im.yml
               parameters:
