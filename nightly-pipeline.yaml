@@ -1,10 +1,15 @@
-trigger: none
+trigger:
+  - none
+
+pr: 
+  - none
+  
 schedules:
-- cron: '0 1 * * *'
-  displayName: 'daily run'
+- cron: "0 1 * * *"
+  displayName: Daily run
   branches:
-    include: 
-      - master
+    include:
+    - master
   always: true
 
 parameters:
