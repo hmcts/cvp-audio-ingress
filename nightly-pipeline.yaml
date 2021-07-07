@@ -1,11 +1,16 @@
-trigger: none
+trigger:
+  - none
+
+pr: 
+  - none
+  
 schedules:
-  - cron: '0 1 * * *'
-    displayName: 'daily run'
-    branches:
-      include:
-        - master
-    always: true
+- cron: "0 1 * * *"
+  displayName: Daily run
+  branches:
+    include:
+    - master
+  always: true
 
 parameters:
   - name: envs
