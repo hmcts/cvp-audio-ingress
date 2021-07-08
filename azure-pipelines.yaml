@@ -25,11 +25,11 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        ${{ if eq(variables["env"], 'sbox') }}:
+        ${{ if eq(env, 'sbox') }}:
           dependsOnEnv: ''
-        ${{ if eq(variables["env"], 'stg') }}:
+        ${{ if eq(env, 'stg') }}:
           dependsOnEnv: ${{sbox}}
-        ${{ if eq(variables["env"], 'prod') }}:
+        ${{ if eq(env, 'prod') }}:
           dependsOnEnv: ${{stg}}
 
   - ${{each env in parameters.envs}}:
