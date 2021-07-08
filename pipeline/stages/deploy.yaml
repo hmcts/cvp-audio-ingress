@@ -43,9 +43,9 @@ stages:
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
               env: ${{variables.env}}
-              location: ${{parameters.location}}
-              locationEng: ${{parameters.locationEng}}
-              product: ${{parameters.product}}
+              location: ${{variables.location}}
+              locationEng: ${{variables.locationEng}}
+              product: ${{variables.product}}
 
           - template: ../steps/az-dynatrace.yaml
             parameters:
