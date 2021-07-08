@@ -19,10 +19,10 @@ parameters:
     default: ['sbox','stg','prod']
 
 stages:
-  - templates: pipeline/stages/build.yaml
+  - template: pipeline/stages/build.yaml
 
   - ${{each env in parameters.envs}}:
-    - templates: pipeline/stages/plan.yaml
+    - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
         ${{ if eq(variables["env"], 'sbox') }}:
@@ -33,11 +33,11 @@ stages:
           dependsOnEnv: ${{stg}}
 
   - ${{each env in parameters.envs}}:
-    - templates: pipeline/stages/deploy.yaml
+    - template: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
 
   - ${{each env in parameters.envs}}:
-    - templates: pipeline/stages/test.yaml
+    - template: pipeline/stages/test.yaml
       parameters:
         env: ${{env}}
