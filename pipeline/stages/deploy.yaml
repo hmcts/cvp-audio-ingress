@@ -2,7 +2,7 @@ parameters:
   - name: env
     type: string
     default: 'sbox'
-
+#TODO: only run these if not prod or is prod and master branch
 stages:
   - stage: Wait${{parameters.env}}
     displayName: '${{parameters.env}} Waiting for Approval'

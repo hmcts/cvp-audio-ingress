@@ -12,7 +12,7 @@ stages:
     ${{ if eq(parameters.dependsOnEnv, '') }}:
       dependsOn: Build
     ${{ if ne(parameters.dependsOnEnv, '') }}:
-      dependsOn: 'Plan${{parameters.dependsOnEnv}}'
+      dependsOn: 'Test${{parameters.dependsOnEnv}}'
     variables:
       - template: ../variables/variables-common.yaml
       - ${{ if ne(parameters.env, 'prod') }}:

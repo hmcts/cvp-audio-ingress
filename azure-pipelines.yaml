@@ -36,3 +36,8 @@ stages:
     - templates: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
+
+  - ${{each env in parameters.envs}}:
+    - templates: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}

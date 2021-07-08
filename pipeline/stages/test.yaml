@@ -1,0 +1,113 @@
+parameters:
+  - name: env
+    type: string
+    default: 'sbox'
+
+stages:
+  - stage: Test${{parameters.env}}
+    displayName: 'Test to ${{parameters.env}}'
+    dependsOn: Deploy${{parameters.env}}
+    variables:
+      - template: ../variables/variables-common.yaml
+      - ${{ if ne(parameters.env, 'prod') }}:
+        - template: ../variables/variables-${{parameters.env}}.yaml
+        - group: cvp-${{parameters.env}}
+      - ${{ if and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod')) }}:
+        # Production (prod)
+        - template: ../variables/variables-prod.yaml
+        - group: cvp-prod
+    jobs:
+      - job: LoadBalancerTest
+        displayName: '${{parameters.env}} Load Balancer Tests '
+        steps:
+          - task: AzureCLI@2
+            name: 'healthprodcheck'
+            displayName: Check Health Probe
+            inputs:
+              azureSubscription: '${{variables.subscriptionName}}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                service_name="${{variables.product}}-recordings-${{env}}-"
+                rgName="${service_name}rg"
+                lbName="${service_name}lb"
+
+                metricName="DipAvailability"
+                resourceType="Microsoft.Network/loadBalancers"
+
+                sleep 2m
+                healthResults=$(az monitor metrics list --resource $lbName --resource-group $rgName --resource-type $resourceType --metric $metricName --query "(value[0].timeseries[0].data)[*].average" -o tsv)
+                echo $healthResults
+
+                healthSuccess=true
+                c=0
+                m=5
+                for i in $healthResults
+                do
+                    val=`echo $i | sed 's/\\r//g'`
+                    if [ "$val" != "100.0" ] 
+                    then
+                        healthSuccess=false
+                    fi
+                    if [ "$c" == "$m" ] 
+                    then
+                        break
+                    fi
+                    c=$((c+1))
+                done
+
+                if [ "$healthSuccess" = "false" ]
+                then
+                  echo "##vso[task.LogIssue type=error;]$lbName health probe is showing issues in the last $m runs."
+                  exit 1
+                fi
+
+      - job: VirtualMachineTest
+        displayName: '${{parameters.env}} Virtual Machine Tests '
+        steps:
+          - task: AzureCLI@2
+            name: 'machineconfig'
+            displayName: Check Machine Config
+            inputs:
+              azureSubscription: '${{variables.subscriptionName}}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                service_name="${{variables.product}}-recordings-${{env}}-"
+                rgName="${service_name}rg"
+
+                allOk=true
+                for i in {1..2}
+                do
+
+                    vmName="${service_name}vm${i}"
+                    echo "Testing $vmName in $rgName."
+
+                    #az vm show --resource-group $rgName --name $vmName
+                    passwordDisabled=$(az vm show --resource-group $rgName --name $vmName --query "osProfile.linuxConfiguration.disablePasswordAuthentication" -o tsv)
+                    if [ "$passwordDisabled" = "false" ]
+                    then
+                        echo "##vso[task.LogIssue type=error;]$vmName in $rgName has password access enabled."
+                        allOk=false
+                    fi
+                    secretCount=$(az vm show --resource-group $rgName --name $vmName --query "length(osProfile.secrets[0].vaultCertificates)" -o tsv)
+                    if [ "$secretCount" = "0" ]
+                    then
+                        echo "##vso[task.LogIssue type=error;]There are no Key Vault Secrets attached to $vmName in $rgName"
+                        allOk=false
+                    else
+                        certCount=$(az vm show --resource-group $rgName --name $vmName --query "length(osProfile.secrets[0].vaultCertificates)" -o tsv)
+                        if [ "$certCount" = "0" ]
+                        then
+                            echo "##vso[task.LogIssue type=error;]There are no Key Vault Secret Certificates attached to $vmName in $rgName"
+                            allOk=false
+                        fi
+                    fi
+
+                done
+
+                if [ "$allOk" = "false" ]
+                then
+                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
+                    exit 1
+                fi
