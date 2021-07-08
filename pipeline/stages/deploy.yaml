@@ -42,7 +42,7 @@ stages:
           - template: ../steps/tf-apply.yaml
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
-              env: ${{variables.env)
+              env: ${{variables.env}}
 
           - template: ../steps/az-dynatrace.yaml
             parameters:
