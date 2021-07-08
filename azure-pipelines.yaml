@@ -39,11 +39,11 @@ stages:
           - script: terraform fmt -check=true
             displayName: Check Formatting
 
-  - stage: Deploy
+  - stage: Plan
     dependsOn: Build
     jobs:
-      - job: DeployToEnv
-        displayName: 'Deploy to ${{parameters.env}}'
+      - job: PlanToEnv
+        displayName: 'Plan to ${{parameters.env}}'
         steps:
 
           - template: pipeline/steps/tf-init.yaml
@@ -63,7 +63,7 @@ stages:
               application: $(application)
 
   - stage: Wait
-    dependsOn: Deploy
+    dependsOn: Plan
     jobs:
       - job: waitForValidation
         displayName: 'Wait for external validation'
@@ -89,7 +89,7 @@ stages:
               subscriptionName: $(subscriptionName)
               env: $(env)
 
-          - template: pipeline/steps/tf-dynatrace.yaml
+          - template: pipeline/steps/az-dynatrace.yaml
             parameters:
               subscriptionName: $(subscriptionName)
               env: $(env)

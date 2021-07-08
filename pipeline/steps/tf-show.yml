@@ -1,0 +1,40 @@
+parameters:
+  - name: planOrStateFilePath
+    type: string
+  - name: outputLocation
+    type: string
+  - name: subscriptionName
+    type: string
+    default: $(subscriptionName)
+  - name: product
+    type: string
+    default: $(product)
+  - name: locationEng
+    type: string
+    default: $(locationEng)
+  - name: location
+    type: string
+    default: $(location)
+  - name: env
+    type: string
+    default: $(env)
+
+steps:
+
+  - template: tf-init.yaml
+    parameters:
+      subscriptionName: ${{parameters.subscriptionName}}
+      env: ${{parameters.env}}
+      location: ${{parameters.location}}
+      locationEng: ${{parameters.locationEng}}
+      product: ${{parameters.product}}
+      useBackend: true
+
+  - powershell: |
+      $outputlocation = "${{parameters.outputLocation}}"
+      if ($outputlocation -eq "") {
+        terraform show ${{parameters.planOrStateFilePath}}
+      } else {
+        terraform show -json -no-color ${{parameters.planOrStateFilePath}} > $outputlocation
+      }
+    displayName: 'Terraform Show'
