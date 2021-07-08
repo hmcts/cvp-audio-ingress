@@ -6,7 +6,7 @@ parameters:
 stages:
   - stage: Wait${{parameters.env}}
     displayName: '${{parameters.env}} Waiting for Approval'
-    condition: and(ne(parameters.env,'sbox'))
+    condition: and(succeeded(), ne(parameters.env,'sbox'))
     dependsOn: Plan${{parameters.env}}
     jobs:
       - job: waitForValidation
