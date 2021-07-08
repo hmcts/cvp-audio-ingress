@@ -28,7 +28,7 @@ stages:
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                service_name="${{variables.product}}-recordings-${{env}}-"
+                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
                 rgName="${service_name}rg"
                 lbName="${service_name}lb"
 
@@ -73,7 +73,7 @@ stages:
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                service_name="${{variables.product}}-recordings-${{env}}-"
+                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
                 rgName="${service_name}rg"
 
                 allOk=true
