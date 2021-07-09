@@ -15,13 +15,8 @@ stages:
       dependsOn: 'Test${{parameters.dependsOnEnv}}'
     variables:
       - template: ../variables/variables-common.yaml
-      - ${{ if ne(parameters.env, 'prod') }}:
-        - template: ../variables/variables-${{parameters.env}}.yaml
-        - group: cvp-${{parameters.env}}
-      - ${{ if and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod')) }}:
-        # Production (prod)
-        - template: ../variables/variables-prod.yaml
-        - group: cvp-prod
+      - template: ../variables/variables-${{parameters.env}}.yaml
+      - group: cvp-${{parameters.env}}
     jobs:
       - job: PlanToEnv${{parameters.env}}
         displayName: 'Plan to ${{parameters.env}}'
