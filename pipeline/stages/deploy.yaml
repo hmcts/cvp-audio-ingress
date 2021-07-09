@@ -6,7 +6,7 @@ parameters:
 stages:
   - stage: Wait${{parameters.env}}
     displayName: '${{parameters.env}} Waiting for Approval'
-    condition: and(succeeded(), ne('${{ parameters.env}}','sbox'))
+    condition: and(succeeded(), or(eq('${{ parameters.env}}','stg'),and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod'))))
     dependsOn: Plan${{parameters.env}}
     jobs:
       - job: waitForValidation
@@ -26,15 +26,11 @@ stages:
       dependsOn: Plan${{parameters.env}}
     ${{ if ne(parameters.env, 'sbox') }}:
       dependsOn: Wait${{parameters.env}}
+    condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod'))))
     variables:
       - template: ../variables/variables-common.yaml
-      - ${{ if ne(parameters.env, 'prod') }}:
-        - template: ../variables/variables-${{parameters.env}}.yaml
-        - group: cvp-${{parameters.env}}
-      - ${{ if and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod')) }}:
-        # Production (prod)
-        - template: ../variables/variables-prod.yaml
-        - group: cvp-prod
+      - template: ../variables/variables-${{parameters.env}}.yaml
+      - group: cvp-${{parameters.env}}
     jobs:
       - job: ApplytoEnv
         displayName: 'Apply to ${{parameters.env}}'

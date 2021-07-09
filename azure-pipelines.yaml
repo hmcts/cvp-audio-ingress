@@ -28,9 +28,9 @@ stages:
         ${{ if eq(env, 'sbox') }}:
           dependsOnEnv: ''
         ${{ if eq(env, 'stg') }}:
-          dependsOnEnv: ${{sbox}}
+          dependsOnEnv: 'sbox'
         ${{ if eq(env, 'prod') }}:
-          dependsOnEnv: ${{stg}}
+          dependsOnEnv: 'stg'
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/deploy.yaml
