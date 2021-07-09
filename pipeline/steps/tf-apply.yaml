@@ -3,6 +3,15 @@ parameters:
     type: string
   - name: env
     type: string
+  - name: product
+    type: string
+    default: $(product)
+  - name: locationEng
+    type: string
+    default: $(locationEng)
+  - name: location
+    type: string
+    default: $(location)
   - name: wowza_sku
     type: string
     default: 'linux-paid-4-8'
@@ -23,6 +32,11 @@ steps:
 
   - template: tf-init.yaml
     parameters:
+      subscriptionName: ${{parameters.subscriptionName}}
+      env: ${{parameters.env}}
+      location: ${{parameters.location}}
+      locationEng: ${{parameters.locationEng}}
+      product: ${{parameters.product}}
       useBackend: true
 
   - task: AzureCLI@2

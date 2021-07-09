@@ -1,0 +1,19 @@
+
+stages:
+  - stage: Build
+    variables:
+      - template: ../variables/variables-common.yaml
+    jobs:
+      - job: BasicValidation
+        steps:
+          - template: ../steps/tf-install.yaml
+          - template: ../steps/tf-init.yaml
+            parameters:
+              useBackend: false
+          - task: TerraformCLI@0
+            displayName: Validate Terraform
+            inputs:
+              command: 'validate'
+              commandOptions: '-no-color'
+          - script: terraform fmt -check=true
+            displayName: Check Formatting

@@ -19,66 +19,21 @@ parameters:
     values: []
     default: ['sbox','stg','prod']
 
-
-
 stages:
-  - stage: Build
-    jobs:
-      - job: BasicValidation
-        steps:
-          - template: pipeline/steps/tf-install.yaml
-          - template: pipeline/steps/tf-init.yaml
-            parameters:
-              useBackend: false
-          - task: TerraformCLI@0
-            displayName: Validate Terraform
-            inputs:
-              command: 'validate'
-              commandOptions: '-no-color'
-          - script: terraform fmt -check=true
-            displayName: Check Formatting
+  - template: pipeline/stages/build.yaml
 
   - ${{each env in parameters.envs}}:
-    - stage: 'Plan${{env}}'
-      displayName: 'Plan ${{env}}'
-      dependsOn: Build
-      variables:
-        - template: pipeline/variables-common.yaml
-        - template: pipeline/variables-${{env}}.yaml
-        - group: cvp-${{env}}
-      jobs:
-        - job: PlanToEnv${{env}}
-          displayName: 'Plan to ${{env}}'
-          steps:
-
-            - template: pipeline/steps/tf-init.yaml
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                env: ${{variables.env}}
-                location: ${{variables.location}}
-                locationEng: ${{variables.locationEng}}
-                product: ${{variables.product}}
-                useBackend: true
-
-            - template: pipeline/steps/tf-plan.yaml
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                env: ${{variables.env}}
-                certName: ${{variables.certName}}
-                location: ${{variables.location}}
-                product: ${{variables.product}}
-                builtFrom: $(Build.Repository.Name)
-                # Manually passed in for use in scripts where resources are tagged
-                businessArea: ${{variables.businessArea}}
-                application: ${{variables.application}}
+    - template: pipeline/stages/plan.yaml
+      parameters:
+        env: ${{env}}
   
   - ${{each env in parameters.envs}}:
     - stage: 'Validate${{env}}'
       displayName: 'Validate ${{env}}'
       dependsOn: 'Plan${{env}}'
       variables:
-        - template: pipeline/variables-common.yaml
-        - template: pipeline/variables-${{env}}.yaml
+        - template: pipeline/variables/variables-common.yaml
+        - template: pipeline/variables/variables-${{env}}.yaml
         - group: cvp-${{env}}
       jobs:
         - job: ValidateChanges${{env}}
