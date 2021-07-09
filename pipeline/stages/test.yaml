@@ -106,3 +106,51 @@ stages:
                     echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
                     exit 1
                 fi
+          - task: AzureCLI@2
+            name: 'certificate'
+            displayName: Check Machine Certificates
+            inputs:
+              azureSubscription: '${{variables.subscriptionName}}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
+                rgName="${service_name}rg"
+                nsgName="${service_name}sg"
+                ruleName="pipelineTestRule"
+
+                echo "Get Source IP"
+                sourceIp="$(dig @resolver4.opendns.com myip.opendns.com +short)"
+                echo "Source IP: $sourceIp"
+
+                echo "Create NSG rule"
+                az network nsg rule create --name $ruleName --nsg-name $nsgName --priority '200' --resource-group $rgName --access 'Allow' --description "Test from the Deployment Pipeline"  --destination-port-ranges '443' --direction 'Inbound' --protocol 'Tcp' --source-address-prefixes $sourceIp  --source-port-ranges '*'
+
+                allOk=true
+                for i in {1..2}
+                do
+
+                    vmName="${service_name}vm${i}"
+                    echo "Testing $vmName in $rgName."
+
+                    publicIpName="${service_name}pipvm${i}"
+                    publicIp="$(az network public-ip show -g ${rgName} -n ${publicIpName} --query "ipAddress" -o tsv)"
+
+                    echo "Test Cert on $publicIp"
+                    if true | openssl s_client -connect "$publicIp:443" 2>/dev/null | openssl x509 -noout -checkend 0; then
+                        echo "Certificate is not expired"
+                    else
+                        echo "Certificate is expired"
+                        echo "##vso[task.LogIssue type=error;]Certificate on $vmName in $rgName is not valid"
+                        allOk=false
+                    fi
+                done
+
+                echo "Delete NSG Rule"
+                az network nsg rule delete -g $rgName --nsg-name $nsgName -n $ruleName
+
+                if [ "$allOk" = "false" ]
+                then
+                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
+                    exit 1
+                fi
