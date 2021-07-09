@@ -126,6 +126,7 @@ stages:
                 echo "Create NSG rule"
                 az network nsg rule create --name $ruleName --nsg-name $nsgName --priority '200' --resource-group $rgName --access 'Allow' --description "Test from the Deployment Pipeline"  --destination-port-ranges '443' --direction 'Inbound' --protocol 'Tcp' --source-address-prefixes $sourceIp  --source-port-ranges '*'
 
+                sleep 20s
                 allOk=true
                 for i in {1..2}
                 do
