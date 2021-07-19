@@ -16,3 +16,4 @@ variables:
   dynatrace_id: 'yrk32651'
   dynatrace_host_group: 'SBOX_DTS_CVP'
   dynatrace_network_zone: 'azure.cft'
+  rtmps_source_address_prefixes: \"35.204.50.163\",\"35.204.108.36\",\"34.91.92.40\",\"34.91.75.226\",\"81.109.71.47\"
