@@ -2,7 +2,7 @@ parameters:
     - name: subscriptionName
       type: string
     - name: resourceGroupName
-	    type: string
+      type: string
     - name: loadBalancerName
       type: string
 

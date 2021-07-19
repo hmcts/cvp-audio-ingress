@@ -2,9 +2,9 @@ parameters:
     - name: subscriptionName
       type: string
     - name: resourceGroupName
-	    type: string
+      type: string
     - name: nsgName
-	    type: string
+      type: string
       default: ''
     - name: virtualMachines
       type: object
@@ -37,51 +37,51 @@ steps:
             az network nsg rule create --name $ruleName --nsg-name $nsgName --priority '200' --resource-group $rgName --access 'Allow' --description "Test from the Deployment Pipeline"  --destination-port-ranges '443' --direction 'Inbound' --protocol 'Tcp' --source-address-prefixes $sourceIp  --source-port-ranges '*'
     
     - ${{ each vm in parameters.virtualMachines.vms }}:
-        - task: AzureCLI@2
-          displayName: Check ${{ vm.vmName }} Certificates
-          inputs:
-            azureSubscription: '${{parameters.subscriptionName}}'
-            scriptType: 'bash'
-            scriptLocation: 'inlineScript'
-            inlineScript: |
-                rgName="${{parameters.resourceGroupName}}"
+      - task: AzureCLI@2
+        displayName: Check ${{ vm.vmName }} Certificates
+        inputs:
+          azureSubscription: '${{parameters.subscriptionName}}'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+              rgName="${{parameters.resourceGroupName}}"
 
-                testCertificate(){
-                    echo "Test Cert on $1"
-                    if true | openssl s_client -connect "$1:443" 2>/dev/null | openssl x509 -noout -checkend 0; then
-                        echo "Certificate is not expired"
-                        return 1
-                    else
-                        echo "Certificate is expired"
-                        return 0
-                    fi
-                }
+              testCertificate(){
+                  echo "Test Cert on $1"
+                  if true | openssl s_client -connect "$1:443" 2>/dev/null | openssl x509 -noout -checkend 0; then
+                      echo "Certificate is not expired"
+                      return 1
+                  else
+                      echo "Certificate is expired"
+                      return 0
+                  fi
+              }
 
-                vmName="${{ vm.vmName }}"
-                echo "Testing $vmName in $rgName."
+              vmName="${{ vm.vmName }}"
+              echo "Testing $vmName in $rgName."
 
-                publicIpName="${{ vm.publicIpName }}"
-                publicIp=$(az network public-ip show -g ${rgName} -n ${publicIpName} --query "ipAddress" -o tsv)
+              publicIpName="${{ vm.publicIpName }}"
+              publicIp=$(az network public-ip show -g ${rgName} -n ${publicIpName} --query "ipAddress" -o tsv)
 
-                vmOk=false
-                for r in {1..3}
-                do
-                    testResult=$(testCertificate $publicIp)
-                    if [ "${testResult}" == "1" ]
-                    then
-                        vmOk=true
-                        break
-                    fi
-                    sleep 20s
-                done
-                if [ "${vmOk}" = "true" ] 
-                then
-                    echo "Certificate is not expired"
-                else
-                    echo "Certificate is expired"
-                    echo "##vso[task.LogIssue type=error;]Certificate on $vmName in $rgName is not valid"
-                    exit 1
-                fi
+              vmOk=false
+              for r in {1..3}
+              do
+                  testResult=$(testCertificate $publicIp)
+                  if [ "${testResult}" == "1" ]
+                  then
+                      vmOk=true
+                      break
+                  fi
+                  sleep 20s
+              done
+              if [ "${vmOk}" = "true" ] 
+              then
+                  echo "Certificate is not expired"
+              else
+                  echo "Certificate is expired"
+                  echo "##vso[task.LogIssue type=error;]Certificate on $vmName in $rgName is not valid"
+                  exit 1
+              fi
 
     - task: AzureCLI@2
       displayName: Remove source IP Address from NSG
