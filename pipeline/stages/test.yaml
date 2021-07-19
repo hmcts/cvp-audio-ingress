@@ -74,13 +74,13 @@ stages:
           - template: ../template/validSslCertificate.yaml
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
-              resourceGroupName: '${{variables.product}}-recordings-${{parameters.env}}-rg'
-              nsgName: '${{variables.product}}-recordings-${{parameters.env}}-sg'
+              resourceGroupName: ${{variables.product}}-recordings-${{parameters.env}}-rg
+              nsgName: ${{variables.product}}-recordings-${{parameters.env}}-sg
               virtualMachines:
                 - vms:
-                  vmName: '${{variables.product}}-recordings-${{parameters.env}}-vm1'
-                  publicIpName: '${{variables.product}}-recordings-${{parameters.env}}-pipvm1'
+                  vmName: ${{variables.product}}-recordings-${{parameters.env}}-vm1
+                  publicIpName: ${{variables.product}}-recordings-${{parameters.env}}-pipvm1
                 - vms:
-                  vmName: '${{variables.product}}-recordings-${{parameters.env}}-vm2'
-                  publicIpName: '${{variables.product}}-recordings-${{parameters.env}}-pipvm2'
+                  vmName: ${{variables.product}}-recordings-${{parameters.env}}-vm2
+                  publicIpName: ${{variables.product}}-recordings-${{parameters.env}}-pipvm2
           
