@@ -36,7 +36,7 @@ steps:
             echo "Create NSG rule"
             az network nsg rule create --name $ruleName --nsg-name $nsgName --priority '200' --resource-group $rgName --access 'Allow' --description "Test from the Deployment Pipeline"  --destination-port-ranges '443' --direction 'Inbound' --protocol 'Tcp' --source-address-prefixes $sourceIp  --source-port-ranges '*'
     
-    - ${{ each vm in parameters.virtualMachines.vms }}:
+    - ${{ each vm in parameters.virtualMachines }}:
       - task: AzureCLI@2
         displayName: Check ${{ vm.vmName }} Certificates
         inputs:
