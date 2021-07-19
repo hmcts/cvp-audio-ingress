@@ -6,10 +6,10 @@ pr:
 resources:
   repositories:
     - repository: azTemplates
-      type: git
+      type: github
       name: hmcts/azure-devops-templates
-      ref: 'refs/heads/master'
-
+      ref: refs/heads/master
+      endpoint: hmcts
 schedules:
   - cron: "0 1 * * 1"
     displayName: Weekly Run
