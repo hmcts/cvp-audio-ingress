@@ -15,7 +15,7 @@ stages:
       - job: LoadBalancerTest
         displayName: '${{parameters.env}} Load Balancer Tests '
         steps:
-          - template: ../template/healthprobe.yaml
+          - template: templates\tests\Azure\LoadBalancer\healthprobe.yml@azTemplates
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
               resourceGroupName: '${{variables.product}}-recordings-${{parameters.env}}-rg'
@@ -71,7 +71,7 @@ stages:
                     exit 1
                 fi
           
-          - template: ../template/validSslCertificate.yaml
+          - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
               resourceGroupName: ${{variables.product}}-recordings-${{parameters.env}}-rg

@@ -2,6 +2,13 @@ trigger:
   - master
 pr:
   - master
+  
+resources:
+  repositories:
+    - repository: azTemplates
+      type: git
+      name: hmcts/azure-devops-templates
+      ref: 'refs/heads/master'
 
 schedules:
   - cron: "0 1 * * 1"
