@@ -85,7 +85,7 @@ steps:
 
     - task: AzureCLI@2
       displayName: Remove source IP Address from NSG
-      condition: and(succeededOrFailed() ,ne('${{parameters.nsgName}}'',''))
+      condition: and(succeededOrFailed() ,ne('${{parameters.nsgName}}',''))
       inputs:
         azureSubscription: '${{parameters.subscriptionName}}'
         scriptType: 'bash'
