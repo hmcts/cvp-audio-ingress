@@ -1,6 +1,7 @@
 
 stages:
   - stage: Build
+    dependsOn: GetDependencies
     variables:
       - template: ../variables/variables-common.yaml
     jobs:
