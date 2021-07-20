@@ -1,0 +1,86 @@
+parameters:
+  - name: env
+    type: string
+    default: 'sbox'
+
+stages:
+  - stage: Test${{parameters.env}}
+    displayName: 'Test to ${{parameters.env}}'
+    dependsOn: Apply${{parameters.env}}
+    variables:
+      - template: ../variables/variables-common.yaml
+      - template: ../variables/variables-${{parameters.env}}.yaml
+      - group: cvp-${{parameters.env}}
+    jobs:
+      - job: LoadBalancerTest
+        displayName: '${{parameters.env}} Load Balancer Tests '
+        steps:
+          - template: templates\tests\Azure\LoadBalancer\healthprobe.yml@azTemplates
+            parameters:
+              subscriptionName: ${{variables.subscriptionName}}
+              resourceGroupName: '${{variables.product}}-recordings-${{parameters.env}}-rg'
+              loadBalancerName: '${{variables.product}}-recordings-${{parameters.env}}-lb'
+
+      - job: VirtualMachineTest
+        displayName: '${{parameters.env}} Virtual Machine Tests '
+        steps:
+          - task: AzureCLI@2
+            name: 'machineconfig'
+            displayName: Check Machine Config
+            inputs:
+              azureSubscription: '${{variables.subscriptionName}}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
+                rgName="${service_name}rg"
+
+                allOk=true
+                for i in {1..2}
+                do
+
+                    vmName="${service_name}vm${i}"
+                    echo "Testing $vmName in $rgName."
+
+                    #az vm show --resource-group $rgName --name $vmName
+                    passwordDisabled=$(az vm show --resource-group $rgName --name $vmName --query "osProfile.linuxConfiguration.disablePasswordAuthentication" -o tsv)
+                    if [ "$passwordDisabled" = "false" ]
+                    then
+                        echo "##vso[task.LogIssue type=error;]$vmName in $rgName has password access enabled."
+                        allOk=false
+                    fi
+                    secretCount=$(az vm show --resource-group $rgName --name $vmName --query "length(osProfile.secrets[0].vaultCertificates)" -o tsv)
+                    if [ "$secretCount" = "0" ]
+                    then
+                        echo "##vso[task.LogIssue type=error;]There are no Key Vault Secrets attached to $vmName in $rgName"
+                        allOk=false
+                    else
+                        certCount=$(az vm show --resource-group $rgName --name $vmName --query "length(osProfile.secrets[0].vaultCertificates)" -o tsv)
+                        if [ "$certCount" = "0" ]
+                        then
+                            echo "##vso[task.LogIssue type=error;]There are no Key Vault Secret Certificates attached to $vmName in $rgName"
+                            allOk=false
+                        fi
+                    fi
+
+                done
+
+                if [ "$allOk" = "false" ]
+                then
+                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
+                    exit 1
+                fi
+          
+#          - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates
+#            parameters:
+#              subscriptionName: ${{variables.subscriptionName}}
+#              resourceGroupName: ${{variables.product}}-recordings-${{parameters.env}}-rg
+#              nsgName: ${{variables.product}}-recordings-${{parameters.env}}-sg
+#              virtualMachines:
+#                - vms:
+#                  vmName: ${{variables.product}}-recordings-${{parameters.env}}-vm1
+#                  publicIpName: ${{variables.product}}-recordings-${{parameters.env}}-pipvm1
+#                - vms:
+#                  vmName: ${{variables.product}}-recordings-${{parameters.env}}-vm2
+#                  publicIpName: ${{variables.product}}-recordings-${{parameters.env}}-pipvm2
+          

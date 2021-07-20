@@ -31,7 +31,7 @@ steps:
               schemaId = "$schemaId"
               data     = @{
                   title = "$title"
-                  text  = "$message"
+                  message  = "$message"
               }
           }
 

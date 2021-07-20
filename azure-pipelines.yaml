@@ -2,96 +2,49 @@ trigger:
   - master
 pr:
   - master
-parameters:
-  - name: env
-    displayName: Environment to Deploy to
-    type: string
-    default: sbox
-    values:
-      - sbox
-      - stg
-      - prod
+  
+resources:
+  repositories:
+    - repository: azTemplates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: refs/heads/master
+      endpoint: hmcts
+schedules:
+  - cron: "0 1 * * 1"
+    displayName: Weekly Run
+    branches:
+      include:
+      - master
+    always: false
 
-variables:
-  - template: pipeline/variables-common.yaml
-  - ${{ if ne(parameters.env, 'prod') }}:
-    - template: pipeline/variables-${{parameters.env}}.yaml
-    - group: cvp-${{parameters.env}}
-  - ${{ if and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.env, 'prod')) }}:
-    # Production (prod)
-    - template: pipeline/variables-prod.yaml
-    - group: cvp-prod
+parameters:
+  - name: envs
+    displayName: Environments
+    type: object
+    values: []
+    default: ['sbox','stg','prod']
 
 stages:
-  - stage: Build
-    jobs:
-      - job: BasicValidation
-        steps:
-          - template: pipeline/steps/tf-install.yaml
-          - template: pipeline/steps/tf-init.yaml
-            parameters:
-              useBackend: false
-          - task: TerraformCLI@0
-            displayName: Validate Terraform
-            inputs:
-              command: 'validate'
-              commandOptions: '-no-color'
-          - script: terraform fmt -check=true
-            displayName: Check Formatting
+  - template: pipeline/stages/build.yaml
 
-  - stage: Plan
-    dependsOn: Build
-    jobs:
-      - job: PlanToEnv
-        displayName: 'Plan to ${{parameters.env}}'
-        steps:
+  - ${{each env in parameters.envs}}:
+    - template: pipeline/stages/plan.yaml
+      parameters:
+        env: ${{env}}
+        ${{ if eq(env, 'sbox') }}:
+          dependsOnEnv: ''
+        ${{ if eq(env, 'stg') }}:
+          dependsOnEnv: 'sbox'
+        ${{ if eq(env, 'prod') }}:
+          dependsOnEnv: 'stg'
 
-          - template: pipeline/steps/tf-init.yaml
-            parameters:
-              useBackend: true
+  - ${{each env in parameters.envs}}:
+    - template: pipeline/stages/deploy.yaml
+      parameters:
+        env: ${{env}}
 
-          - template: pipeline/steps/tf-plan.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
-              certName: $(certName)
-              location: $(location)
-              product: $(product)
-              builtFrom: $(Build.Repository.Name)
-              # Manually passed in for use in scripts where resources are tagged
-              businessArea: $(businessArea)
-              application: $(application)
-
-  - stage: Wait
-    dependsOn: Plan
-    jobs:
-      - job: waitForValidation
-        displayName: 'Wait for external validation'
-        pool: server
-        timeoutInMinutes: 4320 # job times out in 3 days
-        steps:
-        - task: ManualValidation@0
-          timeoutInMinutes: 1440 # task times out in 1 day
-          inputs:
-            instructions: 'Please validate the Terraform Plan for PROD environment to resume'
-            onTimeout: 'reject'
-
-  - stage: Apply
-    dependsOn:
-    - Build
-    - Wait
-    jobs:
-      - job: ApplytoEnv
-        displayName: 'Apply to ${{parameters.env}}'
-        steps:
-          - template: pipeline/steps/tf-apply.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
-
-          - template: pipeline/steps/az-dynatrace.yaml
-            parameters:
-              subscriptionName: $(subscriptionName)
-              env: $(env)
-              location: $(location)
-              product: $(product)
+  - ${{each env in parameters.envs}}:
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
