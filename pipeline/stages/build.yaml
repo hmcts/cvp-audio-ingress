@@ -1,12 +1,12 @@
 parameters:
-  - name: shouldRun
-    type: boolean
-    default: false
+  - name: scheduleName
+    type: string
+    default: ''
 
 stages:
   - stage: Build
     dependsOn: GetDependencies
-    condition: eq('${{ parameters.shouldRun }}','true')
+    condition: eq('${{ parameters.scheduleName }}','Nightly')
     variables:
       - template: ../variables/variables-common.yaml
     jobs:
