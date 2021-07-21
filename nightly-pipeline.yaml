@@ -183,4 +183,4 @@ stages:
               echo "Run me"
               echo "name: ${schname}"
             env: 
-              schname: ${{ dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'] }}
+              schname: $[dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'] ]
