@@ -53,7 +53,7 @@ stages:
 
   - template: pipeline/stages/build.yaml
     parameters:
-      shouldRun: ${{ eq(stageDependencies.GetScheduleName.GetDependencies.outputs['scheduleName'], 'Nightly' ) }}
+      shouldRun: ${{ eq(dependencies.GetDependencies.outputs['GetScheduleName.scheduleName'], 'Nightly' ) }}
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
