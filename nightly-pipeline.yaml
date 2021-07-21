@@ -44,16 +44,17 @@ stages:
         steps: 
           - download: none
           - checkout: none
-          - template: templates\common\pipeline-details.yml@azTemplates
+          - template: pipeline\templates\builds.yaml
             parameters:
               buildId: $(Build.BuildId)
               patToken: $(pipelinePAT)
               propertyName: ".triggerInfo.scheduleName"
               variableName: "scheduleName"
+              taskName: 'buildDetial'
 
   - template: pipeline/stages/build.yaml
     parameters:
-      scheduleName: dependencies.GetDependencies.GetScheduleName.outputs['scheduleName']
+      scheduleName: dependencies.GetDependencies.GetScheduleName.outputs['buildDetial.scheduleName']
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
@@ -168,7 +169,7 @@ stages:
 
   - stage: 'HouseKeeper'
     displayName: 'House Keeper Tasks'
-    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.scheduleName'], 'Monthly' )
+    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetial.scheduleName'], 'Monthly' )
     dependsOn: []
     variables:
       - group: cvp-common
