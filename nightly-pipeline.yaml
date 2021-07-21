@@ -51,10 +51,10 @@ stages:
               propertyName: ".triggerInfo.scheduleName"
               variableName: "scheduleName"
               taskName: 'buildDetail'
-
-  - template: pipeline/stages/build.yaml
-    #parameters:
-      #scheduleName: dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName']
+  - ${{ if eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'],'null') }}:
+    - template: pipeline/stages/build.yaml
+      #parameters:
+        #scheduleName: dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName']
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
