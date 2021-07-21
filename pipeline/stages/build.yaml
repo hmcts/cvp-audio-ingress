@@ -1,7 +1,6 @@
 parameters:
   - name: scheduleName
     type: string
-    default: ''
 
 stages:
   - stage: Build
