@@ -179,6 +179,8 @@ stages:
         steps: 
           - download: none
           - checkout: none
-          - bash: echo "Run me"
+          - bash: | 
+              echo "Run me"
+              echo "name: ${schname}"
             env: 
               schname: dependencies.GetDependencies.outputs
