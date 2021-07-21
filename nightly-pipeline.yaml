@@ -169,7 +169,7 @@ stages:
 
   - stage: 'HouseKeeper'
     displayName: 'House Keeper Tasks'
-    #condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
+    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'null' )
     dependsOn: GetDependencies
     variables:
       - group: cvp-common
@@ -183,4 +183,4 @@ stages:
               echo "Run me"
               echo "name: ${schname}"
             env: 
-              schname: dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName']
+              schname: ${{ dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'] }}
