@@ -10,7 +10,9 @@ resources:
       type: github
       name: hmcts/azure-devops-templates
       ref: refs/heads/getBuild
+      #TODO: ref: refs/heads/master
       endpoint: hmcts
+
 schedules:
 - cron: "0 1 * * *"
   displayName: Nightly
@@ -18,11 +20,12 @@ schedules:
     include:
     - master
   always: true
-- cron: "0 2 1 * *"
+- cron: "5 * * * *" #TODO: "0 2 1 * *"
   displayName: Monthly
   branches:
     include:
-    - master
+    #TODO: - master
+    - VIH-7725
   always: true
 
 parameters:
@@ -167,8 +170,8 @@ stages:
 
   - ${{each env in parameters.envs}}:
     - stage: 'HouseKeeper'
-      displayName: 'House Keeper Tasks'
-      condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'null' )
+      displayName: '${{env}} House Keeper Tasks'
+      condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
       dependsOn: GetDependencies
       variables:
         - template: pipeline/variables/variables-common.yaml
@@ -176,7 +179,7 @@ stages:
         - group: cvp-${{env}}
       jobs:
         - job: ClearKv
-          displayName: 'Clear Key Vault'
+          displayName: '${{env}} Key Vault'
           steps: 
             - download: none
             - checkout: none
