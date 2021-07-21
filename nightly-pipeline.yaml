@@ -51,8 +51,9 @@ stages:
               propertyName: ".triggerInfo.scheduleName"
               variableName: "scheduleName"
 
-  - ${{ if eq(dependencies.GetDependencies.outputs['GetScheduleName.scheduleName'], 'Nightly' ) }}:
-    - template: pipeline/stages/build.yaml
+  - template: pipeline/stages/build.yaml
+    parameters:
+      shouldRun: ${{ eq(stageDependencies.GetScheduleName.GetDependencies.outputs['scheduleName'], 'Nightly' ) }}
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
@@ -165,16 +166,16 @@ stages:
                 message: "$(wowzaCheck.msg)"
                 conditionAction: $(wowzaCheck.sendMsg)
 
-  - ${{ if eq(dependencies.GetDependencies.outputs['GetScheduleName.scheduleName'], 'Monthly' ) }}:
-    - stage: 'HouseKeeper'
-      displayName: 'House Keeper Tasks'
-      dependsOn: []
-      variables:
-        - group: cvp-common
-      jobs:
-        - job: ClearKv
-          displayName: 'Clear Key Vault'
-          steps: 
-            - download: none
-            - checkout: none
-            - bash: echo "Run me"
+  - stage: 'HouseKeeper'
+    displayName: 'House Keeper Tasks'
+    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.scheduleName'], 'Monthly' )
+    dependsOn: []
+    variables:
+      - group: cvp-common
+    jobs:
+      - job: ClearKv
+        displayName: 'Clear Key Vault'
+        steps: 
+          - download: none
+          - checkout: none
+          - bash: echo "Run me"

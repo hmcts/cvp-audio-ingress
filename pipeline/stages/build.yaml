@@ -1,7 +1,12 @@
+parameters:
+  - name: shouldRun
+    type: boolean
+    default: false
 
 stages:
   - stage: Build
     dependsOn: GetDependencies
+    condition: eq('${{ parameters.shouldRun }}','true')
     variables:
       - template: ../variables/variables-common.yaml
     jobs:
