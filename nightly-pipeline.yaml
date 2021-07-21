@@ -169,7 +169,7 @@ stages:
                 conditionAction: $(wowzaCheck.sendMsg)
 
   - ${{each env in parameters.envs}}:
-    - stage: 'HouseKeeper'
+    - stage: '${{env}}HouseKeeper'
       displayName: '${{env}} House Keeper Tasks'
       condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
       dependsOn: GetDependencies
@@ -178,7 +178,7 @@ stages:
         - template: pipeline/variables/variables-${{env}}.yaml
         - group: cvp-${{env}}
       jobs:
-        - job: ClearKv
+        - job: ${{env}}ClearKv
           displayName: '${{env}} Key Vault'
           steps: 
             - download: none
