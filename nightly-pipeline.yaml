@@ -51,7 +51,7 @@ stages:
               propertyName: ".triggerInfo.scheduleName"
               variableName: "scheduleName"
 
-  - ${{ if eq('Nightly',$[ stageDependencies.GetDependencies.GetScheduleName.outputs['scheduleName'] ])}}:
+  - ${{ if eq('Nightly',$(stageDependencies.GetDependencies.GetScheduleName.outputs['scheduleName'] ))}}:
     - template: pipeline/stages/build.yaml
 
   - ${{each env in parameters.envs}}:
@@ -165,7 +165,7 @@ stages:
                 message: "$(wowzaCheck.msg)"
                 conditionAction: $(wowzaCheck.sendMsg)
 
-  - ${{ if eq('Monthly',$[ stageDependencies.GetDependencies.GetScheduleName.outputs['scheduleName'] ])}}:
+  - ${{ if eq('Monthly',$( stageDependencies.GetDependencies.GetScheduleName.outputs['scheduleName'] ))}}:
     - stage: 'HouseKeeper'
       displayName: 'House Keeper Tasks'
       dependsOn: []
