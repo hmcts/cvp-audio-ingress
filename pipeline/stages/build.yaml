@@ -1,12 +1,8 @@
-parameters:
-  - name: scheduleName
-    type: string
-    default: ''
 
 stages:
   - stage: Build
     dependsOn: GetDependencies
-    condition: eq('${{ parameters.scheduleName }}','Nightly')
+    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'null' )
     variables:
       - template: ../variables/variables-common.yaml
     jobs:
