@@ -165,22 +165,23 @@ stages:
                 message: "$(wowzaCheck.msg)"
                 conditionAction: $(wowzaCheck.sendMsg)
 
-  - stage: 'HouseKeeper'
-    displayName: 'House Keeper Tasks'
-    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'null' )
-    dependsOn: GetDependencies
-    variables:
-      - template: pipeline/variables/variables-common.yaml
-      - template: pipeline/variables/variables-sbox.yaml
-      - group: cvp-sbox
-    jobs:
-      - job: ClearKv
-        displayName: 'Clear Key Vault'
-        steps: 
-          - download: none
-          - checkout: none
-          - template: templates\keyvault\pruneNetworkRules.yaml@azTemplates
-            parameters:
-              subscriptionName: ${{variables.subscriptionName}}
-              resourceGroupName: "${{variables.product}}-sharedinfra-sbox"
-              keyVaultName: "${{variables.product}}-sbox-kv"
+  - ${{each env in parameters.envs}}:
+    - stage: 'HouseKeeper'
+      displayName: 'House Keeper Tasks'
+      condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'null' )
+      dependsOn: GetDependencies
+      variables:
+        - template: pipeline/variables/variables-common.yaml
+        - template: pipeline/variables/variables-${{env}}.yaml
+        - group: cvp-${{env}}
+      jobs:
+        - job: ClearKv
+          displayName: 'Clear Key Vault'
+          steps: 
+            - download: none
+            - checkout: none
+            - template: templates\keyvault\pruneNetworkRules.yaml@azTemplates
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                resourceGroupName: "${{variables.product}}-sharedinfra-${{env}}"
+                keyVaultName: "${{variables.product}}-${{env}}-kv"
