@@ -21,16 +21,11 @@ parameters:
 
 steps:
     - bash: |
-        echo "pat: ${patToken}"
-        echo "organizationUrl: ${organizationUrl}"
-        echo "projectName: ${projectName}"
-        echo "buildId: ${buildId}"
-        echo "taskName: ${taskName}"
-        echo "variableName: ${variableName}"
-        echo "propertyName: ${propertyName}"
         projectName="${projectName// /%20}"
+        
         apiUrl="${organizationUrl}${projectName}/_apis/build/builds/${buildId}?api-version=6.0"
         echo "Request: ${apiUrl}"
+
         propertyValue=$(curl -u :${patToken} ${apiUrl} | jq -r ${propertyName})
 
         echo "${variableName} is ${propertyValue}"
