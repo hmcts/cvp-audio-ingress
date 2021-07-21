@@ -9,8 +9,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: refs/heads/getBuild
-      #TODO: ref: refs/heads/master
+      ref: refs/heads/master
       endpoint: hmcts
 
 schedules:
@@ -20,12 +19,11 @@ schedules:
     include:
     - master
   always: true
-- cron: "*/5 * * * *" #TODO: "0 2 1 * *"
+- cron: "0 2 1 * *"
   displayName: Monthly
   branches:
     include:
-    #TODO: - master
-    - VIH-7725
+    - master
   always: true
 
 parameters:
