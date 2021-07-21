@@ -20,7 +20,7 @@ schedules:
     include:
     - master
   always: true
-- cron: "5 * * * *" #TODO: "0 2 1 * *"
+- cron: "*/5 * * * *" #TODO: "0 2 1 * *"
   displayName: Monthly
   branches:
     include:
