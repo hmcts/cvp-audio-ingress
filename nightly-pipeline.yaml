@@ -9,7 +9,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: refs/heads/master
+      ref: refs/heads/getBuild
       endpoint: hmcts
 schedules:
 - cron: "0 1 * * *"
@@ -44,7 +44,7 @@ stages:
         steps: 
           - download: none
           - checkout: none
-          - template: pipeline\templates\builds.yaml
+          - template: templates\common\pipeline-details.yml@azTemplates
             parameters:
               buildId: $(Build.BuildId)
               patToken: $(pipelinePAT)
