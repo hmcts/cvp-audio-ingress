@@ -50,11 +50,11 @@ stages:
               patToken: $(pipelinePAT)
               propertyName: ".triggerInfo.scheduleName"
               variableName: "scheduleName"
-              taskName: 'buildDetial'
+              taskName: 'buildDetail'
 
   - template: pipeline/stages/build.yaml
     parameters:
-      scheduleName: dependencies.GetDependencies.GetScheduleName.outputs['buildDetial.scheduleName']
+      scheduleName: dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName']
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
@@ -169,7 +169,7 @@ stages:
 
   - stage: 'HouseKeeper'
     displayName: 'House Keeper Tasks'
-    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetial.scheduleName'], 'Monthly' )
+    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
     dependsOn: []
     variables:
       - group: cvp-common
