@@ -172,12 +172,7 @@ stages:
     - stage: '${{env}}HouseKeeper'
       displayName: '${{env}} House Keeper Tasks'
       condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
-      ${{ if eq(env, 'sbox') }}:
-        dependsOnEnv: 'GetDependencies'
-      ${{ if eq(env, 'stg') }}:
-        dependsOnEnv: 'sboxHouseKeeper'
-      ${{ if eq(env, 'prod') }}:
-        dependsOnEnv: 'stgHouseKeeper'
+      dependsOn: GetDependencies
       variables:
         - template: pipeline/variables/variables-common.yaml
         - template: pipeline/variables/variables-${{env}}.yaml
