@@ -54,6 +54,9 @@ stages:
               taskName: 'buildDetail'
 
   - template: pipeline/stages/build.yaml
+    parameters:
+      dependsOnEnv: GetDependencies
+      condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Nightly' )
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
