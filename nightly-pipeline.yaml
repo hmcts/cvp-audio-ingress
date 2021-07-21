@@ -54,7 +54,7 @@ stages:
 
   - template: pipeline/stages/build.yaml
     parameters:
-      scheduleName: dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName']
+      #scheduleName: dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName']
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
@@ -169,7 +169,7 @@ stages:
 
   - stage: 'HouseKeeper'
     displayName: 'House Keeper Tasks'
-    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
+    #condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
     dependsOn: []
     variables:
       - group: cvp-common
@@ -180,3 +180,5 @@ stages:
           - download: none
           - checkout: none
           - bash: echo "Run me"
+            env: 
+              schname: dependencies.GetDependencies.outputs
