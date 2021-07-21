@@ -170,15 +170,17 @@ stages:
     condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'null' )
     dependsOn: GetDependencies
     variables:
-      - group: cvp-common
+      - template: pipeline/variables/variables-common.yaml
+      - template: pipeline/variables/variables-sbox.yaml
+      - group: cvp-sbox
     jobs:
       - job: ClearKv
         displayName: 'Clear Key Vault'
         steps: 
           - download: none
           - checkout: none
-          - bash: | 
-              echo "Run me"
-              echo "name: ${schname}"
-            env: 
-              schname: $[dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'] ]
+          - template: templates\keyvault\pruneNetworkRules.yaml@azTemplates
+            parameters:
+              subscriptionName: ${{variables.subscriptionName}}
+              resourceGroupName: "${{variables.product}}-sharedinfra-sbox"
+              keyVaultName: "${{variables.product}}-sbox-kv"

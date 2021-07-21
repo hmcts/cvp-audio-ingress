@@ -2,7 +2,7 @@
 stages:
   - stage: Build
     dependsOn: GetDependencies
-    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'null' )
+    condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Nightly' )
     variables:
       - template: ../variables/variables-common.yaml
     jobs:
