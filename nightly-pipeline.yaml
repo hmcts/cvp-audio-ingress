@@ -170,7 +170,7 @@ stages:
   - stage: 'HouseKeeper'
     displayName: 'House Keeper Tasks'
     #condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
-    dependsOn: []
+    dependsOn: GetDependencies
     variables:
       - group: cvp-common
     jobs:
