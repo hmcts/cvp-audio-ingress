@@ -3,10 +3,24 @@ trigger:
 
 pr: 
   - none
-  
+
+resources:
+  repositories:
+    - repository: azTemplates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: refs/heads/master
+      endpoint: hmcts
+
 schedules:
 - cron: "0 1 * * *"
-  displayName: Daily run
+  displayName: Nightly
+  branches:
+    include:
+    - master
+  always: true
+- cron: "0 2 1 * *"
+  displayName: Monthly
   branches:
     include:
     - master
@@ -20,7 +34,29 @@ parameters:
     default: ['sbox','stg','prod']
 
 stages:
+  - stage: 'GetDependencies'
+    displayName: 'Get Dependency Details'
+    dependsOn: []
+    variables:
+      - group: cvp-common
+    jobs:
+      - job: GetScheduleName
+        displayName: 'Get Schedule Name'
+        steps: 
+          - download: none
+          - checkout: none
+          - template: templates\common\pipeline-details.yml@azTemplates
+            parameters:
+              buildId: $(Build.BuildId)
+              patToken: $(pipelinePAT)
+              propertyName: ".triggerInfo.scheduleName"
+              variableName: "scheduleName"
+              taskName: 'buildDetail'
+
   - template: pipeline/stages/build.yaml
+    parameters:
+      dependsOnEnv: GetDependencies
+      condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Nightly' )
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
@@ -132,3 +168,24 @@ stages:
                 title: "Wowza version upgrade in ${{env}}"
                 message: "$(wowzaCheck.msg)"
                 conditionAction: $(wowzaCheck.sendMsg)
+
+  - ${{each env in parameters.envs}}:
+    - stage: '${{env}}HouseKeeper'
+      displayName: '${{env}} House Keeper Tasks'
+      condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
+      dependsOn: GetDependencies
+      variables:
+        - template: pipeline/variables/variables-common.yaml
+        - template: pipeline/variables/variables-${{env}}.yaml
+        - group: cvp-${{env}}
+      jobs:
+        - job: ${{env}}ClearKv
+          displayName: '${{env}} Key Vault'
+          steps: 
+            - download: none
+            - checkout: none
+            - template: templates\keyvault\pruneNetworkRules.yaml@azTemplates
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                resourceGroupName: "${{variables.product}}-sharedinfra-${{env}}"
+                keyVaultName: "${{variables.product}}-${{env}}-kv"

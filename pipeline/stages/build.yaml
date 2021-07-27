@@ -1,6 +1,18 @@
+parameters:
+  - name: dependsOnEnv
+    type: string
+    default: ''
+  - name: condition
+    type: string
+    default: 'always()'
 
 stages:
   - stage: Build
+    ${{ if eq(parameters.dependsOnEnv, '') }}:
+      dependsOn: []
+    ${{ if ne(parameters.dependsOnEnv, '') }}:
+      dependsOn: '${{parameters.dependsOnEnv}}'
+    condition: ${{ parameters.condition }}
     variables:
       - template: ../variables/variables-common.yaml
     jobs:
