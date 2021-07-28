@@ -138,7 +138,52 @@ stages:
                     echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
                     exit 1
                 fi
-                
+          - task: AzureCLI@2
+            name: 'pgkinstall'
+            displayName: Check Packages Installed
+            inputs:
+              azureSubscription: '${{variables.subscriptionName}}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
+                rgName="${service_name}rg"
+
+                allOk=true
+                for i in {1..2}
+                do
+
+                    vmName="${service_name}vm${i}"
+                    echo "Testing $vmName in $rgName."
+
+                    # Test fuse
+                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts 'dpkg-query -W --showformat='${Status}\n' fuse |grep "install ok installed" && echo "installed" || echo "failed"' --query "value[0].message")
+
+                    if [[ $response == *"installed"* ]]; then
+                      echo "It's there!"
+                    else
+                      echo "##vso[task.LogIssue type=error;]The fuse package failed to install on $vmName in $rgName"
+                      allOk=false
+                    fi
+
+                    # Test blobfuse
+                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts 'dpkg-query -W --showformat='${Status}\n' blobfuse |grep "install ok installed" && echo "installed" || echo "failed"' --query "value[0].message")
+
+                    if [[ $response == *"installed"* ]]; then
+                      echo "It's there!"
+                    else
+                      echo "##vso[task.LogIssue type=error;]The blobfuse package failed to install on $vmName in $rgName"
+                      allOk=false
+                    fi
+
+                done
+
+                if [ "$allOk" = "false" ]
+                then
+                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
+                    exit 1
+                fi
+
 #          - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates
 #            parameters:
 #              subscriptionName: ${{variables.subscriptionName}}
