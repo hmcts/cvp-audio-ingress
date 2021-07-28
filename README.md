@@ -15,6 +15,12 @@ The project can be deployed to the following 3 environments:
 * Shared Services Staging - Used as a pre-prod type environment and for end-to-end/load testing
 * Shared Services Production
 
+## Pipeline
+There are some post deployment tests that run, which should clearly state what is wrong and be easy to know how to fix.
+Below are some instructions for some of the tests.
+
+1. `Check Blob Mounted` - If this failed then restart the VM or run the commands at the bottom of the `cloudconfig.tpl` file.
+
 ## Testing
 Before starting testing, make sure the client IP(s) for the machines you are testing from is added to the 
 `rtmps_source_address_prefixes` variable. This can be found in a variable group in Azure DevOps called `cvp-<env>`.
