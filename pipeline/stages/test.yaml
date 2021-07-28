@@ -70,6 +70,40 @@ stages:
                     echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
                     exit 1
                 fi
+          - task: AzureCLI@2
+            name: 'blobmount'
+            displayName: Check Blob Mounted
+            inputs:
+              azureSubscription: '${{variables.subscriptionName}}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
+                rgName="${service_name}rg"
+
+                allOk=true
+                for i in {1..2}
+                do
+
+                    vmName="${service_name}vm${i}"
+                    echo "Testing $vmName in $rgName."
+                    
+                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts '[ -d "/usr/local/WowzaStreamingEngine/content/azurecopy" ] && echo "Directory exists." || echo "Error: Directory does not exists."' --query "value[0].message")
+
+                    if [[ $response == *"Directory exists"* ]]; then
+                      echo "It's there!"
+                    else
+                      echo "##vso[task.LogIssue type=error;]The blob storage is not attached to $vmName in $rgName"
+                      allOk=false
+                    fi
+
+                done
+
+                if [ "$allOk" = "false" ]
+                then
+                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
+                    exit 1
+                fi
           
 #          - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates
 #            parameters:
