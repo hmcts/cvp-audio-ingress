@@ -71,8 +71,8 @@ stages:
                     exit 1
                 fi
           - task: AzureCLI@2
-            name: 'blobmount'
-            displayName: Check Blob Mounted
+            name: 'vminstalls'
+            displayName: Check VM Installs
             inputs:
               azureSubscription: '${{variables.subscriptionName}}'
               scriptType: 'bash'
@@ -88,93 +88,39 @@ stages:
                     vmName="${service_name}vm${i}"
                     echo "Testing $vmName in $rgName."
 
-                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts '[ -d "/usr/local/WowzaStreamingEngine/content/azurecopy" ] && echo "Directory exists." || echo "Error: Directory does not exists."' --query "value[0].message")
+                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts '[ -d "/usr/local/WowzaStreamingEngine/content/azurecopy" ] && echo "Directory exists." || echo "Error: Directory does not exists." && dpkg -s fuse |grep "install ok installed" && echo "fuse pgk installed" || echo "fuse pgk failed" && dpkg -s blobfuse |grep "install ok installed" && echo "blobfuse installed" || echo "blobfuse failed" && systemctl is-active --quiet WowzaStreamingEngine && echo "Service Running" || echo "Error: Service not Running"' --query "value[0].message")
 
-                    if [[ $response == *"Directory exists"* ]]; then
-                      echo "It's there!"
+                    echo "$response"
+                    echo ""
+
+                    if [[ $response == *"fuse pgk installed"* ]]; then
+                        echo "The fuse package installed on $vmName in $rgName"
                     else
-                      echo "##vso[task.LogIssue type=error;]The blob storage is not attached to $vmName in $rgName"
-                      allOk=false
+                        echo "##vso[task.LogIssue type=error;]The fuse package failed to install on $vmName in $rgName"
+                        allOk=false
                     fi
 
-                done
-
-                if [ "$allOk" = "false" ]
-                then
-                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
-                    exit 1
-                fi
-          - task: AzureCLI@2
-            name: 'wowzaservice'
-            displayName: Check Wowza Service
-            inputs:
-              azureSubscription: '${{variables.subscriptionName}}'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
-                rgName="${service_name}rg"
-
-                allOk=true
-                for i in {1..2}
-                do
-
-                    vmName="${service_name}vm${i}"
-                    echo "Testing $vmName in $rgName."
-
-                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts 'systemctl is-active --quiet WowzaStreamingEngine && echo "Service Running" || echo "Error: Service not Running"' --query "value[0].message")
+                    if [[ $response == *"blobfuse installed"* ]]; then
+                        echo "The blobfuse package installed on $vmName in $rgName"
+                    else
+                        echo "##vso[task.LogIssue type=error;]The blobfuse package failed to install on $vmName in $rgName"
+                        allOk=false
+                    fi
 
                     if [[ $response == *"Service Running"* ]]; then
-                      echo "It's there!"
+                        echo "The Wowza Service is running in $vmName in $rgName"
                     else
-                      echo "##vso[task.LogIssue type=error;]The Wowza Service is not running in $vmName in $rgName"
-                      allOk=false
+                        echo "##vso[task.LogIssue type=error;]The Wowza Service is not running in $vmName in $rgName"
+                        allOk=false
                     fi
 
-                done
-
-                if [ "$allOk" = "false" ]
-                then
-                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
-                    exit 1
-                fi
-          - task: AzureCLI@2
-            name: 'pgkinstall'
-            displayName: Check Packages Installed
-            inputs:
-              azureSubscription: '${{variables.subscriptionName}}'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
-                rgName="${service_name}rg"
-
-                allOk=true
-                for i in {1..2}
-                do
-
-                    vmName="${service_name}vm${i}"
-                    echo "Testing $vmName in $rgName."
-
-                    # Test fuse
-                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts 'dpkg-query -W --showformat='${Status}\n' fuse |grep "install ok installed" && echo "installed" || echo "failed"' --query "value[0].message")
-
-                    if [[ $response == *"installed"* ]]; then
-                      echo "It's there!"
+                    if [[ $response == *"Directory exists"* ]]; then
+                        echo "The blob storage is attached to $vmName in $rgName"
                     else
-                      echo "##vso[task.LogIssue type=error;]The fuse package failed to install on $vmName in $rgName"
-                      allOk=false
+                        echo "##vso[task.LogIssue type=error;]The blob storage is not attached to $vmName in $rgName"
+                        allOk=false
                     fi
 
-                    # Test blobfuse
-                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts 'dpkg-query -W --showformat='${Status}\n' blobfuse |grep "install ok installed" && echo "installed" || echo "failed"' --query "value[0].message")
-
-                    if [[ $response == *"installed"* ]]; then
-                      echo "It's there!"
-                    else
-                      echo "##vso[task.LogIssue type=error;]The blobfuse package failed to install on $vmName in $rgName"
-                      allOk=false
-                    fi
 
                 done
 
@@ -184,6 +130,7 @@ stages:
                     exit 1
                 fi
 
+                
 #          - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates
 #            parameters:
 #              subscriptionName: ${{variables.subscriptionName}}
