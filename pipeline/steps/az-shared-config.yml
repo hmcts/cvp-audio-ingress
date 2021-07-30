@@ -161,16 +161,17 @@ steps:
             az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName -f cert-cvp.pfx
             base64 -d cert-cvp.pfx > cert-existing.pfx
 
-            openssl pkcs12 -in cert-up.pfx -out cert-up.pem -nodes 
-            openssl pkcs12 -in cert-existing.pfx -out cert-existing.pem -nodes 
+            openssl base64 -in cert-existing.pfx -out cert-existing.pem
+            openssl base64 -in cert-up.pfx -out cert-up.pem
             echo ""
             echo "up"
-            cat cert-up.pem
+            cat cert-up.pfx
             echo ""
             echo "existing"
-            cat cert-existing.pem
+            cat cert-existing.pfx
+            openssl base64 -in <infile> -out <outfile>
 
-            if cmp -s cert-up.pem cert-existing.pem; then
+            if cmp -s cert-up.pfx cert-existing.pfx; then
                 echo "No Change in Cert"
             else
                 echo "Change Required in Cert"
