@@ -153,7 +153,6 @@ resource "azurerm_network_security_group" "sg" {
     source_address_prefixes    = var.rtmps_source_address_prefixes
     destination_address_prefix = "*"
   }
-  
   #egress rules
   security_rule {
     name                       = "Required_Packages_443"
@@ -222,29 +221,6 @@ resource "azurerm_network_security_group" "sg" {
     destination_address_prefix = "*"
   }
   tags = var.common_tags
-}
-
-resource "azurerm_network_security_rule" "developer_rule" {
-  name                        = "RTMPS_Dev"
-  priority                    = 1039
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "443"
-  source_address_prefix       = ""
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.rg.name
-  network_security_group_name = azurerm_network_security_group.sg.name
-
-  depends_on = [
-    azurerm_network_security_group.sg
-  ]
-  lifecycle {
-    ignore_changes = [
-      source_address_prefix
-    ]
-  }
 }
 
 resource "azurerm_network_interface" "nic1" {
