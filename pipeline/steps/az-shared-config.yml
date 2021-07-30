@@ -182,6 +182,13 @@ steps:
         echo "##vso[task.setvariable variable=secretId]$secretId"
         echo "##vso[task.setvariable variable=thumbprint]$thumbprint"
   
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: $(System.DefaultWorkingDirectory)/*.pfx  # Required  # The folder or file path to publish. This can be a fully-qualified path or a path relative to the root of the repository. Wildcards are not supported. [Variables](https://go.microsoft.com/fwlink/?LinkID=550988) are supported. Example: $(Build.ArtifactStagingDirectory)
+      ArtifactName: certs  # Required  # The name of the artifact to create in the publish location.
+      ArtifactType: Container # Options: 'Container', 'FilePath' # Required  # Choose whether to store the artifact in Azure Pipelines, or to copy it to a file share that must be accessible from the build agent.
+
+
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'
     inputs:
