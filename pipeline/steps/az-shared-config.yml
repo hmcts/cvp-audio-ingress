@@ -150,21 +150,22 @@ steps:
             az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name $certName --verbose
         }
 
-        if [ $kvSecret = "" ]; then
+        echo "Check if cert exists"
+        kvSecret=$(az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName --query "id")
+        if [ "$kvSecret" = "" ]; then
             echo "Cert doesn't exist"
-            import() 
-        fi
-        if [ $kvSecret != "" ]; then
+            import
+        else
             echo "Cert exists"
             echo "Get Existing cert from CVP"
             az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName -f cert.pfx
             base64 -d cert.pfx > cert-existing.pfx
 
-            if cmp -s "cert-up.pfx" "cert-existing.pfx"; then
+            if cmp -s cert-up.pfx cert-existing.pfx; then
                 echo "No Change in Cert"
             else
                 echo "Change Required in Cert"
-                import()
+                import
             fi
         fi
 
