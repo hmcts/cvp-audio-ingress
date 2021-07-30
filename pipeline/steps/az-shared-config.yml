@@ -165,13 +165,12 @@ steps:
             openssl base64 -in cert-up.pfx -out cert-up.pem
             echo ""
             echo "up"
-            cat cert-up.pfx
+            cat cert-up.pem
             echo ""
             echo "existing"
-            cat cert-existing.pfx
-            openssl base64 -in <infile> -out <outfile>
+            cat cert-existing.pem
 
-            if cmp -s cert-up.pfx cert-existing.pfx; then
+            if cmp -s cert-up.pem cert-existing.pem; then
                 echo "No Change in Cert"
             else
                 echo "Change Required in Cert"
