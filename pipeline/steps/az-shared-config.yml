@@ -141,15 +141,15 @@ steps:
         echo "Logged in as oid $oid"
 
         cd $(System.DefaultWorkingDirectory)
-        
-        echo "Copy wildcard cert from cftapps"
-        az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert-cft.pfx
 
-        base64 -d cert-cft.pfx > cert-up.pfx
+        echo "Copy wildcard cert from cftapps"
+        az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f $(System.DefaultWorkingDirectory)/cert-cft.pfx
+
+        base64 -d $(System.DefaultWorkingDirectory)/cert-cft.pfx > $(System.DefaultWorkingDirectory)/cert-up.pfx
 
         import(){
             echo "Import the cert to our new KV $kvName"
-            az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name $certName --verbose
+            az keyvault certificate import --file $(System.DefaultWorkingDirectory)/cert-up.pfx --vault-name $kvName --name $certName --verbose
         }
 
         echo "Check if cert exists"
@@ -160,10 +160,10 @@ steps:
         else
             echo "Cert exists"
             echo "Get Existing cert from CVP"
-            az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName -f cert-cvp.pfx
-            base64 -d cert-cvp.pfx > cert-existing.pfx
+            az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName -f $(System.DefaultWorkingDirectory)/cert-cvp.pfx
+            base64 -d $(System.DefaultWorkingDirectory)/cert-cvp.pfx > $(System.DefaultWorkingDirectory)/cert-existing.pfx
 
-            if cmp -s cert-up.pfx cert-existing.pfx; then
+            if cmp -s $(System.DefaultWorkingDirectory)/cert-up.pfx $(System.DefaultWorkingDirectory)/cert-existing.pfx; then
                 echo "No Change in Cert"
             else
                 echo "Change Required in Cert"
