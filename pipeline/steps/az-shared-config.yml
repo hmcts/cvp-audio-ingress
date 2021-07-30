@@ -151,7 +151,7 @@ steps:
         }
 
         echo "Check if cert exists"
-        $kvSecret=$(az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName --query "id")
+        kvSecret=$(az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName --query "id")
         if [ "$kvSecret" = "" ]; then
             echo "Cert doesn't exist"
             import()
