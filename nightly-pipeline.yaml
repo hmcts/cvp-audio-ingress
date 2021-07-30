@@ -169,6 +169,20 @@ stages:
                 message: "$(wowzaCheck.msg)"
                 conditionAction: $(wowzaCheck.sendMsg)
 
+        - job: Clean${{env}}
+          displayName: 'Clean ${{env}} down'
+          steps: 
+            - checkout: none
+            - download: none
+            
+            - template: pipeline/steps/az-clear-nsg-rule.yml
+              parameters: 
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+                resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+                nsgName: "${{variables.product}}-recordings-${{variables.env}}-sg"
+                nsgRuleName: "RTMPS_Dev"
+
   - ${{each env in parameters.envs}}:
     - stage: '${{env}}HouseKeeper'
       displayName: '${{env}} House Keeper Tasks'
