@@ -182,7 +182,7 @@ stages:
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 nsgName: "${{variables.product}}-recordings-${{variables.env}}-sg"
                 nsgRuleName: "RTMPS_Dev"
-                sourceAddressPrefixes: "${{ variables.defaultDevIp }}"
+                sourceAddressPrefixes: "${{ variables.dev_source_address_prefixes }}"
 
   - ${{each env in parameters.envs}}:
     - stage: '${{env}}HouseKeeper'
