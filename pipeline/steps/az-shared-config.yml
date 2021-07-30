@@ -131,7 +131,6 @@ steps:
       azureSubscription: '${{ parameters.subscriptionName }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
-      workingDirectory: $(System.DefaultWorkingDirectory)
       inlineScript: |
         kvName="$(kvName)"
         oid=$(oid)
@@ -141,6 +140,8 @@ steps:
         sourceKvName="$kvNamePrefix-$env"
         echo "Logged in as oid $oid"
 
+        cd $(System.DefaultWorkingDirectory)
+        
         echo "Copy wildcard cert from cftapps"
         az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert-cft.pfx
 
