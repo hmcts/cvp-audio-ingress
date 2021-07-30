@@ -141,9 +141,9 @@ steps:
         echo "Logged in as oid $oid"
 
         echo "Copy wildcard cert from cftapps"
-        az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert.pfx
+        az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert-cft.pfx
 
-        base64 -d cert.pfx > cert-up.pfx
+        base64 -d cert-cft.pfx > cert-up.pfx
 
         import(){
             echo "Import the cert to our new KV $kvName"
@@ -158,8 +158,8 @@ steps:
         else
             echo "Cert exists"
             echo "Get Existing cert from CVP"
-            az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName -f cert.pfx
-            base64 -d cert.pfx > cert-existing.pfx
+            az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName -f cert-cvp.pfx
+            base64 -d cert-cvp.pfx > cert-existing.pfx
 
             if cmp -s cert-up.pfx cert-existing.pfx; then
                 echo "No Change in Cert"
