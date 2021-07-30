@@ -8,3 +8,4 @@ variables:
   product: 'cvp'
   businessArea: 'Cross-Cutting'
   application: 'Cloud Video Platform'
+  defaultDevIp: '127.0.0.1'

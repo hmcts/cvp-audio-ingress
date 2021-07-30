@@ -101,7 +101,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   private_dns_zone_name = azurerm_private_dns_zone.blob.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
   registration_enabled  = true
-  tags = var.common_tags
+  tags                  = var.common_tags
 }
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
@@ -153,7 +153,7 @@ resource "azurerm_network_security_group" "sg" {
     source_address_prefixes    = var.rtmps_source_address_prefixes
     destination_address_prefix = "*"
   }
-  
+
   #egress rules
   security_rule {
     name                       = "Required_Packages_443"
@@ -232,7 +232,7 @@ resource "azurerm_network_security_rule" "developer_rule" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "443"
-  source_address_prefix       = ""
+  source_address_prefix       = var.dev_source_address_prefixes
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.rg.name
   network_security_group_name = azurerm_network_security_group.sg.name

@@ -67,6 +67,7 @@ steps:
         -var "lb_IPaddress=$(lb_IPaddress)"
         -var "ssh_public_key=$(pubKey)"
         -var "rtmps_source_address_prefixes=[$(rtmps_source_address_prefixes)]"
+        -var "dev_source_address_prefixes=$(dev_source_address_prefixes)"
         -var "ws_name=$(ws_name)"
         -var "ws_rg=$(ws_rg)"
         -var "ws_sub_id=$(ws_sub_id)"
