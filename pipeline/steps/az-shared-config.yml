@@ -131,6 +131,7 @@ steps:
       azureSubscription: '${{ parameters.subscriptionName }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
+      workingDirectory: $(System.DefaultWorkingDirectory)
       inlineScript: |
         kvName="$(kvName)"
         oid=$(oid)
