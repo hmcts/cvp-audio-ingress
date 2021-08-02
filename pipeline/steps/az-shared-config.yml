@@ -142,7 +142,7 @@ steps:
 
         echo "Copy wildcard cert from cftapps"
         az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert-cft.pfx
-        cftAppsVersionUrl=$(az keyvault secret show --id https://$sourceKvName.vault.azure.net/secrets/$certName --query "id")
+        cftAppsVersionUrl=$(az keyvault secret show --id https://$sourceKvName.vault.azure.net/secrets/$certName --query "id" -o tsv)
         cftAppsVersionId=${cftAppsVersionUrl##*/}
         echo "cftapps Version $cftAppsVersionId"
 
