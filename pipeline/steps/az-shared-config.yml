@@ -142,12 +142,15 @@ steps:
 
         echo "Copy wildcard cert from cftapps"
         az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert-cft.pfx
+        cftAppsVersionUrl=$(az keyvault secret show --id https://$sourceKvName.vault.azure.net/secrets/$certName --query "id")
+        cftAppsVersionId=${cftAppsVersionUrl##*/}
+        echo "cftapps Version $cftAppsVersionId"
 
         base64 -d cert-cft.pfx > cert-up.pfx
 
         import(){
             echo "Import the cert to our new KV $kvName"
-            az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name $certName --verbose
+            az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name $certName --tags parentVersion=$cftAppsVersionId --verbose
         }
 
         echo "Check if cert exists"
@@ -158,23 +161,13 @@ steps:
         else
             echo "Cert exists"
             echo "Get Existing cert from CVP"
-            az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName -f cert-cvp.pfx
-            base64 -d cert-cvp.pfx > cert-existing.pfx
+            kvSecretVersion=$(az keyvault secret show --id https://$kvName.vault.azure.net/secrets/$certName --query "[?tags.parentVersion == '$cftAppsVersionId'].id")
 
-            openssl base64 -in cert-existing.pfx -out cert-existing.pem
-            openssl base64 -in cert-up.pfx -out cert-up.pem
-            echo ""
-            echo "up"
-            cat cert-up.pem
-            echo ""
-            echo "existing"
-            cat cert-existing.pem
-
-            if cmp -s cert-up.pem cert-existing.pem; then
-                echo "No Change in Cert"
-            else
+            if [ "$kvSecretVersion" = "" ]; then
                 echo "Change Required in Cert"
                 import
+            else
+                echo "No Change in Cert"
             fi
         fi
 
