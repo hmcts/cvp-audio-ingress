@@ -161,7 +161,7 @@ steps:
         else
             echo "Cert exists"
             echo "Get Existing cert from CVP"
-            kvSecretVersion=$(az keyvault secret show --id https://$kvName.vault.azure.net/secrets/$certName  --query "tags.parentVersion" -o tsv")
+            kvSecretVersion=$(az keyvault secret show --id https://$kvName.vault.azure.net/secrets/$certName  --query "tags.parentVersion" -o tsv)
 
             if [ "$kvSecretVersion" != "$cftAppsVersionId" ]; then
                 echo "Change Required in Cert"
