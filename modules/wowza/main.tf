@@ -7,50 +7,55 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
   tags     = var.common_tags
 }
+locals {
+  main_container_name = "recordings"
+}
+module "sa" {
+  source = "../storage_account"
 
-resource "azurerm_storage_account" "sa" {
-  name                      = "${replace(lower(local.service_name), "-", "")}sa"
-  resource_group_name       = azurerm_resource_group.rg.name
-  location                  = azurerm_resource_group.rg.location
-  tags                      = var.common_tags
-  access_tier               = var.sa_access_tier
-  account_kind              = var.sa_account_kind
-  account_tier              = var.sa_account_tier
-  account_replication_type  = var.sa_account_replication_type
-  enable_https_traffic_only = true
-  min_tls_version           = "TLS1_2"
-  blob_properties {
-    delete_retention_policy {
-      days = 365
+  rg_name     = azurerm_resource_group.rg.name
+  rg_location = azurerm_resource_group.rg.location
+
+  sa_name                     = "${replace(lower(local.service_name), "-", "")}sa"
+  sa_tags                     = var.common_tags
+  sa_access_tier              = var.sa_access_tier
+  sa_account_kind             = var.sa_account_kind
+  sa_account_tier             = var.sa_account_tier
+  sa_account_replication_type = var.sa_account_replication_type
+
+  sa_policy = [
+    {
+      name = "Recording Retion Policy"
+      filters = {
+        prefix_match = ["${local.main_container_name}/"]
+        blob_types   = ["blockBlob"]
+      }
+      actions = {
+        version_delete_after_days_since_creation = 180
+      }
     }
-  }
-}
+  ]
 
-resource "azurerm_management_lock" "sa" {
-  name       = "resource-sa"
-  scope      = azurerm_storage_account.sa.id
-  lock_level = "CanNotDelete"
-  notes      = "Lock to prevent deletion of storage account"
-}
+  sa_lock_name  = "resource-sa"
+  sa_lock_level = "CanNotDelete"
+  sa_lock_notes = "Lock to prevent deletion of storage account"
 
-resource "azurerm_storage_container" "media_container" {
-  name                  = "recordings"
-  storage_account_name  = azurerm_storage_account.sa.name
-  container_access_type = "private"
-}
+  sa_containers = [
+    {
+      name        = local.main_container_name
+      access_type = "private"
+    },
+    // Keep these containers until all recordings have been migrated to `recordings` container
+    {
+      name        = "recordings01"
+      access_type = "private"
+    },
+    {
+      name        = "recordings02"
+      access_type = "private"
+    }
+  ]
 
-// Keep this resource until all recordings have been migrated to `recordings` container
-resource "azurerm_storage_container" "media_container_01" {
-  name                  = "recordings01"
-  storage_account_name  = azurerm_storage_account.sa.name
-  container_access_type = "private"
-}
-
-// Keep this resource until all recordings have been migrated to `recordings` container
-resource "azurerm_storage_container" "media_container_02" {
-  name                  = "recordings02"
-  storage_account_name  = azurerm_storage_account.sa.name
-  container_access_type = "private"
 }
 
 resource "azurerm_virtual_network" "vnet" {
@@ -73,7 +78,7 @@ resource "azurerm_subnet" "sn" {
 }
 
 resource "azurerm_private_endpoint" "endpoint" {
-  name = "${azurerm_storage_account.sa.name}-endpoint"
+  name = "${module.sa.sa_name}-endpoint"
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -81,8 +86,8 @@ resource "azurerm_private_endpoint" "endpoint" {
   subnet_id = azurerm_subnet.sn.id
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.sa.name}-scon"
-    private_connection_resource_id = azurerm_storage_account.sa.id
+    name                           = "${module.sa.sa_name}-scon"
+    private_connection_resource_id = module.sa.sa_id
     subresource_names              = ["Blob"]
     is_manual_connection           = false
   }
@@ -101,11 +106,11 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   private_dns_zone_name = azurerm_private_dns_zone.blob.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
   registration_enabled  = true
-  tags = var.common_tags
+  tags                  = var.common_tags
 }
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
-  name                = azurerm_storage_account.sa.name
+  name                = module.sa.sa_name
   zone_name           = azurerm_private_dns_zone.blob.name
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
@@ -346,11 +351,11 @@ data "template_file" "cloudconfig" {
   vars = {
     certPassword       = random_password.certPassword.result
     certThumbprint     = var.thumbprint
-    storageAccountName = azurerm_storage_account.sa.name
-    storageAccountKey  = azurerm_storage_account.sa.primary_access_key
+    storageAccountName = module.sa.sa_name
+    storageAccountKey  = module.sa.sa_private_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
-    containerName      = azurerm_storage_container.media_container.name
+    containerName      = local.main_container_name
     numApplications    = var.num_applications
   }
 }
