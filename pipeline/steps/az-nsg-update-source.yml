@@ -1,0 +1,29 @@
+parameters:
+  - name: subscriptionName
+    type: string
+  - name: env
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: nsgName
+    type: string
+  - name: nsgRuleName
+    type: string
+  - name: sourceAddressPrefixes
+    type: string
+    default: ''
+      
+  - task: AzureCLI@2
+    displayName: 'Set Variables'
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName }}'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        nsgRule="${{ parameters.nsgRuleName }}"
+        nsgName="${{ parameters.nsgName }}"
+        rgName="${{ parameters.resourceGroupName }}"
+        sourceAddressPrefixes="${{ parameters.sourceAddressPrefixes }}"
+
+        echo "Update $nsgName rule $nsgRule to $sourceAddressPrefixes"
+        az network nsg rule update --name $nsgRule --nsg-name $nsgName --resource-group $rgName --source-address-prefixes $sourceAddressPrefixes
