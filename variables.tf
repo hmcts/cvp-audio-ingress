@@ -103,3 +103,9 @@ variable "ws_rg" {
 variable "ws_sub_id" {
   type = string
 }
+
+## Storage Account
+variable "sa_recording_retention" {
+  type        = number
+  description = "How long to retain the recordings in blob"
+}

@@ -11,19 +11,25 @@ locals {
   main_container_name = "recordings"
 }
 module "sa" {
-  source = "../storage_account"
+  source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=master"
 
-  rg_name     = azurerm_resource_group.rg.name
-  rg_location = azurerm_resource_group.rg.location
+  env = var.env
 
-  sa_name                     = "${replace(lower(local.service_name), "-", "")}sa"
-  sa_tags                     = var.common_tags
-  sa_access_tier              = var.sa_access_tier
-  sa_account_kind             = var.sa_account_kind
-  sa_account_tier             = var.sa_account_tier
-  sa_account_replication_type = var.sa_account_replication_type
+  storage_account_name = "${replace(lower(local.service_name), "-", "")}sa"
+  common_tags          = var.common_tags
 
-  sa_policy = [
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  account_tier             = var.sa_access_tier
+  account_kind             = var.sa_account_kind
+  account_replication_type = var.sa_account_replication_type
+  access_tier              = var.sa_account_tier
+
+  team_name    = "CVP DevOps"
+  team_contact = "#vh-devops"
+
+  policy = [
     {
       name = "Recording Retion Policy"
       filters = {
@@ -31,16 +37,11 @@ module "sa" {
         blob_types   = ["blockBlob"]
       }
       actions = {
-        version_delete_after_days_since_creation = 180
+        version_delete_after_days_since_creation = var.sa_recording_retention
       }
     }
   ]
-
-  sa_lock_name  = "resource-sa"
-  sa_lock_level = "CanNotDelete"
-  sa_lock_notes = "Lock to prevent deletion of storage account"
-
-  sa_containers = [
+  containers = [
     {
       name        = local.main_container_name
       access_type = "private"
@@ -55,8 +56,15 @@ module "sa" {
       access_type = "private"
     }
   ]
-
 }
+
+resource "azurerm_management_lock" "sa" {
+  name       = "resource-sa"
+  scope      = module.sa.storageaccount_id
+  lock_level = "CanNotDelete"
+  notes      = "Lock to prevent deletion of storage account"
+}
+
 
 resource "azurerm_virtual_network" "vnet" {
   name          = "${local.service_name}-vnet"
@@ -78,7 +86,7 @@ resource "azurerm_subnet" "sn" {
 }
 
 resource "azurerm_private_endpoint" "endpoint" {
-  name = "${module.sa.sa_name}-endpoint"
+  name = "${module.sa.storageaccount_name}-endpoint"
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -86,8 +94,8 @@ resource "azurerm_private_endpoint" "endpoint" {
   subnet_id = azurerm_subnet.sn.id
 
   private_service_connection {
-    name                           = "${module.sa.sa_name}-scon"
-    private_connection_resource_id = module.sa.sa_id
+    name                           = "${module.sa.storageaccount_name}-scon"
+    private_connection_resource_id = module.sa.storageaccount_id
     subresource_names              = ["Blob"]
     is_manual_connection           = false
   }
@@ -110,7 +118,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
 }
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
-  name                = module.sa.sa_name
+  name                = module.sa.storageaccount_name
   zone_name           = azurerm_private_dns_zone.blob.name
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
@@ -351,8 +359,8 @@ data "template_file" "cloudconfig" {
   vars = {
     certPassword       = random_password.certPassword.result
     certThumbprint     = var.thumbprint
-    storageAccountName = module.sa.sa_name
-    storageAccountKey  = module.sa.sa_private_key
+    storageAccountName = module.sa.storageaccount_name
+    storageAccountKey  = module.sa.storageaccount_primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
     containerName      = local.main_container_name

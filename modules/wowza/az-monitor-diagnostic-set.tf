@@ -47,7 +47,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
 
 resource "azurerm_monitor_diagnostic_setting" "cvp-sa-diag-set" {
   name                       = "cvp-sa-${var.env}-diag-set"
-  target_resource_id         = module.sa.sa_id
+  target_resource_id         = module.sa.storageaccount_id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.log_analytics.id
 
   metric {

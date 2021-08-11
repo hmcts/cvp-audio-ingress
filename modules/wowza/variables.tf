@@ -34,6 +34,10 @@ variable "sa_account_replication_type" {
   type    = string
   default = "RAGRS"
 }
+variable "sa_recording_retention" {
+  type        = number
+  description = "How long to retain the recordings in blob"
+}
 
 variable "address_space" {
   type    = string

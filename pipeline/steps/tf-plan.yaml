@@ -47,6 +47,8 @@ steps:
       command: 'plan'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: >
+        -var-file "$(Build.SourceDirectory)/tf-variables/shared.tfvars"
+        -var-file "$(Build.SourceDirectory)/tf-variables/${{parameters.env}}.tfvars"
         -var "location=$(location)"
         -var "product=$(product)"
         -var "builtFrom=${{ parameters.builtFrom }}"

@@ -35,6 +35,7 @@ module "wowza" {
   ws_name                       = var.ws_name
   ws_sub_id                     = var.ws_sub_id
   ws_rg                         = var.ws_rg
+  sa_recording_retention        = var.sa_recording_retention
 }
 
 resource "azurerm_dns_a_record" "wowza" {

@@ -1,0 +1,1 @@
+sa_recording_retention = 2555 # 7 years
