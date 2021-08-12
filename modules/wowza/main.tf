@@ -403,7 +403,7 @@ data "template_cloudinit_config" "wowza_setup" {
 }
 data "azurerm_key_vault" "cvp_kv" {
   name                = "cvp-${var.env}-kv"
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = "cvp-sharedinfra-${var.env}"
 }
 data "azurerm_key_vault_certificate" "cert" {
   name         = var.cert_name
