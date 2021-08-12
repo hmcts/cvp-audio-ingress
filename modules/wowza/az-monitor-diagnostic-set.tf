@@ -1,6 +1,6 @@
 resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
   name                       = "cvp-kv-${var.env}-diag-set"
-  target_resource_id         = var.key_vault_id
+  target_resource_id         = data.azurerm_key_vault.cvp_kv.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.log_analytics.id
 
   log {

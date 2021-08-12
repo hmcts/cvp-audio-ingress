@@ -69,19 +69,10 @@ variable "os_disk_size" {
   default = 1024
 }
 
-variable "service_certificate_kv_url" {
-  type = string
-}
-
 variable "cert_path" {
   type = string
 }
-
-variable "thumbprint" {
-  type = string
-}
-
-variable "key_vault_id" {
+variable "cert_name" {
   type = string
 }
 
@@ -113,10 +104,6 @@ variable "wowza_sku" {
 }
 
 variable "lb_IPaddress" {
-  type = string
-}
-
-variable "ssh_public_key" {
   type = string
 }
 

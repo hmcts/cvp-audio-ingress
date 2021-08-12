@@ -11,7 +11,7 @@ locals {
   main_container_name = "recordings"
 }
 module "sa" {
-  source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=master"
+  source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=sa-lifecycle"
 
   env = var.env
 
@@ -21,17 +21,17 @@ module "sa" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
 
-  account_tier             = var.sa_access_tier
+  account_tier             = var.sa_account_tier
   account_kind             = var.sa_account_kind
   account_replication_type = var.sa_account_replication_type
-  access_tier              = var.sa_account_tier
+  access_tier              = var.sa_access_tier
 
   team_name    = "CVP DevOps"
   team_contact = "#vh-devops"
 
   policy = [
     {
-      name = "Recording Retion Policy"
+      name = "RecordingRetionPolicy"
       filters = {
         prefix_match = ["${local.main_container_name}/"]
         blob_types   = ["blockBlob"]
@@ -282,7 +282,7 @@ resource "azurerm_lb" "lb" {
 }
 
 resource "azurerm_lb_backend_address_pool" "be_add_pool" {
-  resource_group_name = azurerm_resource_group.rg.name
+  #resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "BackEndAddressPool"
 }
@@ -358,7 +358,7 @@ data "template_file" "cloudconfig" {
   template = file(var.cloud_init_file)
   vars = {
     certPassword       = random_password.certPassword.result
-    certThumbprint     = var.thumbprint
+    certThumbprint     = data.azurerm_key_vault_certificate.cert.thumbprint
     storageAccountName = module.sa.storageaccount_name
     storageAccountKey  = module.sa.storageaccount_primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
@@ -376,6 +376,18 @@ data "template_cloudinit_config" "wowza_setup" {
     content_type = "text/cloud-config"
     content      = data.template_file.cloudconfig.rendered
   }
+}
+data "azurerm_key_vault" "cvp_kv" {
+  name                = "cvp-${var.env}-kv"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+data "azurerm_key_vault_certificate" "cert" {
+  name         = var.cert_name
+  key_vault_id = data.azurerm_key_vault.cvp_kv.id
+}
+data "azurerm_key_vault_secret" "ssh_pub_key" {
+  name         = "cvp-ssh-pub-key"
+  key_vault_id = data.azurerm_key_vault.cvp_kv.id
 }
 
 resource "azurerm_linux_virtual_machine" "vm1" {
@@ -397,7 +409,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = var.ssh_public_key
+    public_key = data.azurerm_key_vault_secret.ssh_pub_key.value
   }
 
   os_disk {
@@ -409,9 +421,9 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = var.service_certificate_kv_url
+      url = data.azurerm_key_vault_certificate.cert.id
     }
-    key_vault_id = var.key_vault_id
+    key_vault_id = data.azurerm_key_vault.cvp_kv.id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
@@ -454,7 +466,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = var.ssh_public_key
+    public_key = data.azurerm_key_vault_secret.ssh_pub_key.value
   }
 
   os_disk {
@@ -466,9 +478,9 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = var.service_certificate_kv_url
+      url = data.azurerm_key_vault_certificate.cert.id
     }
-    key_vault_id = var.key_vault_id
+    key_vault_id = data.azurerm_key_vault.cvp_kv.id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
