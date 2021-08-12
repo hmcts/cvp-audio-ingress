@@ -79,6 +79,10 @@ variable "rtmps_source_address_prefixes" {
   type = list(string)
 }
 
+variable "dev_source_address_prefixes" {
+  type = string
+}
+
 variable "ws_name" {
   type = string
 }

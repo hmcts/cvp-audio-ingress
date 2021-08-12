@@ -23,7 +23,7 @@ Below are some instructions for some of the tests.
 
 ## Testing
 Before starting testing, make sure the client IP(s) for the machines you are testing from is added to the 
-`rtmps_source_address_prefixes` variable. This can be found in a variable group in Azure DevOps called `cvp-<env>`.
+`dev_source_address_prefixes` variable. This can be found in a variable group in Azure DevOps called `cvp-<env>`.
 
 ### Functional tests
 
