@@ -11,7 +11,8 @@ locals {
   main_container_name = "recordings"
 }
 module "sa" {
-  source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=sa-lifecycle"
+  source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=master"
+  #source = "../../../cnp-module-storage-account"
 
   env = var.env
 

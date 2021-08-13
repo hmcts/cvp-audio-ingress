@@ -29,13 +29,13 @@ else
 ## Test Variable
 $builtFrom="hmcts/cvp-audio-ingress"
 
-$ws_sub_name;
+$global:ws_sub_name="";
 Get-Content "tf-variables/$env.tfvars" | Foreach-Object{
   $var = $_.Split('=')
   $var_name = $var[0]
   if ($var_name -like "ws_sub_name*"){
     write-host "Got Subscription Name"
-    $ws_sub_name = $var[1].Trim().Replace("`"","")
+    $global:ws_sub_name = $var[1].Trim().Replace("`"","")
   }
 }
 
