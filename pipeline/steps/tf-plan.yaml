@@ -47,8 +47,8 @@ steps:
       command: 'plan'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: >
-        -var-file "$(Build.SourceDirectory)/tf-variables/shared.tfvars"
-        -var-file "$(Build.SourceDirectory)/tf-variables/${{parameters.env}}.tfvars"
+        -var-file "$(Build.SourcesDirectory)/tf-variables/shared.tfvars"
+        -var-file "$(Build.SourcesDirectory)/tf-variables/${{parameters.env}}.tfvars"
         -var "builtFrom=${{ parameters.builtFrom }}"
         -var "cert_name=${{parameters.certName}}"
         -var "cert_path=$(certPath)"
