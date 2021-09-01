@@ -33,7 +33,7 @@ stages:
       - group: cvp-${{parameters.env}}
     jobs:
       - job: ApplyTfToEnv
-        displayName: 'Apply to ${{parameters.env}}'
+        displayName: 'Terraform to ${{parameters.env}}'
         steps:
           - template: ../steps/tf-apply.yaml
             parameters:
@@ -44,7 +44,7 @@ stages:
               product: ${{variables.product}}
 
       - job: ApplyDynaToEnv
-        displayName: 'Apply to ${{parameters.env}}'
+        displayName: 'Dynatrace to ${{parameters.env}}'
         dependsOn: ApplyTfToEnv
         steps:
           - template: ../steps/az-dynatrace.yaml
