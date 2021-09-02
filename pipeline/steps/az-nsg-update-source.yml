@@ -12,7 +12,8 @@ parameters:
   - name: sourceAddressPrefixes
     type: string
     default: ''
-      
+
+steps:     
   - task: AzureCLI@2
     displayName: 'Set Variables'
     inputs:
