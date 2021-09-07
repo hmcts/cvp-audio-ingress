@@ -53,7 +53,7 @@ module "sa" {
       access_type = "private"
     },
     {
-      name        = "recordings02"
+      name        = "${local.main_container_name}02"
       access_type = "private"
     }
   ]
