@@ -32,7 +32,7 @@ module "sa" {
 
   policy = [
     {
-      name = "RecordingRetionPolicy"
+      name = "RecordingRetention"
       filters = {
         prefix_match = ["${local.main_container_name}/"]
         blob_types   = ["blockBlob"]
