@@ -49,7 +49,7 @@ module "sa" {
     },
     // Keep these containers until all recordings have been migrated to `recordings` container
     {
-      name        = "recordings01"
+      name        = "${local.main_container_name}01"
       access_type = "private"
     },
     {
