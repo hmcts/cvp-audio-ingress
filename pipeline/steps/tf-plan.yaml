@@ -52,7 +52,7 @@ steps:
         -var "builtFrom=${{ parameters.builtFrom }}"
         -var "cert_name=${{parameters.certName}}"
         -var "cert_path=$(certPath)"
-        -var "ws_sub_id=$(ws_sub_id)"
+        -var "ws_sub_id=$(log_analytics.ws_sub_id)"
         -out="${{ parameters.env }}.tfplan" -no-color -input=false
 #      publishPlanResults: ${{ parameters.env }}.tfplan
 

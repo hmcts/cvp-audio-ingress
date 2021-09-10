@@ -213,6 +213,7 @@ steps:
 
   - task: AzureCLI@2
     displayName: Get Log Analytics Workspace Subscription ID by name
+    name: log_analytics
     inputs:
       azureSubscription: '${{ parameters.subscriptionName}}'
       scriptType: 'bash'
