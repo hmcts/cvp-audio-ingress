@@ -12,7 +12,6 @@ locals {
 }
 module "sa" {
   source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=master"
-  #source = "../../../cnp-module-storage-account"
 
   env = var.env
 
@@ -32,7 +31,7 @@ module "sa" {
 
   policy = [
     {
-      name = "RecordingRetionPolicy"
+      name = "RecordingRetention"
       filters = {
         prefix_match = ["${local.main_container_name}/"]
         blob_types   = ["blockBlob"]
@@ -49,11 +48,11 @@ module "sa" {
     },
     // Keep these containers until all recordings have been migrated to `recordings` container
     {
-      name        = "recordings01"
+      name        = "${local.main_container_name}01"
       access_type = "private"
     },
     {
-      name        = "recordings02"
+      name        = "${local.main_container_name}02"
       access_type = "private"
     }
   ]
@@ -307,7 +306,6 @@ resource "azurerm_lb" "lb" {
 }
 
 resource "azurerm_lb_backend_address_pool" "be_add_pool" {
-  #resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "BackEndAddressPool"
 }
