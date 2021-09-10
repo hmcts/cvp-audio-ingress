@@ -7,5 +7,4 @@ lb_IPaddress                  = "10.50.11.41"
 rtmps_source_address_prefixes = ["10.11.72.32/27", "10.49.72.32/27"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
-ws_sub_name                   = "DCD-CNP-DEV"
 num_applications              = 3500

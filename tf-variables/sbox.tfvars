@@ -7,5 +7,4 @@ lb_IPaddress                  = "10.50.11.10"
 rtmps_source_address_prefixes = ["35.204.50.163", "35.204.108.36", "34.91.92.40", "34.91.75.226", "81.109.71.47"]
 ws_name                       = "cvp-sbox"
 ws_rg                         = "cvp-sharedinfra-sbox"
-ws_sub_name                   = "DTS-SHAREDSERVICES-SBOX"
 num_applications              = 20

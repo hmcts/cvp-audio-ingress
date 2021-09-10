@@ -4,7 +4,7 @@ variables:
   subscriptionName: 'DTS-SHAREDSERVICES-PROD'
   kv_name_prefix : 'cft-apps'
   infra_kv: 'infra-vault-prod'
- 
+  ws_sub_name: "DCD-CNP-Prod"
  
   dynatrace_token: 'dynatrace-prod-api-key'
   dynatrace_id: 'ebe20728'
