@@ -444,7 +444,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = data.azurerm_key_vault_certificate.cert.id
+      url = data.azurerm_key_vault_certificate.cert.secret_id
     }
     key_vault_id = data.azurerm_key_vault.cvp_kv.id
   }
@@ -501,7 +501,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = data.azurerm_key_vault_certificate.cert.id
+      url = data.azurerm_key_vault_certificate.cert.secret_id
     }
     key_vault_id = data.azurerm_key_vault.cvp_kv.id
   }
