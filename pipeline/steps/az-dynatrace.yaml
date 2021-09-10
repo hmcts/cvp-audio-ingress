@@ -40,20 +40,34 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        rgName="${{ parameters.product }}-recordings-${{ parameters.env }}-rg"
-        rgNameCom="${{ parameters.product }}-recordings-${{ parameters.env }}"
-        kvName="${{ parameters.product }}-${{ parameters.env }}-kv"
+        product="${{ parameters.product }}"
+        env="${{ parameters.env }}"
 
-        echo "our KV is here: https://$kvName.vault.azure.net/secrets/ looking for $(dynatrace_token)"
-        dtToken=$(az keyvault secret show --id https://$kvName.vault.azure.net/secrets/$(dynatrace_token) | jq ".value" | sed -e 's/"//g')
-        # delete ext for vm1
-        az vm extension delete --subscription ${{ parameters.subscriptionName }} -g $rgName --vm-name $rgNameCom-vm1 -n oneAgentLinux || true
-        # deploy to vm1 
-        az vm extension set --publisher dynatrace.ruxit --name oneAgentLinux --subscription ${{ parameters.subscriptionName }} --resource-group $rgName --vm-name $rgNameCom-vm1 --settings '{"tenantId":"$(dynatrace_id)","token": "'$dtToken'","hostGroup":"$(dynatrace_host_group)","networkZone":"$(dynatrace_network_zone)","enableLogAnalytics":"yes"}'
-        # delete ext for vm2
-        az vm extension delete --subscription ${{ parameters.subscriptionName }} -g $rgName --vm-name $rgNameCom-vm2 -n oneAgentLinux || true
-        # deploy to vm2
-        az vm extension set --publisher dynatrace.ruxit --name oneAgentLinux --subscription ${{ parameters.subscriptionName }} --resource-group $rgName --vm-name $rgNameCom-vm2 --settings '{"tenantId":"$(dynatrace_id)","token": "'$dtToken'","hostGroup":"$(dynatrace_host_group)","networkZone":"$(dynatrace_network_zone)","enableLogAnalytics":"yes"}'
+        rgName="${product}-recordings-${env}-rg"
+        rgNameCom="${product}-recordings-${env}"
+        kvName="${product}-${env}-kv"
+        subscriptionName="${{ parameters.subscriptionName }}"
+        dynatrace_token='$(dynatrace_token)'
+        dynatrace_id='$(dynatrace_id)'
+        dynatrace_host_group='$(dynatrace_host_group)'
+        dynatrace_network_zone='$(dynatrace_network_zone)'
+
+        echo "our KV is here: https://$kvName.vault.azure.net/secrets/ looking for ${dynatrace_token}"
+        dtToken=$(az keyvault secret show --name $dynatrace_token --vault-name $kvName --query "value" -o tsv)
+        echo "got token"
+
+        for i in {1..2}
+        do
+
+          vmName="${rgNameCom}-vm${i}"
+
+          echo "delete ext for $vmName"
+          az vm extension delete --subscription $subscriptionName -g $rgName --vm-name $vmName -n oneAgentLinux || true
+          
+          echo "deploy ext for $vmName"
+          az vm extension set --publisher dynatrace.ruxit --name oneAgentLinux --subscription $subscriptionName --resource-group $rgName --vm-name $vmName --settings '{"tenantId":"'$dynatrace_id'","token": "'${dtToken//[$'\t\r\n']/}'","hostGroup":"'$dynatrace_host_group'","networkZone":"'$dynatrace_network_zone'","enableLogAnalytics":"yes"}'
+
+        done
 
   - task: AzureCLI@2
     condition: always()
