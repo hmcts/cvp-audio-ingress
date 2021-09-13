@@ -35,6 +35,14 @@ stages:
       - job: ApplyTfToEnv
         displayName: 'Terraform to ${{parameters.env}}'
         steps:
+          - template: ../steps/az-unlock-resource.yml
+            parameters:
+              subscriptionName:  ${{variables.subscriptionName}}
+              resourceName: "${{variables.product}}recordings${{variables.env}}sa"
+              resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+              lockName: "resource-sa"
+              resourceType: "Microsoft.Storage/storageAccounts"
+
           - template: ../steps/tf-apply.yaml
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
