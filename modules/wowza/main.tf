@@ -17,6 +17,8 @@ module "sa" {
 
   storage_account_name = "${replace(lower(local.service_name), "-", "")}sa"
   common_tags          = var.common_tags
+  
+  default_action = "Allow"
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location

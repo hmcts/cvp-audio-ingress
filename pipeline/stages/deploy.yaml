@@ -35,7 +35,7 @@ stages:
       - job: ApplyTfToEnv
         displayName: 'Terraform to ${{parameters.env}}'
         steps:
-          - template: ../steps/az-unlock-resource.yml
+          - template: templates\Azure\Common\unlock-resource.yml@azTemplates
             parameters:
               subscriptionName:  ${{variables.subscriptionName}}
               resourceName: "${{variables.product}}recordings${{variables.env}}sa"
