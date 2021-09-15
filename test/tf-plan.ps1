@@ -1,6 +1,7 @@
 
 $env="sbox"
-
+$subscriptionName="DTS-SHAREDSERVICES-"+$env.ToUpper()
+az account set -s $subscriptionName
 
 ## set override
 $overrideContent = "terraform {
@@ -30,18 +31,22 @@ else
 $builtFrom="hmcts/cvp-audio-ingress"
 
 $global:ws_sub_name="";
-Get-Content "tf-variables/$env.tfvars" | Foreach-Object{
-  $var = $_.Split('=')
+Get-Content "pipeline/variables/variables-$env.yaml" | Foreach-Object{
+  $var = $_.Split(':')
   $var_name = $var[0]
-  if ($var_name -like "ws_sub_name*"){
-    write-host "Got Subscription Name"
-    $global:ws_sub_name = $var[1].Trim().Replace("`"","")
+  #write-host "got $var_name"
+  if ($var_name -like "*ws_sub_name*"){
+    $sub_name = $var[1].Trim().Replace("`"","")
+    write-host "Got Subscription Name - $sub_name"
+    $global:ws_sub_name = $sub_name
   }
 }
 
 $kvName="cvp-$env-kv"
 $certPath="test/cert.pem"
-Remove-Item $certPath
+if (Test-Path $certPath){
+  Remove-Item $certPath
+}
 $certName=az keyvault certificate list --vault-name $kvName --query "[0].name" -o tsv
 az keyvault certificate download --id https://$kvName.vault.azure.net/certificates/$certName -f $certPath
 
