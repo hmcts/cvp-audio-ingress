@@ -43,6 +43,7 @@ stages:
               lockName: "resource-sa"
               resourceType: "Microsoft.Storage/storageAccounts"
 
+          - template: ../steps/tf-install.yaml
           - template: ../steps/tf-apply.yaml
             parameters:
               subscriptionName: ${{variables.subscriptionName}}

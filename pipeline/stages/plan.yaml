@@ -21,6 +21,7 @@ stages:
       - job: PlanToEnv${{parameters.env}}
         displayName: 'Plan to ${{parameters.env}}'
         steps:
+          - template: ../steps/tf-install.yaml
           - template: ../steps/tf-init.yaml
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
