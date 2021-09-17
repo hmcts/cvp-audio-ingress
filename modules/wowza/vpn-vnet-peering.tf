@@ -3,17 +3,18 @@
 #--------------------------------------------------------------
 
 locals {
-  requester_network_name = azurerm_virtual_network.vnet.name
-  requester_network_id = azurerm_virtual_network.vnet.id
+  requester_network_name                = azurerm_virtual_network.vnet.name
+  requester_network_id                  = azurerm_virtual_network.vnet.id
   requester_network_resource_group_name = azurerm_resource_group.rg.name
 
-  accepter_network_name = "core-infra-vnet-mgmt"
+  accepter_network_name                = "core-infra-vnet-mgmt"
   accepter_network_resource_group_name = "rg-mgmt"
 
-  allow_forwarded_traffic = true
+  allow_forwarded_traffic      = true
   allow_virtual_network_access = true
 }
 data "azurerm_virtual_network" "core_vnet" {
+  provider            = azurerm.reform_cft_mgmt
   name                = local.accepter_network_name
   resource_group_name = local.accepter_network_resource_group_name
 }
