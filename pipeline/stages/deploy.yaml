@@ -27,7 +27,7 @@ stages:
       dependsOn: Plan${{parameters.env}}
     ${{ if ne(parameters.env, 'sbox') }}:
       dependsOn: Wait${{parameters.env}}
-    condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8192')), eq('${{ parameters.env}}', 'prod'))))
+    condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
     variables:
       - template: ../variables/variables-common.yaml
       - template: ../variables/variables-${{parameters.env}}.yaml
