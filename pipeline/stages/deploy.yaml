@@ -4,7 +4,7 @@ parameters:
     default: 'sbox'
 
 stages:
-  - ${{ if or(ne(parameters.env, 'sbox'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8192'), False)) }}:
+  - ${{ if ne(parameters.env, 'sbox') }}:
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
       condition: succeeded()
