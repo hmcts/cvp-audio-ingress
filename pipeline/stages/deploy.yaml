@@ -4,27 +4,28 @@ parameters:
     default: 'sbox'
 
 stages:
-  - stage: Wait${{parameters.env}}
-    displayName: '${{parameters.env}} Waiting for Approval'
-    condition: and(succeeded(), or(eq('${{ parameters.env}}','stg'),and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq('${{ parameters.env}}', 'prod'))))
-    dependsOn: Plan${{parameters.env}}
-    jobs:
-      - job: waitForValidation
-        displayName: '${{parameters.env}} Wait for external validation'
-        pool: server
-        timeoutInMinutes: 4320 # job times out in 3 days
-        steps:
-        - task: ManualValidation@0
-          timeoutInMinutes: 1440 # task times out in 1 day
-          inputs:
-            instructions: 'Please validate the Terraform Plan for PROD environment to resume'
-            onTimeout: 'reject'
+  - ${{ if or(ne(parameters.env, 'sbox'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8192'), False)) }}:
+    - stage: Wait${{parameters.env}}
+      displayName: '${{parameters.env}} Waiting for Approval'
+      condition: succeeded()
+      dependsOn: Plan${{parameters.env}}
+      jobs:
+        - job: waitForValidation
+          displayName: '${{parameters.env}} Wait for external validation'
+          pool: server
+          timeoutInMinutes: 4320 # job times out in 3 days
+          steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 1440 # task times out in 1 day
+            inputs:
+              instructions: 'Please validate the Terraform Plan for PROD environment to resume'
+              onTimeout: 'reject'
 
   - stage: Apply${{parameters.env}}
     displayName: 'Apply to ${{parameters.env}}'
-    ${{ if eq(parameters.env, 'sbox') }}:
+    ${{ if or(ne(parameters.env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8192'))  }}:
       dependsOn: Plan${{parameters.env}}
-    ${{ if ne(parameters.env, 'sbox') }}:
+    ${{ if and(ne(parameters.env, 'sbox'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8192'), False)) }}:
       dependsOn: Wait${{parameters.env}}
     condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq('${{ parameters.env}}', 'prod'))))
     variables:
@@ -43,7 +44,6 @@ stages:
               lockName: "resource-sa"
               resourceType: "Microsoft.Storage/storageAccounts"
 
-          - template: ../steps/tf-install.yaml
           - template: ../steps/tf-apply.yaml
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
