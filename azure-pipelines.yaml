@@ -32,11 +32,11 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        ${{ if eq(env, 'sbox') }}:
+        ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
           dependsOnEnv: ''
-        ${{ if eq(env, 'stg') }}:
+        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
           dependsOnEnv: 'sbox'
-        ${{ if eq(env, 'prod') }}:
+        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
           dependsOnEnv: 'stg'
 
   - ${{each env in parameters.envs}}:
