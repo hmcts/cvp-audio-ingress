@@ -23,11 +23,11 @@ stages:
 
   - stage: Apply${{parameters.env}}
     displayName: 'Apply to ${{parameters.env}}'
-    ${{ if or(ne(parameters.env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8192'))  }}:
+    ${{ if eq(parameters.env, 'sbox')  }}:
       dependsOn: Plan${{parameters.env}}
-    ${{ if and(ne(parameters.env, 'sbox'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8192'), False)) }}:
+    ${{ if ne(parameters.env, 'sbox') }}:
       dependsOn: Wait${{parameters.env}}
-    condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(contains(variables['Build.SourceBranch'], 'refs/heads/master'), eq('${{ parameters.env}}', 'prod'))))
+    condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8192')), eq('${{ parameters.env}}', 'prod'))))
     variables:
       - template: ../variables/variables-common.yaml
       - template: ../variables/variables-${{parameters.env}}.yaml
