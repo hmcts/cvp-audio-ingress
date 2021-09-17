@@ -39,6 +39,7 @@ resource "azurerm_virtual_network_peering" "virtual_network_peering_requester" {
 }
 
 resource "azurerm_virtual_network_peering" "virtual_network_peering_accepter" {
+  provider            = azurerm.reform_cft_mgmt
   name = format(
     "%s_%s_network_peering_%s",
     local.accepter_network_name,
