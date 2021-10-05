@@ -43,6 +43,8 @@ stages:
               resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
               lockName: "resource-sa"
               resourceType: "Microsoft.Storage/storageAccounts"
+              
+          - template: ../steps/tf-install.yaml
 
           - template: ../steps/tf-apply.yaml
             parameters:
