@@ -24,3 +24,7 @@ variable "dynatrace_token_name" {
   type        = string
   description = "Dynatrace Key Vault Secret Name"
 }
+variable "dynatrace_host_group" {
+  type        = string
+  description = "Dynatrace Host Group"
+}

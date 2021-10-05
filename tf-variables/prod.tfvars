@@ -11,3 +11,4 @@ num_applications              = 3500
 infra_kv                      = "infra-vault-prod"
 infra_subscription_id         = "" ##TODO: get prod subscription ID
 dynatrace_token_name          = "dynatrace-prod-api-key"
+dynatrace_host_group          = "PROD_DTS_CVP"

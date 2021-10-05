@@ -11,3 +11,4 @@ num_applications              = 20
 infra_kv                      = "infra-vault-sandbox"
 infra_subscription_id         = "bf308a5c-0624-4334-8ff8-8dca9fd43783"
 dynatrace_token_name          = "dynatrace-nonprod-api-key"
+dynatrace_host_group          = "SBOX_DTS_CVP"

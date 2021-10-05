@@ -23,4 +23,5 @@ module "dynatrace-oneagent" {
   virtual_machine_os   = "linux"
   virtual_machine_type = "vm"
   virtual_machine_id   = each.value
+  hostgroup            = var.dynatrace_host_group
 }

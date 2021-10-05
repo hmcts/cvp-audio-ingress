@@ -36,6 +36,7 @@ module "wowza" {
   sa_recording_retention        = var.sa_recording_retention
   infra_kv                      = var.infra_kv
   dynatrace_token_name          = var.dynatrace_token_name
+  dynatrace_host_group          = var.dynatrace_host_group
   infra_subscription_id         = var.infra_subscription_id
   infra_rg                      = var.infra_rg
 }

@@ -4,7 +4,3 @@ variables:
   subscriptionName: 'DTS-SHAREDSERVICES-PROD'
   kv_name_prefix : 'cft-apps'
   ws_sub_name: "DCD-CNP-Prod"
- 
-  dynatrace_id: 'ebe20728'
-  dynatrace_host_group: 'PROD_DTS_CVP'
-  dynatrace_network_zone: 'azure.cft'
