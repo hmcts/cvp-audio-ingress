@@ -554,3 +554,17 @@ PROTECTEDSETTINGS
 
   tags = var.common_tags
 }
+
+module "dynatrace" {
+  source = "../dynatrace"
+
+  vm_ids = [
+    azurerm_linux_virtual_machine.vm1.id,
+    azurerm_linux_virtual_machine.vm2.id
+  ]
+  env                   = var.env
+  infra_kv              = var.infra_kv
+  dynatrace_token_name  = var.dynatrace_token_name
+  infra_subscription_id = var.infra_subscription_id
+  infra_rg              = var.infra_rg
+}

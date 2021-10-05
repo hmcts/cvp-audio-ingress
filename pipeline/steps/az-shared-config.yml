@@ -107,23 +107,7 @@ steps:
           --name $kvName \
           --bypass AzureServices \
           --default-action Deny
- 
-  - task: AzureCLI@2
-    displayName: 'Get Dynatrace tokens'
-    inputs:
-      azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        kvName="$(kvName)"
-        oid=$(oid)
-        echo "Logged in as oid $oid"
 
-        echo "Copy Dynatrace env token from $(infra_kv)"
-        az keyvault secret download --id https://$(infra_kv).vault.azure.net/secrets/$(dynatrace_token) --file dynatrace-token
-
-        echo "Import Dynatrace env token to KV $kvName"
-        az keyvault secret set --name $(dynatrace_token) --file dynatrace-token --vault-name $kvName --verbose
    
   - task: AzureCLI@2
     displayName: 'Get Certificates'

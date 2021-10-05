@@ -34,6 +34,10 @@ module "wowza" {
   ws_sub_id                     = var.ws_sub_id
   ws_rg                         = var.ws_rg
   sa_recording_retention        = var.sa_recording_retention
+  infra_kv                      = var.infra_kv
+  dynatrace_token_name          = var.dynatrace_token_name
+  infra_subscription_id         = var.infra_subscription_id
+  infra_rg                      = var.infra_rg
 }
 
 resource "azurerm_dns_a_record" "wowza" {

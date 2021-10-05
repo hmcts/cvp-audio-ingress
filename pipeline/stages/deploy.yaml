@@ -51,14 +51,3 @@ stages:
               location: ${{variables.location}}
               locationEng: ${{variables.locationEng}}
               product: ${{variables.product}}
-
-      - job: ApplyDynaToEnv
-        displayName: 'Dynatrace to ${{parameters.env}}'
-        dependsOn: ApplyTfToEnv
-        steps:
-          - template: ../steps/az-dynatrace.yaml
-            parameters:
-              subscriptionName: ${{variables.subscriptionName}}
-              env: ${{variables.env}}
-              location: ${{variables.location}}
-              product: ${{variables.product}}

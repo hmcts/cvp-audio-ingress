@@ -8,3 +8,6 @@ rtmps_source_address_prefixes = ["35.204.50.163", "35.204.108.36", "34.91.92.40"
 ws_name                       = "cvp-sbox"
 ws_rg                         = "cvp-sharedinfra-sbox"
 num_applications              = 20
+infra_kv                      = "infra-vault-sandbox"
+infra_subscription_id         = "bf308a5c-0624-4334-8ff8-8dca9fd43783"
+dynatrace_token_name          = "dynatrace-nonprod-api-key"
