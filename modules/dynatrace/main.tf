@@ -3,7 +3,7 @@ data "azurerm_key_vault" "kv" {
   name                = var.infra_kv
   resource_group_name = var.infra_rg
 }
-resource "azurerm_role_assignment" "kv_access" {
+/* resource "azurerm_role_assignment" "kv_access" {
   provider     = azurerm.core_infra
   scope                = data.azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets User"
@@ -18,7 +18,7 @@ resource "azurerm_key_vault_access_policy" "policy" {
   secret_permissions      = ["Get", "List"]
   certificate_permissions = []
   storage_permissions     = []
-}
+} */
 data "azurerm_key_vault_secret" "dynatrace_token" {
   provider     = azurerm.core_infra
   name         = var.dynatrace_token_name
