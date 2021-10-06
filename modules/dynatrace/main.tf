@@ -6,7 +6,7 @@ locals {
 
 data "azurerm_key_vault" "kv" {
   name                = local.key_vault_name
-  resource_group_name = local.key_vault_name
+  resource_group_name = local.key_vault_resource_group_name
 }
 /* resource "azurerm_role_assignment" "kv_access" {
   provider     = azurerm.core_infra
