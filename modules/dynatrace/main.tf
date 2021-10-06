@@ -23,10 +23,10 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
   provider     = azurerm.core_infra
   name         = var.dynatrace_token_name
   key_vault_id = data.azurerm_key_vault.kv.id
-  depends_on = [
+ /*  depends_on = [
     azurerm_key_vault_access_policy.policy,
     azurerm_role_assignment.kv_access
-  ]
+  ] */
 }
 
 data "azurerm_client_config" "current" {}
