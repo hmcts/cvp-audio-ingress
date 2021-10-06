@@ -1,7 +1,12 @@
+locals {
+  dynatrace_token_name          = "dynatrace-token"
+  key_vault_resource_group_name = "cvp-sharedinfra-${var.env}"
+  key_vault_name                = "cvp-${var.env}-kv"
+}
+
 data "azurerm_key_vault" "kv" {
-  provider            = azurerm.core_infra
-  name                = var.infra_kv
-  resource_group_name = var.infra_rg
+  name                = local.key_vault_name
+  resource_group_name = local.key_vault_name
 }
 /* resource "azurerm_role_assignment" "kv_access" {
   provider     = azurerm.core_infra
@@ -20,10 +25,9 @@ resource "azurerm_key_vault_access_policy" "policy" {
   storage_permissions     = []
 } */
 data "azurerm_key_vault_secret" "dynatrace_token" {
-  provider     = azurerm.core_infra
-  name         = var.dynatrace_token_name
+  name         = local.dynatrace_token_name
   key_vault_id = data.azurerm_key_vault.kv.id
- /*  depends_on = [
+  /*depends_on = [
     azurerm_key_vault_access_policy.policy,
     azurerm_role_assignment.kv_access
   ] */
@@ -32,8 +36,8 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
 data "azurerm_client_config" "current" {}
 
 module "dynatrace-oneagent" {
-  count = length(var.vm_ids)
-  source   = "github.com/hmcts/terraform-module-dynatrace-oneagent"
+  count  = length(var.vm_ids)
+  source = "github.com/hmcts/terraform-module-dynatrace-oneagent"
 
   tenant_id            = data.azurerm_client_config.current.tenant_id
   token                = data.azurerm_key_vault_secret.dynatrace_token.value

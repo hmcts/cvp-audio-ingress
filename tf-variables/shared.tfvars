@@ -6,5 +6,3 @@ wowza_version               = "latest"
 wowza_publisher             = "wowza"
 wowza_offer                 = "wowzastreamingengine"
 dev_source_address_prefixes = "127.0.0.1"
-
-infra_rg = "cnp-core-infra"

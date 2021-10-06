@@ -8,7 +8,4 @@ rtmps_source_address_prefixes = ["10.11.72.32/27", "10.49.72.32/27"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-infra_kv                      = "infra-vault-nonprod"
-infra_subscription_id         = "1c4f0704-a29e-403d-b719-b90c34ef14c9"
-dynatrace_token_name          = "dynatrace-nonprod-api-key"
 dynatrace_host_group          = "AAT_DTS_CVP"

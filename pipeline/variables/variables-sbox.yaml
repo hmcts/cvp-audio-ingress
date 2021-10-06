@@ -4,3 +4,4 @@ variables:
   subscriptionName: 'DTS-SHAREDSERVICES-SBOX'
   kv_name_prefix : 'cftapps'
   ws_sub_name: "DTS-SHAREDSERVICES-SBOX"
+  dynatrace_token: 'dynatrace-nonprod-api-key'

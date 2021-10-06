@@ -103,22 +103,6 @@ variable "sa_recording_retention" {
 }
 
 ## Dynatrace
-variable "infra_kv" {
-  type        = string
-  description = "Core Infrastructure Key Vault"
-}
-variable "infra_subscription_id" {
-  type        = string
-  description = "Core Infrastructure Subscription ID"
-}
-variable "infra_rg" {
-  type        = string
-  description = "Core Infrastructure Key Vault Resource Group"
-}
-variable "dynatrace_token_name" {
-  type        = string
-  description = "Dynatrace Key Vault Secret Name"
-}
 variable "dynatrace_host_group" {
   type        = string
   description = "Dynatrace Host Group"

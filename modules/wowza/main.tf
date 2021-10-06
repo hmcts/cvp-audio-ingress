@@ -562,10 +562,6 @@ module "dynatrace" {
     azurerm_linux_virtual_machine.vm1.id,
     azurerm_linux_virtual_machine.vm2.id
   ]
-  env                   = var.env
-  infra_kv              = var.infra_kv
-  dynatrace_token_name  = var.dynatrace_token_name
-  dynatrace_host_group  = var.dynatrace_host_group
-  infra_subscription_id = var.infra_subscription_id
-  infra_rg              = var.infra_rg
+  env                  = var.env
+  dynatrace_host_group = var.dynatrace_host_group
 }

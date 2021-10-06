@@ -8,7 +8,4 @@ rtmps_source_address_prefixes = ["35.246.64.24", "35.246.125.146", "35.246.120.2
 ws_name                       = "hmcts-prod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-infra_kv                      = "infra-vault-prod"
-infra_subscription_id         = "" ##TODO: get prod subscription ID
-dynatrace_token_name          = "dynatrace-prod-api-key"
 dynatrace_host_group          = "PROD_DTS_CVP"
