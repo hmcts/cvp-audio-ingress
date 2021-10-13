@@ -383,7 +383,7 @@ data "azurerm_key_vault" "cvp_kv" {
   resource_group_name = "cvp-sharedinfra-${var.env}"
 }
 module "get_cert" {
-  source        = "github.com/hmcts/sds-module-certificate"
+  source        = "git::https://github.com/hmcts/sds-module-certificate.git?ref=master"
   environment   = var.env
   domain_prefix = "cvp-recording"
 }
