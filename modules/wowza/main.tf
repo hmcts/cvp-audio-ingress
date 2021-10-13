@@ -359,7 +359,7 @@ data "template_file" "cloudconfig" {
   template = file(var.cloud_init_file)
   vars = {
     certPassword       = random_password.certPassword.result
-    certThumbprint     = data.azurerm_key_vault_certificate.cert.thumbprint
+    certThumbprint     = module.get_cert.thumbprint
     storageAccountName = module.sa.storageaccount_name
     storageAccountKey  = module.sa.storageaccount_primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
@@ -382,9 +382,10 @@ data "azurerm_key_vault" "cvp_kv" {
   name                = "cvp-${var.env}-kv"
   resource_group_name = "cvp-sharedinfra-${var.env}"
 }
-data "azurerm_key_vault_certificate" "cert" {
-  name         = var.cert_name
-  key_vault_id = data.azurerm_key_vault.cvp_kv.id
+module "get_cert" {
+  source        = "github.com/hmcts/sds-module-certificate"
+  environment   = var.env
+  domain_prefix = "cvp-recording"
 }
 data "azurerm_key_vault_secret" "ssh_pub_key" {
   name         = "cvp-ssh-pub-key"
@@ -422,7 +423,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = data.azurerm_key_vault_certificate.cert.secret_id
+      url = module.get_cert.secret_id
     }
     key_vault_id = data.azurerm_key_vault.cvp_kv.id
   }
@@ -479,7 +480,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = data.azurerm_key_vault_certificate.cert.secret_id
+      url = module.get_cert.secret_id
     }
     key_vault_id = data.azurerm_key_vault.cvp_kv.id
   }
