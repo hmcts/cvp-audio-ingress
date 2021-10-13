@@ -359,7 +359,7 @@ data "template_file" "cloudconfig" {
   template = file(var.cloud_init_file)
   vars = {
     certPassword       = random_password.certPassword.result
-    certThumbprint     = module.get_cert.thumbprint
+    certThumbprint     = module.cert.thumbprint
     storageAccountName = module.sa.storageaccount_name
     storageAccountKey  = module.sa.storageaccount_primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
@@ -382,7 +382,7 @@ data "azurerm_key_vault" "cvp_kv" {
   name                = "cvp-${var.env}-kv"
   resource_group_name = "cvp-sharedinfra-${var.env}"
 }
-module "get_cert" {
+module "cert" {
   source        = "git::https://github.com/hmcts/sds-module-certificate.git?ref=master"
   environment   = var.env
   domain_prefix = "cvp-recording"
@@ -423,9 +423,9 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = module.get_cert.secret_id
+      url = module.cert.secret_id
     }
-    key_vault_id = data.get_cert.key_vault_id
+    key_vault_id = data.cert.key_vault_id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
@@ -480,9 +480,9 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = module.get_cert.secret_id
+      url = module.cert.secret_id
     }
-    key_vault_id = data.get_cert.key_vault_id
+    key_vault_id = data.cert.key_vault_id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
