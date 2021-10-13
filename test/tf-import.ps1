@@ -52,9 +52,11 @@ az keyvault certificate download --id https://$kvName.vault.azure.net/certificat
 
 $subscriptionId=$(az account show -s $ws_sub_name --query id -o tsv)
 
-$azResourceId="/subscriptions/a8140a9e-f1b0-481f-a4de-09e2ee23f7ab/resourceGroups/cvp-recordings-sbox-rg/providers/Microsoft.Compute/virtualMachines/cvp-recordings-sbox-vm2"
-$tfConfig="module.wowza.azurerm_linux_virtual_machine.vm2"
+$azResourceId="/subscriptions/a8140a9e-f1b0-481f-a4de-09e2ee23f7ab/resourceGroups/cvp-recordings-sbox-rg/providers/Microsoft.Compute/virtualMachines/cvp-recordings-sbox-vm"
+$tfConfig="module.wowza.azurerm_linux_virtual_machine.vm"
 
 terraform init -reconfigure
 
-terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" -var "ws_sub_id=$subscriptionId" $tfConfig $azResourceId
+terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" -var "ws_sub_id=$subscriptionId" $tfConfig"2" $azResourceId"2"
+
+terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" -var "ws_sub_id=$subscriptionId" $tfConfig"1" $azResourceId"1"
