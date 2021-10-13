@@ -425,7 +425,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
     certificate {
       url = module.cert.secret_id
     }
-    key_vault_id = data.cert.key_vault_id
+    key_vault_id = module.cert.key_vault_id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
@@ -482,7 +482,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
     certificate {
       url = module.cert.secret_id
     }
-    key_vault_id = data.cert.key_vault_id
+    key_vault_id = module.cert.key_vault_id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
