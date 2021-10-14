@@ -39,7 +39,7 @@ module "dynatrace-oneagent" {
   count  = length(var.vm_ids)
   source = "github.com/hmcts/terraform-module-dynatrace-oneagent"
 
-  tenant_id            = data.azurerm_client_config.current.tenant_id
+  tenant_id            = var.dynatrace_tenant_id
   token                = data.azurerm_key_vault_secret.dynatrace_token.value
   virtual_machine_os   = "linux"
   virtual_machine_type = "vm"

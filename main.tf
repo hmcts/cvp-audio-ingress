@@ -35,6 +35,7 @@ module "wowza" {
   ws_rg                         = var.ws_rg
   sa_recording_retention        = var.sa_recording_retention
   dynatrace_host_group          = var.dynatrace_host_group
+  dynatrace_tenant_id           = var.dynatrace_tenant_id
 }
 
 resource "azurerm_dns_a_record" "wowza" {

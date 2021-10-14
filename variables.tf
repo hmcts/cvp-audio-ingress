@@ -107,3 +107,8 @@ variable "dynatrace_host_group" {
   type        = string
   description = "Dynatrace Host Group"
 }
+variable "dynatrace_tenant_id" {
+  type        = string
+  description = "Dynatrace Tenant ID"
+}
+

@@ -564,4 +564,5 @@ module "dynatrace" {
   ]
   env                  = var.env
   dynatrace_host_group = var.dynatrace_host_group
+  dynatrace_tenant_id  = var.dynatrace_tenant_id
 }

@@ -9,3 +9,4 @@ ws_name                       = "cvp-sbox"
 ws_rg                         = "cvp-sharedinfra-sbox"
 num_applications              = 20
 dynatrace_host_group          = "SBOX_DTS_CVP"
+dynatrace_tenant_id           = "yrk32651"
