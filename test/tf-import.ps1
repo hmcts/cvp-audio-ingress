@@ -52,7 +52,7 @@ az keyvault certificate download --id https://$kvName.vault.azure.net/certificat
 
 $subscriptionId=$(az account show -s $ws_sub_name --query id -o tsv)
 
-$azResourceId="/subscriptions/a8140a9e-f1b0-481f-a4de-09e2ee23f7ab/resourceGroups/cvp-recordings-sbox-rg/providers/Microsoft.Compute/virtualMachines/cvp-recordings-sbox-vm"
+$azResourceId="/subscriptions/$subscriptionId/resourceGroups/cvp-recordings-$env-rg/providers/Microsoft.Compute/virtualMachines/cvp-recordings-$env-vm"
 $tfConfig="module.wowza.azurerm_linux_virtual_machine.vm"
 
 terraform init -reconfigure
