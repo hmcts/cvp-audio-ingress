@@ -33,6 +33,10 @@ parameters:
     values: []
     default: ['sbox','stg','prod']
 
+variables:
+  cvpPipelineUrl: "https://dev.azure.com/hmcts/Shared%20Services/_build?definitionId=337&_a=summary"
+  cvpName: "CVP Audio Ingress"
+
 stages:
   - stage: 'GetDependencies'
     displayName: 'Get Dependency Details'
@@ -113,12 +117,14 @@ stages:
                   Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$sendMsg"
                   Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
             
-            - template: pipeline/steps/send-im.yml
+            - template: templates\Azure\LogicApp\send-pipeline-alert.yaml@azTemplates
               parameters:
                 logicAppUrl: $(logic_app_url)
                 title: "Terraform Changes in ${{env}}"
                 message: "$(terraChanges.msg)"
                 conditionAction: $(terraChanges.sendMsg)
+                pipelineUrl: ${{ variables.cvpPipelineUrl }}
+                projectName: ${{ variables.cvpName }}
                 
         - job: ValidateWowzaVersion${{env}}
           displayName: '${{env}} wowza image version'
@@ -162,12 +168,14 @@ stages:
                   echo "##vso[task.setvariable variable=sendMsg;isOutput=true]${upgradeRequired}"
                   echo "##vso[task.setvariable variable=msg;isOutput=true]${msg}"
                   
-            - template: pipeline/steps/send-im.yml
+            - template: templates\Azure\LogicApp\send-pipeline-alert.yaml@azTemplates
               parameters:
                 logicAppUrl: $(logic_app_url)
                 title: "Wowza version upgrade in ${{env}}"
                 message: "$(wowzaCheck.msg)"
                 conditionAction: $(wowzaCheck.sendMsg)
+                pipelineUrl: ${{ variables.cvpPipelineUrl }}
+                projectName: ${{ variables.cvpName }}
 
         - job: Clean${{env}}
           displayName: 'Clean ${{env}} down'
@@ -183,6 +191,49 @@ stages:
                 nsgName: "${{variables.product}}-recordings-${{variables.env}}-sg"
                 nsgRuleName: "RTMPS_Dev"
                 sourceAddressPrefixes: "${{ variables.dev_source_address_prefixes }}"
+
+        - job: CheckPipelineRun
+          displayName: 'Check Pipelines have run'
+          steps: 
+            - download: none
+            - checkout: none
+
+            - task: AzureCLI@2
+              name: 'deployment_Check'
+              displayName: Check Last Run
+              inputs:
+                azureSubscription: '${{variables.subscriptionName}}'
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+
+                  $maxNoneRunDays=65
+                  $blob=az storage blob show -c deployment -n deployment-flag.txt --account-name ${{variables.product}}recordings${{variables.env}}sa -o json --only-show-errors | ConvertFrom-Json
+
+                  $currentDate=Get-Date
+                  $lastRunDate=Get-Date -Date $blob.properties.lastModified
+                  Write-Host "Current Date: $currentDate"
+                  Write-Host "Last Run Date: $lastRunDate"
+
+                  $diff=(New-TimeSpan -Start $lastRunDate -End $currentDate)
+                  Write-Host "Difference $diff"
+
+                  $msg="The ${{env}} pipeline has not run in last $maxNoneRunDays days"
+                  echo $msg
+
+                  $upgradeRequired=($diff.Days -gt $maxNoneRunDays)
+                  
+                  Write-Host "##vso[task.setvariable variable=sendMsg;isOutput=true]$upgradeRequired"
+                  Write-Host "##vso[task.setvariable variable=msg;isOutput=true]$msg"
+            
+            - template: templates\Azure\LogicApp\send-pipeline-alert.yaml@azTemplates
+              parameters:
+                logicAppUrl: $(logic_app_url)
+                title: "${{env}} not run alert"
+                message: "$(deployment_Check.msg)"
+                conditionAction: $(deployment_Check.sendMsg)
+                pipelineUrl: ${{ variables.cvpPipelineUrl }}
+                projectName: ${{ variables.cvpName }}
 
   - ${{each env in parameters.envs}}:
     - stage: '${{env}}HouseKeeper'
