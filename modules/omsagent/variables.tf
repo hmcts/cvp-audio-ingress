@@ -1,7 +1,7 @@
 variable "vms" {
-  type        = list(object({
+  type = list(object({
     name = string
-    id = string
+    id   = string
   }))
   description = "List of Virtual Machine details"
 }

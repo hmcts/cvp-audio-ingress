@@ -520,17 +520,17 @@ module "omsagent" {
 
   vms = [
     {
-      id = azurerm_linux_virtual_machine.vm2.id 
+      id   = azurerm_linux_virtual_machine.vm2.id
       name = "${local.service_name}-vm2"
     },
     {
-      id = azurerm_linux_virtual_machine.vm1.id 
+      id   = azurerm_linux_virtual_machine.vm1.id
       name = "${local.service_name}-vm1"
     }
   ]
-  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
+  log_analytics_workspace_id       = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
   log_analytics_primary_shared_key = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
-  tags = var.common_tags
+  tags                             = var.common_tags
 }
 
 module "dynatrace" {

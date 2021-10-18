@@ -7,7 +7,7 @@ resource "azurerm_storage_container" "deployment_details" {
 
 resource "azurerm_storage_blob" "deployment_flag" {
   name                   = "deployment-flag.txt"
-  storage_account_name   =  module.sa.storageaccount_name
+  storage_account_name   = module.sa.storageaccount_name
   storage_container_name = azurerm_storage_container.deployment_details.name
   type                   = "Block"
   source_content         = timestamp()
