@@ -515,47 +515,21 @@ data "azurerm_log_analytics_workspace" "log_analytics" {
   provider            = azurerm.secops
 }
 
-resource "azurerm_virtual_machine_extension" "log_analytics_vm1" {
-  name                 = "${local.service_name}-vm1-ext"
-  virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
-  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
-  type                 = "OmsAgentForLinux"
-  type_handler_version = "1.7"
+module "omsagent" {
+  source = "../omsagent"
 
-  settings = <<SETTINGS
+  vms = [
     {
-        "workspaceId": "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
-    }
-SETTINGS
-
-  protected_settings = <<PROTECTEDSETTINGS
+      id = azurerm_linux_virtual_machine.vm2.id 
+      name = "${local.service_name}-vm2"
+    },
     {
-        "workspaceKey": "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
+      id = azurerm_linux_virtual_machine.vm1.id 
+      name = "${local.service_name}-vm1"
     }
-PROTECTEDSETTINGS
-
-  tags = var.common_tags
-}
-
-resource "azurerm_virtual_machine_extension" "log_analytics_vm2" {
-  name                 = "${local.service_name}-vm2-ext"
-  virtual_machine_id   = azurerm_linux_virtual_machine.vm2.id
-  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
-  type                 = "OmsAgentForLinux"
-  type_handler_version = "1.7"
-
-  settings = <<SETTINGS
-    {
-        "workspaceId": "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
-    }
-SETTINGS
-
-  protected_settings = <<PROTECTEDSETTINGS
-    {
-        "workspaceKey": "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
-    }
-PROTECTEDSETTINGS
-
+  ]
+  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
+  log_analytics_primary_shared_key = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
   tags = var.common_tags
 }
 
