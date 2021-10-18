@@ -101,3 +101,14 @@ variable "sa_recording_retention" {
   type        = number
   description = "How long to retain the recordings in blob"
 }
+
+## Dynatrace
+variable "dynatrace_host_group" {
+  type        = string
+  description = "Dynatrace Host Group"
+}
+variable "dynatrace_tenant_id" {
+  type        = string
+  description = "Dynatrace Tenant ID"
+}
+

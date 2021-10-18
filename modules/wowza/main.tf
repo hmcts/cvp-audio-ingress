@@ -385,7 +385,7 @@ data "azurerm_key_vault" "cvp_kv" {
 data "azurerm_client_config" "current" {
 }
 module "cert" {
-  source        = "git::https://github.com/hmcts/sds-module-certificate.git?ref=master"
+  source        = "git::https://github.com/hmcts/terraform-module-certificate.git?ref=master"
   environment   = var.env
   domain_prefix = "cvp-recording"
   object_id     = data.azurerm_client_config.current.object_id
@@ -557,4 +557,16 @@ SETTINGS
 PROTECTEDSETTINGS
 
   tags = var.common_tags
+}
+
+module "dynatrace" {
+  source = "../dynatrace"
+
+  vm_ids = [
+    azurerm_linux_virtual_machine.vm1.id,
+    azurerm_linux_virtual_machine.vm2.id
+  ]
+  env                  = var.env
+  dynatrace_host_group = var.dynatrace_host_group
+  dynatrace_tenant_id  = var.dynatrace_tenant_id
 }

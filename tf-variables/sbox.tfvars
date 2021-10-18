@@ -8,3 +8,5 @@ rtmps_source_address_prefixes = ["35.204.50.163", "35.204.108.36", "34.91.92.40"
 ws_name                       = "cvp-sbox"
 ws_rg                         = "cvp-sharedinfra-sbox"
 num_applications              = 20
+dynatrace_host_group          = "SBOX_DTS_CVP"
+dynatrace_tenant_id           = "yrk32651"

@@ -8,3 +8,5 @@ rtmps_source_address_prefixes = ["10.11.72.32/27", "10.49.72.32/27"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
+dynatrace_host_group          = "AAT_DTS_CVP"
+dynatrace_tenant_id           = "yrk32651"

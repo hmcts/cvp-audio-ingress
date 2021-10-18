@@ -3,10 +3,6 @@ variables:
   certName: 'STAR-sandbox-platform-hmcts-net'
   subscriptionName: 'DTS-SHAREDSERVICES-SBOX'
   kv_name_prefix : 'cftapps'
-  infra_kv: 'infra-vault-sandbox'
   ws_sub_name: "DTS-SHAREDSERVICES-SBOX"
-  
-  dynatrace_token: 'dynatrace-nonprod-api-key'
-  dynatrace_id: 'yrk32651'
-  dynatrace_host_group: 'SBOX_DTS_CVP'
-  dynatrace_network_zone: 'azure.cft'
+  dynatrace_token: 'dynatrace-nonprod-token'
+  infra_kv: 'infra-vault-sandbox'
