@@ -17,7 +17,6 @@ steps:
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
-        $rgName="${{ parameters.workspaceRgName }}"
 
         $dynatrace_id="$(dynatrace_id)"
         $dynatrace_host_group="$(dynatrace_host_group)"
