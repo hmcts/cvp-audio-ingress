@@ -32,7 +32,7 @@ steps:
           token              = $dynatrace_token
           hostGroup          = $dynatrace_host_group
           networkZone        = $dynatrace_network_zone
-          enableLogAnalytics = $true
+          enableLogAnalytics = "true"
           installerArguments = "--loglevel=Verbose"
         }
         $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
