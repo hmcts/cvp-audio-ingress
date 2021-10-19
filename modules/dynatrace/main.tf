@@ -16,7 +16,7 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
 
 data "azurerm_client_config" "current" {}
 
-module "dynatrace-oneagent" {
+/* module "dynatrace-oneagent" {
   count  = length(var.vm_ids)
   source = "github.com/hmcts/terraform-module-dynatrace-oneagent"
 
@@ -26,4 +26,4 @@ module "dynatrace-oneagent" {
   virtual_machine_type = "vm"
   virtual_machine_id   = var.vm_ids[count.index]
   hostgroup            = var.dynatrace_host_group
-}
+} */

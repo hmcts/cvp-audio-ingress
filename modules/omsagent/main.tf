@@ -1,5 +1,5 @@
 
-resource "azurerm_virtual_machine_extension" "oms_agent" {
+/* resource "azurerm_virtual_machine_extension" "oms_agent" {
   for_each             = { for vm in var.vms : vm.name => vm }
   name                 = "OmsAgentForLinux"
   virtual_machine_id   = each.value.id
@@ -20,4 +20,4 @@ SETTINGS
 PROTECTEDSETTINGS
 
   tags = var.tags
-}
+} */
