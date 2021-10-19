@@ -17,9 +17,9 @@ steps:
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
-        $rgName="$env:ws_rg"
-        $workspaceName="$env:ws_name"
-        $workspaceSubId="$env:ws_sub_id"
+        $rgName="$env:WS_RG"
+        $workspaceName="$env:WS_NAME"
+        $workspaceSubId="$env:WS_SUB_ID"
 
         az account set -s $workspaceSubId
 

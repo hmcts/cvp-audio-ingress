@@ -123,17 +123,3 @@ variable "ws_rg" {
   type    = string
   default = "oms-automation"
 }
-
-variable "ws_sub_id" {
-  type = string
-}
-
-## Dynatrace
-variable "dynatrace_host_group" {
-  type        = string
-  description = "Dynatrace Host Group"
-}
-variable "dynatrace_tenant_id" {
-  type        = string
-  description = "Dynatrace Tenant ID"
-}

@@ -6,3 +6,7 @@ variables:
   ws_sub_name: "DTS-SHAREDSERVICES-SBOX"
   dynatrace_token: 'dynatrace-nonprod-token'
   infra_kv: 'infra-vault-sandbox'
+  ws_name: "cvp-sbox"
+  ws_rg: "cvp-sharedinfra-sbox"
+  dynatrace_host_group: "SBOX_DTS_CVP"
+  dynatrace_tenant_id: "yrk32651"
