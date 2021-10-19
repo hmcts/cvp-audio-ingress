@@ -36,11 +36,11 @@ steps:
           installerArguments = "--loglevel=Verbose"
         }
         $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
-        #$settingsJson = $settingsJson -replace "`"", "\`""
+        $settingsJson = $settingsJson -replace "`"", "\`""
 
         $protectedSettings = [PSCustomObject]@{}
         $protectedSettingsJson = $protectedSettings | ConvertTo-Json -Compress -Depth 100
-        #$protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
+        $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
 
         Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         Write-Host $settingsJson
