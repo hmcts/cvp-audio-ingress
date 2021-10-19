@@ -16,20 +16,14 @@ steps:
       azureSubscription: ${{ parameters.subscription }}
       scriptType: pscore
       scriptLocation: inlineScript
-      env:
-        dynaId: $(dynatrace_id)
-        dynaHost: $(dynatrace_host_group)
-        dynaNetwork: $(dynatrace_network_zone)
-        infraKvName: $(infra_kv)
-        infraSecretName: $(dynatrace_token)
       inlineScript: |
 
-        $dynatrace_id="$env:dynaId"
-        $dynatrace_host_group="$env:dynaHost"
-        $dynatrace_network_zone="$env:dynaNetwork"
+        $dynatrace_id="$env:dynatrace_id"
+        $dynatrace_host_group="$env:dynatrace_host_group"
+        $dynatrace_network_zone="$env:dynatrace_network_zone"
 
-        $infraKvName = "$env:infraKvName"
-        $infraSecretName = "$env:infraSecretName"
+        $infraKvName = "$env:infra_kv"
+        $infraSecretName = "$env:dynatrace_token"
         echo "Get Dynatrace env token from $infraKvName / $infraSecretName "
         $dynatrace_token=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/$infraSecretName  --query "value" -o tsv
 

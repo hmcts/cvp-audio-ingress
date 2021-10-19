@@ -16,12 +16,9 @@ steps:
       azureSubscription: ${{ parameters.subscription }}
       scriptType: pscore
       scriptLocation: inlineScript
-      env:
-        wsRgName: $(ws_rg)
-        wsName: $(ws_name)
       inlineScript: |
-        $rgName="$env:wsRgName"
-        $workspaceName="$env:wsName"
+        $rgName="$env:ws_rg"
+        $workspaceName="$env:ws_name"
 
         az account set -s $(ws_sub_id)
 
