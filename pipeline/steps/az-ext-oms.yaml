@@ -24,7 +24,7 @@ steps:
         az account set -s $workspaceSubId
 
         $key=az monitor log-analytics workspace get-shared-keys --resource-group $rgName --workspace-name $workspaceName -o tsv
-        $id=az monitor log-analytics workspace show --resource-group $rgName --workspace-name $workspaceName -o tsv --query "id"
+        $id=az monitor log-analytics workspace show --resource-group $rgName --workspace-name $workspaceName -o tsv --query "customerId"
 
         Write-Host "ID: $id"
 

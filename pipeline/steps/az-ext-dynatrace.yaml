@@ -18,7 +18,7 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
 
-        $dynatrace_id="$env:DYNATRACE_ID"
+        $dynatrace_tenant_id="$env:DYNATRACE_TENANT_ID"
         $dynatrace_host_group="$env:DYNATRACE_HOST_GROUP"
         $dynatrace_network_zone="$env:DYNATRACE_NETWORK_ZONE"
 
@@ -28,7 +28,7 @@ steps:
         $dynatrace_token=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/$infraSecretName  --query "value" -o tsv
 
         $settings = [PSCustomObject]@{
-          tenantId           = $dynatrace_id
+          tenantId           = $dynatrace_tenant_id
           token              = $dynatrace_token
           hostGroup          = $dynatrace_host_group
           networkZone        = $dynatrace_network_zone
