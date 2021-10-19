@@ -56,6 +56,12 @@ steps:
         -out="${{ parameters.env }}.tfplan" -no-color -input=false
 #      publishPlanResults: ${{ parameters.env }}.tfplan
 
+  - ${{ if ne(variables['System.StageAttempt'], 1) }}:
+    - task: DeleteFiles@1
+      inputs:
+        SourceFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.env }}.tfplan'
+        RemoveSourceFolder: true
+
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Terraform Plan'
     inputs:
