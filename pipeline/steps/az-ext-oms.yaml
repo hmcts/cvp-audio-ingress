@@ -19,8 +19,9 @@ steps:
       inlineScript: |
         $rgName="$env:ws_rg"
         $workspaceName="$env:ws_name"
+        $workspaceSubId="$env:ws_sub_id"
 
-        az account set -s $(ws_sub_id)
+        az account set -s $workspaceSubId
 
         $key=az monitor log-analytics workspace get-shared-keys --resource-group $rgName --workspace-name $workspaceName -o tsv
         $id=az monitor log-analytics workspace show --resource-group $rgName --workspace-name $workspaceName -o tsv --query "id"
