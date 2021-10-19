@@ -1,0 +1,56 @@
+parameters:
+  - name: subscription
+    type: string
+  - name: vmNames
+    type: object
+    default: []
+  - name: vmRgName
+    type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Get Settings for Dynatrace Extension
+    name: dynaSettings
+    condition: always()
+    inputs:
+      azureSubscription: ${{ parameters.subscription }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        $rgName="${{ parameters.workspaceRgName }}"
+
+        $dynatrace_id="$(dynatrace_id)"
+        $dynatrace_host_group="$(dynatrace_host_group)"
+        $dynatrace_network_zone="$(dynatrace_network_zone)"
+
+        echo "Get Dynatrace env token from $(infra_kv)"
+        $dynatrace_token=az keyvault secret show --id https://$(infra_kv).vault.azure.net/secrets/$(dynatrace_token) --query "value" -o tsv
+
+        $settings = [PSCustomObject]@{
+          tenantId           = $dynatrace_id
+          token              = $dynatrace_token
+          hostGroup          = $dynatrace_host_group
+          networkZone        = $dynatrace_network_zone
+          enableLogAnalytics = $true
+          installerArguments = "--loglevel=Verbose"
+        }
+        $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
+        $settingsJson = $settingsJson -replace "`"", "\`""
+
+        $protectedSettings = [PSCustomObject]@{}
+        $protectedSettingsJson = $protectedSettings | ConvertTo-Json -Compress -Depth 100
+        $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
+
+        Write-Host "##vso[task.setvariable variable=settingsJson]$settingsJson"
+        Write-Host "##vso[task.setvariable variable=protectedSettingsJson]$protectedSettingsJson"
+
+  - ${{ each vm in parameters.vmNames }}:
+    - template: templates\Azure\Vm\install.yaml@azTemplates
+      parameters:
+        subscription: ${{ parameters.subscription }}
+        rgName: ${{ parameters.vmRgName }}
+        vmName: ${{ vm }}
+        extName: "oneAgentLinux"
+        extPublisher: "dynatrace.ruxit"
+        settingsJson: $(dynaSettings.settingsJson)
+        protectedSettingsJson: $(dynaSettings.protectedSettingsJson)

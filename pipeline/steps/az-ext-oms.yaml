@@ -1,0 +1,54 @@
+parameters:
+  - name: subscription
+    type: string
+  - name: vmNames
+    type: object
+    default: []
+  - name: vmRgName
+    type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Get Settings for OMS Extension
+    name: omsSettings
+    condition: always()
+    inputs:
+      azureSubscription: ${{ parameters.subscription }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        $rgName="$(ws_rg)"
+        $workspaceName="$(ws_name)"
+
+        az account set -s $(ws_sub_id)
+
+        $key=az monitor log-analytics workspace get-shared-keys --resource-group $rgName --workspace-name $workspaceName -o tsv
+        $id=az monitor log-analytics workspace show --resource-group $rgName --workspace-name $workspaceName -o tsv --query "id"
+
+        Write-Host "ID: $id"
+
+        $settings = [PSCustomObject]@{
+          workspaceId           = $id
+        }
+        $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
+        $settingsJson = $settingsJson -replace "`"", "\`""
+
+        $protectedSettings = [PSCustomObject]@{
+          workspaceKey           = $key
+        }
+        $protectedSettingsJson = $protectedSettings | ConvertTo-Json -Compress -Depth 100
+        $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
+
+        Write-Host "##vso[task.setvariable variable=settingsJson]$settingsJson"
+        Write-Host "##vso[task.setvariable variable=protectedSettingsJson]$protectedSettingsJson"
+
+  - ${{ each vm in parameters.vmNames }}:
+    - template: templates\Azure\Vm\install.yaml@azTemplates
+      parameters:
+        subscription: ${{ parameters.subscription }}
+        rgName: ${{ parameters.vmRgName }}
+        vmName: ${{ vm }}
+        extName: "OmsAgentForLinux"
+        extPublisher: "Microsoft.EnterpriseCloud.Monitoring"
+        settingsJson: $(omsSettings.settingsJson)
+        protectedSettingsJson: $(omsSettings.protectedSettingsJson)
