@@ -83,8 +83,23 @@ variable "dev_source_address_prefixes" {
   type = string
 }
 
+variable "ws_name" {
+  type = string
+}
+
+variable "ws_rg" {
+  type    = string
+  default = "oms-automation"
+}
+
+variable "ws_sub_id" {
+  type = string
+}
+
 ## Storage Account
 variable "sa_recording_retention" {
   type        = number
   description = "How long to retain the recordings in blob"
 }
+
+

@@ -1,3 +1,5 @@
+
+/*
 locals {
   dynatrace_token_name          = "dynatrace-token"
   key_vault_resource_group_name = "cvp-sharedinfra-${var.env}"
@@ -15,8 +17,7 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
 }
 
 data "azurerm_client_config" "current" {}
-
-/* module "dynatrace-oneagent" {
+ module "dynatrace-oneagent" {
   count  = length(var.vm_ids)
   source = "github.com/hmcts/terraform-module-dynatrace-oneagent"
 

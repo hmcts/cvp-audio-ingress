@@ -30,6 +30,9 @@ module "wowza" {
   wowza_offer                   = var.wowza_offer
   rtmps_source_address_prefixes = var.rtmps_source_address_prefixes
   dev_source_address_prefixes   = var.dev_source_address_prefixes
+  ws_name                       = var.ws_name
+  ws_sub_id                     = var.ws_sub_id
+  ws_rg                         = var.ws_rg
   sa_recording_retention        = var.sa_recording_retention
 }
 
