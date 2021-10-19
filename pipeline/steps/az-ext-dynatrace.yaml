@@ -43,6 +43,7 @@ steps:
         #$protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
 
         Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
+        Write-Host $settingsJson
         Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
 
   - ${{ each vm in parameters.vmNames }}:
