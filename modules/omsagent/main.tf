@@ -5,7 +5,7 @@ resource "azurerm_virtual_machine_extension" "oms_agent" {
   virtual_machine_id   = each.value.id
   publisher            = "Microsoft.EnterpriseCloud.Monitoring"
   type                 = "OmsAgentForLinux"
-  type_handler_version = "1.13"
+  type_handler_version = "1.13.40"
 
   settings = <<SETTINGS
     {
