@@ -32,7 +32,7 @@ steps:
           workspaceId           = $id
         }
         $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
-        $settingsJson = $settingsJson -replace "`"", "\`""
+        #$settingsJson = $settingsJson -replace "`"", "\`""
 
         $protectedSettings = [PSCustomObject]@{
           workspaceKey           = $key
