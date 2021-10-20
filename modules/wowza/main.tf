@@ -526,3 +526,14 @@ module "dynatrace" {
 
 
 }
+
+resource "azurerm_public_ip" "pip_vm1" {
+  name = "${local.service_name}-pipvm1"
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  allocation_method = "Static"
+  sku               = "Standard"
+  tags              = var.common_tags
+}

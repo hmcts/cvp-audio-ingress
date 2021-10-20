@@ -58,6 +58,9 @@ stages:
               locationEng: ${{variables.locationEng}}
               product: ${{variables.product}}
 
+      - job: ApplyExtToEnv
+        displayName: 'Extensions to ${{parameters.env}}'
+        steps:
           - template: ../steps/az-ext-oms.yaml
             parameters:
               subscription: ${{variables.subscriptionName}}
