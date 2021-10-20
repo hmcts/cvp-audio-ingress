@@ -534,14 +534,3 @@ data "azurerm_log_analytics_workspace" "log_analytics" {
   resource_group_name = var.ws_rg
   provider            = azurerm.secops
 }
-
-module "omsagent" {
-  source = "../omsagent"
-
-
-}
-
-module "dynatrace" {
-  source = "../dynatrace"
-
-}
