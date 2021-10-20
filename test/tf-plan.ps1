@@ -57,6 +57,6 @@ $outputJson = "test/plan.json"
 
 terraform init -reconfigure
 
-terraform plan -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" -var "ws_sub_id=$subscriptionId" -out="$outputState" -input=false
+terraform plan -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" -out="$outputState" -input=false
 
 terraform show -json $outputState > $outputJson

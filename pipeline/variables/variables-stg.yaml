@@ -6,3 +6,7 @@ variables:
   ws_sub_name: "DCD-CNP-DEV"
   dynatrace_token: 'dynatrace-nonprod-token'
   infra_kv: 'infra-vault-nonprod'
+  ws_name: "hmcts-nonprod"
+  ws_rg: "oms-automation"
+  dynatrace_host_group: "AAT_DTS_CVP"
+  dynatrace_tenant_id: "yrk32651"

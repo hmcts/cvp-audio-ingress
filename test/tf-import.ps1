@@ -57,6 +57,6 @@ $tfConfig="module.wowza.azurerm_linux_virtual_machine.vm"
 
 terraform init -reconfigure
 
-terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" -var "ws_sub_id=$subscriptionId" $tfConfig"2" $azResourceId"2"
+terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" $tfConfig"2" $azResourceId"2"
 
-terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" -var "ws_sub_id=$subscriptionId" $tfConfig"1" $azResourceId"1"
+terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" $tfConfig"1" $azResourceId"1"

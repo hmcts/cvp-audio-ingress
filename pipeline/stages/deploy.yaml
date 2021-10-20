@@ -9,6 +9,8 @@ stages:
       displayName: '${{parameters.env}} Waiting for Approval'
       condition: succeeded()
       dependsOn: Plan${{parameters.env}}
+      pool:
+        vmImage: 'ubuntu-latest'
       jobs:
         - job: waitForValidation
           displayName: '${{parameters.env}} Wait for external validation'
@@ -23,6 +25,8 @@ stages:
 
   - stage: Apply${{parameters.env}}
     displayName: 'Apply to ${{parameters.env}}'
+    pool:
+      vmImage: 'ubuntu-latest'
     ${{ if eq(parameters.env, 'sbox')  }}:
       dependsOn: Plan${{parameters.env}}
     ${{ if ne(parameters.env, 'sbox') }}:
@@ -53,3 +57,18 @@ stages:
               location: ${{variables.location}}
               locationEng: ${{variables.locationEng}}
               product: ${{variables.product}}
+
+      - job: ApplyExtToEnv
+        displayName: 'Extensions to ${{parameters.env}}'
+        steps:
+          - template: ../steps/az-ext-oms.yaml
+            parameters:
+              subscription: ${{variables.subscriptionName}}
+              vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+              vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+
+          - template: ../steps/az-ext-dynatrace.yaml
+            parameters:
+              subscription: ${{variables.subscriptionName}}
+              vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+              vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"

@@ -6,6 +6,8 @@ parameters:
 stages:
   - stage: Test${{parameters.env}}
     displayName: 'Test to ${{parameters.env}}'
+    pool:
+      vmImage: 'ubuntu-latest'
     dependsOn: Apply${{parameters.env}}
     variables:
       - template: ../variables/variables-common.yaml

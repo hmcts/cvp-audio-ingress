@@ -13,6 +13,8 @@ stages:
     ${{ if ne(parameters.dependsOnEnv, '') }}:
       dependsOn: '${{parameters.dependsOnEnv}}'
     condition: ${{ parameters.condition }}
+    pool:
+      vmImage: 'ubuntu-latest'
     variables:
       - template: ../variables/variables-common.yaml
     jobs:

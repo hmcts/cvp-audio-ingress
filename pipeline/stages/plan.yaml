@@ -9,6 +9,8 @@ parameters:
 stages:
   - stage: 'Plan${{parameters.env}}'
     displayName: 'Plan ${{parameters.env}}'
+    pool:
+      vmImage: 'ubuntu-latest'
     ${{ if eq(parameters.dependsOnEnv, '') }}:
       dependsOn: Build
     ${{ if ne(parameters.dependsOnEnv, '') }}:

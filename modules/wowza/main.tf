@@ -239,7 +239,16 @@ resource "azurerm_network_security_rule" "developer_rule" {
     ]
   }
 }
+resource "azurerm_public_ip" "pip_vm1" {
+  name = "${local.service_name}-pipvm1"
 
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  allocation_method = "Static"
+  sku               = "Standard"
+  tags              = var.common_tags
+}
 resource "azurerm_network_interface" "nic1" {
   name = "${local.service_name}-nic1"
 
@@ -250,10 +259,20 @@ resource "azurerm_network_interface" "nic1" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip_vm1.id
   }
   tags = var.common_tags
 }
+resource "azurerm_public_ip" "pip_vm2" {
+  name = "${local.service_name}-pipvm2"
 
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  allocation_method = "Static"
+  sku               = "Standard"
+  tags              = var.common_tags
+}
 resource "azurerm_network_interface" "nic2" {
   name = "${local.service_name}-nic2"
 
@@ -264,6 +283,7 @@ resource "azurerm_network_interface" "nic2" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip_vm2.id
   }
   tags = var.common_tags
 }
@@ -513,60 +533,4 @@ data "azurerm_log_analytics_workspace" "log_analytics" {
   name                = var.ws_name
   resource_group_name = var.ws_rg
   provider            = azurerm.secops
-}
-
-resource "azurerm_virtual_machine_extension" "log_analytics_vm1" {
-  name                 = "${local.service_name}-vm1-ext"
-  virtual_machine_id   = azurerm_linux_virtual_machine.vm1.id
-  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
-  type                 = "OmsAgentForLinux"
-  type_handler_version = "1.7"
-
-  settings = <<SETTINGS
-    {
-        "workspaceId": "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
-    }
-SETTINGS
-
-  protected_settings = <<PROTECTEDSETTINGS
-    {
-        "workspaceKey": "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
-    }
-PROTECTEDSETTINGS
-
-  tags = var.common_tags
-}
-
-resource "azurerm_virtual_machine_extension" "log_analytics_vm2" {
-  name                 = "${local.service_name}-vm2-ext"
-  virtual_machine_id   = azurerm_linux_virtual_machine.vm2.id
-  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
-  type                 = "OmsAgentForLinux"
-  type_handler_version = "1.7"
-
-  settings = <<SETTINGS
-    {
-        "workspaceId": "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
-    }
-SETTINGS
-
-  protected_settings = <<PROTECTEDSETTINGS
-    {
-        "workspaceKey": "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
-    }
-PROTECTEDSETTINGS
-
-  tags = var.common_tags
-}
-
-module "dynatrace" {
-  source = "../dynatrace"
-
-  vm_ids = [
-    azurerm_linux_virtual_machine.vm1.id,
-    azurerm_linux_virtual_machine.vm2.id
-  ]
-  env                  = var.env
-  dynatrace_host_group = var.dynatrace_host_group
-  dynatrace_tenant_id  = var.dynatrace_tenant_id
 }
