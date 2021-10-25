@@ -42,13 +42,7 @@ Get-Content "pipeline/variables/variables-$env.yaml" | Foreach-Object{
   }
 }
 
-$kvName="cvp-$env-kv"
-$certPath="test/cert.pem"
-if (Test-Path $certPath){
-  Remove-Item $certPath
-}
-$certName=az keyvault certificate list --vault-name $kvName --query "[0].name" -o tsv
-az keyvault certificate download --id https://$kvName.vault.azure.net/certificates/$certName -f $certPath
+$wsSsubscriptionId=az account show -s $global:ws_sub_name --query id -o tsv
 
 $subscriptionId=$(az account show -s $ws_sub_name --query id -o tsv)
 
@@ -57,6 +51,6 @@ $tfConfig="module.wowza.azurerm_linux_virtual_machine.vm"
 
 terraform init -reconfigure
 
-terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" $tfConfig"2" $azResourceId"2"
+terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "ws_sub_id=$wsSsubscriptionId" $tfConfig"2" $azResourceId"2"
 
-terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "cert_path=$certPath" -var "cert_name=$certName" $tfConfig"1" $azResourceId"1"
+terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "ws_sub_id=$wsSsubscriptionId" $tfConfig"1" $azResourceId"1"

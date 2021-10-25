@@ -3,8 +3,6 @@ parameters:
     type: string
   - name: env
     type: string
-  - name: certName
-    type: string
   - name: location
     type: string
   - name: product
@@ -33,7 +31,6 @@ steps:
     parameters:
       subscriptionName: ${{parameters.subscriptionName}}
       env: ${{parameters.env}}
-      certName: ${{parameters.certName}}
       location: ${{parameters.location}}
       product: ${{parameters.product}}
       builtFrom: ${{parameters.builtFrom}}
@@ -50,8 +47,6 @@ steps:
         -var-file "$(Build.SourcesDirectory)/tf-variables/shared.tfvars"
         -var-file "$(Build.SourcesDirectory)/tf-variables/${{parameters.env}}.tfvars"
         -var "builtFrom=${{ parameters.builtFrom }}"
-        -var "cert_name=${{parameters.certName}}"
-        -var "cert_path=$(certPath)"
         -var "ws_sub_id=$(ws_sub_id)"
         -out="${{ parameters.env }}.tfplan" -no-color -input=false
 #      publishPlanResults: ${{ parameters.env }}.tfplan

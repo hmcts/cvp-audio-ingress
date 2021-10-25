@@ -69,13 +69,6 @@ variable "os_disk_size" {
   default = 1024
 }
 
-variable "cert_path" {
-  type = string
-}
-variable "cert_name" {
-  type = string
-}
-
 variable "cloud_init_file" {
   description = "The location of the cloud init configuration file."
   type        = string

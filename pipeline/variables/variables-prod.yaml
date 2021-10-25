@@ -1,6 +1,5 @@
 variables:
   env: 'prod'
-  certName: 'wildcard-platform-hmcts-net'
   subscriptionName: 'DTS-SHAREDSERVICES-PROD'
   kv_name_prefix : 'cft-apps'
   ws_sub_name: "DCD-CNP-Prod"

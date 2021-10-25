@@ -3,8 +3,6 @@ parameters:
     type: string
   - name: env
     type: string
-  - name: certName
-    type: string
   - name: location
     type: string
   - name: product
@@ -108,58 +106,6 @@ steps:
           --bypass AzureServices \
           --default-action Deny
 
-  - task: AzureCLI@2
-    displayName: 'Get Certificates'
-    inputs:
-      azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        kvName="$(kvName)"
-        oid=$(oid)
-        env="${{ parameters.env }}"
-        certName="${{ parameters.certName }}"
-        kvNamePrefix="$(kv_name_prefix)"
-        sourceKvName="$kvNamePrefix-$env"
-        echo "Logged in as oid $oid"
-
-        echo "Copy wildcard cert from cftapps"
-        az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert-cft.pfx
-        cftAppsVersionUrl=$(az keyvault secret show --id https://$sourceKvName.vault.azure.net/secrets/$certName --query "id" -o tsv)
-        cftAppsVersionId=${cftAppsVersionUrl##*/}
-        echo "cftapps Version $cftAppsVersionId"
-
-        base64 -d cert-cft.pfx > cert-up.pfx
-
-        import(){
-            echo "Import the cert to our new KV $kvName"
-            az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name $certName --tags parentVersion=$cftAppsVersionId --verbose
-        }
-
-        echo "Check if cert exists"
-        kvSecret=$(az keyvault secret show --id https://$kvName.vault.azure.net/secrets/$certName --query "id")
-        if [ "$kvSecret" = "" ]; then
-            echo "Cert doesn't exist"
-            import
-        else
-            echo "Cert exists"
-            kvSecretVersion=$(az keyvault secret show --id https://$kvName.vault.azure.net/secrets/$certName  --query "tags.parentVersion" -o tsv)
-            echo "Current CVP Version $kvSecretVersion"
-
-            if [ "$kvSecretVersion" != "$cftAppsVersionId" ]; then
-                echo "Change Required in Cert"
-                import
-            else
-                echo "No Change in Cert"
-            fi
-        fi
-
-        echo "Download the cert as a pem file"
-        az keyvault certificate download --id https://$kvName.vault.azure.net/certificates/$certName -f cert.pem
-        certPath=`pwd`/cert.pem
-
-        echo "##vso[task.setvariable variable=certPath]$certPath"
-  
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'
     inputs:

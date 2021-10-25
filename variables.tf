@@ -45,13 +45,6 @@ variable "lb_IPaddress" {
   type = string
 }
 
-variable "cert_path" {
-  type = string
-}
-variable "cert_name" {
-  type = string
-}
-
 variable "wowza_publisher" {
   type = string
 }

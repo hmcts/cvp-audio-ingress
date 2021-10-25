@@ -22,8 +22,6 @@ module "wowza" {
   address_space                 = var.address_space
   lb_IPaddress                  = var.lb_IPaddress
   num_applications              = var.num_applications
-  cert_path                     = var.cert_path
-  cert_name                     = var.cert_name
   wowza_sku                     = var.wowza_sku
   wowza_version                 = var.wowza_version
   wowza_publisher               = var.wowza_publisher

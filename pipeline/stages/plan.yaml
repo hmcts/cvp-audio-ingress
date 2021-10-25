@@ -37,7 +37,6 @@ stages:
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
               env: ${{variables.env}}
-              certName: ${{variables.certName}}
               location: ${{variables.location}}
               product: ${{variables.product}}
               builtFrom: $(Build.Repository.Name)
