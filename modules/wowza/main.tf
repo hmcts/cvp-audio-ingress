@@ -379,7 +379,7 @@ data "template_file" "cloudconfig" {
   template = file(var.cloud_init_file)
   vars = {
     certPassword       = random_password.certPassword.result
-    certThumbprint     = module.cert.thumbprint
+    certThumbprint     = data.azurerm_key_vault_certificate.cert.thumbprint
     storageAccountName = module.sa.storageaccount_name
     storageAccountKey  = module.sa.storageaccount_primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
@@ -404,12 +404,10 @@ data "azurerm_key_vault" "cvp_kv" {
 }
 data "azurerm_client_config" "current" {
 }
-module "cert" {
-  source            = "git::https://github.com/hmcts/terraform-module-certificate.git?ref=remove-kv-policy"
-  environment       = var.env
-  domain_dns_prefix = var.env == "stg" ? "aat" : var.env
-  domain_prefix     = "cvp-recording"
-  #object_id         = data.azurerm_client_config.current.object_id
+data "azurerm_key_vault_certificate" "cert" {
+  name         = "cvp-certificate"
+  key_vault_id = data.azurerm_key_vault.cvp_kv.id
+
 }
 data "azurerm_key_vault_secret" "ssh_pub_key" {
   name         = "cvp-ssh-pub-key"
@@ -447,9 +445,9 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = module.cert.secret_id
+      url = data.azurerm_key_vault_certificate.cert.secret_id
     }
-    key_vault_id = module.cert.key_vault_id
+    key_vault_id = data.azurerm_key_vault_certificate.cert.key_vault_id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
@@ -504,9 +502,9 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = module.cert.secret_id
+      url = data.azurerm_key_vault_certificate.cert.secret_id
     }
-    key_vault_id = module.cert.key_vault_id
+    key_vault_id = data.azurerm_key_vault_certificate.cert.key_vault_id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
