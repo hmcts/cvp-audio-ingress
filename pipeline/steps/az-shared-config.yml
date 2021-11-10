@@ -150,7 +150,7 @@ steps:
         kvName="$(kvName)"
         oid=$(oid)
         env="${{ parameters.env }}"
-        sourceCertName="${{ parameters.certName }}"
+        sourceCertName="$(kv_cert_name)"
         certName="cvp-certificate"
         kvNamePrefix="$(kv_name_prefix)"
         sourceKvName="$kvNamePrefix-$env"

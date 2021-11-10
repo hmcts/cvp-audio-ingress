@@ -2,6 +2,7 @@ variables:
   env: 'prod'
   subscriptionName: 'DTS-SHAREDSERVICES-PROD'
   kv_name_prefix : 'cft-apps'
+  kv_cert_name: 'wildcard-platform-hmcts-net'
   ws_sub_name: "DCD-CNP-Prod"
   dynatrace_token: 'dynatrace-prod-api-key'
   infra_kv: 'infra-vault-prod'
