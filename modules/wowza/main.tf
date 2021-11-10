@@ -409,7 +409,7 @@ module "cert" {
   environment       = var.env
   domain_dns_prefix = var.env == "stg" ? "aat" : var.env
   domain_prefix     = "cvp-recording"
-  object_id         = data.azurerm_client_config.current.object_id
+  #object_id         = data.azurerm_client_config.current.object_id
 }
 data "azurerm_key_vault_secret" "ssh_pub_key" {
   name         = "cvp-ssh-pub-key"
