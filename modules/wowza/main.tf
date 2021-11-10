@@ -406,7 +406,7 @@ data "azurerm_client_config" "current" {
 }
 module "cert" {
   source        = "git::https://github.com/hmcts/terraform-module-certificate.git?ref=master"
-  environment   = var.env
+  environment   = var.env == "stg" ? "aat" : var.env
   domain_prefix = "cvp-recording"
   object_id     = data.azurerm_client_config.current.object_id
 }
