@@ -52,3 +52,22 @@ and has their Dev environment IPs whitelisted already.
 * The Wowza Engine Management UI doesn't seem to work when the Wowza Engine is configured with TLS (which this project 
 is).
 * Occasionally cloud-init will not complete properly. The quickest solution seems to be to reboot the VM to trigger cloud-init to run again.
+
+## Investigation
+
+### Check Certificates:
+
+1. Get password via: `cat /usr/local/WowzaStreamingEngine/conf/Server.xml | grep Password`
+2. Run below and add password.
+```
+keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
+```
+
+### Check mount:
+
+1. run this command `df -h | grep azurecopy` and something like this should be returned:
+`blobfuse        126G   61M  120G   1% /usr/local/WowzaStreamingEngine-4.8.10/content/azurecopy`
+
+### Check eveything is installed:
+
+ run through the commands in the cloudinit file to make sure the packages are install, mount is mounted, applications have been built and wowza restarted.
