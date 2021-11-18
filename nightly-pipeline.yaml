@@ -46,6 +46,8 @@ stages:
     jobs:
       - job: GetScheduleName
         displayName: 'Get Schedule Name'
+        pool:
+          vmImage: ubuntu-latest
         steps: 
           - download: none
           - checkout: none
