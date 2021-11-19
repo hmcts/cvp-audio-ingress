@@ -24,7 +24,7 @@ steps:
 
         $infraKvName = "$env:INFRA_KV"
         $infraSecretName = "$env:DYNATRACE_TOKEN"
-        echo "Get Dynatrace env token from $infraKvName / $infraSecretName "
+        Write-Host "Get Dynatrace env token from $infraKvName / $infraSecretName "
         $dynatrace_token=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/$infraSecretName  --query "value" -o tsv
 
         $settings = [PSCustomObject]@{

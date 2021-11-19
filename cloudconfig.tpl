@@ -412,6 +412,12 @@ write_files:
       accountKey ${storageAccountKey}
       containerName ${containerName}
   - owner: wowza:wowza
+    path: /home/wowza/connection-logs.cfg
+    content: |
+      accountName ${storageAccountName}
+      accountKey ${storageAccountKey}
+      containerName ${logsContainerName}
+  - owner: wowza:wowza
     path: /usr/local/WowzaStreamingEngine/conf/admin.password
     content: |
       # Admin password file (format [username][space][password])
@@ -686,6 +692,30 @@ write_files:
                         </Properties>
                 </Application>
         </Root>
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/log-mount.sh
+    content: |
+      #!/bin/bash
+      
+      source="/usr/local/WowzaStreamingEngine/logs"
+
+      rootDir="/usr/local/WowzaStreamingEngine/azlogs"
+      mkdir $rootDir
+
+      hostname=$(cat /proc/sys/kernel/hostname)
+      destination="$rootDir/$hostname"
+      mkdir $destination
+
+      cronTaskPath="/home/wowza/log_copy.txt"
+      sudo touch $cronTaskPath
+      sudo chmod 777 $cronTaskPath
+      echo "*/5 * * * * /usr/bin/rsync -avz $source $destination
+      " > $cronTaskPath
+      sudo -u wowza bash -c "crontab $cronTaskPath"
+
+
+      blobfuse $rootDir --tmp-path=/mnt/blobfusetmplogs -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=/home/wowza/connection-logs.cfg -o allow_other -o nonempty
 
   - owner: wowza:wowza
     permissions: 0775
@@ -773,6 +803,7 @@ runcmd:
   - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}'
   - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy'
   - '/home/wowza/dir-creator.sh ${numApplications}'
+  - '/home/wowza/log-mount.sh'
   - 'sudo service WowzaStreamingEngine restart'
 
 final_message: "The system is finally up, after $UPTIME seconds"
