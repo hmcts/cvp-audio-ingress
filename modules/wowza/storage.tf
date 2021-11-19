@@ -1,6 +1,6 @@
 locals {
   main_container_name       = "recordings"
-  wowza_logs_container_name = "wowza_logs"
+  wowza_logs_container_name = "wowzalogs"
 }
 module "sa" {
   source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=master"
