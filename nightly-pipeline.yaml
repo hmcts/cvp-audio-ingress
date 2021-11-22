@@ -41,6 +41,8 @@ stages:
   - stage: 'GetDependencies'
     displayName: 'Get Dependency Details'
     dependsOn: []
+    pool:
+      vmImage: ubuntu-latest
     variables:
       - group: cvp-common
     jobs:
@@ -71,6 +73,8 @@ stages:
     - stage: 'Validate${{env}}'
       displayName: 'Validate ${{env}}'
       dependsOn: 'Plan${{env}}'
+      pool:
+        vmImage: ubuntu-latest
       variables:
         - template: pipeline/variables/variables-common.yaml
         - template: pipeline/variables/variables-${{env}}.yaml
@@ -239,6 +243,8 @@ stages:
     - stage: '${{env}}HouseKeeper'
       displayName: '${{env}} House Keeper Tasks'
       condition: eq(dependencies.GetDependencies.outputs['GetScheduleName.buildDetail.scheduleName'], 'Monthly' )
+      pool:
+        vmImage: ubuntu-latest
       dependsOn: GetDependencies
       variables:
         - template: pipeline/variables/variables-common.yaml
