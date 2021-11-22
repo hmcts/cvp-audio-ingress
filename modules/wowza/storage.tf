@@ -2,6 +2,7 @@ locals {
   main_container_name       = "recordings"
   wowza_logs_container_name = "wowzalogs"
 }
+#tfsec:ignore:azure-storage-default-action-deny
 module "sa" {
   source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=master"
 

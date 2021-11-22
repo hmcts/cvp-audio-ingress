@@ -69,6 +69,7 @@ resource "azurerm_private_dns_a_record" "sa_a_record" {
   tags                = var.common_tags
 }
 
+#tfsec:ignore:azure-network-ssh-blocked-from-internet
 resource "azurerm_network_security_group" "sg" {
   name = "${local.service_name}-sg"
 

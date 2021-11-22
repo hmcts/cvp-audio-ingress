@@ -24,10 +24,6 @@ stages:
           - template: ../steps/tf-init.yaml
             parameters:
               useBackend: false
-          - task: TerraformCLI@0
-            displayName: Validate Terraform
-            inputs:
-              command: 'validate'
-              commandOptions: '-no-color'
-          - script: terraform fmt -check=true
-            displayName: Check Formatting
+          - template: templates/tests/terraform/allTests.yaml@azTemplates
+            parameters:
+              terraformPath: $(System.DefaultWorkingDirectory)
