@@ -132,6 +132,31 @@ stages:
                     exit 1
                 fi
 
+          - task: AzureCLI@2
+            name: 'vm'
+            displayName: Get VM IP
+            inputs:
+              azureSubscription: '${{variables.subscriptionName}}'
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                $publicIpName="cvp-recordings-${{parameters.env}}-pipvm1"
+                $rgName="cvp-recordings-${{parameters.env}}-rg"
+
+                $publicIp=az network public-ip show -g $rgName -n $publicIpName -o json | ConvertFrom-Json
+
+                Write-Host $publicIp
+                $ipAddress=$publicIp.ipAddress 
+                Write-Host "##vso[task.setvariable variable=ipAddress;isOutput=true]$ipAddress"
+          - template: templates\tests\ffmpeg.yml@azTemplates
+            parameters: 
+              application: "audiostream1"
+              source: $(vm.ipAddress)
+              streamName: "testStream$(Build.BuildID)"
+              subscriptionName: ${{variables.subscriptionName}}
+              storageAccount: cvprecordings${{parameters.env}}sa
+              storageContainer: recordings
+
                 
 #          - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates
 #            parameters:
