@@ -34,7 +34,7 @@ steps:
       subscriptionName: ${{parameters.subscriptionName}}
       storageAccount: cvprecordings${{parameters.env}}sa
       storageContainer: recordings
-  - template: templates\Azure\NetworkSecurityGroup\remove.yml@azTemplates
+  - template: templates\Azure\NetworkSecurityGroup\remove.yaml@azTemplates
     parameters: 
       subscriptionName: ${{parameters.subscriptionName}}
       resourceGroupName: "cvp-recordings-${{parameters.env}}-rg"
