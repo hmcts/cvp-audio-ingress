@@ -5,6 +5,11 @@ parameters:
     type: string
 
 steps:
+  - template: templates\Azure\NetworkSecurityGroup\add.yml@azTemplates
+    parameters: 
+      subscriptionName: ${{parameters.subscriptionName}}
+      resourceGroupName: "cvp-recordings-${{parameters.env}}-rg"
+      networkSecurityGroupName: "cvp-recordings-${{parameters.env}}-sg"
   - task: AzureCLI@2
     name: 'vm'
     displayName: Get VM IP
@@ -29,3 +34,8 @@ steps:
       subscriptionName: ${{parameters.subscriptionName}}
       storageAccount: cvprecordings${{parameters.env}}sa
       storageContainer: recordings
+  - template: templates\Azure\NetworkSecurityGroup\remove.yml@azTemplates
+    parameters: 
+      subscriptionName: ${{parameters.subscriptionName}}
+      resourceGroupName: "cvp-recordings-${{parameters.env}}-rg"
+      networkSecurityGroupName: "cvp-recordings-${{parameters.env}}-sg"
