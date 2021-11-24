@@ -60,6 +60,7 @@ stages:
 
       - job: ApplyExtToEnv
         displayName: 'Extensions to ${{parameters.env}}'
+        dependsOn: ApplyTfToEnv
         steps:
           - template: ../steps/az-ext-oms.yaml
             parameters:
