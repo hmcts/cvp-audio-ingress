@@ -8,7 +8,7 @@ stages:
     displayName: 'Test to ${{parameters.env}}'
     pool:
       vmImage: 'ubuntu-latest'
-    dependsOn: [] ##TODO: Change dependency for testing. revert!!!!
+    dependsOn: Apply${{parameters.env}}
     variables:
       - template: ../variables/variables-common.yaml
       - template: ../variables/variables-${{parameters.env}}.yaml
@@ -26,10 +26,6 @@ stages:
       - job: VirtualMachineTest
         displayName: '${{parameters.env}} Virtual Machine Tests '
         steps:
-          - template: ..\steps\test-ffmpeg.yml
-            parameters:
-              subscriptionName: ${{ variables.subscriptionName }}
-              env: ${{ variables.env }}
 
           - task: AzureCLI@2
             name: 'machineconfig'
@@ -137,6 +133,11 @@ stages:
                     exit 1
                 fi
 
+          - ${{ if ne(parameters.env, 'sbox') }}:
+            - template: ..\steps\test-ffmpeg.yml
+              parameters:
+                subscriptionName: ${{ variables.subscriptionName }}
+                env: ${{ variables.env }}
          
 
 
