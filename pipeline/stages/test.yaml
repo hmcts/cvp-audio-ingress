@@ -8,7 +8,7 @@ stages:
     displayName: 'Test to ${{parameters.env}}'
     pool:
       vmImage: 'ubuntu-latest'
-    dependsOn: Apply${{parameters.env}}
+    dependsOn: [] ##TODO: Change dependency for testing. revert!!!!
     variables:
       - template: ../variables/variables-common.yaml
       - template: ../variables/variables-${{parameters.env}}.yaml
