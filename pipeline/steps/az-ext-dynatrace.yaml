@@ -42,8 +42,11 @@ steps:
         $protectedSettingsJson = $protectedSettings | ConvertTo-Json -Compress -Depth 100
         $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
 
+        $dynatrace_token_display = $dynatrace_token -replace '[ -~]', "*"
+        $settings.token = $dynatrace_token_display
+
         Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
-        Write-Host $settingsJson
+        Write-Host $settings
         Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
 
   - ${{ each vm in parameters.vmNames }}:
