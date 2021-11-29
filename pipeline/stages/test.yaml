@@ -26,6 +26,7 @@ stages:
       - job: VirtualMachineTest
         displayName: '${{parameters.env}} Virtual Machine Tests '
         steps:
+
           - task: AzureCLI@2
             name: 'machineconfig'
             displayName: Check Machine Config
@@ -131,6 +132,14 @@ stages:
                     echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
                     exit 1
                 fi
+
+          - ${{ if ne(parameters.env, 'sbox') }}:
+            - template: ..\steps\test-ffmpeg.yml
+              parameters:
+                subscriptionName: ${{ variables.subscriptionName }}
+                env: ${{ variables.env }}
+         
+
 
                 
 #          - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates

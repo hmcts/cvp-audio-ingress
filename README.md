@@ -35,9 +35,19 @@ This will generate a plan against the remote state file.
 1. Check that port 443 is responding with a valid SSL cert by opening the endpoint in your browser. (Smoke test candidate)
 
 2. The following command streams a single file to Wowza and should get persisted to a folder in Azure Blob Storage called 
-audiostream5.
-```shell script
-ffmpeg -re -i ./<local audio file> -c copy -f flv "rtmps://<host name for your wowza engine instance or the lb>:443/audiostream1 flashver=FMLE/3.0\20(compatible;\20FMSc/1.0) live=true pubUser=wowza playpath=<target filename>"
+audiostream5. [https://www.wowza.com/docs/how-to-live-stream-using-ffmpeg-with-wowza-streaming-engine](How to use FFMPEG for Wowza)
+```powershell
+$ffmpegPath="ffmpeg-4.4.1-essentials_build\bin" ## update to ffmpeg location
+$application="audiostream1" ## update to target application/room
+$audioFilePath="ffmpeg\audio-example.mp4" ## update to your example file
+$fileName="test-stream" ## update to tartet case name
+$source="20.108.61.33" ## update to target wowza instance
+
+$ffmpeg_url="rtmps://$source`:443/$application/$fileName"
+
+Set-Location -Path $ffmpegPath
+
+ffmpeg.exe -re -i $audioFilePath -c copy -f flv "$ffmpeg_url flashver=FMLE/3.0\20(compatible;\20FMSc/1.0) live=true pubUser=wowza title=$fileName" -loglevel verbose
 ``` 
 
 3. Load testing can be conducted on a Windows VM on Azure (Standard DS11 v2). It will require dotnet core installing on it.
