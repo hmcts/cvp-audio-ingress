@@ -26,5 +26,12 @@ steps:
         rgName="${{ parameters.resourceGroupName }}"
         sourceAddressPrefixes="${{ parameters.sourceAddressPrefixes }}"
 
-        echo "Update $nsgName rule $nsgRule to $sourceAddressPrefixes"
-        az network nsg rule update --name $nsgRule --nsg-name $nsgName --resource-group $rgName --source-address-prefixes $sourceAddressPrefixes
+        nsg=$(az network nsg show -g $rgName -n $nsgName -o tsv --query "name")
+
+        if [[ ! -z $nsg ]]
+        then
+          echo "Update $nsgName rule $nsgRule to $sourceAddressPrefixes"
+          az network nsg rule update --name $nsgRule --nsg-name $nsgName --resource-group $rgName --source-address-prefixes $sourceAddressPrefixes
+        else
+          echo "NSG $nsgName in $rgName doesn't exist"
+        fi
