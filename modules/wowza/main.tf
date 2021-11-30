@@ -1,6 +1,7 @@
 locals {
-  service_name = "${var.product}-recordings-${var.env}"
-  vms          = ["vm1", "vm2"]
+  service_name      = "${var.product}-recordings-${var.env}"
+  vms               = ["vm1", "vm2"]
+  domain_dns_prefix = var.env == "stg" ? "aat" : var.env == "sbox" ? "sandbox" : var.env == "stg" ? "staging" : var.env
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -86,6 +87,17 @@ resource "azurerm_network_security_group" "sg" {
     source_port_range          = "*"
     destination_port_range     = "443"
     source_address_prefixes    = var.rtmps_source_address_prefixes
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name                       = "RTMPS"
+    priority                   = 1039
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefixes    = var.rtmps_source_address_p
     destination_address_prefix = "*"
   }
 
@@ -288,6 +300,7 @@ data "template_file" "cloudconfig" {
     containerName      = local.main_container_name
     logsContainerName  = local.wowza_logs_container_name
     numApplications    = var.num_applications
+    domain             = "cvp-recording.${local.domain_dns_prefix}.platform.hmcts.net"
   }
 }
 
@@ -309,7 +322,7 @@ data "azurerm_client_config" "current" {
 module "cert" {
   source            = "git::https://github.com/hmcts/terraform-module-certificate.git?ref=master"
   environment       = var.env
-  domain_dns_prefix = var.env == "stg" ? "aat" : var.env
+  domain_dns_prefix = local.domain_dns_prefix
   domain_prefix     = "cvp-recording"
   object_id         = data.azurerm_client_config.current.object_id
 }

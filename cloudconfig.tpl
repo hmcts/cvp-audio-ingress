@@ -698,7 +698,8 @@ write_files:
     content: |
       #!/bin/bash
       
-      source="/usr/local/WowzaStreamingEngine/logs"
+      wowzaSource="/usr/local/WowzaStreamingEngine/logs"
+      certSource="/var/log/letsencrypt"
 
       rootDir="/usr/local/WowzaStreamingEngine/azlogs"
       mkdir $rootDir
@@ -710,7 +711,8 @@ write_files:
       cronTaskPath="/home/wowza/log_copy.txt"
       sudo touch $cronTaskPath
       sudo chmod 777 $cronTaskPath
-      echo "*/5 * * * * /usr/bin/rsync -avz $source $destination
+      echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination
+      */5 * * * * /usr/bin/rsync -avz $certSource $destination
       " > $cronTaskPath
       sudo -u wowza bash -c "crontab $cronTaskPath"
 
@@ -788,6 +790,31 @@ write_files:
       appDirs=$(ls -d $${prefix}*)
       echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
 
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/certbot/install-certbot.sh
+    content: |
+      #!/bin/bash
+
+        # info: https://certbot.eff.org/instructions?ws=web-hosting-product&os=ubuntu-18
+        # Install Snap
+        sudo snap install core
+        sudo snap refresh core
+
+        # Remove certbot
+        sudo apt-get remove certbot
+
+        # Install new certbot
+        sudo snap install --classic certbot
+
+        # Prepare command
+        sudo ln -s /snap/bin/certbot /usr/bin/certbot
+
+        # Install while running
+        sudo certbot certonly --standalone --register-unsafely-without-email --non-interactive --agree-tos --domains $1 -v
+
+        # Test cert update
+        sudo certbot renew --dry-run
 
 runcmd:
   - 'sudo apt-get install -y fuse'
@@ -801,6 +828,7 @@ runcmd:
   - '[[ ! -z "$secretsPfx" ]] && echo "PFX exists" || openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}'
   - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'
   - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}'
+  - '/home/certbot/install-certbot.sh ${domain}'
   - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy'
   - '/home/wowza/dir-creator.sh ${numApplications}'
   - '/home/wowza/log-mount.sh'
