@@ -89,17 +89,6 @@ resource "azurerm_network_security_group" "sg" {
     source_address_prefixes    = var.rtmps_source_address_prefixes
     destination_address_prefix = "*"
   }
-  security_rule {
-    name                       = "RTMPS"
-    priority                   = 1039
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefixes    = var.rtmps_source_address_p
-    destination_address_prefix = "*"
-  }
 
   #egress rules
   security_rule {
