@@ -4,11 +4,11 @@ ${certThumbprint} = $1
 ${certPassword} = $2
 ${numApplications} = $3
 
-sudo apt-get install -y fuse
-sudo apt-get install -y blobfuse
-wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
-sudo mkdir /mnt/blobfusetmp
-sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy
+dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
+dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
+[[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
+[ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
+[ ! -d /usr/local/WowzaStreamingEngine/content/azurecopy ] && sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy
 certDir="/var/lib/waagent/"
 secretsname=$(find $certDir -name "${certThumbprint}.prv" | cut -c -57)
 secretsPfx=$(find $certDir -name "${certThumbprint}.pfx")
