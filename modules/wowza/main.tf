@@ -372,7 +372,8 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   }
 
   identity {
-    type = "SystemAssigned"
+    type         = "SystemAssigned, UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.mi.id]
   }
   tags = var.common_tags
 }
@@ -429,7 +430,8 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 
   identity {
-    type = "SystemAssigned"
+    type         = "SystemAssigned, UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.mi.id]
   }
   tags = var.common_tags
 }
