@@ -21,6 +21,7 @@ parameters:
 
 steps:
 
+  - template: tf-install.yaml
   - template: tf-init.yaml
     parameters:
       subscriptionName: ${{parameters.subscriptionName}}
