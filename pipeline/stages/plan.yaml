@@ -32,6 +32,14 @@ stages:
               locationEng: ${{variables.locationEng}}
               product: ${{variables.product}}
               useBackend: true
+              
+          - template: templates\Azure\Common\unlock-resource.yml@azTemplates
+            parameters:
+              subscriptionName:  ${{variables.subscriptionName}}
+              resourceName: "${{variables.product}}recordings${{variables.env}}sa"
+              resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+              lockName: "resource-sa"
+              resourceType: "Microsoft.Storage/storageAccounts"
 
           - template: ../steps/tf-plan.yaml
             parameters:

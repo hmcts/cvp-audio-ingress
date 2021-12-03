@@ -57,9 +57,9 @@ module "sa" {
   ]
 }
 
-#resource "azurerm_management_lock" "sa" {
-#  name       = "resource-sa"
-#  scope      = module.sa.storageaccount_id
-#  lock_level = "CanNotDelete"
-#  notes      = "Lock to prevent deletion of storage account"
-#}
+resource "azurerm_management_lock" "sa" {
+  name       = "resource-sa"
+  scope      = module.sa.storageaccount_id
+  lock_level = "CanNotDelete"
+  notes      = "Lock to prevent deletion of storage account"
+}
