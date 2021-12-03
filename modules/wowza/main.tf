@@ -280,16 +280,20 @@ resource "random_password" "streamPassword" {
 data "template_file" "cloudconfig" {
   template = file(var.cloud_init_file)
   vars = {
-    certPassword       = random_password.certPassword.result
-    certThumbprint     = module.cert.thumbprint
-    storageAccountName = module.sa.storageaccount_name
-    storageAccountKey  = module.sa.storageaccount_primary_access_key
-    restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
-    streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
-    containerName      = local.main_container_name
-    logsContainerName  = local.wowza_logs_container_name
-    numApplications    = var.num_applications
-    domain             = "cvp-recording.${local.domain_dns_prefix}.platform.hmcts.net"
+    certPassword            = random_password.certPassword.result
+    certThumbprint          = module.cert.thumbprint
+    storageAccountName      = module.sa.storageaccount_name
+    storageAccountKey       = module.sa.storageaccount_primary_access_key
+    restPassword            = md5("wowza:Wowza:${random_password.restPassword.result}")
+    streamPassword          = md5("wowza:Wowza:${random_password.streamPassword.result}")
+    containerName           = local.main_container_name
+    logsContainerName       = local.wowza_logs_container_name
+    numApplications         = var.num_applications
+    domain                  = "${local.domain_dns_prefix}.platform.hmcts.net"
+    managedIdentityClientId = "azurerm_user_assigned_identity.mi.client_id"
+    tenantId                = data.azurerm_client_config.current.tenant_id
+    dnsResourceGroupPath    = "/subscriptions/${var.reforms_sub_id}/resourceGroups/${data.azurerm_dns_zone.dns.resource_group_name}"
+    domainPrefix            = "cvp-recording"
   }
 }
 
@@ -313,7 +317,6 @@ module "cert" {
   environment       = var.env
   domain_dns_prefix = local.domain_dns_prefix
   domain_prefix     = "cvp-recording"
-  object_id         = data.azurerm_client_config.current.object_id
 }
 data "azurerm_key_vault_secret" "ssh_pub_key" {
   name         = "cvp-ssh-pub-key"

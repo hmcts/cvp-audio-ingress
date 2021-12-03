@@ -8,8 +8,8 @@ provider "azurerm" {
   features {}
 }
 
-provider "azurerm"{
-  alias = "reform"
-  subscription_id = "ed302caf-ec27-4c64-a05e-85731c3ce90e"
+provider "azurerm" {
+  alias           = "reform"
+  subscription_id = var.reforms_sub_id
   features {}
 }

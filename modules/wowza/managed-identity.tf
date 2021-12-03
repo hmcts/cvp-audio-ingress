@@ -7,7 +7,7 @@ resource "azurerm_user_assigned_identity" "mi" {
 }
 
 data "azurerm_dns_zone" "dns" {
-  provider = azurerm.reform
+  provider            = azurerm.reform
   name                = "${local.domain_dns_prefix}.platform.hmcts.net"
   resource_group_name = "reformmgmtrg"
 }

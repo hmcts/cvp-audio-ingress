@@ -120,3 +120,8 @@ variable "ws_rg" {
 variable "ws_sub_id" {
   type = string
 }
+
+variable "reforms_sub_id" {
+  type    = string
+  default = "ed302caf-ec27-4c64-a05e-85731c3ce90e"
+}
