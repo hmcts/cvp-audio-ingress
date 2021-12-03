@@ -823,11 +823,13 @@ write_files:
     content: |
       #!/bin/bash
 
+        /home/certbot/setup-certbot.sh
+
         # info: https://certbot.eff.org/instructions?ws=web-hosting-product&os=ubuntu-18
 
         # Install certbot and certbot-dns-azure
         sudo apt-get -y install python3-pip
-        sudo pip3 -y  install certbot certbot-dns-azure 
+        sudo pip3 install certbot certbot-dns-azure 
         sudo pip3 install -Iv zope.interface==5.4.0
         sudo pip3 install -Iv cryptography==2.5
 
