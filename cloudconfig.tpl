@@ -839,6 +839,7 @@ write_files:
         --preferred-challenges dns \
         --noninteractive \
         --agree-tos \
+        --email cvp@cvp.cvp \
         --dns-azure-config .secrets/certbot/azure.ini \
         -d ${domainPrefix}.${domain}
 
