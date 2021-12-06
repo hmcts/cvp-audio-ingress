@@ -824,7 +824,7 @@ write_files:
         #!/bin/bash
 
         certPath="/etc/letsencrypt/live/${domainPrefix}.${domain}/fullchain.pem"
-        privateKeyPath="/etc/letsencrypt/live${domainPrefix}.${domain}/privkey.pem"
+        privateKeyPath="/etc/letsencrypt/live/${domainPrefix}.${domain}/privkey.pem"
         certDir="/var/lib/waagent/"
         pfxName="cvpPfx.pfx"
 
