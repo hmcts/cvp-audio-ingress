@@ -52,20 +52,7 @@ stages:
                         echo "##vso[task.LogIssue type=error;]$vmName in $rgName has password access enabled."
                         allOk=false
                     fi
-                    secretCount=$(az vm show --resource-group $rgName --name $vmName --query "length(osProfile.secrets[0].vaultCertificates)" -o tsv)
-                    if [ "$secretCount" = "0" ]
-                    then
-                        echo "##vso[task.LogIssue type=error;]There are no Key Vault Secrets attached to $vmName in $rgName"
-                        allOk=false
-                    else
-                        certCount=$(az vm show --resource-group $rgName --name $vmName --query "length(osProfile.secrets[0].vaultCertificates)" -o tsv)
-                        if [ "$certCount" = "0" ]
-                        then
-                            echo "##vso[task.LogIssue type=error;]There are no Key Vault Secret Certificates attached to $vmName in $rgName"
-                            allOk=false
-                        fi
-                    fi
-
+                    
                 done
 
                 if [ "$allOk" = "false" ]

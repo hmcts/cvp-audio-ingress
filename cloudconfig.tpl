@@ -800,18 +800,41 @@ write_files:
         [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
         [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
         [ ! -d /usr/local/WowzaStreamingEngine/content/azurecopy ] && sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy
-        certDir="/var/lib/waagent/"
-        secretsname=$(find $certDir -name "${certThumbprint}.prv" | cut -c -57)
-        secretsPfx=$(find $certDir -name "${certThumbprint}.pfx")
-        [[ ! -z "$secretsPfx" ]] && echo "PFX exists" || openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}
-        export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
-        keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}
         sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
         /home/wowza/dir-creator.sh ${numApplications}
         /home/wowza/log-mount.sh
         sudo /home/certbot/install-certbot.sh
         sudo service WowzaStreamingEngine restart
 
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/certbot/renew-certbot.sh
+    content: |
+        #!/bin/bash
+
+        # Test cert update
+        sudo certbot renew -q
+
+        sudo /home/certbot/save-certificate.sh
+
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/certbot/save-certificate.sh
+    content: |
+        #!/bin/bash
+
+        certPath="/etc/letsencrypt/live/${domainPrefix}.${domain}/fullchain.pem"
+        privateKeyPath="/etc/letsencrypt/live${domainPrefix}.${domain}/privkey.pem"
+        certDir="/var/lib/waagent/"
+        pfxName="cvpPfx.pfx"
+
+        cd $certDir
+
+        openssl pkcs12 -inkey $privateKeyPath -in $certPath -export -out $pfxName -passin pass: -passout pass:${certPassword}
+
+        export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
+        keytool -importkeystore -srckeystore $pfxName -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}
+        
   - owner: wowza:wowza
     permissions: 0775
     path: /home/certbot/setup-certbot.sh
@@ -865,11 +888,10 @@ write_files:
       --dns-azure-config .secrets/certbot/azure.ini \
       -d ${domainPrefix}.${domain}
 
-      # Test cert update
-      sudo certbot renew --dry-run
+      sudo /home/certbot/save-certificate.sh
 
       # Auto Renewal > https://eff-certbot.readthedocs.io/en/stable/using.html#setting-up-automated-renewal
-      SLEEPTIME=$(awk 'BEGIN{srand(); print int(rand()*(3600+1))}'); echo "0 0,12 * * * root sleep $SLEEPTIME && sudo certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+      SLEEPTIME=$(awk 'BEGIN{srand(); print int(rand()*(3600+1))}'); echo "0 0,12 * * * root sleep $SLEEPTIME && sudo /home/certbot/renew-certbot.sh" | sudo tee -a /etc/crontab > /dev/null
 
 runcmd:
   - 'sudo runcmd.sh'
