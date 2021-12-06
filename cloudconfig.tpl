@@ -796,26 +796,26 @@ write_files:
     content: |
       #!/bin/bash
 
-        clientId="${managedIdentityClientId}"
-        tenantId="${tenantId}"
-        dnsZoneResourceGroup="${dnsResourceGroupPath}"
-        dnsZoneName="${domain}"
+      clientId="${managedIdentityClientId}"
+      tenantId="${tenantId}"
+      dnsZoneResourceGroup="${dnsResourceGroupPath}"
+      dnsZoneName="${domain}"
 
-        filePath=".secrets/certbot/azure.ini"
+      filePath=".secrets/certbot/azure.ini"
 
-        mkdir ".secrets"
-        mkdir ".secrets/certbot"
-        touch $filePath
+      mkdir ".secrets"
+      mkdir ".secrets/certbot"
+      touch $filePath
 
-        sudo chmod 777 $filePath
+      sudo chmod 777 $filePath
 
-        echo "" > $filePath
-        echo "dns_azure_msi_client_id = $clientId" >> $filePath
-        echo "dns_azure_tenant_id = $tenantId" >> $filePath
-        echo "" >> $filePath
-        echo "dns_azure_zone1 = $dnsZoneName:$dnsZoneResourceGroup" >> $filePath
+      echo "" > $filePath
+      echo "dns_azure_msi_client_id = $clientId" >> $filePath
+      echo "dns_azure_tenant_id = $tenantId" >> $filePath
+      echo "" >> $filePath
+      echo "dns_azure_zone1 = $dnsZoneName:$dnsZoneResourceGroup" >> $filePath
 
-        sudo chmod 400 $filePath
+      sudo chmod 400 $filePath
 
   - owner: wowza:wowza
     permissions: 0775
@@ -823,31 +823,31 @@ write_files:
     content: |
       #!/bin/bash
 
-        /home/certbot/setup-certbot.sh
+      /home/certbot/setup-certbot.sh
 
-        # info: https://certbot.eff.org/instructions?ws=web-hosting-product&os=ubuntu-18
+      # info: https://certbot.eff.org/instructions?ws=web-hosting-product&os=ubuntu-18
 
-        # Install certbot and certbot-dns-azure
-        sudo apt-get -y install python3-pip
-        sudo pip3 install certbot certbot-dns-azure 
-        sudo pip3 install -Iv zope.interface==5.4.0
-        sudo pip3 install -Iv cryptography==2.5
+      # Install certbot and certbot-dns-azure
+      sudo apt-get -y install python3-pip
+      sudo pip3 install certbot certbot-dns-azure 
+      sudo pip3 install -Iv zope.interface==5.4.0
+      sudo pip3 install -Iv cryptography==2.5
 
-        # Install while running
-        sudo certbot certonly \
-        --authenticator dns-azure \
-        --preferred-challenges dns \
-        --noninteractive \
-        --agree-tos \
-        --email cvp@cvp.cvp \
-        --dns-azure-config .secrets/certbot/azure.ini \
-        -d ${domainPrefix}.${domain}
+      # Install while running
+      sudo certbot certonly \
+      --authenticator dns-azure \
+      --preferred-challenges dns \
+      --noninteractive \
+      --agree-tos \
+      --email cvp@cvp.com \
+      --dns-azure-config .secrets/certbot/azure.ini \
+      -d ${domainPrefix}.${domain}
 
-        # Test cert update
-        sudo certbot renew --dry-run
+      # Test cert update
+      sudo certbot renew --dry-run
 
-        # Auto Renewal > https://eff-certbot.readthedocs.io/en/stable/using.html#setting-up-automated-renewal
-        SLEEPTIME=$(awk 'BEGIN{srand(); print int(rand()*(3600+1))}'); echo "0 0,12 * * * root sleep $SLEEPTIME && sudo certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+      # Auto Renewal > https://eff-certbot.readthedocs.io/en/stable/using.html#setting-up-automated-renewal
+      SLEEPTIME=$(awk 'BEGIN{srand(); print int(rand()*(3600+1))}'); echo "0 0,12 * * * root sleep $SLEEPTIME && sudo certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
 
 runcmd:
   - 'sudo apt-get install -y fuse'
@@ -861,7 +861,7 @@ runcmd:
   - '[[ ! -z "$secretsPfx" ]] && echo "PFX exists" || openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}'
   - 'export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin'
   - 'keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}'
-  - '/home/certbot/install-certbot.sh'
+  - 'sudo /home/certbot/install-certbot.sh'
   - 'sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy'
   - '/home/wowza/dir-creator.sh ${numApplications}'
   - '/home/wowza/log-mount.sh'
