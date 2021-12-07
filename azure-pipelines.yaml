@@ -8,15 +8,8 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: refs/heads/master
+      ref: refs/heads/VIH-8530
       endpoint: hmcts
-schedules:
-  - cron: "0 1 * * 1"
-    displayName: Weekly Run
-    branches:
-      include:
-      - master
-    always: false
 
 parameters:
   - name: envs
@@ -29,20 +22,27 @@ stages:
   - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
-    - template: pipeline/stages/plan.yaml
+    - template: templates\Azure\Certificates\Request.yaml
       parameters:
-        env: ${{env}}
-        ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
-          dependsOnEnv: ''
-        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-          dependsOnEnv: 'sbox'
-        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-          dependsOnEnv: 'stg'
+        subscriptionName: ${{variables.subscriptionName}}
+        product: "cvp"
+        environment: ${env}
+        domain: "cvp-recording.sandbox.platform.hmcts.net"
 
-    - template: pipeline/stages/deploy.yaml
-      parameters:
-        env: ${{env}}
+    #- template: pipeline/stages/plan.yaml
+    #  parameters:
+    #    env: ${{env}}
+    #    ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
+    #      dependsOnEnv: ''
+    #    ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+    #      dependsOnEnv: 'sbox'
+    #    ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+    #      dependsOnEnv: 'stg'
 
-    - template: pipeline/stages/test.yaml
-      parameters:
-        env: ${{env}}
+    #- template: pipeline/stages/deploy.yaml
+    #  parameters:
+    #    env: ${{env}}
+
+    #- template: pipeline/stages/test.yaml
+    #  parameters:
+    #    env: ${{env}}
