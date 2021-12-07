@@ -51,3 +51,14 @@ stages:
               # Manually passed in for use in scripts where resources are tagged
               businessArea: ${{variables.businessArea}}
               application: ${{variables.application}}
+
+      - job: CertGen${{parameters.env}}
+        displayName: 'Generate Certificate for ${{parameters.env}}'
+        steps:
+          - template: templates\Azure\Certificates\Request.yaml@azTemplates
+            parameters:
+              subscriptionName: ${{variables.subscriptionName}}
+              product: "cvp"
+              environment: ${{env}}
+              domain: "${{ variables.dns }}"
+              keyVaultName: "cvp-${{env}}-kv"

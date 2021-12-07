@@ -19,41 +19,23 @@ parameters:
     default: ['sbox','stg','prod']
 
 stages:
-  #- template: pipeline/stages/build.yaml 
+  - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
-    - stage: Build${{env}}
-      pool:
-        vmImage: 'ubuntu-latest'
-      variables:
-        - template: pipeline/variables/variables-common.yaml
-        - template: pipeline/variables/variables-${{env}}.yaml
-        - group: cvp-${{env}}
-      jobs:
-        - job: BasicValidation
-          steps:
-            - template: templates\Azure\Certificates\Request.yaml@azTemplates
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                product: "cvp"
-                environment: ${{env}}
-                domain: "${{ variables.dns }}"
-                keyVaultName: "cvp-${{env}}-kv"
+    - template: pipeline/stages/plan.yaml
+      parameters:
+        env: ${{env}}
+        ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
+          dependsOnEnv: ''
+        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+          dependsOnEnv: 'sbox'
+        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+          dependsOnEnv: 'stg'
 
-    #- template: pipeline/stages/plan.yaml
-    #  parameters:
-    #    env: ${{env}}
-    #    ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
-    #      dependsOnEnv: ''
-    #    ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-    #      dependsOnEnv: 'sbox'
-    #    ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-    #      dependsOnEnv: 'stg'
+    - template: pipeline/stages/deploy.yaml
+      parameters:
+        env: ${{env}}
 
-    #- template: pipeline/stages/deploy.yaml
-    #  parameters:
-    #    env: ${{env}}
-
-    #- template: pipeline/stages/test.yaml
-    #  parameters:
-    #    env: ${{env}}
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
