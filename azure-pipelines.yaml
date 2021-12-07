@@ -22,7 +22,7 @@ stages:
   - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
-    - stage: Build
+    - stage: Build${{env}}
       pool:
         vmImage: 'ubuntu-latest'
       variables:
