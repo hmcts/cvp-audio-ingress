@@ -22,7 +22,7 @@ stages:
   - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
-    - template: templates\Azure\Certificates\Request.yaml
+    - template: templates\Azure\Certificates\Request.yaml@azTemplates
       parameters:
         subscriptionName: ${{variables.subscriptionName}}
         product: "cvp"
