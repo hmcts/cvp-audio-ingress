@@ -36,8 +36,9 @@ stages:
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 product: "cvp"
-                environment: ${env}
-                domain: "cvp-recording.sandbox.platform.hmcts.net"
+                environment: ${{env}}
+                domain: "${{ variables.dns }}"
+                keyVaultName: "cvp-${{env}}-kv"
 
     #- template: pipeline/stages/plan.yaml
     #  parameters:
