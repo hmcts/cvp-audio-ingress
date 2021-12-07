@@ -19,7 +19,7 @@ parameters:
     default: ['sbox','stg','prod']
 
 stages:
-  - template: pipeline/stages/build.yaml 
+  #- template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
     - stage: Build${{env}}
