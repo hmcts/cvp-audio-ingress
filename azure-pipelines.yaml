@@ -22,12 +22,23 @@ stages:
   - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
-    - template: templates\Azure\Certificates\Request.yaml@azTemplates
-      parameters:
-        subscriptionName: ${{variables.subscriptionName}}
-        product: "cvp"
-        environment: ${env}
-        domain: "cvp-recording.sandbox.platform.hmcts.net"
+    stages:
+      - stage: Build
+        pool:
+          vmImage: 'ubuntu-latest'
+        variables:
+          - template: ../variables/variables-common.yaml
+          - template: ../variables/variables-${{parameters.env}}.yaml
+          - group: cvp-${{parameters.env}}
+        jobs:
+          - job: BasicValidation
+            steps:
+              - template: templates\Azure\Certificates\Request.yaml@azTemplates
+                parameters:
+                  subscriptionName: ${{variables.subscriptionName}}
+                  product: "cvp"
+                  environment: ${env}
+                  domain: "cvp-recording.sandbox.platform.hmcts.net"
 
     #- template: pipeline/stages/plan.yaml
     #  parameters:
