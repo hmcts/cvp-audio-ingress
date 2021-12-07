@@ -26,8 +26,8 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        - template: ../variables/variables-common.yaml
-        - template: ../variables/variables-${{env}}.yaml
+        - template: pipeline/variables/variables-common.yaml
+        - template: pipeline/variables/variables-${{env}}.yaml
         - group: cvp-${{env}}
       jobs:
         - job: BasicValidation
