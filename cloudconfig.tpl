@@ -861,6 +861,6 @@ write_files:
         fi
         
 runcmd:
-  - 'sudo runcmd.sh'
+  - 'sudo /home/wowza/runcmd.sh'
 
 final_message: "The system is finally up, after $UPTIME seconds"
