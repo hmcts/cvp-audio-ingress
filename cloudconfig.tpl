@@ -833,6 +833,7 @@ write_files:
 
         keyVaultName="${keyVaultName}"
         certName="${certName}"
+        domain="${domain}"
 
         jksPath="/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks"
         jksPass="${certPassword}"
