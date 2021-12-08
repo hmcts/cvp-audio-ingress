@@ -699,7 +699,6 @@ write_files:
       #!/bin/bash
       
       wowzaSource="/usr/local/WowzaStreamingEngine/logs"
-      certSource="/var/log/letsencrypt"
 
       rootDir="/usr/local/WowzaStreamingEngine/azlogs"
       mkdir $rootDir
@@ -712,7 +711,6 @@ write_files:
       sudo touch $cronTaskPath
       sudo chmod 777 $cronTaskPath
       echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination
-      */5 * * * * /usr/bin/rsync -avz $certSource $destination
       " > $cronTaskPath
       sudo -u wowza bash -c "crontab $cronTaskPath"
 
