@@ -802,9 +802,9 @@ write_files:
         sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
         /home/wowza/dir-creator.sh ${numApplications}
         /home/wowza/log-mount.sh
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
-        /home/wowza/renew-cert.sh
-        /home/wowza/schedule-cert.sh
+        sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
+        sudo /home/wowza/renew-cert.sh
+        sudo /home/wowza/schedule-cert.sh
         sudo service WowzaStreamingEngine restart
 
   - owner: wowza:wowza
@@ -853,8 +853,8 @@ write_files:
             rm -rf $pfxPath || true
             az keyvault secret download --file $pfxPath --vault-name $keyVaultName --encoding base64 --name $certName
 
-            keytool -importkeystore -srckeystore $pfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
-
+            keytool -delete -alias $domain -keystore $jksPath -storepass $jksPass
+            keytool -importkeystore -srckeystore $pfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass ''
         else
             echo "Certificate has NOT expired"
         fi
