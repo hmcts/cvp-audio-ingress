@@ -802,6 +802,7 @@ write_files:
         sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
         /home/wowza/dir-creator.sh ${numApplications}
         /home/wowza/log-mount.sh
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
         /home/wowza/renew-cert.sh
         /home/wowza/schedule-cert.sh
         sudo service WowzaStreamingEngine restart
