@@ -125,20 +125,17 @@ stages:
               parameters:
                 subscriptionName: ${{ variables.subscriptionName }}
                 env: ${{ variables.env }}
-         
-
-
-                
-#          - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates
-#            parameters:
-#              subscriptionName: ${{variables.subscriptionName}}
-#              resourceGroupName: ${{variables.product}}-recordings-${{parameters.env}}-rg
-#              nsgName: ${{variables.product}}-recordings-${{parameters.env}}-sg
-#              virtualMachines:
-#                - vms:
-#                  vmName: ${{variables.product}}-recordings-${{parameters.env}}-vm1
-#                  publicIpName: ${{variables.product}}-recordings-${{parameters.env}}-pipvm1
-#                - vms:
-#                  vmName: ${{variables.product}}-recordings-${{parameters.env}}-vm2
-#                  publicIpName: ${{variables.product}}-recordings-${{parameters.env}}-pipvm2
+          
+            - template: templates\tests\Azure\VirtualMachine\validSslCertificate.yml@azTemplates
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                resourceGroupName: ${{variables.product}}-recordings-${{parameters.env}}-rg
+                nsgName: ${{variables.product}}-recordings-${{parameters.env}}-sg
+                virtualMachines:
+                  - vms:
+                    vmName: ${{variables.product}}-recordings-${{parameters.env}}-vm1
+                    publicIpName: ${{variables.product}}-recordings-${{parameters.env}}-pipvm1
+                  - vms:
+                    vmName: ${{variables.product}}-recordings-${{parameters.env}}-vm2
+                    publicIpName: ${{variables.product}}-recordings-${{parameters.env}}-pipvm2
           

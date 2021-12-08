@@ -69,7 +69,6 @@ stages:
       parameters:
         env: ${{env}}
   
-  - ${{each env in parameters.envs}}:
     - stage: 'Validate${{env}}'
       displayName: 'Validate ${{env}}'
       dependsOn: 'Plan${{env}}'
@@ -238,6 +237,11 @@ stages:
                 conditionAction: $(deployment_Check.sendMsg)
                 pipelineUrl: ${{ variables.cvpPipelineUrl }}
                 projectName: ${{ variables.cvpName }}
+
+    - template: pipeline\stages\test.yaml
+      parameters:
+        env: ${{env}}
+
 
   - ${{each env in parameters.envs}}:
     - stage: '${{env}}HouseKeeper'
