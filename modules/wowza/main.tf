@@ -288,11 +288,10 @@ data "template_file" "cloudconfig" {
     containerName           = local.main_container_name
     logsContainerName       = local.wowza_logs_container_name
     numApplications         = var.num_applications
-    domain                  = "${local.domain_dns_prefix}.platform.hmcts.net"
     managedIdentityClientId = azurerm_user_assigned_identity.mi.client_id
-    tenantId                = data.azurerm_client_config.current.tenant_id
-    dnsResourceGroupPath    = "/subscriptions/${var.reforms_sub_id}/resourceGroups/${data.azurerm_dns_zone.dns.resource_group_name}"
-    domainPrefix            = "cvp-recording"
+    certName                = "cvp-${var.env}-le-cert"
+    keyVaultName            = "cvp-${var.env}-kv"
+
   }
 }
 

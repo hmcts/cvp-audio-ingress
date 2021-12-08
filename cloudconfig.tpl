@@ -716,7 +716,6 @@ write_files:
       " > $cronTaskPath
       sudo -u wowza bash -c "crontab $cronTaskPath"
 
-
       blobfuse $rootDir --tmp-path=/mnt/blobfusetmplogs -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=/home/wowza/connection-logs.cfg -o allow_other -o nonempty
 
   - owner: wowza:wowza
@@ -803,25 +802,61 @@ write_files:
         sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
         /home/wowza/dir-creator.sh ${numApplications}
         /home/wowza/log-mount.sh
+        /home/wowza/renew-cert.sh
+        /home/wowza/schedule-cert.sh
         sudo service WowzaStreamingEngine restart
 
   - owner: wowza:wowza
     permissions: 0775
-    path: /home/certbot/save-certificate.sh
+    path: /home/wowza/schedule-cert.sh
+    content: |
+        #!/bin/bash
+        cronTaskPath="/home/wowza/cert-renew.txt"
+        sudo touch $cronTaskPath
+        sudo chmod 777 $cronTaskPath
+
+        echo "0 0 * * * /home/wowza/renew-cert.sh
+        " > $cronTaskPath
+
+        sudo -u wowza bash -c "crontab $cronTaskPath"
+
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/renew-cert.sh
     content: |
         #!/bin/bash
 
-        certPath="/etc/letsencrypt/live/${domainPrefix}.${domain}/fullchain.pem"
-        privateKeyPath="/etc/letsencrypt/live/${domainPrefix}.${domain}/privkey.pem"
-        certDir="/var/lib/waagent/"
-        pfxName="cvpPfx.pfx"
+        miClientId="${managedIdentityClientId}"
 
-        cd $certDir
+        az login --identity --username $miClientId
 
-        openssl pkcs12 -inkey $privateKeyPath -in $certPath -export -out $pfxName -passin pass: -passout pass:${certPassword}
+        keyVaultName="${keyVaultName}"
+        certName="${certName}"
+
+        jksPath="/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks"
+        jksPass="${certPassword}"
+        pfxPath="cert.pfx"
 
         export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
-        keytool -importkeystore -srckeystore $pfxName -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}
+
+        expiryDate=$(keytool -list -v -keystore $jksPath -storepass $jksPass | grep until | sed 's/.*until: //')
+
+        echo "Certificate Expires $expiryDate"
+        expiryDate="$(date -d "$expiryDate - 14 days" +%Y%m%d)"
+        echo "Certificate Forced Expiry is $expiryDate"
+        today=$(date +%Y%m%d)
+
+        if [[ $expiryDate -lt $today ]]; then
+            echo "Certificate has expired"
+        
+            rm -rf $pfxPath || true
+            az keyvault secret download --file $pfxPath --vault-name $keyVaultName --encoding base64 --name $certName
+
+            keytool -importkeystore -srckeystore $pfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
+
+        else
+            echo "Certificate has NOT expired"
+        fi
         
 runcmd:
   - 'sudo runcmd.sh'
