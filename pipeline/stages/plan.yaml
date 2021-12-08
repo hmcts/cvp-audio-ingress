@@ -59,6 +59,6 @@ stages:
             parameters:
               subscriptionName: ${{variables.subscriptionName}}
               product: "cvp"
-              environment: ${{env}}
+              environment: ${{parameters.env}}
               domain: "${{ variables.dns }}"
-              keyVaultName: "cvp-${{env}}-kv"
+              keyVaultName: "cvp-${{parameters.env}}-kv"
