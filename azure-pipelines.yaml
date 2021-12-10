@@ -10,13 +10,6 @@ resources:
       name: hmcts/azure-devops-templates
       ref: refs/heads/master
       endpoint: hmcts
-schedules:
-  - cron: "0 1 * * 1"
-    displayName: Weekly Run
-    branches:
-      include:
-      - master
-    always: false
 
 parameters:
   - name: envs

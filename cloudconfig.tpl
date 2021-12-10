@@ -698,7 +698,7 @@ write_files:
     content: |
       #!/bin/bash
       
-      source="/usr/local/WowzaStreamingEngine/logs"
+      wowzaSource="/usr/local/WowzaStreamingEngine/logs"
 
       rootDir="/usr/local/WowzaStreamingEngine/azlogs"
       mkdir $rootDir
@@ -710,10 +710,9 @@ write_files:
       cronTaskPath="/home/wowza/log_copy.txt"
       sudo touch $cronTaskPath
       sudo chmod 777 $cronTaskPath
-      echo "*/5 * * * * /usr/bin/rsync -avz $source $destination
+      echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination
       " > $cronTaskPath
       sudo -u wowza bash -c "crontab $cronTaskPath"
-
 
       blobfuse $rootDir --tmp-path=/mnt/blobfusetmplogs -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=/home/wowza/connection-logs.cfg -o allow_other -o nonempty
 
@@ -798,19 +797,68 @@ write_files:
         [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
         [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
         [ ! -d /usr/local/WowzaStreamingEngine/content/azurecopy ] && sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy
-        certDir="/var/lib/waagent/"
-        secretsname=$(find $certDir -name "${certThumbprint}.prv" | cut -c -57)
-        secretsPfx=$(find $certDir -name "${certThumbprint}.pfx")
-        [[ ! -z "$secretsPfx" ]] && echo "PFX exists" || openssl pkcs12 -export -out $secretsname.pfx -inkey $secretsname.prv -in $secretsname.crt -passin pass: -passout pass:${certPassword}
-        export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
-        keytool -importkeystore -srckeystore $secretsname.pfx -srcstoretype pkcs12 -destkeystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -deststoretype JKS -deststorepass ${certPassword} -srcstorepass ${certPassword}
         sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
         /home/wowza/dir-creator.sh ${numApplications}
         /home/wowza/log-mount.sh
+        sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
+        sudo /home/wowza/renew-cert.sh
+        sudo /home/wowza/schedule-cert.sh
         sudo service WowzaStreamingEngine restart
 
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/schedule-cert.sh
+    content: |
+        #!/bin/bash
+        cronTaskPath="/home/wowza/cert-renew.txt"
+        sudo touch $cronTaskPath
+        sudo chmod 777 $cronTaskPath
 
+        echo "0 0 * * * /home/wowza/renew-cert.sh
+        " > $cronTaskPath
+
+        sudo -u wowza bash -c "crontab $cronTaskPath"
+
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/renew-cert.sh
+    content: |
+        #!/bin/bash
+
+        miClientId="${managedIdentityClientId}"
+
+        az login --identity --username $miClientId
+
+        keyVaultName="${keyVaultName}"
+        certName="${certName}"
+        domain="${domain}"
+
+        jksPath="/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks"
+        jksPass="${certPassword}"
+        pfxPath="cert.pfx"
+
+        export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
+
+        expiryDate=$(keytool -list -v -keystore $jksPath -storepass $jksPass | grep until | sed 's/.*until: //')
+
+        echo "Certificate Expires $expiryDate"
+        expiryDate="$(date -d "$expiryDate - 14 days" +%Y%m%d)"
+        echo "Certificate Forced Expiry is $expiryDate"
+        today=$(date +%Y%m%d)
+
+        if [[ $expiryDate -lt $today ]]; then
+            echo "Certificate has expired"
+        
+            rm -rf $pfxPath || true
+            az keyvault secret download --file $pfxPath --vault-name $keyVaultName --encoding base64 --name $certName
+
+            keytool -delete -alias $domain -keystore $jksPath -storepass $jksPass
+            keytool -importkeystore -srckeystore $pfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass ''
+        else
+            echo "Certificate has NOT expired"
+        fi
+        
 runcmd:
-  - 'sudo runcmd.sh'
+  - 'sudo /home/wowza/runcmd.sh'
 
 final_message: "The system is finally up, after $UPTIME seconds"

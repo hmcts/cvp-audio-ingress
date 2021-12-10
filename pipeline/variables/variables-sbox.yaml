@@ -1,5 +1,6 @@
 variables:
   env: 'sbox'
+  dns: 'cvp-recording.sandbox.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-SBOX'
   kv_name_prefix : 'cftapps'
   ws_sub_name: "DTS-SHAREDSERVICES-SBOX"

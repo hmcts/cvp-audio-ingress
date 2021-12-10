@@ -1,5 +1,6 @@
 variables:
   env: 'stg'
+  dns: 'cvp-recording.aat.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-STG'
   kv_name_prefix : 'cftapps'
   ws_sub_name: "DCD-CNP-DEV"

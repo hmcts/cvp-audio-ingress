@@ -1,5 +1,6 @@
 variables:
   env: 'prod'
+  dns: 'cvp-recording.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-PROD'
   kv_name_prefix : 'cft-apps'
   ws_sub_name: "DCD-CNP-Prod"
