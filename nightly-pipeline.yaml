@@ -238,10 +238,6 @@ stages:
                 pipelineUrl: ${{ variables.cvpPipelineUrl }}
                 projectName: ${{ variables.cvpName }}
 
-    - template: pipeline\stages\test.yaml
-      parameters:
-        env: ${{env}}
-
 
   - ${{each env in parameters.envs}}:
     - stage: '${{env}}HouseKeeper'
