@@ -883,8 +883,8 @@ write_files:
         ## Move new files
         sudo mv "$home_dir/patch/$lof4j_zip_name/$log4core_name" "$wowza_lib_dir"
         sudo mv "$home_dir/patch/$lof4j_zip_name/$log4api_name" "$wowza_lib_dir"
-        chmod 770 "$wowza_lib_dir/$log4core_name"
-        chmod 770 "$wowza_lib_dir/$log4api_name"
+        chmod 775 "$wowza_lib_dir/$log4core_name"
+        chmod 775 "$wowza_lib_dir/$log4api_name"
 
         ## Start Wowza
         sudo service WowzaStreamingEngine start
