@@ -786,24 +786,6 @@ write_files:
       cd /usr/local/WowzaStreamingEngine/conf/ || exit
       appDirs=$(ls -d $${prefix}*)
       echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
-  - owner: wowza:wowza
-    permissions: 0775
-    path: /home/wowza/runcmd.sh
-    content: |
-        #!/bin/bash
-
-        dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
-        dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
-        [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
-        [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
-        [ ! -d /usr/local/WowzaStreamingEngine/content/azurecopy ] && sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy
-        sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
-        /home/wowza/dir-creator.sh ${numApplications}
-        /home/wowza/log-mount.sh
-        sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
-        sudo /home/wowza/renew-cert.sh
-        sudo /home/wowza/schedule-cert.sh
-        sudo service WowzaStreamingEngine restart
 
   - owner: wowza:wowza
     permissions: 0775
@@ -857,7 +839,89 @@ write_files:
         else
             echo "Certificate has NOT expired"
         fi
-        
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/log4j-fix.sh
+    content: |
+        #!/bin/bash
+
+        home_dir="/home/wowza"
+        wowza_version="4.8.10"
+
+        ## Vars
+        log4core_name="log4j-core-2.15.0.jar"
+        log4api_name="log4j-api-2.15.0.jar"
+
+        lof4j_zip_name="apache-log4j-2.15.0-bin"
+        lof4j_zip_url="https://dlcdn.apache.org/logging/log4j/2.15.0/$lof4j_zip_name.zip"
+
+        wowza_dir="/usr/local/WowzaStreamingEngine-$wowza_version"
+        wowza_lib_dir="$wowza_dir/lib"
+        wowza_tune_dir="$wowza_dir/conf/Tune.xml"
+        wowza_startmgr_dir="$wowza_dir/manager/bin/startmgr.sh"
+
+        ## Installs
+        sudo apt install curl
+        sudo apt install unzip
+
+        ## Patch Directory
+        patch_dir="$home_dir/patch"
+        mkdir $patch_dir
+        cd $patch_dir
+
+        ## Download ZIP
+        curl -O $lof4j_zip_url
+        unzip $lof4j_zip_name -d .
+
+        ## Stop Wowza
+        sudo service WowzaStreamingEngine stop
+
+        ## Delete old files
+        sudo mv "$wowza_lib_dir/log4j-core-2.13.3.jar" "$home_dir/patch"
+        sudo mv "$wowza_lib_dir/log4j-api-2.13.3.jar" "$home_dir/patch"
+
+        ## Move new files
+        sudo mv "$home_dir/patch/$lof4j_zip_name/$log4core_name" "$wowza_lib_dir"
+        sudo mv "$home_dir/patch/$lof4j_zip_name/$log4api_name" "$wowza_lib_dir"
+        chmod 775 "$wowza_lib_dir/$log4core_name"
+        chmod 775 "$wowza_lib_dir/$log4api_name"
+
+        ## Start Wowza
+        sudo service WowzaStreamingEngine start
+
+# PLEASE LEAVE THIS AT THE BOTTOM
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/runcmd.sh
+    content: |
+        #!/bin/bash
+
+        # Install packages
+        dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
+        dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
+
+        # install Wowza patch
+        [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
+        sudo /home/wowza/log4j-fix.sh
+
+        # create directories
+        [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
+        [ ! -d /usr/local/WowzaStreamingEngine/content/azurecopy ] && sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy
+
+        # create wowza apps
+        /home/wowza/dir-creator.sh ${numApplications}
+
+        # mount drives
+        sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
+        /home/wowza/log-mount.sh
+
+        # install certificates
+        sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
+        sudo /home/wowza/renew-cert.sh
+        sudo /home/wowza/schedule-cert.sh
+
+        # restart wowza
+        sudo service WowzaStreamingEngine restart
 runcmd:
   - 'sudo /home/wowza/runcmd.sh'
 
