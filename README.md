@@ -76,7 +76,7 @@ keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
 ### Check mount:
 
 1. run this command `df -h | grep azurecopy` and something like this should be returned:
-`blobfuse        126G   61M  120G   1% /usr/local/WowzaStreamingEngine-4.8.10/content/azurecopy`
+`blobfuse        126G   61M  120G   1% /usr/local/WowzaStreamingEngine/content/azurecopy`
 
 ### Check eveything is installed:
 
