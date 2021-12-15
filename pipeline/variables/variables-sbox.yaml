@@ -3,7 +3,7 @@ variables:
   dns: 'cvp-recording.sandbox.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-SBOX'
   kv_name_prefix : 'cftapps'
-  ws_sub_name: "DTS-SHAREDSERVICES-SBOX"
+  ws_sub_name: "DCD-CFT-Sandbox"
   dynatrace_token: 'dynatrace-nonprod-token'
   infra_kv: 'infra-vault-sandbox'
   ws_name: "hmcts-sandbox"
