@@ -849,7 +849,7 @@ write_files:
         wowza_version="4.8.10"
 
         ## Vars
-        log4core_name="log4j-core-2.15.0.jar"
+        log4core_name="log4j-core-2.16.0.jar"
         log4api_name="log4j-api-2.15.0.jar"
 
         lof4j_zip_name="apache-log4j-2.15.0-bin"
