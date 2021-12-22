@@ -849,11 +849,11 @@ write_files:
         wowza_version="4.8.10"
 
         ## Vars
-        log4core_name="log4j-core-2.16.0.jar"
-        log4api_name="log4j-api-2.15.0.jar"
+        log4core_name="log4j-core-2.17.0.jar"
+        log4api_name="log4j-api-2.17.0.jar"
 
-        lof4j_zip_name="apache-log4j-2.15.0-bin"
-        lof4j_zip_url="https://dlcdn.apache.org/logging/log4j/2.15.0/$lof4j_zip_name.zip"
+        lof4j_zip_name="apache-log4j-2.17.0-bin"
+        lof4j_zip_url="https://dlcdn.apache.org/logging/log4j/2.17.0/$lof4j_zip_name.zip"
 
         wowza_dir="/usr/local/WowzaStreamingEngine-$wowza_version"
         wowza_lib_dir="$wowza_dir/lib"
