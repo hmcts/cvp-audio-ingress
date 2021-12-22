@@ -877,8 +877,8 @@ write_files:
         sudo service WowzaStreamingEngine stop
 
         ## Delete old files
-        sudo mv "$wowza_lib_dir/log4j-core-2.15.0.jar" "$home_dir/patch"
-        sudo mv "$wowza_lib_dir/log4j-api-2.15.0.jar" "$home_dir/patch"
+        sudo mv "$wowza_lib_dir/log4j-core-2.13.3.jar" "$home_dir/patch"
+        sudo mv "$wowza_lib_dir/log4j-api-2.13.3.jar" "$home_dir/patch"
 
         ## Move new files
         sudo mv "$home_dir/patch/$lof4j_zip_name/$log4core_name" "$wowza_lib_dir"
