@@ -849,11 +849,11 @@ write_files:
         wowza_version="4.8.10"
 
         ## Vars
-        log4core_name="log4j-core-2.16.0.jar"
-        log4api_name="log4j-api-2.15.0.jar"
+        log4core_name="log4j-core-2.17.0.jar"
+        log4api_name="log4j-api-2.17.0.jar"
 
-        lof4j_zip_name="apache-log4j-2.15.0-bin"
-        lof4j_zip_url="https://dlcdn.apache.org/logging/log4j/2.15.0/$lof4j_zip_name.zip"
+        lof4j_zip_name="apache-log4j-2.17.0-bin"
+        lof4j_zip_url="https://dlcdn.apache.org/logging/log4j/2.17.0/$lof4j_zip_name.zip"
 
         wowza_dir="/usr/local/WowzaStreamingEngine-$wowza_version"
         wowza_lib_dir="$wowza_dir/lib"
@@ -877,8 +877,8 @@ write_files:
         sudo service WowzaStreamingEngine stop
 
         ## Delete old files
-        sudo mv "$wowza_lib_dir/log4j-core-2.13.3.jar" "$home_dir/patch"
-        sudo mv "$wowza_lib_dir/log4j-api-2.13.3.jar" "$home_dir/patch"
+        sudo mv "$wowza_lib_dir/log4j-core-2.15.0.jar" "$home_dir/patch"
+        sudo mv "$wowza_lib_dir/log4j-api-2.15.0.jar" "$home_dir/patch"
 
         ## Move new files
         sudo mv "$home_dir/patch/$lof4j_zip_name/$log4core_name" "$wowza_lib_dir"
