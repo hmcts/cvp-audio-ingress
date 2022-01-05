@@ -846,7 +846,7 @@ write_files:
         #!/bin/bash
 
         home_dir="/home/wowza"
-        wowza_version="4.8.10"
+        wowza_version="${wowzaVersion}"
 
         ## Vars
         log4core_name="log4j-core-2.17.0.jar"
