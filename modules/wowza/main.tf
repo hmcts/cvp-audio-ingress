@@ -46,10 +46,9 @@ resource "azurerm_private_endpoint" "endpoint" {
   tags = var.common_tags
 }
 
-resource "azurerm_private_dns_zone" "blob" {
+data "azurerm_private_dns_zone" "blob" {
   name                = "privatelink.blob.core.windows.net"
-  resource_group_name = azurerm_resource_group.rg.name
-  tags                = var.common_tags
+  resource_group_name = "core-infra-intsvc-rg"
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
