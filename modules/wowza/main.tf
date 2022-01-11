@@ -47,6 +47,7 @@ resource "azurerm_private_endpoint" "endpoint" {
 }
 
 data "azurerm_private_dns_zone" "blob" {
+  provider = azurerm.shared-dns-zone
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = "core-infra-intsvc-rg"
 }
