@@ -839,7 +839,7 @@ write_files:
             openssl pkcs12 -in $downloadedPfxPath -out tmpmycert.pem -passin pass: -passout pass:${jksPass}
             openssl pkcs12 -export -out $signedPfxPath -in tmpmycert.pem -passin pass:${jksPass} -passout pass:${jksPass}
 
-            keytool -delete -alias $domain -keystore $jksPath -storepass $jksPass
+            keytool -delete -alias 1 -keystore $jksPath -storepass $jksPass
             keytool -importkeystore -srckeystore $signedPfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass -alias 
         else
             echo "Certificate has NOT expired"
