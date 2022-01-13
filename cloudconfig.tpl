@@ -817,7 +817,6 @@ write_files:
 
         jksPath="/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks"
         jksPass="${certPassword}"
-        pfxPath="cert.pfx"
 
         export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
 
@@ -830,12 +829,18 @@ write_files:
 
         if [[ $expiryDate -lt $today ]]; then
             echo "Certificate has expired"
+            downloadedPfxPath="downloadedCert.pfx"
+            signedPfxPath="signedCert.pfx"
         
-            rm -rf $pfxPath || true
-            az keyvault secret download --file $pfxPath --vault-name $keyVaultName --encoding base64 --name $certName
+            rm -rf $downloadedPfxPath || true
+            az keyvault secret download --file $downloadedPfxPath --vault-name $keyVaultName --encoding base64 --name $certName
+            
+            rm -rf $signedPfxPath || true
+            openssl pkcs12 -in $downloadedPfxPath -out tmpmycert.pem -passin pass: -passout pass:$jksPass
+            openssl pkcs12 -export -out $signedPfxPath -in tmpmycert.pem -passin pass:$jksPass -passout pass:$jksPass
 
-            keytool -delete -alias $domain -keystore $jksPath -storepass $jksPass
-            keytool -importkeystore -srckeystore $pfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass ''
+            keytool -delete -alias 1 -keystore $jksPath -storepass $jksPass
+            keytool -importkeystore -srckeystore $signedPfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
         else
             echo "Certificate has NOT expired"
         fi
@@ -846,7 +851,7 @@ write_files:
         #!/bin/bash
 
         home_dir="/home/wowza"
-        wowza_version="4.8.10"
+        wowza_version="${wowzaVersion}"
 
         ## Vars
         log4core_name="log4j-core-2.17.0.jar"
