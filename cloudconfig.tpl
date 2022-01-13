@@ -423,11 +423,11 @@ write_files:
         dt=$(date '+%d/%m/%Y %H:%M:%S')
 
         context="failed"
-        if grep -qs ${mountDir} ../../proc/mounts; then
+        if grep -qs $mountDir ../../proc/mounts; then
          context="IS"
         else
           context="WAS NOT"
-          echo "Remounting ${mountDir}"
+          echo "Remounting $mountDir"
           sudo /home/wowza/mount.sh $1 $2 $3 $4 $5
         fi
         echo "$dt :: drive $context mounted. :: $mountDir" >> $logPath
