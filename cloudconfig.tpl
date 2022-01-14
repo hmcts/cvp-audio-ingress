@@ -404,7 +404,34 @@ write_files:
     path: /home/wowza/mount.sh
     content: |
       #!/bin/bash
-      blobfuse $1 --tmp-path=/mnt/blobfusetmp -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=/home/wowza/connection.cfg -o allow_other -o nonempty
+
+      ## Add BlobFuse
+      blobfuse $1 --tmp-path=$2 -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$3 -o allow_other -o nonempty
+
+      ## Cron to check remounting
+      cronTaskPath="/home/wowza/remount_$4.txt"
+      sudo touch $cronTaskPath
+      sudo chmod 777 $cronTaskPath
+      echo "*/5 * * * * /home/wowza/remount.sh $1 $2 $3 $4 $5
+      " > $cronTaskPath
+      sudo -u wowza bash -c "crontab $cronTaskPath"
+  - owner: wowza:wowza
+    path: /home/wowza/remount.sh
+    content: |
+        mountDir="$5"
+        logPath="/usr/local/WowzaStreamingEngine-${wowzaVersion}+1/azlogs/log-mount.log"
+        dt=$(date '+%d/%m/%Y %H:%M:%S')
+
+        context="failed"
+        if grep -qs $mountDir ../../proc/mounts; then
+         context="IS"
+        else
+          context="WAS NOT"
+          echo "Remounting $mountDir"
+          sudo /home/wowza/mount.sh $1 $2 $3 $4 $5
+        fi
+        echo "$dt :: drive $context mounted. :: $mountDir" >> $logPath
+
   - owner: wowza:wowza
     path: /home/wowza/connection.cfg
     content: |
@@ -694,6 +721,16 @@ write_files:
         </Root>
   - owner: wowza:wowza
     permissions: 0775
+    path: /home/wowza/wowza-mount.sh
+    content: |
+        contentDirectory="/usr/local/WowzaStreamingEngine/content/azurecopy"
+        # create directories
+        [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
+        [ ! -d $contentDirectory ] && sudo mkdir $contentDirectory
+
+        sudo bash /home/wowza/mount.sh $contentDirectory /mnt/blobfusetmp /home/wowza/connection.cfg "wowzaContent" "/usr/local/WowzaStreamingEngine-${wowzaVersion}+1/content/azurecopy"
+  - owner: wowza:wowza
+    permissions: 0775
     path: /home/wowza/log-mount.sh
     content: |
       #!/bin/bash
@@ -714,8 +751,7 @@ write_files:
       " > $cronTaskPath
       sudo -u wowza bash -c "crontab $cronTaskPath"
 
-      blobfuse $rootDir --tmp-path=/mnt/blobfusetmplogs -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=/home/wowza/connection-logs.cfg -o allow_other -o nonempty
-
+      sudo bash /home/wowza/mount.sh $rootDir /mnt/blobfusetmplogs /home/wowza/connection-logs.cfg "azlogs" "/usr/local/WowzaStreamingEngine-${wowzaVersion}+1/azlogs"
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/dir-creator.sh
@@ -909,15 +945,11 @@ write_files:
         [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
         sudo /home/wowza/log4j-fix.sh
 
-        # create directories
-        [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
-        [ ! -d /usr/local/WowzaStreamingEngine/content/azurecopy ] && sudo mkdir /usr/local/WowzaStreamingEngine/content/azurecopy
-
         # create wowza apps
         /home/wowza/dir-creator.sh ${numApplications}
 
         # mount drives
-        sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
+        /home/wowza/wowza-mount.sh
         /home/wowza/log-mount.sh
 
         # install certificates
