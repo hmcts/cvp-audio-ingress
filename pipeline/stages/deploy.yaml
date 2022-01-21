@@ -50,6 +50,7 @@ stages:
               location: ${{variables.location}}
               locationEng: ${{variables.locationEng}}
               product: ${{variables.product}}
+              wowza_version: ${{variables.wowza_version}}
 
       - job: ApplyExtToEnv
         displayName: 'Extensions to ${{parameters.env}}'

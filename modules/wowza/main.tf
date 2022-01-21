@@ -270,6 +270,7 @@ data "template_file" "cloudconfig" {
     certName                = "cvp-${var.env}-le-cert"
     keyVaultName            = "cvp-${var.env}-kv"
     domain                  = "cvp-recording.${local.domain_dns_prefix}.platform.hmcts.net"
+    wowzaVersion            = var.wowza_version
   }
 }
 
