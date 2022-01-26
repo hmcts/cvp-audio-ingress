@@ -74,6 +74,7 @@ steps:
         kvName="$(kvName)"
         oid=$(oid)
         echo "Logged in as oid $oid"
+        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
         
         echo "Creating Shared KV $kvName"
         newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
@@ -105,7 +106,6 @@ steps:
           --name $kvName \
           --bypass AzureServices \
           --default-action Deny
-          --tags businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}
 
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'
