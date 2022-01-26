@@ -93,7 +93,6 @@ steps:
           --resource-group $rgName \
           --name $kvName \
           --ip-address $agentIp
-          --tags businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}
 
         # Whitelist the subnet the VMs are on (if they are there)
         subnetId=$(az network vnet subnet show --resource-group "cvp-recordings-${{ parameters.env }}-rg" --vnet-name "cvp-recordings-${{ parameters.env }}-vnet" --name "wowza" --query id --output tsv)
@@ -106,6 +105,7 @@ steps:
           --name $kvName \
           --bypass AzureServices \
           --default-action Deny
+          --tags businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}
 
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'
