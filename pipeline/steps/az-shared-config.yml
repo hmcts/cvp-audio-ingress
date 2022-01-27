@@ -78,7 +78,7 @@ steps:
         kvName="$(kvName)"
         oid=$(oid)
         echo "Logged in as oid $oid"
-        echo "Env: " + $envName
+        echo "Env: $envName"
         tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$envName"
         
         echo "Creating Shared KV $kvName"
