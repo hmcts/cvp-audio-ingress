@@ -3,6 +3,8 @@ parameters:
     type: string
   - name: env
     type: string
+  - name: envLong
+    type: string
   - name: location
     type: string
   - name: product
@@ -70,11 +72,15 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
+        if [[ ${{ parameters.env }} = "sbox" ]]; then envName="sandbox"; fi
+        if [[ ${{ parameters.env }} = "stg" ]]; then envName="staging"; fi
+        if [[ ${{ parameters.env }} = "prod" ]]; then envName="production"; fi
+
         rgName="$(rgName)"
         kvName="$(kvName)"
         oid=$(oid)
         echo "Logged in as oid $oid"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
+        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$envName"
         
         echo "Creating Shared KV $kvName"
         newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
