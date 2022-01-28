@@ -74,12 +74,16 @@ steps:
         if [[ ${{ parameters.env }} = "stg" ]]; then envName="staging"; fi
         if [[ ${{ parameters.env }} = "prod" ]]; then envName="production"; fi
 
+        businessArea=${{ parameters.businessArea }}
+        application=${{ parameters.application }}
+        builtFrom=${{ parameters.builtFrom }}
+
         rgName="$(rgName)"
         kvName="$(kvName)"
         oid=$(oid)
         echo "Logged in as oid $oid"
         echo "Env: $envName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$envName"
+        tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$envName"
         
         echo "Creating Shared KV $kvName"
         newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
@@ -111,6 +115,12 @@ steps:
           --name $kvName \
           --bypass AzureServices \
           --default-action Deny
+
+        echo "Update keyvault tags"
+        az keyvault update \
+          --resource-group $rgName \
+          --name $kvName \
+          --set tags.businessArea=${{ parameters.businessArea }} tags.application='${{ parameters.application }}' tags.builtFrom=${{ parameters.builtFrom }} tags.environment=$envName
 
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'
