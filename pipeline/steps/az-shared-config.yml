@@ -85,11 +85,20 @@ steps:
         echo "Env: $envName"
         tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$envName"
         
-        echo "Creating Shared KV $kvName"
-        newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
+        if [[ $(az keyvault list --resource-group $rgName --query "[?name=='$kvName'] | length(@)") > 0 ]]
+		    then
+			      echo "KV $kvName Already exists"
+			      newKv=$(az keyvault show --name $kvName)
+		    else
+		      	echo "Creating Shared KV $kvName"
+			      newKv=$(az keyvault create --location $location --name $kvName --resource-group $rgName  --subscription $sub --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)  
+		    fi
         
-        kvId=$(echo $newKv | jq .id)
+        kvId=$(echo $newKv | jq .id | sed 's/"//g')
         echo "##vso[task.setvariable variable=kvId]$kvId"
+
+        echo "Tagging $kvId"
+		    az tag update --resource-id ${kvId//[$'\t\r\n']/} --operation replace --subscription ${{ parameters.subscriptionName }} --tags $tags 
 
         echo "Grant Service connection permissions on the KV"
         az keyvault set-policy --name $kvName \
@@ -116,11 +125,6 @@ steps:
           --bypass AzureServices \
           --default-action Deny
 
-        echo "Update keyvault tags"
-        az keyvault update \
-          --resource-group $rgName \
-          --name $kvName \
-          --set tags.businessArea=${{ parameters.businessArea }} tags.application='${{ parameters.application }}' tags.builtFrom=${{ parameters.builtFrom }} tags.environment=$envName
 
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'
