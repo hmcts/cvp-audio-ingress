@@ -60,11 +60,13 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   resource_group_name   = "core-infra-intsvc-rg"
   private_dns_zone_name = data.azurerm_private_dns_zone.blob.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
-  registration_enabled  = true
+  registration_enabled  = false
   tags                  = var.common_tags
 }
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
+  provider = azurerm.shared-dns-zone
+  
   name                = module.sa.storageaccount_name
   zone_name           = data.azurerm_private_dns_zone.blob.name
   resource_group_name = "core-infra-intsvc-rg"
