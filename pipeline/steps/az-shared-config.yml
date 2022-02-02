@@ -98,7 +98,7 @@ steps:
         echo "##vso[task.setvariable variable=kvId]$kvId"
 
         echo "Tagging $kvId"
-		    az tag update --resource-id ${kvId//[$'\t\r\n']/} --operation replace --subscription ${{ parameters.subscriptionName }} --tags $tags 
+        az tag update --resource-id ${kvId//[$'\t\r\n']/} --operation replace --subscription ${{ parameters.subscriptionName }} --tags $tags
 
         echo "Grant Service connection permissions on the KV"
         az keyvault set-policy --name $kvName \
