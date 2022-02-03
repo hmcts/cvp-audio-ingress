@@ -68,7 +68,7 @@ resource "azurerm_private_dns_a_record" "sa_a_record" {
   provider = azurerm.shared-dns-zone
   
   name                = "cvprecordingssboxsa-test"
-  zone_name           = data.azurerm_private_dns_zone.blob.name
+  zone_name           = "privatelink.blob.core.windows.net"
   resource_group_name = "core-infra-intsvc-rg"
   ttl                 = 300
   records             = [azurerm_private_endpoint.endpoint.private_service_connection.0.private_ip_address]
