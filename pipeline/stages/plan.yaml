@@ -2,9 +2,18 @@ parameters:
   - name: env
     type: string
     default: 'sbox'
-  - name: testRepoBranch
+  - name: testRepoBranch1
     type: string
-    default: 'abc123'
+    default: 'abc1'
+  - name: testRepoBranch2
+    type: string
+    default: 'abc2'
+  - name: testRepoBranch3
+    type: string
+    default: 'abc3'
+  - name: testRepoBranch4
+    type: string
+    default: 'abc4'
   - name: dependsOnEnv
     type: string
     default: ''
@@ -27,9 +36,10 @@ stages:
         displayName: 'Plan to ${{parameters.env}}'
         steps:
           - script: |
-              echo $(variables['Build.SourceBranch'])
-              echo "$(variables['Build.SourceBranch'])"
-              echo "$variables['Build.SourceBranch']"
+              echo ${{parameters.testRepoBranch1}}
+              echo ${{parameters.testRepoBranch2}}
+              echo ${{parameters.testRepoBranch3}}
+              echo ${{parameters.testRepoBranch4}}
             displayName: View repo branch
 
           - template: ../steps/tf-install.yaml
