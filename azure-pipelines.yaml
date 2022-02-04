@@ -26,8 +26,12 @@ stages:
       parameters:
         env: ${{env}}
         testRepoBranch: ${{variables['Build.SourceBranch']}}
-        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
+        # ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+        #   dependsOnEnv: ''
+        ${{ if and(eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
           dependsOnEnv: 'sbox'
+        # ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+        #   dependsOnEnv: 'stg'
 
     - template: pipeline/stages/deploy.yaml
       parameters:
