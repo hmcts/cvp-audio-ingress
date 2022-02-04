@@ -27,7 +27,7 @@ stages:
         displayName: 'Plan to ${{parameters.env}}'
         steps:
           - script: |
-              echo "testRepoBranch: ${{ parameters['testRepoBranch']}}"
+              echo variables['Build.SourceBranch']
             displayName: View repo branch
 
           - template: ../steps/tf-install.yaml
