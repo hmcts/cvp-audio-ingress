@@ -21,24 +21,23 @@ parameters:
 stages:
   - template: pipeline/stages/build.yaml 
 
-  - template: pipeline/stages/build.yaml 
+  - ${{each env in parameters.envs}}:
+    - template: pipeline/stages/plan.yaml
+      parameters:
+        env: ${{env}}
+        testRepoBranch: ${{variables['Build.SourceBranch']}}
+        dependsOnEnv: ''
+        # ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
+        #   dependsOnEnv: ''
+        # ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+        #   dependsOnEnv: 'sbox'
+        # ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+        #   dependsOnEnv: 'stg'
 
-  # - ${{each env in parameters.envs}}:
-  #   - template: pipeline/stages/plan.yaml
-  #     parameters:
-  #       env: ${{env}}
-  #       testRepoBranch: ${{variables['Build.SourceBranch']}}
-  #       ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
-  #         dependsOnEnv: ''
-  #       ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
-  #         dependsOnEnv: 'sbox'
-  #       # ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-  #       #   dependsOnEnv: 'stg'
+    - template: pipeline/stages/deploy.yaml
+      parameters:
+        env: ${{env}}
 
-  #   - template: pipeline/stages/deploy.yaml
-  #     parameters:
-  #       env: ${{env}}
-
-  #   - template: pipeline/stages/test.yaml
-  #     parameters:
-  #       env: ${{env}}
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
