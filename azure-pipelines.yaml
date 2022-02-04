@@ -25,6 +25,7 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
+        testRepoBranch: variables['Build.SourceBranch']
         ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
           dependsOnEnv: ''
         ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
