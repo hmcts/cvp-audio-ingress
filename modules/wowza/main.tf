@@ -46,29 +46,28 @@ resource "azurerm_private_endpoint" "endpoint" {
   tags = var.common_tags
 }
 
-#data "azurerm_private_dns_zone" "blob" {
-#  provider = azurerm.shared-dns-zone#
+data "azurerm_private_dns_zone" "blob" {
+  provider = azurerm.shared-dns-zone
+  name                = "privatelink.blob.core.windows.net"
+  resource_group_name = "core-infra-intsvc-rg"
+}
 
-#  name                = "privatelink.blob.core.windows.net"
-#  resource_group_name = "core-infra-intsvc-rg"
-#}#
-
-#resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
-#  provider = azurerm.shared-dns-zone
-#  
-#  name                  = "${azurerm_virtual_network.vnet.name}-link"
-#  resource_group_name   = "core-infra-intsvc-rg"
-#  private_dns_zone_name = data.azurerm_private_dns_zone.blob.name
-#  virtual_network_id    = azurerm_virtual_network.vnet.id
-#  registration_enabled  = true
-#  tags                  = var.common_tags
-#}#
+resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
+  provider = azurerm.shared-dns-zone
+  
+  name                  = "${azurerm_virtual_network.vnet.name}-link"
+  resource_group_name   = "core-infra-intsvc-rg"
+  private_dns_zone_name = data.azurerm_private_dns_zone.blob.name
+  virtual_network_id    = azurerm_virtual_network.vnet.id
+  registration_enabled  = true
+  tags                  = var.common_tags
+}
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
   provider = azurerm.shared-dns-zone
   
-  name                = "cvprecordingssboxsa-test"
-  zone_name           = "privatelink.blob.core.windows.net"
+  name                = module.sa.storageaccount_name
+  zone_name           = data.azurerm_private_dns_zone.blob.name
   resource_group_name = "core-infra-intsvc-rg"
   ttl                 = 300
   records             = [azurerm_private_endpoint.endpoint.private_service_connection.0.private_ip_address]
