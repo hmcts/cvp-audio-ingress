@@ -37,6 +37,6 @@ stages:
     #   parameters:
     #     env: ${{env}}
 
-    # - template: pipeline/stages/test.yaml
-    #   parameters:
-    #     env: ${{env}}
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
