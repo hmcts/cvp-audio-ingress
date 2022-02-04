@@ -20,6 +20,7 @@ parameters:
 
 stages:
   - template: pipeline/stages/build.yaml 
+    condition: always()
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
