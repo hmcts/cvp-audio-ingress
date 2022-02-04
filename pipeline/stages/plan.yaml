@@ -2,18 +2,9 @@ parameters:
   - name: env
     type: string
     default: 'sbox'
-  - name: testRepoBranch1
+  - name: testRepoBranch
     type: string
     default: 'abc1'
-  - name: testRepoBranch2
-    type: string
-    default: 'abc2'
-  - name: testRepoBranch3
-    type: string
-    default: 'abc3'
-  - name: testRepoBranch4
-    type: string
-    default: 'abc4'
   - name: dependsOnEnv
     type: string
     default: ''
@@ -36,10 +27,7 @@ stages:
         displayName: 'Plan to ${{parameters.env}}'
         steps:
           - script: |
-              echo 1 ${{parameters.testRepoBranch1}}
-              echo 2 ${{parameters.testRepoBranch2}}
-              echo 3 ${{parameters.testRepoBranch3}}
-              echo 4 ${{parameters.testRepoBranch4}}
+              echo 1 ${{parameters.testRepoBranch}}
             displayName: View repo branch
 
           - template: ../steps/tf-install.yaml
