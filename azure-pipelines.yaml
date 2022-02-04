@@ -20,14 +20,14 @@ parameters:
 
 stages:
   - template: pipeline/stages/build.yaml 
-    condition: always()
-
-  - ${{each env in parameters.envs}}:
-    - template: pipeline/stages/plan.yaml
-      parameters:
-        env: ${{env}}
-        testRepoBranch: ${{variables['Build.SourceBranch']}}
-        dependsOnEnv: 'sbox'
+    parameters:
+      condition: 'failed()'
+  # - ${{each env in parameters.envs}}:
+  #   - template: pipeline/stages/plan.yaml
+  #     parameters:
+  #       env: ${{env}}
+  #       testRepoBranch: ${{variables['Build.SourceBranch']}}
+  #       dependsOnEnv: 'sbox'
         # ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
         #   dependsOnEnv: ''
         # ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
