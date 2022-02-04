@@ -34,10 +34,10 @@ stages:
         # ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
         #   dependsOnEnv: 'stg'
 
-    - template: pipeline/stages/deploy.yaml
-      parameters:
-        env: ${{env}}
+    # - template: pipeline/stages/deploy.yaml
+    #   parameters:
+    #     env: ${{env}}
 
-    - template: pipeline/stages/test.yaml
-      parameters:
-        env: ${{env}}
+    # - template: pipeline/stages/test.yaml
+    #   parameters:
+    #     env: ${{env}}
