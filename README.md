@@ -63,7 +63,7 @@ and has their Dev environment IPs whitelisted already.
 is).
 * Occasionally cloud-init will not complete properly. The quickest solution seems to be to reboot the VM to trigger cloud-init to run again.
 
-## Investigation
+### Investigation
 
 ### Check Certificates:
 
