@@ -36,10 +36,10 @@ stages:
         displayName: 'Plan to ${{parameters.env}}'
         steps:
           - script: |
-              echo ${{parameters.testRepoBranch1}}
-              echo ${{parameters.testRepoBranch2}}
-              echo ${{parameters.testRepoBranch3}}
-              echo ${{parameters.testRepoBranch4}}
+              echo 1 ${{parameters.testRepoBranch1}}
+              echo 2 ${{parameters.testRepoBranch2}}
+              echo 3 ${{parameters.testRepoBranch3}}
+              echo 4 ${{parameters.testRepoBranch4}}
             displayName: View repo branch
 
           - template: ../steps/tf-install.yaml
