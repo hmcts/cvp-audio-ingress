@@ -28,17 +28,24 @@ stages:
         env: ${{env}}
         testRepoBranch: ${{variables['Build.SourceBranch']}}
         dependsOnEnv: 'sbox'
-        # ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
-        #   dependsOnEnv: ''
-        # ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-        #   dependsOnEnv: 'sbox'
-        # ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-        #   dependsOnEnv: 'stg'
+        ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
+          dependsOnEnv: ''
+        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+          dependsOnEnv: 'sbox'
+        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+          dependsOnEnv: 'stg'
 
-    # - template: pipeline/stages/deploy.yaml
-    #   parameters:
-    #     env: ${{env}}
+    - template: pipeline/stages/deploy.yaml
+      parameters:
+        env: ${{env}}
 
-    # - template: pipeline/stages/test.yaml
-    #   parameters:
-    #     env: ${{env}}
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
+
+
+# Every time we do a release, the plan has already been run, so most every time we need to rerun the plan.
+# As we cannot do that without creating a new release, we always create a 'hotfix' branch so we can by pass the other environments.
+
+# Instead we would like every thing that is not with the 'release/' branch path to deploy to sbox and stg, then run the production plan but that is all.
+# If the branch is within the 'release/' branch path then it should run the Build, Plan, Wait, Deploy and Test stages.

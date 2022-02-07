@@ -8,10 +8,10 @@ parameters:
 
 stages:
   - stage: Build
-    # ${{ if eq(parameters.dependsOnEnv, '') }}:
-    #   dependsOn: []
-    # ${{ if ne(parameters.dependsOnEnv, '') }}:
-    #   dependsOn: '${{parameters.dependsOnEnv}}'
+    ${{ if eq(parameters.dependsOnEnv, '') }}:
+      dependsOn: []
+    ${{ if ne(parameters.dependsOnEnv, '') }}:
+      dependsOn: '${{parameters.dependsOnEnv}}'
     condition: ${{ parameters.condition }}
     pool:
       vmImage: 'ubuntu-latest'
