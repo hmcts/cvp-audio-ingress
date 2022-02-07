@@ -5,15 +5,19 @@ parameters:
   - name: runStage
     type: string
     default: 'true'
+  - name: runStage
+    type: string
+    default: 'false'
 
 stages:
   - ${{ if ne(parameters.env, 'sbox') }}:
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
-      condition: succeeded()
+      # condition: succeeded()
       dependsOn: Plan${{parameters.env}}
       pool:
         vmImage: 'ubuntu-latest'
+      condition: and(succeeded(), eq('${{parameters.runStage}}', 'true'))
       jobs:
         - job: waitForValidation
           displayName: '${{parameters.env}} Wait for external validation'
@@ -34,7 +38,8 @@ stages:
     #   dependsOn: Plan${{parameters.env}}
     # ${{ if ne(parameters.env, 'sbox') }}:
     #   dependsOn: Wait${{parameters.env}}
-    condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
+    # condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
+    condition: and(succeeded(), eq('${{parameters.runStage}}', 'true'))
     variables:
       - template: ../variables/variables-common.yaml
       - template: ../variables/variables-${{parameters.env}}.yaml

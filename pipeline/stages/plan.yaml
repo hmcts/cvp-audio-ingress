@@ -14,7 +14,7 @@ stages:
     displayName: 'Plan ${{parameters.env}}'
     pool:
       vmImage: 'ubuntu-latest'
-    condition: and(succeeded(), eq('${{parameters.env}}', 'true'))
+    condition: and(succeeded(), eq('${{parameters.runStage}}', 'true'))
     # ${{ if eq(parameters.dependsOnEnv, '') }}:
     #   dependsOn: Build
     # ${{ if ne(parameters.dependsOnEnv, '') }}:

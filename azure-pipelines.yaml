@@ -35,22 +35,18 @@ stages:
     - template: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
-        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:  # prod + not release
-          runStage: 'false'
-        ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}: # sbox/stg + release
-          runStage: 'false'  
+        ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:  # prod + not release
+          runStage: 'true' 
         ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False )) }}: # sbox/stg + not release
           runStage: 'true'
 
-    # - template: pipeline/stages/test.yaml
-    #   parameters:
-    #     env: ${{env}}
-    #     ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:  # prod + not release
-    #       runStage: 'false'
-    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}: # sbox/stg + release
-    #       runStage: 'false'  
-    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False) }}: # sbox/stg + not release
-    #       runStage: 'true'
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
+        ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:  # prod + not release
+          runStage: 'true' 
+        ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False )) }}: # sbox/stg + not release
+          runStage: 'true'
 
 
 # Every time we do a release, the plan has already been run, so most every time we need to rerun the plan.
