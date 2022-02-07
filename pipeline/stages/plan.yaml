@@ -8,6 +8,12 @@ parameters:
   - name: dependsOnEnv
     type: string
     default: ''
+  - name: runStage
+    type: string
+    default: 'false'
+  - name: runEnv
+    type: boolean
+    default: 'false'
 
 stages:
   - stage: 'Plan${{parameters.env}}'

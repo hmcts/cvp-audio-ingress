@@ -3,7 +3,6 @@ parameters:
     type: string
     default: 'sbox'
 
-
 stages:
   - stage: Test${{parameters.env}}
     displayName: 'Test to ${{parameters.env}}'
