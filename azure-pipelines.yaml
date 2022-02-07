@@ -38,10 +38,10 @@ stages:
           dependsOnEnv: 'stg'
           runStage: 'false'
           runEnv: 'false'
-        ${{ if and(eq(env, 'stg'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
-          dependsOnEnv: 'stg'
-          runStage: 'false'
-          runEnv: 'false'
+        # ${{ if and(eq(env, 'stg'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+        #   dependsOnEnv: 'stg'
+        #   runStage: 'false'
+        #   runEnv: 'false'
         # ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
         #   dependsOnEnv: 'stg'
         #   runStage: 'false'
@@ -68,13 +68,13 @@ stages:
         # ${{ if and(eq('${{ parameters.env}}','prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
         #   runStage: false
           
-    # - template: pipeline/stages/deploy.yaml
-    #   parameters:
-    #     env: ${{env}}
+    - template: pipeline/stages/deploy.yaml
+      parameters:
+        env: ${{env}}
 
-    # - template: pipeline/stages/test.yaml
-    #   parameters:
-    #     env: ${{env}}
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
 
 
 # Every time we do a release, the plan has already been run, so most every time we need to rerun the plan.
