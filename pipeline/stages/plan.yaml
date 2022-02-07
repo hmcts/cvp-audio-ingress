@@ -12,7 +12,7 @@ parameters:
 stages:
   - stage: 'Plan${{parameters.env}}'
     displayName: 'Plan ${{parameters.env}}'
-    condition: and(succeeded(), eq(${{parameters.env}}, 'sbox')) 
+    condition: and(succeeded(), eq(${{parameters.env}}, sbox)) 
     pool:
       vmImage: 'ubuntu-latest'
     # ${{ if eq(parameters.dependsOnEnv, '') }}:
