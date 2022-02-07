@@ -12,7 +12,6 @@ parameters:
 stages:
   - stage: 'Plan${{parameters.env}}'
     displayName: 'Plan ${{parameters.env}}'
-    condition: ${{ if and(succeeded(), eq('${{parameters.env}}', 'stg'))  }}
     pool:
       vmImage: 'ubuntu-latest'
     # ${{ if eq(parameters.dependsOnEnv, '') }}:
