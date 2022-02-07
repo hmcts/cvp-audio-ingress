@@ -3,8 +3,6 @@ trigger:
 pr:
   - master
 
-variables: 
-
 resources:
   repositories:
     - repository: azTemplates
@@ -19,12 +17,11 @@ parameters:
     type: object
     values: []
     default: ['sbox','stg','prod']
-  - name: skippedReleaseEnvs
+  - name: envsToSkipIfRelease 
     displayName: Skipped envs during code release
     type: object
-    default:
-      - 'sbox'
-      - 'stg'
+    default: ['sbox','stg',]
+
 stages:
   - template: pipeline/stages/build.yaml 
 
@@ -33,24 +30,28 @@ stages:
       parameters:
         env: ${{env}}
         testRepoBranch: ${{variables['Build.SourceBranch']}}
-        # ${{ if or(eq(env, 'sbox'), contains('refs/heads/hotfix-', 'refs/heads/hotfix-')) }}:
-        #   dependsOnEnv: ''
-        # ${{ if and(eq(env, 'stg'), eq(contains('refs/heads/hotfix-', 'refs/heads/hotfix-'), False)) }}:
-        #   dependsOnEnv: 'sbox'
-        # ${{ if and(eq(env, 'prod'), eq(contains('refs/heads/hotfix-', 'refs/heads/hotfix-'), False)) }}:
-        #   dependsOnEnv: 'stg'
-        # 'refs/heads/release-'
-        # 'refs/heads/VIH-8722-'
-        ${{ if and(containsValue(parameters.skippedReleaseEnvs, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+        ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
           runStage: 'false'
           
-    # - template: pipeline/stages/deploy.yaml
-    #   parameters:
-    #     env: ${{env}}
+    - template: pipeline/stages/deploy.yaml
+      parameters:
+        env: ${{env}}
+        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:  # prod + not release
+          runStage: 'false'
+        ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}: # sbox/stg + release
+          runStage: 'false'  
+        ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False) }}: # sbox/stg + not release
+          runStage: 'true'
 
     # - template: pipeline/stages/test.yaml
     #   parameters:
     #     env: ${{env}}
+    #     ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:  # prod + not release
+    #       runStage: 'false'
+    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}: # sbox/stg + release
+    #       runStage: 'false'  
+    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False) }}: # sbox/stg + not release
+    #       runStage: 'true'
 
 
 # Every time we do a release, the plan has already been run, so most every time we need to rerun the plan.

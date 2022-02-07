@@ -2,17 +2,11 @@ parameters:
   - name: env
     type: string
     default: 'sbox'
-  - name: testRepoBranch
-    type: string
-    default: 'abc1'
   - name: dependsOnEnv
     type: string
     default: ''
   - name: runStage
     type: string
-    default: 'true'
-  - name: runEnv
-    type: boolean
     default: 'true'
 
 stages:
@@ -33,10 +27,6 @@ stages:
       - job: PlanToEnv${{parameters.env}}
         displayName: 'Plan to ${{parameters.env}}'
         steps:
-          - script: |
-              echo 1 ${{parameters.testRepoBranch}}
-            displayName: View repo branch
-
           - template: ../steps/tf-install.yaml
           - template: ../steps/tf-init.yaml
             parameters:
