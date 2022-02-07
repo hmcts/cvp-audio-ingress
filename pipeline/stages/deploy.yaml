@@ -8,7 +8,7 @@ stages:
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
       condition: succeeded()
-      dependsOn: Plan${{parameters.env}}
+      # dependsOn: Plan${{parameters.env}}
       pool:
         vmImage: 'ubuntu-latest'
       jobs:
@@ -27,10 +27,10 @@ stages:
     displayName: 'Apply to ${{parameters.env}}'
     pool:
       vmImage: 'ubuntu-latest'
-    ${{ if eq(parameters.env, 'sbox')  }}:
-      dependsOn: Plan${{parameters.env}}
-    ${{ if ne(parameters.env, 'sbox') }}:
-      dependsOn: Wait${{parameters.env}}
+    # ${{ if eq(parameters.env, 'sbox')  }}:
+    #   dependsOn: Plan${{parameters.env}}
+    # ${{ if ne(parameters.env, 'sbox') }}:
+    #   dependsOn: Wait${{parameters.env}}
     condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
     variables:
       - template: ../variables/variables-common.yaml
@@ -54,7 +54,7 @@ stages:
 
       - job: ApplyExtToEnv
         displayName: 'Extensions to ${{parameters.env}}'
-        dependsOn: ApplyTfToEnv
+        # dependsOn: ApplyTfToEnv
         steps:
           - template: ../steps/az-ext-oms.yaml
             parameters:
