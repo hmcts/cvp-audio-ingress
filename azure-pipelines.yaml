@@ -2,7 +2,9 @@ trigger:
   - master
 pr:
   - master
-  
+
+variables: 
+
 resources:
   repositories:
     - repository: azTemplates
@@ -17,7 +19,12 @@ parameters:
     type: object
     values: []
     default: ['sbox','stg','prod']
-
+  - name: skippedReleaseEnvs
+    displayName: Skipped envs during code release
+    type: object
+    default:
+      - 'sbox'
+      - 'stg'
 stages:
   - template: pipeline/stages/build.yaml 
 
@@ -35,9 +42,7 @@ stages:
         # 'refs/heads/release-'
         # 'refs/heads/VIH-8722-'
         ${{ if and(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
-          dependsOnEnv: 'stg'
           runStage: 'false'
-          runEnv: 'false'
         # ${{ if and(eq(env, 'stg'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
         #   dependsOnEnv: 'stg'
         #   runStage: 'false'
