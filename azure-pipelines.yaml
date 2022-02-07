@@ -32,15 +32,16 @@ stages:
         #   dependsOnEnv: 'sbox'
         # ${{ if and(eq(env, 'prod'), eq(contains('refs/heads/hotfix-', 'refs/heads/hotfix-'), False)) }}:
         #   dependsOnEnv: 'stg'
-
-        ${{ if and(or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'), ne(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
-          runStage: true
-        ${{ if and(eq('${{ parameters.env}}','prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
+        # 'refs/heads/release-'
+        # 'refs/heads/VIH-8722-'
+        ${{ if and(or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722-'), False)) }}:
           runStage: false
-        ${{ if and(or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
-          runStage: false
-        ${{ if and(eq('${{ parameters.env}}','prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
+        ${{ if and(eq('${{ parameters.env}}','prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722-'), False)) }}:
           runStage: true
+        ${{ if and(or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'), ne(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722-'), False)) }}:
+          runStage: true
+        ${{ if and(eq('${{ parameters.env}}','prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722-'), False)) }}:
+          runStage: false
           
     - template: pipeline/stages/deploy.yaml
       parameters:

@@ -2,6 +2,9 @@ parameters:
   - name: env
     type: string
     default: 'sbox'
+  - name: runStage
+    type: string
+    default: false
 
 stages:
   - stage: Test${{parameters.env}}

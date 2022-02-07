@@ -2,7 +2,10 @@ parameters:
   - name: env
     type: string
     default: 'sbox'
-
+  - name: runStage
+    type: string
+    default: false
+    
 stages:
   - ${{ if ne(parameters.env, 'sbox') }}:
     - stage: Wait${{parameters.env}}

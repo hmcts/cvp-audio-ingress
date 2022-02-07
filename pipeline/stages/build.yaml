@@ -5,9 +5,6 @@ parameters:
   - name: condition
     type: string
     default: 'always()'
-  - name: runStage
-    type: string
-    default: false
 
 stages:
   - stage: Build
