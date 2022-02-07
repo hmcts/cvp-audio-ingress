@@ -33,13 +33,13 @@ stages:
         # ${{ if and(eq(env, 'prod'), eq(contains('refs/heads/hotfix-', 'refs/heads/hotfix-'), False)) }}:
         #   dependsOnEnv: 'stg'
 
-        ${{ if and(containsValue(['sbox','stg'], env), ne(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
+        ${{ if and(or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'), ne(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
           runStage: true
-        ${{ if and(containsValue(['prod'], env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
+        ${{ if and(eq('${{ parameters.env}}','prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
           runStage: false
-        ${{ if and(containsValue(['sbox','stg'], env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
+        ${{ if and(or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
           runStage: false
-        ${{ if and(containsValue(['prod'], env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
+        ${{ if and(eq('${{ parameters.env}}','prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/release-'), False)) }}:
           runStage: true
           
     - template: pipeline/stages/deploy.yaml
