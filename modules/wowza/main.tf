@@ -46,7 +46,7 @@ resource "azurerm_private_endpoint" "endpoint" {
   tags = var.common_tags
 }
 
-resource "azurerm_private_dns_zone" "blob" {
+/* resource "azurerm_private_dns_zone" "blob" {
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = azurerm_resource_group.rg.name
   tags                = var.common_tags
@@ -68,7 +68,7 @@ resource "azurerm_private_dns_a_record" "sa_a_record" {
   ttl                 = 300
   records             = [azurerm_private_endpoint.endpoint.private_service_connection.0.private_ip_address]
   tags                = var.common_tags
-}
+} */
 
 #tfsec:ignore:azure-network-ssh-blocked-from-internet
 resource "azurerm_network_security_group" "sg" {
