@@ -10,7 +10,7 @@ parameters:
     default: ''
   - name: runStage
     type: string
-    default: 'false'
+    default: 'true'
   - name: runEnv
     type: boolean
     default: 'false'
@@ -20,6 +20,7 @@ stages:
     displayName: 'Plan ${{parameters.env}}'
     pool:
       vmImage: 'ubuntu-latest'
+    condition: and(succeeded(), eq('${{ parameters.runStage}}','true')
     # ${{ if eq(parameters.dependsOnEnv, '') }}:
     #   dependsOn: Build
     # ${{ if ne(parameters.dependsOnEnv, '') }}:
