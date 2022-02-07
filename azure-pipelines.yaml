@@ -27,11 +27,11 @@ stages:
       parameters:
         env: ${{env}}
         testRepoBranch: ${{variables['Build.SourceBranch']}}
-        ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
+        ${{ if or(eq(env, 'sbox'), contains('refs/heads/hotfix-', 'refs/heads/hotfix-')) }}:
           dependsOnEnv: ''
-        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+        ${{ if and(eq(env, 'stg'), eq(contains('refs/heads/hotfix-', 'refs/heads/hotfix-'), False)) }}:
           dependsOnEnv: 'sbox'
-        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+        ${{ if and(eq(env, 'prod'), eq(contains('refs/heads/hotfix-', 'refs/heads/hotfix-'), False)) }}:
           dependsOnEnv: 'stg'
 
     - template: pipeline/stages/deploy.yaml
