@@ -41,7 +41,7 @@ stages:
         #   dependsOnEnv: 'stg'
         # 'refs/heads/release-'
         # 'refs/heads/VIH-8722-'
-        ${{ if and(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+        ${{ if and(containsValue(${{ parameters.skippedReleaseEnvs}}, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
           runStage: 'false'
         # ${{ if and(eq(env, 'stg'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
         #   dependsOnEnv: 'stg'
