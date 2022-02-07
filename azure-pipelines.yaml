@@ -20,8 +20,7 @@ parameters:
 
 stages:
   - template: pipeline/stages/build.yaml 
-    parameters:
-      condition: 'failed()'
+  
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
       parameters:
