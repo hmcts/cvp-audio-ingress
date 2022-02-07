@@ -34,9 +34,9 @@ stages:
         #   dependsOnEnv: 'stg'
         # 'refs/heads/release-'
         # 'refs/heads/VIH-8722-'
-        ${{ if and(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+        ${{ if and(eq(env, 'sbox'), eq(contains('refs/heads/hotfix-', 'refs/heads/hotfix-'), False)) }}:
           runStage: false
-        ${{ if and(eq(env, 'stg'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+        ${{ if and(eq(env, 'stg'), eq(contains('refs/heads/hotfix-', 'refs/heads/hotfix-'), False)) }}:
           runStage: false
         # ${{ if and(or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
         #   runStage: false
