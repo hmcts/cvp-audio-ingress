@@ -29,7 +29,6 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        testRepoBranch: ${{variables['Build.SourceBranch']}}
         ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
           runStage: 'false'
           
