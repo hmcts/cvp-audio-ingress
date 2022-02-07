@@ -34,10 +34,21 @@ stages:
         #   dependsOnEnv: 'stg'
         # 'refs/heads/release-'
         # 'refs/heads/VIH-8722-'
-        ${{ if and(eq(env, 'sbox'), contains('refs/heads/hotfix-', 'refs/heads/hotfix-')) }}:
+        ${{ if and(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
           dependsOnEnv: 'stg'
+        ${{ if and(eq(env, 'stg'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+          dependsOnEnv: 'stg'
+        ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+          dependsOnEnv: 'stg'
+        ${{ if and(eq(env, 'sbox'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
+          dependsOnEnv: 'stg'
+        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
+          dependsOnEnv: 'stg'
+        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
+          dependsOnEnv: 'stg'
+        
           # runStage: false
-          # runEnv
+          # runEnv: false
         # ${{ if and(or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
         #   runStage: false
         # ${{ if and(eq('${{ parameters.env}}','prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False)) }}:
