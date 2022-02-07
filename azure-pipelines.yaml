@@ -40,7 +40,7 @@ stages:
         ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}: # sbox/stg + release
           runStage: 'false'  
         ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722'), False )) }}: # sbox/stg + not release
-        #   runStage: 'true'
+          runStage: 'true'
 
     # - template: pipeline/stages/test.yaml
     #   parameters:
