@@ -11,23 +11,16 @@ resources:
       ref: refs/heads/master
       endpoint: hmcts
 
-# variables:
-#   releaseBranchName: 'refs/heads/VIH-8722'
-
 parameters:
   - name: envs
     displayName: Environments
     type: object
     values: []
     default: ['sbox','stg','prod']
-  # - name: envsToSkipIfRelease 
-  #   displayName: Skipped envs during code release
-  #   type: object
-  #   default: ['sbox','stg',]
   - name: releaseBranchName 
     displayName: release branch name. # if branch is release then will only run in prod. else, will run in all envs but prod env will only run plan
     type: string
-    default: 'refs/heads/VIH-8722X'
+    default: 'refs/heads ZZZ /VIH-8722'
 
 stages:
   - template: pipeline/stages/build.yaml 
@@ -54,10 +47,3 @@ stages:
           runStage: 'true' 
         ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), False )) }}: # sbox/stg + not release
           runStage: 'true'
-
-
-# Every time we do a release, the plan has already been run, so most every time we need to rerun the plan.
-# As we cannot do that without creating a new release, we always create a 'hotfix' branch so we can by pass the other environments.
-
-# Instead we would like every thing that is not with the 'release/' branch path to deploy to sbox and stg, then run the production plan but that is all.
-# If the branch is within the 'release/' branch path then it should run the Build, Plan, Wait, Deploy and Test stages.
