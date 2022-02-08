@@ -11,7 +11,7 @@ stages:
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
       # condition: succeeded()
-      dependsOn: Plan${{parameters.env}}
+      # dependsOn: Plan${{parameters.env}}
       pool:
         vmImage: 'ubuntu-latest'
       condition: succeeded()
@@ -59,7 +59,7 @@ stages:
 
       - job: ApplyExtToEnv
         displayName: 'Extensions to ${{parameters.env}}'
-        dependsOn: ApplyTfToEnv
+        # dependsOn: ApplyTfToEnv
         steps:
           - template: ../steps/az-ext-oms.yaml
             parameters:
