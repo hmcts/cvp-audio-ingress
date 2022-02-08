@@ -31,7 +31,7 @@ stages:
         env: ${{env}}
         ${{ if or(eq(env, 'sbox'), eq(env, 'stg')) }}:
         # ${{ if and(or(eq(env, 'sbox'), eq(env, 'stg')), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
-          runStage: 'false'
+          runStage: 'true'
           
     - template: pipeline/stages/deploy.yaml
       parameters:
