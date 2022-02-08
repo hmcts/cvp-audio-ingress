@@ -18,7 +18,7 @@ parameters:
     values: []
     default: ['sbox','stg','prod']
   - name: releaseBranchName 
-    displayName: release branch substring. # if branch is release then will only run in prod. else, will run in all envs but prod env will only run plan
+    displayName: Release branch substring. # if branch is release then will only run in prod. else, will run in all envs but prod env will only run plan
     type: string
     default: 'refasdf722' # 'refs/heads/VIH-8722'
 
@@ -31,21 +31,20 @@ stages:
         env: ${{env}}
         releaseBranchName: ${{ parameters['releaseBranchName'] }}
         ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
-        # ${{ if  contains(variables['Build.SourceBranch'], parameters.releaseBranchName) }}:
           runStage: 'false'
           
-    # - template: pipeline/stages/deploy.yaml
-    #   parameters:
-    #     env: ${{env}}
-    #     ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], refs/heads/VIH-8722)) }}:  # prod + not release
-    #       runStage: 'true' 
-    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], refs/heads/VIH-8722), False )) }}: # sbox/stg + not release
-    #       runStage: 'true'
+    - template: pipeline/stages/deploy.yaml
+      parameters:
+        env: ${{env}}
+        ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], refs/heads/VIH-8722)) }}:  # prod + not release
+          runStage: 'true' 
+        ${{ if and(ne(env, 'prod'), eq(contains(variables['Build.SourceBranch'], refs/heads/VIH-8722), False )) }}: # not prod + not release
+          runStage: 'true'
 
-    # - template: pipeline/stages/test.yaml
-    #   parameters:
-    #     env: ${{env}}
-    #     ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], refs/heads/VIH-8722)) }}:  # prod + not release
-    #       runStage: 'true' 
-    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], refs/heads/VIH-8722), False )) }}: # sbox/stg + not release
-    #       runStage: 'true'
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
+        ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], refs/heads/VIH-8722)) }}:  # prod + not release
+          runStage: 'true' 
+        ${{ if and(ne(env, 'prod'), eq(contains(variables['Build.SourceBranch'], refs/heads/VIH-8722), False )) }}: # not prod + not release
+          runStage: 'true'
