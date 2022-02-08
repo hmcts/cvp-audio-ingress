@@ -4,9 +4,6 @@ parameters:
     default: 'sbox'
   - name: runStage
     type: string
-    default: 'true'
-  - name: runStage
-    type: string
     default: 'false'
 
 stages:
