@@ -36,6 +36,7 @@ stages:
               echo 3 ${{parameters.env}}
               echo 4 ${{variables['Agent.JobStatus']}}
               echo 5 ${{parameters.releaseBranchName}}
+              echo 6 ${{variables.subscriptionName}}
             displayName: View repo branch
 
           - template: ../steps/tf-install.yaml
