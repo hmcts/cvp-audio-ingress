@@ -29,7 +29,8 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        ${{ if and(or(eq(env, 'sbox'), eq(env, 'stg')), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
+        ${{ if or(eq(env, 'sbox'), eq(env, 'stg')) }}:
+        # ${{ if and(or(eq(env, 'sbox'), eq(env, 'stg')), contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722')) }}:
           runStage: 'false'
           
     - template: pipeline/stages/deploy.yaml
