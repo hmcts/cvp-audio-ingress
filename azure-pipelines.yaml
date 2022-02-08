@@ -30,8 +30,8 @@ stages:
       parameters:
         env: ${{env}}
         releaseBranchName: ${{ parameters['releaseBranchName'] }}
-        # ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
-        ${{ if  contains(variables['Build.SourceBranch'], parameters.releaseBranchName) }}:
+        ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
+        # ${{ if  contains(variables['Build.SourceBranch'], parameters.releaseBranchName) }}:
           runStage: 'false'
           
     # - template: pipeline/stages/deploy.yaml
