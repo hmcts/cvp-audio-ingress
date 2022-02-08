@@ -29,6 +29,8 @@ stages:
         steps:
           - script: |
               echo 1 ${{parameters.runStage}}
+              echo 2 ${{variables['Build.SourceBranch']}}
+              echo 3 ${{parameters.env}}
             displayName: View repo branch
 
           - template: ../steps/tf-install.yaml
