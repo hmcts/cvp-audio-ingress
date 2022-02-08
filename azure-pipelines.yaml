@@ -20,11 +20,14 @@ parameters:
     type: object
     values: []
     default: ['sbox','stg','prod']
-  - name: envsToSkipIfRelease 
-    displayName: Skipped envs during code release
-    type: object
-    default: ['sbox','stg',]
-  - releaseBranchName: 'refs/heads/VIH-8722'
+  # - name: envsToSkipIfRelease 
+  #   displayName: Skipped envs during code release
+  #   type: object
+  #   default: ['sbox','stg',]
+  - name: releaseBranchName 
+    displayName: releaseBranchName
+    type: string
+    default: 'refs/heads/VIH-8722'
 
 stages:
   - template: pipeline/stages/build.yaml 
