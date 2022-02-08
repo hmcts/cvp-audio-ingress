@@ -36,7 +36,7 @@ stages:
     # ${{ if ne(parameters.env, 'sbox') }}:
     #   dependsOn: Wait${{parameters.env}}
     # condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
-    condition: and(succeeded(), eq('${{parameters.runStage}}', 'true'))
+    condition: and(not(failed()), eq('${{parameters.runStage}}', 'true'))
     variables:
       - template: ../variables/variables-common.yaml
       - template: ../variables/variables-${{parameters.env}}.yaml
