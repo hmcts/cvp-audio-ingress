@@ -30,8 +30,8 @@ stages:
       parameters:
         env: ${{env}}
         releaseBranchName: ${{ parameters['releaseBranchName'] }}
-        ${{ if ne(env, 'prod') }}:
-        # ${{ if contains(variables['Build.SourceBranch'], parameters.releaseBranchName) }}:
+        # ${{ if ne(env, 'prod') }}:
+        ${{ if contains(variables['Build.SourceBranch'], parameters.releaseBranchName) }}:
         # ${{ if and(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), ne(env, 'prod')) }}:
         # ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
           runStage: 'false'
