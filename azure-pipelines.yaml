@@ -25,9 +25,9 @@ parameters:
   #   type: object
   #   default: ['sbox','stg',]
   - name: releaseBranchName 
-    displayName: releaseBranchName
+    displayName: release branch name. # if branch is release then will only run in prod. else, will run in all envs but prod env will only run plan
     type: string
-    default: 'refs/heads/VIH-8722'
+    default: 'refs/heads/VIH-8722X'
 
 stages:
   - template: pipeline/stages/build.yaml 
