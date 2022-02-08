@@ -30,21 +30,21 @@ stages:
       parameters:
         env: ${{env}}
         # ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
-        ${{ if  contains(variables['Build.SourceBranch'], parameters.releaseBranchName) }}:
+        ${{ if  contains(variables['Build.SourceBranch'], 'refs/heads/VIH-8722') }}:
           runStage: 'false'
           
     # - template: pipeline/stages/deploy.yaml
     #   parameters:
     #     env: ${{env}}
-    #     ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:  # prod + not release
+    #     ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], refs/heads/VIH-8722)) }}:  # prod + not release
     #       runStage: 'true' 
-    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), False )) }}: # sbox/stg + not release
+    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], refs/heads/VIH-8722), False )) }}: # sbox/stg + not release
     #       runStage: 'true'
 
     # - template: pipeline/stages/test.yaml
     #   parameters:
     #     env: ${{env}}
-    #     ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:  # prod + not release
+    #     ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], refs/heads/VIH-8722)) }}:  # prod + not release
     #       runStage: 'true' 
-    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), False )) }}: # sbox/stg + not release
+    #     ${{ if and(containsValue(parameters.envsToSkipIfRelease, env), eq(contains(variables['Build.SourceBranch'], refs/heads/VIH-8722), False )) }}: # sbox/stg + not release
     #       runStage: 'true'
