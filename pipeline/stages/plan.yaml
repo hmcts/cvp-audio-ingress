@@ -14,7 +14,7 @@ stages:
     displayName: 'Plan ${{parameters.env}}'
     pool:
       vmImage: 'ubuntu-latest'
-    condition: and(succeeded(), eq('${{parameters.runStage}}', 'true'))
+    # condition: and(succeeded(), eq('${{parameters.runStage}}', 'true'))
     # ${{ if eq(parameters.dependsOnEnv, '') }}:
     #   dependsOn: Build
     # ${{ if ne(parameters.dependsOnEnv, '') }}:
@@ -27,6 +27,10 @@ stages:
       - job: PlanToEnv${{parameters.env}}
         displayName: 'Plan to ${{parameters.env}}'
         steps:
+          - script: |
+              echo 1 ${{parameters.runStage}}
+            displayName: View repo branch
+
           - template: ../steps/tf-install.yaml
           - template: ../steps/tf-init.yaml
             parameters:
