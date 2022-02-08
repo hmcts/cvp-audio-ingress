@@ -77,6 +77,7 @@ steps:
         
         echo "Creating Shared KV $kvName"
         tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
+        echo "businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
         newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
         
         kvId=$(echo $newKv | jq .id)
