@@ -59,6 +59,7 @@ steps:
 
         echo "Creating Shared RG $rgName"
         tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
+        echo "businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
         az group create --location ${{ parameters.location }} --name $rgName  --subscription ${{ parameters.subscriptionName }} --tags $tags
   
   ##TODO: move to Terraform
