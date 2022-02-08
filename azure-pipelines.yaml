@@ -30,7 +30,7 @@ stages:
       parameters:
         env: ${{env}}
         # ${{ if and(or(eq(env, 'sbox'), eq(env, 'stg')), contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
-        ${{ if and(or(eq(env, 'sbox'), eq(env, 'stg'))) }}:
+        ${{ if and(or(eq(env, 'sbox'), eq(env, 'stg')) }}:
           runStage: 'false'
           
     - template: pipeline/stages/deploy.yaml
