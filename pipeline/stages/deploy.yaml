@@ -14,7 +14,7 @@ stages:
       dependsOn: Plan${{parameters.env}}
       pool:
         vmImage: 'ubuntu-latest'
-      condition: and(succeeded(), eq('${{parameters.runStage}}', 'true'))
+      condition: succeeded()
       jobs:
         - job: waitForValidation
           displayName: '${{parameters.env}} Wait for external validation'

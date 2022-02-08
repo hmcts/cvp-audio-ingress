@@ -11,7 +11,7 @@ stages:
     displayName: 'Test to ${{parameters.env}}'
     pool:
       vmImage: 'ubuntu-latest'
-    condition: and(not(failed()), eq('${{parameters.runStage}}', 'true'))
+    condition: succeeded()
     # dependsOn: Apply${{parameters.env}}
     variables:
       - template: ../variables/variables-common.yaml
