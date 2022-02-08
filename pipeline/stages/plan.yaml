@@ -8,6 +8,9 @@ parameters:
   - name: runStage
     type: string
     default: 'true'
+  - name: releaseBranchName
+    type: string
+    default: '123abc'
 
 stages:
   - stage: 'Plan${{parameters.env}}'
@@ -32,6 +35,7 @@ stages:
               echo 2 ${{variables['Build.SourceBranch']}}
               echo 3 ${{parameters.env}}
               echo 4 ${{variables['Agent.JobStatus']}}
+              echo 5 ${{parameters.releaseBranchName}}
             displayName: View repo branch
 
           - template: ../steps/tf-install.yaml
