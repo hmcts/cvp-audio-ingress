@@ -8,9 +8,6 @@ parameters:
   - name: runStage
     type: string
     default: 'true'
-  - name: releaseBranchName
-    type: string
-    default: '123abc'
 
 stages:
   - ${{ if eq(parameters.runStage, true)}}:
@@ -30,6 +27,14 @@ stages:
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
           steps:
+            - script: |
+                echo 1 ${{parameters.runStage}}
+                echo 2 ${{variables['Build.SourceBranch']}}
+                echo 3 ${{parameters.env}}
+                echo 4 ${{variables['Agent.JobStatus']}}
+                echo 5 ${{variables.subscriptionName}}
+              displayName: View repo branch
+
             - template: ../steps/tf-install.yaml
             - template: ../steps/tf-init.yaml
               parameters:
