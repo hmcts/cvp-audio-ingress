@@ -25,49 +25,49 @@ stages:
             inputs:
               instructions: 'Please validate the Terraform Plan for PROD environment to resume'
               onTimeout: 'reject'
+  - ${{ if eq(parameters.runStage, true)}}:
+    - stage: Apply${{parameters.env}}
+      displayName: 'Apply to ${{parameters.env}}'
+      pool:
+        vmImage: 'ubuntu-latest'
+      # ${{ if eq(parameters.env, 'sbox')  }}:
+      dependsOn: Plan${{parameters.env}}
+      # ${{ if ne(parameters.env, 'sbox') }}:
+      #   dependsOn: Wait${{parameters.env}}
+      # condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
+      condition: succeeded()
+      variables:
+        - template: ../variables/variables-common.yaml
+        - template: ../variables/variables-${{parameters.env}}.yaml
+        - group: cvp-${{parameters.env}}
+      jobs:
+        - job: ApplyTfToEnv
+          displayName: 'Terraform to ${{parameters.env}}'
+          steps:
+                
+            - template: ../steps/tf-install.yaml
 
-  - stage: Apply${{parameters.env}}
-    displayName: 'Apply to ${{parameters.env}}'
-    pool:
-      vmImage: 'ubuntu-latest'
-    # ${{ if eq(parameters.env, 'sbox')  }}:
-    dependsOn: Plan${{parameters.env}}
-    # ${{ if ne(parameters.env, 'sbox') }}:
-    #   dependsOn: Wait${{parameters.env}}
-    # condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
-    condition: and(not(failed()), eq('${{parameters.runStage}}', 'true'))
-    variables:
-      - template: ../variables/variables-common.yaml
-      - template: ../variables/variables-${{parameters.env}}.yaml
-      - group: cvp-${{parameters.env}}
-    jobs:
-      - job: ApplyTfToEnv
-        displayName: 'Terraform to ${{parameters.env}}'
-        steps:
-              
-          - template: ../steps/tf-install.yaml
+            - template: ../steps/tf-apply.yaml
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+                location: ${{variables.location}}
+                locationEng: ${{variables.locationEng}}
+                product: ${{variables.product}}
+                wowza_version: ${{variables.wowza_version}}
 
-          - template: ../steps/tf-apply.yaml
-            parameters:
-              subscriptionName: ${{variables.subscriptionName}}
-              env: ${{variables.env}}
-              location: ${{variables.location}}
-              locationEng: ${{variables.locationEng}}
-              product: ${{variables.product}}
-              wowza_version: ${{variables.wowza_version}}
+        - job: ApplyExtToEnv
+          displayName: 'Extensions to ${{parameters.env}}'
+          dependsOn: ApplyTfToEnv
+          steps:
+            - template: ../steps/az-ext-oms.yaml
+              parameters:
+                subscription: ${{variables.subscriptionName}}
+                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+                vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
 
-      - job: ApplyExtToEnv
-        displayName: 'Extensions to ${{parameters.env}}'
-        dependsOn: ApplyTfToEnv
-        steps:
-          - template: ../steps/az-ext-oms.yaml
-            parameters:
-              subscription: ${{variables.subscriptionName}}
-              vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
-              vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-
-          - template: ../steps/az-ext-dynatrace.yaml
-            parameters:
-              subscription: ${{variables.subscriptionName}}
-              vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
-              vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+            - template: ../steps/az-ext-dynatrace.yaml
+              parameters:
+                subscription: ${{variables.subscriptionName}}
+                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+                vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
