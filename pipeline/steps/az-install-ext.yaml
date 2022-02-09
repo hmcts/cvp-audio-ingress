@@ -49,6 +49,8 @@ steps:
                       Write-Host "1 $restBody"
                       $subscriptionId = az account show --query "id" -o tsv
                       Write-Host "2 subscriptionId: $subscriptionId"
+                      Write-Host "3 extName: $extName"
+                      Write-Host "4 vmName: $vmName"
                       $restUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/$extName?api-version=2021-11-01"
 
         Try {
@@ -56,7 +58,7 @@ steps:
           Write-Host "restUri:  $restUri"
 
           
-          # az rest --method put --uri $restUri --body $restBody
+          az rest --method put --uri $restUri --body $restBody
 
         } Catch {
           Write-Host "Failed"
