@@ -13,7 +13,7 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       condition: succeeded()
-      # dependsOn: Apply${{parameters.env}}
+      dependsOn: Apply${{parameters.env}}
       variables:
         - template: ../variables/variables-common.yaml
         - template: ../variables/variables-${{parameters.env}}.yaml

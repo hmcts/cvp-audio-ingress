@@ -19,8 +19,9 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       condition: succeeded()
+      dependsOn: Build
       # ${{ if eq(parameters.dependsOnEnv, '') }}:
-      #   dependsOn: Build
+      
       # ${{ if ne(parameters.dependsOnEnv, '') }}:
       #   dependsOn: 'Test${{parameters.dependsOnEnv}}'
       variables:
