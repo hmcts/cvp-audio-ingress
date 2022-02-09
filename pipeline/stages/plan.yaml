@@ -13,7 +13,6 @@ parameters:
     default: '123abc'
 
 stages:
-  # - ${{ if eq('${{parameters.runStage}}', 'true') }}:
   - ${{ if eq(parameters.runStage, true)}}:
     - stage: 'Plan${{parameters.env}}'
       displayName: 'Plan ${{parameters.env}}'
@@ -21,8 +20,6 @@ stages:
         vmImage: 'ubuntu-latest'
       condition: succeeded()
       dependsOn: Build
-      # ${{ if eq(parameters.dependsOnEnv, '') }}:
-      
       # ${{ if ne(parameters.dependsOnEnv, '') }}:
       #   dependsOn: 'Test${{parameters.dependsOnEnv}}'
       variables:
@@ -33,15 +30,6 @@ stages:
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
           steps:
-            - script: |
-                echo 1 ${{parameters.runStage}}
-                echo 2 ${{variables['Build.SourceBranch']}}
-                echo 3 ${{parameters.env}}
-                echo 4 ${{variables['Agent.JobStatus']}}
-                echo 5 ${{parameters.releaseBranchName}}
-                echo 6 ${{variables.subscriptionName}}
-              displayName: View repo branch
-
             - template: ../steps/tf-install.yaml
             - template: ../steps/tf-init.yaml
               parameters:
