@@ -58,7 +58,7 @@ steps:
           Write-Host "restUri:  $restUri"
 
           
-          # az rest --method put --uri $restUri --body $restBody
+          az rest --method put --uri $restUri --body $restBody
 
         } Catch {
           Write-Host "Failed"
