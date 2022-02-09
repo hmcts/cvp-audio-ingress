@@ -54,13 +54,17 @@ steps:
                       $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
             
                       $extTags = [PSCustomObject]@{
-                          application     = 'Cloud'
-                          BuiltFrom = 'hmcts/cvp-audio-ingress'
-                          BusinessArea    = 'Cross-Cutting'
-                          environment = 'staging'
-                          Platform = ''
-                          Video = ''
-                      }
+                                  "location" = "uksouth"
+                                  "tags" = 
+                                      [PSCustomObject]@{
+                                          application  = 'Cloud'
+                                          BuiltFrom    = 'hmcts/cvp-audio-ingress'
+                                          BusinessArea = 'Cross-Cutting'
+                                          environment  = 'staging'
+                                          Platform     = ''
+                                          Video        = ''
+                                      }
+                                  }
                       $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
                       $extTagsJson = $extTagsJson -replace "`"", "\`""
         Try {
