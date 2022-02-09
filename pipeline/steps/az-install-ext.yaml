@@ -15,7 +15,7 @@ parameters:
   - name: protectedSettingsJson
     type: string
     default: ""
-  - name: extTagsJson
+  - name: restApiPutBodyJson
     type: string
     default: ""
 
@@ -35,7 +35,7 @@ steps:
         $extPublisher="${{ parameters.extPublisher }}"
         $settingsJson='${{ parameters.settingsJson }}'
         $protectedSettingsJson='${{ parameters.protectedSettingsJson }}'
-                      $restBody = '${{ parameters.extTagsJson }}'
+        $restBody = '${{ parameters.restApiPutBodyJson }}'
 
         if ($null -eq $settingsJson -or $settingsJson -eq ""){
           $settingsJson="{}"
@@ -43,40 +43,14 @@ steps:
         if ($null -eq $protectedSettingsJson -or $protectedSettingsJson -eq ""){
           $protectedSettingsJson="{}"
         }
-                      if ($null -eq $restBody -or $restBody -eq ""){
-                        $restBody="{}"
-                      }
-                      Write-Host "1 $restBody"
-                      $subscriptionId = az account show --query "id" -o tsv
-                      Write-Host "2 subscriptionId: $subscriptionId"
-                      Write-Host "3 extName: $extName"
-                      Write-Host "4 vmName: $vmName"
-                      $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
-            
-                      # $extTags = [PSCustomObject]@{
-                      #     "location" = "uksouth"
-                      #     "properties" = [PSCustomObject]@{
-                      #             publisher = 'Microsoft.Azure.NetworkWatcher'
-                      #             type = 'NetworkWatcherAgentLinux'
-                      #             typeHandlerVersion = '1.4'
-                      #             autoUpgradeMinorVersion = true
-                      #     }
-                      #     "tags" = 
-                      #         [PSCustomObject]@{
-                      #             application  = 'Cloud'
-                      #             BuiltFrom    = 'hmcts/cvp-audio-ingress'
-                      #             BusinessArea = 'Cross-Cutting'
-                      #             environment  = 'staging'
-                      #             Platform     = ''
-                      #             Video        = ''
-                      #         }    
-                      # }
-                      # $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
-                      # $extTagsJson = $extTagsJson -replace "`"", "\`""
+        if ($null -eq $restBody -or $restBody -eq ""){
+          $restBody="{}"
+        }
+                      
         Try {
-          Write-Host "Installing $extName from $extPublisher"
-          Write-Host "restUri:  $restUri"
-          
+          Write-Host "Installing $extName from $extPublisher using REST API"
+          $subscriptionId = az account show --query "id" -o tsv
+          $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
           az rest --method put --uri $restUri --body $restBody
 
         } Catch {
