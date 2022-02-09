@@ -7,7 +7,7 @@ parameters:
     default: 'false'
 
 stages:
-  - ${{ if ne(parameters.env, 'sbox') }}:
+  - ${{ if eq('${{parameters.runStage}}', 'true') }}:
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
       # condition: succeeded()

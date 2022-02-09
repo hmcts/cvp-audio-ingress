@@ -7,127 +7,128 @@ parameters:
     default: 'false'
 
 stages:
-  - stage: Test${{parameters.env}}
-    displayName: 'Test to ${{parameters.env}}'
-    pool:
-      vmImage: 'ubuntu-latest'
-    condition: succeeded()
-    # dependsOn: Apply${{parameters.env}}
-    variables:
-      - template: ../variables/variables-common.yaml
-      - template: ../variables/variables-${{parameters.env}}.yaml
-      - group: cvp-${{parameters.env}}
-    jobs:
-      - job: LoadBalancerTest
-        displayName: '${{parameters.env}} Load Balancer Tests '
-        steps:
-          - template: templates\tests\Azure\LoadBalancer\healthprobe.yml@azTemplates
-            parameters:
-              subscriptionName: ${{variables.subscriptionName}}
-              resourceGroupName: '${{variables.product}}-recordings-${{parameters.env}}-rg'
-              loadBalancerName: '${{variables.product}}-recordings-${{parameters.env}}-lb'
-
-      - job: VirtualMachineTest
-        displayName: '${{parameters.env}} Virtual Machine Tests '
-        steps:
-
-          - task: AzureCLI@2
-            name: 'machineconfig'
-            displayName: Check Machine Config
-            inputs:
-              azureSubscription: '${{variables.subscriptionName}}'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
-                rgName="${service_name}rg"
-
-                allOk=true
-                for i in {1..2}
-                do
-
-                    vmName="${service_name}vm${i}"
-                    echo "Testing $vmName in $rgName."
-
-                    #az vm show --resource-group $rgName --name $vmName
-                    passwordDisabled=$(az vm show --resource-group $rgName --name $vmName --query "osProfile.linuxConfiguration.disablePasswordAuthentication" -o tsv)
-                    if [ "$passwordDisabled" = "false" ]
-                    then
-                        echo "##vso[task.LogIssue type=error;]$vmName in $rgName has password access enabled."
-                        allOk=false
-                    fi
-                    
-                done
-
-                if [ "$allOk" = "false" ]
-                then
-                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
-                    exit 1
-                fi
-          - task: AzureCLI@2
-            name: 'vminstalls'
-            displayName: Check VM Installs
-            inputs:
-              azureSubscription: '${{variables.subscriptionName}}'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                service_name="${{variables.product}}-recordings-${{parameters.env}}-"
-                rgName="${service_name}rg"
-
-                allOk=true
-                for i in {1..2}
-                do
-
-                    vmName="${service_name}vm${i}"
-                    echo "Testing $vmName in $rgName."
-
-                    response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts '[ -d "/usr/local/WowzaStreamingEngine/content/azurecopy" ] && echo "Directory exists." || echo "Error: Directory does not exists." && dpkg -s fuse |grep "install ok installed" && echo "fuse pgk installed" || echo "fuse pgk failed" && dpkg -s blobfuse |grep "install ok installed" && echo "blobfuse installed" || echo "blobfuse failed" && systemctl is-active --quiet WowzaStreamingEngine && echo "Service Running" || echo "Error: Service not Running"' --query "value[0].message")
-
-                    echo "$response"
-                    echo ""
-
-                    if [[ $response == *"fuse pgk installed"* ]]; then
-                        echo "The fuse package installed on $vmName in $rgName"
-                    else
-                        echo "##vso[task.LogIssue type=error;]The fuse package failed to install on $vmName in $rgName"
-                        allOk=false
-                    fi
-
-                    if [[ $response == *"blobfuse installed"* ]]; then
-                        echo "The blobfuse package installed on $vmName in $rgName"
-                    else
-                        echo "##vso[task.LogIssue type=error;]The blobfuse package failed to install on $vmName in $rgName"
-                        allOk=false
-                    fi
-
-                    if [[ $response == *"Service Running"* ]]; then
-                        echo "The Wowza Service is running in $vmName in $rgName"
-                    else
-                        echo "##vso[task.LogIssue type=error;]The Wowza Service is not running in $vmName in $rgName"
-                        allOk=false
-                    fi
-
-                    if [[ $response == *"Directory exists"* ]]; then
-                        echo "The blob storage is attached to $vmName in $rgName"
-                    else
-                        echo "##vso[task.LogIssue type=error;]The blob storage is not attached to $vmName in $rgName"
-                        allOk=false
-                    fi
-
-
-                done
-
-                if [ "$allOk" = "false" ]
-                then
-                    echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
-                    exit 1
-                fi
-
-          - ${{ if ne(parameters.env, 'sbox') }}:
-            - template: ..\steps\test-ffmpeg.yml
+  - ${{ if eq('${{parameters.runStage}}', 'true') }}:
+    - stage: Test${{parameters.env}}
+      displayName: 'Test to ${{parameters.env}}'
+      pool:
+        vmImage: 'ubuntu-latest'
+      condition: succeeded()
+      # dependsOn: Apply${{parameters.env}}
+      variables:
+        - template: ../variables/variables-common.yaml
+        - template: ../variables/variables-${{parameters.env}}.yaml
+        - group: cvp-${{parameters.env}}
+      jobs:
+        - job: LoadBalancerTest
+          displayName: '${{parameters.env}} Load Balancer Tests '
+          steps:
+            - template: templates\tests\Azure\LoadBalancer\healthprobe.yml@azTemplates
               parameters:
-                subscriptionName: ${{ variables.subscriptionName }}
-                env: ${{ variables.env }}
-          
-          
+                subscriptionName: ${{variables.subscriptionName}}
+                resourceGroupName: '${{variables.product}}-recordings-${{parameters.env}}-rg'
+                loadBalancerName: '${{variables.product}}-recordings-${{parameters.env}}-lb'
+
+        - job: VirtualMachineTest
+          displayName: '${{parameters.env}} Virtual Machine Tests '
+          steps:
+
+            - task: AzureCLI@2
+              name: 'machineconfig'
+              displayName: Check Machine Config
+              inputs:
+                azureSubscription: '${{variables.subscriptionName}}'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  service_name="${{variables.product}}-recordings-${{parameters.env}}-"
+                  rgName="${service_name}rg"
+
+                  allOk=true
+                  for i in {1..2}
+                  do
+
+                      vmName="${service_name}vm${i}"
+                      echo "Testing $vmName in $rgName."
+
+                      #az vm show --resource-group $rgName --name $vmName
+                      passwordDisabled=$(az vm show --resource-group $rgName --name $vmName --query "osProfile.linuxConfiguration.disablePasswordAuthentication" -o tsv)
+                      if [ "$passwordDisabled" = "false" ]
+                      then
+                          echo "##vso[task.LogIssue type=error;]$vmName in $rgName has password access enabled."
+                          allOk=false
+                      fi
+                      
+                  done
+
+                  if [ "$allOk" = "false" ]
+                  then
+                      echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
+                      exit 1
+                  fi
+            - task: AzureCLI@2
+              name: 'vminstalls'
+              displayName: Check VM Installs
+              inputs:
+                azureSubscription: '${{variables.subscriptionName}}'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  service_name="${{variables.product}}-recordings-${{parameters.env}}-"
+                  rgName="${service_name}rg"
+
+                  allOk=true
+                  for i in {1..2}
+                  do
+
+                      vmName="${service_name}vm${i}"
+                      echo "Testing $vmName in $rgName."
+
+                      response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts '[ -d "/usr/local/WowzaStreamingEngine/content/azurecopy" ] && echo "Directory exists." || echo "Error: Directory does not exists." && dpkg -s fuse |grep "install ok installed" && echo "fuse pgk installed" || echo "fuse pgk failed" && dpkg -s blobfuse |grep "install ok installed" && echo "blobfuse installed" || echo "blobfuse failed" && systemctl is-active --quiet WowzaStreamingEngine && echo "Service Running" || echo "Error: Service not Running"' --query "value[0].message")
+
+                      echo "$response"
+                      echo ""
+
+                      if [[ $response == *"fuse pgk installed"* ]]; then
+                          echo "The fuse package installed on $vmName in $rgName"
+                      else
+                          echo "##vso[task.LogIssue type=error;]The fuse package failed to install on $vmName in $rgName"
+                          allOk=false
+                      fi
+
+                      if [[ $response == *"blobfuse installed"* ]]; then
+                          echo "The blobfuse package installed on $vmName in $rgName"
+                      else
+                          echo "##vso[task.LogIssue type=error;]The blobfuse package failed to install on $vmName in $rgName"
+                          allOk=false
+                      fi
+
+                      if [[ $response == *"Service Running"* ]]; then
+                          echo "The Wowza Service is running in $vmName in $rgName"
+                      else
+                          echo "##vso[task.LogIssue type=error;]The Wowza Service is not running in $vmName in $rgName"
+                          allOk=false
+                      fi
+
+                      if [[ $response == *"Directory exists"* ]]; then
+                          echo "The blob storage is attached to $vmName in $rgName"
+                      else
+                          echo "##vso[task.LogIssue type=error;]The blob storage is not attached to $vmName in $rgName"
+                          allOk=false
+                      fi
+
+
+                  done
+
+                  if [ "$allOk" = "false" ]
+                  then
+                      echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
+                      exit 1
+                  fi
+
+            - ${{ if ne(parameters.env, 'sbox') }}:
+              - template: ..\steps\test-ffmpeg.yml
+                parameters:
+                  subscriptionName: ${{ variables.subscriptionName }}
+                  env: ${{ variables.env }}
+            
+            
