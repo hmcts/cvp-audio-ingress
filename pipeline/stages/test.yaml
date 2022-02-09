@@ -7,7 +7,7 @@ parameters:
     default: 'false'
 
 stages:
-  - ${{ if eq('${{parameters.runStage}}', 'true') }}:
+  - ${{ if eq(parameters.runStage, true)}}:
     - stage: Test${{parameters.env}}
       displayName: 'Test to ${{parameters.env}}'
       pool:
