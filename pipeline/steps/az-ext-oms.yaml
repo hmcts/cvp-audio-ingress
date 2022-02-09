@@ -46,11 +46,11 @@ steps:
                                                     Write-Host "1"
                                                     $extTags = [PSCustomObject]@{
                                                         application     = 'Cloud'
-                                                        # BuiltFrom = 'cvp-audio-ingress'
-                                                        # BusinessArea    = 'Cross-Cutting'
-                                                        # environment = 'staging'
-                                                        # Platform = ''
-                                                        # Video = ''
+                                                        BuiltFrom = 'hmcts/cvp-audio-ingress'
+                                                        BusinessArea    = 'Cross-Cutting'
+                                                        environment = 'staging'
+                                                        Platform = ''
+                                                        Video = ''
                                                     }
                                                     $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
                                                     $extTagsJson = $extTagsJson -replace "`"", "\`""
