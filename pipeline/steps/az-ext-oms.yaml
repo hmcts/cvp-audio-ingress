@@ -45,7 +45,7 @@ steps:
             application     = 'Cloud'
             BuiltFrom = 'hmcts/cvp-audio-ingress'
             BusinessArea    = 'Cross-Cutting'
-            environment = staging
+            environment = 'staging'
             Platform = ''
             Video = ''
         }
