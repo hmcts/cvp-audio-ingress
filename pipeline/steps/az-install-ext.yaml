@@ -51,8 +51,8 @@ steps:
                       Write-Host "2 subscriptionId: $subscriptionId"
                       Write-Host "3 extName: $extName"
                       Write-Host "4 vmName: $vmName"
-                      $restUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/$extName ?  api-version  =2021-11-01"
-
+                      $restUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/$extName?api-version=2021-11-01"
+                      $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
         Try {
           Write-Host "Installing $extName from $extPublisher"
           Write-Host "restUri:  $restUri"
