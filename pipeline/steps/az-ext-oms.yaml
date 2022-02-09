@@ -28,6 +28,9 @@ steps:
 
         Write-Host "ID: $id"
 
+                $subId=az account show --query "id" -o tsv
+                Write-Host "subId: $subId"
+
         $settings = [PSCustomObject]@{
           workspaceId           = $id
         }
@@ -41,19 +44,21 @@ steps:
         $protectedSettingsJson = $protectedSettings | ConvertTo-Json -Compress -Depth 100
         $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
                                                     Write-Host "1"
-        $extTags = [PSCustomObject]@{
-            application     = 'Cloud'
-            BuiltFrom = 'hmcts/cvp-audio-ingress'
-            BusinessArea    = 'Cross-Cutting'
-            environment = 'staging'
-            Platform = ''
-            Video = ''
-        }
-        $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
-        $extTagsJson = $extTagsJson -replace "`"", "\`""
+                                                    $extTags = [PSCustomObject]@{
+                                                        application     = 'Cloud'
+                                                        BuiltFrom = 'hmcts/cvp-audio-ingress'
+                                                        BusinessArea    = 'Cross-Cutting'
+                                                        environment = 'staging'
+                                                        Platform = ''
+                                                        Video = ''
+                                                    }
+                                                    $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
+                                                    $extTagsJson = $extTagsJson -replace "`"", "\`""
                                                     Write-Host "2"
+
         Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
+                                                    Write-Host "##vso[task.setvariable variable=extTagsJson;isOutput=true;issecret=true]$extTagsJson"
 
   - ${{ each vm in parameters.vmNames }}:
     - template: ./az-install-ext.yaml
