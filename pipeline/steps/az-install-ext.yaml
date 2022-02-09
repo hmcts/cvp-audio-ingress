@@ -47,12 +47,15 @@ steps:
                         $restBody="{}"
                       }
                       Write-Host "1 $restBody"
-                      $restUri = "https://management.azure.com/subscriptions/a8140a9e-f1b0-481f-a4de-09e2ee23f7ab/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/$extName?api-version=2021-11-01"
+                      $subscriptionId = az account show --query "id" -o tsv
+                      Write-Host "2 subscriptionId: $subscriptionId"
+                      $restUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/$extName?api-version=2021-11-01"
 
         Try {
           Write-Host "Installing $extName from $extPublisher"
           Write-Host "restUri:  $restUri"
-          # $subscriptionName = az account show --query "name" -o tsv
+
+          
           # az rest --method put --uri $restUri --body $restBody
 
         } Catch {
