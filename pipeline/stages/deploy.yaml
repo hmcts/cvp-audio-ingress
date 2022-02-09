@@ -8,23 +8,23 @@ parameters:
 
 stages:
   - ${{ if and(eq(parameters.runStage, true), ne(parameters.env, 'sbox') )}}:
-    - stage: Wait${{parameters.env}}
-      displayName: '${{parameters.env}} Waiting for Approval'
-      condition: succeeded()
-      # dependsOn: Plan${{parameters.env}}
-      pool:
-        vmImage: 'ubuntu-latest'
-      jobs:
-        - job: waitForValidation
-          displayName: '${{parameters.env}} Wait for external validation'
-          pool: server
-          timeoutInMinutes: 4320 # job times out in 3 days
-          steps:
-          - task: ManualValidation@0
-            timeoutInMinutes: 1440 # task times out in 1 day
-            inputs:
-              instructions: 'Please validate the Terraform Plan for PROD environment to resume'
-              onTimeout: 'reject'
+    # - stage: Wait${{parameters.env}}
+    #   displayName: '${{parameters.env}} Waiting for Approval'
+    #   condition: succeeded()
+    #   dependsOn: Plan${{parameters.env}}
+    #   pool:
+    #     vmImage: 'ubuntu-latest'
+    #   jobs:
+    #     - job: waitForValidation
+    #       displayName: '${{parameters.env}} Wait for external validation'
+    #       pool: server
+    #       timeoutInMinutes: 4320 # job times out in 3 days
+    #       steps:
+    #       - task: ManualValidation@0
+    #         timeoutInMinutes: 1440 # task times out in 1 day
+    #         inputs:
+    #           instructions: 'Please validate the Terraform Plan for PROD environment to resume'
+    #           onTimeout: 'reject'
   - ${{ if eq(parameters.runStage, true)}}:
     - stage: Apply${{parameters.env}}
       displayName: 'Apply to ${{parameters.env}}'
@@ -57,7 +57,7 @@ stages:
 
         - job: ApplyExtToEnv
           displayName: 'Extensions to ${{parameters.env}}'
-          dependsOn: ApplyTfToEnv
+          # dependsOn: ApplyTfToEnv
           steps:
             - template: ../steps/az-ext-oms.yaml
               parameters:
