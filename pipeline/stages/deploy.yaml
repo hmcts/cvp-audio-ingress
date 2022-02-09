@@ -11,7 +11,7 @@ stages:
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
       condition: succeeded()
-      dependsOn: Plan${{parameters.env}}
+      # dependsOn: Plan${{parameters.env}}
       pool:
         vmImage: 'ubuntu-latest'
       jobs:
@@ -30,10 +30,10 @@ stages:
       displayName: 'Apply to ${{parameters.env}}'
       pool:
         vmImage: 'ubuntu-latest'
-      dependsOn: Plan${{parameters.env}}
-      # ${{ if ne(parameters.env, 'sbox') }}:
-      #   dependsOn: Wait${{parameters.env}}
-      # condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
+      # dependsOn: Plan${{parameters.env}}
+              # ${{ if ne(parameters.env, 'sbox') }}:
+              #   dependsOn: Wait${{parameters.env}}
+              # condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
       condition: succeeded()
       variables:
         - template: ../variables/variables-common.yaml
