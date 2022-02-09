@@ -46,7 +46,7 @@ steps:
                                                     Write-Host "1"
                                                     $extTags = [PSCustomObject]@{
                                                         application     = 'Cloud'
-                                                        BuiltFrom = 'hmcts/cvp-audio-ingress'
+                                                        BuiltFrom = 'cvp-audio-ingress'
                                                         BusinessArea    = 'Cross-Cutting'
                                                         environment = 'staging'
                                                         Platform = ''
@@ -55,6 +55,7 @@ steps:
                                                     $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
                                                     $extTagsJson = $extTagsJson -replace "`"", "\`""
                                                     Write-Host "2"
+                                                    Write-Host $protectedSettingsJson
 
         Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
