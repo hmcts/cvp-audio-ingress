@@ -15,6 +15,9 @@ parameters:
   - name: protectedSettingsJson
     type: string
     default: ""
+  - name: extTagsJson
+    type: string
+    default: ""
 
 steps:
   - task: AzureCLI@2
