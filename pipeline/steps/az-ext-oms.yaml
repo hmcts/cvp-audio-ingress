@@ -28,8 +28,8 @@ steps:
 
         Write-Host "ID: $id"
 
-                $subId=az account show --query "id" -o tsv
-                Write-Host "subId: $subId"
+                                                $subId=az account show --query "id" -o tsv
+                                                Write-Host "subId: $subId"
 
         $settings = [PSCustomObject]@{
           workspaceId           = $id
