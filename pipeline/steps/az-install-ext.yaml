@@ -46,7 +46,7 @@ steps:
                       if ($null -eq $restBody -or $restBody -eq ""){
                         $restBody="{}"
                       }
-                      Write-Host $restBody 
+                      Write-Host "1 $restBody"
                       $restUri = "https://management.azure.com/subscriptions/a8140a9e-f1b0-481f-a4de-09e2ee23f7ab/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/$extName?api-version=2021-11-01"
 
         Try {
