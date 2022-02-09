@@ -13,7 +13,8 @@ parameters:
     default: '123abc'
 
 stages:
-  - ${{ if eq(${{parameters.runStage}}, 'true') }}:
+  # - ${{ if eq('${{parameters.runStage}}', 'true') }}:
+  - ${{ if eq(parameters.runStage, true)}}:
     - stage: 'Plan${{parameters.env}}'
       displayName: 'Plan ${{parameters.env}}'
       pool:
