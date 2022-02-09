@@ -55,6 +55,7 @@ steps:
             
                       $extTags = [PSCustomObject]@{
                                   "location" = "uksouth"
+                                  "properties" = [PSCustomObject]@{}
                                   "tags" = 
                                       [PSCustomObject]@{
                                           application  = 'Cloud'
@@ -70,7 +71,6 @@ steps:
         Try {
           Write-Host "Installing $extName from $extPublisher"
           Write-Host "restUri:  $restUri"
-
           
           az rest --method put --uri $restUri --body $extTagsJson
 
