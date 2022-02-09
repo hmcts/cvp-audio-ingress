@@ -53,31 +53,31 @@ steps:
                       Write-Host "4 vmName: $vmName"
                       $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
             
-                      $extTags = [PSCustomObject]@{
-                          "location" = "uksouth"
-                          "properties" = [PSCustomObject]@{
-                                  publisher = 'Microsoft.Azure.NetworkWatcher'
-                                  type = 'NetworkWatcherAgentLinux'
-                                  typeHandlerVersion = '1.4'
-                                  autoUpgradeMinorVersion = true
-                          }
-                          "tags" = 
-                              [PSCustomObject]@{
-                                  application  = 'Cloud'
-                                  BuiltFrom    = 'hmcts/cvp-audio-ingress'
-                                  BusinessArea = 'Cross-Cutting'
-                                  environment  = 'staging'
-                                  Platform     = ''
-                                  Video        = ''
-                              }    
-                      }
-                      $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
-                      $extTagsJson = $extTagsJson -replace "`"", "\`""
+                      # $extTags = [PSCustomObject]@{
+                      #     "location" = "uksouth"
+                      #     "properties" = [PSCustomObject]@{
+                      #             publisher = 'Microsoft.Azure.NetworkWatcher'
+                      #             type = 'NetworkWatcherAgentLinux'
+                      #             typeHandlerVersion = '1.4'
+                      #             autoUpgradeMinorVersion = true
+                      #     }
+                      #     "tags" = 
+                      #         [PSCustomObject]@{
+                      #             application  = 'Cloud'
+                      #             BuiltFrom    = 'hmcts/cvp-audio-ingress'
+                      #             BusinessArea = 'Cross-Cutting'
+                      #             environment  = 'staging'
+                      #             Platform     = ''
+                      #             Video        = ''
+                      #         }    
+                      # }
+                      # $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
+                      # $extTagsJson = $extTagsJson -replace "`"", "\`""
         Try {
           Write-Host "Installing $extName from $extPublisher"
           Write-Host "restUri:  $restUri"
           
-          az rest --method put --uri $restUri --body $extTagsJson
+          az rest --method put --uri $restUri --body $restBody
 
         } Catch {
           Write-Host "Failed"

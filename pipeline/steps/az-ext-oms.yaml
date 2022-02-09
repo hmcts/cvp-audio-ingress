@@ -45,17 +45,23 @@ steps:
         $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
                                                     Write-Host "1"
                                                     $extTags = [PSCustomObject]@{
-                                                                "location" = "uksouth"
-                                                                "tags" = 
-                                                                    [PSCustomObject]@{
-                                                                        application  = 'Cloud'
-                                                                        BuiltFrom    = 'hmcts/cvp-audio-ingress'
-                                                                        BusinessArea = 'Cross-Cutting'
-                                                                        environment  = 'staging'
-                                                                        Platform     = ''
-                                                                        Video        = ''
-                                                                    }
-                                                                }
+                                                        "location" = "uksouth"
+                                                        "properties" = [PSCustomObject]@{
+                                                                publisher = 'Microsoft.Azure.NetworkWatcher'
+                                                                type = 'NetworkWatcherAgentLinux'
+                                                                typeHandlerVersion = '1.4'
+                                                                autoUpgradeMinorVersion = true
+                                                        }
+                                                        "tags" = 
+                                                            [PSCustomObject]@{
+                                                                application  = 'Cloud'
+                                                                BuiltFrom    = 'hmcts/cvp-audio-ingress'
+                                                                BusinessArea = 'Cross-Cutting'
+                                                                environment  = 'staging'
+                                                                Platform     = ''
+                                                                Video        = ''
+                                                            }    
+                                                    }
                                                     $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
                                                     $extTagsJson = $extTagsJson -replace "`"", "\`""
                                                     Write-Host "2"
