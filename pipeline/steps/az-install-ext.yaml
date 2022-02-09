@@ -1,0 +1,59 @@
+parameters:
+  - name: subscription
+    type: string
+  - name: rgName
+    type: string
+  - name: vmName
+    type: string
+  - name: extName
+    type: string
+  - name: extPublisher
+    type: string
+  - name: settingsJson
+    type: string
+    default: ""
+  - name: protectedSettingsJson
+    type: string
+    default: ""
+
+steps:
+  - task: AzureCLI@2
+    displayName: Install ${{ parameters.extName }} to ${{ parameters.vmName }}
+    condition: always()
+    continueOnError: true
+    inputs:
+      azureSubscription: ${{ parameters.subscription }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        $rgName="${{ parameters.rgName }}"
+        $vmName="${{ parameters.vmName }}"
+        $extName="${{ parameters.extName }}"
+        $extPublisher="${{ parameters.extPublisher }}"
+        $settingsJson='${{ parameters.settingsJson }}'
+        $protectedSettingsJson='${{ parameters.protectedSettingsJson }}'
+        $restBody = "${{ parameters.extTagsJson }}"
+
+        if ($null -eq $settingsJson -or $settingsJson -eq ""){
+          $settingsJson="{}"
+        }
+        if ($null -eq $protectedSettingsJson -or $protectedSettingsJson -eq ""){
+          $protectedSettingsJson="{}"
+        }
+        if ($null -eq $restBody -or $restBody -eq ""){
+          $restBody="{}"
+        }
+
+        $restUri = "https://management.azure.com/subscriptions/a8140a9e-f1b0-481f-a4de-09e2ee23f7ab/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/$extName?api-version=2021-11-01"
+
+        Try {
+          Write-Host "Installing $extName from $extPublisher"
+          Write-Host "restUri:  $restUri"
+          # $subscriptionName = az account show --query "name" -o tsv
+          # az rest --method put --uri $restUri --body $restBody
+
+        } Catch {
+          Write-Host "Failed"
+        }
+
+        

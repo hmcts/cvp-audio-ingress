@@ -31,6 +31,7 @@ steps:
         $settings = [PSCustomObject]@{
           workspaceId           = $id
         }
+        
         $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
         $settingsJson = $settingsJson -replace "`"", "\`""
 
@@ -40,11 +41,22 @@ steps:
         $protectedSettingsJson = $protectedSettings | ConvertTo-Json -Compress -Depth 100
         $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
 
+        $extTags = [PSCustomObject]@{
+            application     = 'Cloud'
+            BuiltFrom = 'hmcts/cvp-audio-ingress'
+            BusinessArea    = 'Cross-Cutting'
+            environment = staging
+            Platform = ''
+            Video = ''
+        }
+        $extTagsJson = $extTags | ConvertTo-Json -Compress -Depth 100
+        $extTagsJson = $extTagsJson -replace "`"", "\`""
+
         Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
 
   - ${{ each vm in parameters.vmNames }}:
-    - template: templates\Azure\Vm\install.yaml@azTemplates
+    - template: ./az-install-ext.yaml
       parameters:
         subscription: ${{ parameters.subscription }}
         rgName: ${{ parameters.vmRgName }}
@@ -53,3 +65,4 @@ steps:
         extPublisher: "Microsoft.EnterpriseCloud.Monitoring"
         settingsJson: $(omsSettings.settingsJson)
         protectedSettingsJson: $(omsSettings.protectedSettingsJson)
+        extTagsJson: $(omsSettings.extTagsJson)
