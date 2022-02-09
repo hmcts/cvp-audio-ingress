@@ -13,80 +13,80 @@ parameters:
     default: '123abc'
 
 stages:
-  # - ${{ if eq('${{parameters.runStage}}', 'true') }}:
-  - stage: 'Plan${{parameters.env}}'
-    displayName: 'Plan ${{parameters.env}}'
-    pool:
-      vmImage: 'ubuntu-latest'
-    condition: succeeded()
-    dependsOn: Build
-    # ${{ if eq(parameters.dependsOnEnv, '') }}:
-    
-    # ${{ if ne(parameters.dependsOnEnv, '') }}:
-    #   dependsOn: 'Test${{parameters.dependsOnEnv}}'
-    variables:
-      - template: ../variables/variables-common.yaml
-      - template: ../variables/variables-${{parameters.env}}.yaml
-      - group: cvp-${{parameters.env}}
-    jobs:
-      - job: PlanToEnv${{parameters.env}}
-        displayName: 'Plan to ${{parameters.env}}'
-        steps:
-          - script: |
-              echo 1 ${{parameters.runStage}}
-              echo 2 ${{variables['Build.SourceBranch']}}
-              echo 3 ${{parameters.env}}
-              echo 4 ${{variables['Agent.JobStatus']}}
-              echo 5 ${{parameters.releaseBranchName}}
-              echo 6 ${{variables.subscriptionName}}
-            displayName: View repo branch
+  - ${{ if eq('${{parameters.runStage}}', 'true') }}:
+    - stage: 'Plan${{parameters.env}}'
+      displayName: 'Plan ${{parameters.env}}'
+      pool:
+        vmImage: 'ubuntu-latest'
+      condition: succeeded()
+      dependsOn: Build
+      # ${{ if eq(parameters.dependsOnEnv, '') }}:
+      
+      # ${{ if ne(parameters.dependsOnEnv, '') }}:
+      #   dependsOn: 'Test${{parameters.dependsOnEnv}}'
+      variables:
+        - template: ../variables/variables-common.yaml
+        - template: ../variables/variables-${{parameters.env}}.yaml
+        - group: cvp-${{parameters.env}}
+      jobs:
+        - job: PlanToEnv${{parameters.env}}
+          displayName: 'Plan to ${{parameters.env}}'
+          steps:
+            - script: |
+                echo 1 ${{parameters.runStage}}
+                echo 2 ${{variables['Build.SourceBranch']}}
+                echo 3 ${{parameters.env}}
+                echo 4 ${{variables['Agent.JobStatus']}}
+                echo 5 ${{parameters.releaseBranchName}}
+                echo 6 ${{variables.subscriptionName}}
+              displayName: View repo branch
 
-          - template: ../steps/tf-install.yaml
-          - template: ../steps/tf-init.yaml
-            parameters:
-              subscriptionName: ${{variables.subscriptionName}}
-              env: ${{variables.env}}
-              location: ${{variables.location}}
-              locationEng: ${{variables.locationEng}}
-              product: ${{variables.product}}
-              useBackend: true
-          
-          - template: templates\Azure\Common\unlock-resource.yml@azTemplates
-            parameters:
-              subscriptionName:  ${{variables.subscriptionName}}
-              resourceName: "${{variables.product}}recordings${{variables.env}}sa"
-              resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-              lockName: "resource-sa"
-              resourceType: "Microsoft.Storage/storageAccounts"
-          - template: templates\Azure\Common\unlock-resource-group.yml@azTemplates
-            parameters:
-              subscriptionName:  ${{variables.subscriptionName}}
-              resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-              lockName: "${{variables.env}}-lock"
-          - template: templates\Azure\Common\unlock-resource-group.yml@azTemplates
-            parameters:
-              subscriptionName:  ${{variables.subscriptionName}}
-              resourceGroupName: "managed-identities-${{variables.env}}-rg"
-              lockName: "${{variables.env}}-lock"
+            - template: ../steps/tf-install.yaml
+            - template: ../steps/tf-init.yaml
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+                location: ${{variables.location}}
+                locationEng: ${{variables.locationEng}}
+                product: ${{variables.product}}
+                useBackend: true
+            
+            - template: templates\Azure\Common\unlock-resource.yml@azTemplates
+              parameters:
+                subscriptionName:  ${{variables.subscriptionName}}
+                resourceName: "${{variables.product}}recordings${{variables.env}}sa"
+                resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+                lockName: "resource-sa"
+                resourceType: "Microsoft.Storage/storageAccounts"
+            - template: templates\Azure\Common\unlock-resource-group.yml@azTemplates
+              parameters:
+                subscriptionName:  ${{variables.subscriptionName}}
+                resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+                lockName: "${{variables.env}}-lock"
+            - template: templates\Azure\Common\unlock-resource-group.yml@azTemplates
+              parameters:
+                subscriptionName:  ${{variables.subscriptionName}}
+                resourceGroupName: "managed-identities-${{variables.env}}-rg"
+                lockName: "${{variables.env}}-lock"
 
-          - template: ../steps/tf-plan.yaml
-            parameters:
-              subscriptionName: ${{variables.subscriptionName}}
-              env: ${{variables.env}}
-              location: ${{variables.location}}
-              product: ${{variables.product}}
-              builtFrom: $(Build.Repository.Name)
-              # Manually passed in for use in scripts where resources are tagged
-              businessArea: ${{variables.businessArea}}
-              application: ${{variables.application}}
+            - template: ../steps/tf-plan.yaml
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+                location: ${{variables.location}}
+                product: ${{variables.product}}
+                builtFrom: $(Build.Repository.Name)
+                # Manually passed in for use in scripts where resources are tagged
+                businessArea: ${{variables.businessArea}}
+                application: ${{variables.application}}
 
-      - job: CertGen${{parameters.env}}
-        displayName: 'Generate Certificate for ${{parameters.env}}'
-        steps:
-          - template: templates\Azure\Certificates\Request.yaml@azTemplates
-            parameters:
-              subscriptionName: ${{variables.subscriptionName}}
-              product: "cvp"
-              environment: ${{parameters.env}}
-              domain: "${{ variables.dns }}"
-              keyVaultName: "cvp-${{parameters.env}}-kv"
+        - job: CertGen${{parameters.env}}
+          displayName: 'Generate Certificate for ${{parameters.env}}'
+          steps:
+            - template: templates\Azure\Certificates\Request.yaml@azTemplates
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                product: "cvp"
+                environment: ${{parameters.env}}
+                domain: "${{ variables.dns }}"
+                keyVaultName: "cvp-${{parameters.env}}-kv"
