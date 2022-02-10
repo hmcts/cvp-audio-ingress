@@ -35,7 +35,35 @@ steps:
         $extPublisher="${{ parameters.extPublisher }}"
         $settingsJson='${{ parameters.settingsJson }}'
         $protectedSettingsJson='${{ parameters.protectedSettingsJson }}'
-        $restBody = '${{ parameters.restApiPutBodyJson }}'
+
+        $environmentObj = [PSCustomObject]@{
+            "sbox" = "sandbox"
+            "stg" = "staging"
+            "prod" = "production"
+        }
+        $restApiPutBody = [PSCustomObject]@{
+            "location" = "uksouth"
+            "properties" = [PSCustomObject]@{
+                    publisher = 'Microsoft.Azure.NetworkWatcher'
+                    type = 'NetworkWatcherAgentLinux'
+                    typeHandlerVersion = '1.4'
+                    autoUpgradeMinorVersion = 'true'
+            }
+            "tags" = 
+                [PSCustomObject]@{
+                    application  = 'Cloud'
+                    BuiltFrom    = 'hmcts/cvp-audio-ingress'
+                    BusinessArea = 'Cross-Cutting'
+                    environment  = 'sandbox'
+                    Platform     = ''
+                    Video        = ''
+                }    
+        }
+        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
+        $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
+
+        $restBody = $restApiPutBodyJson 
+        # '${{ parameters.restApiPutBodyJson }}'
 
         if ($null -eq $settingsJson -or $settingsJson -eq ""){
           $settingsJson="{}"
@@ -48,9 +76,12 @@ steps:
         }
                       
         Try {
-          Write-Host "Installing $extName from $extPublisher using REST API"
+          
           $subscriptionId = az account show --query "id" -o tsv
           $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
+          Write-Host "restUri: $restUri"
+          Write-Host "restBody: $restBody"
+          Write-Host "Installing $extName from $extPublisher using REST API"
           az rest --method put --uri $restUri --body $restBody
 
         } Catch {
