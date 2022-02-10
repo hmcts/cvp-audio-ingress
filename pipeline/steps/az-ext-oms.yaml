@@ -59,7 +59,7 @@ steps:
                     application  = 'Cloud'
                     BuiltFrom    = 'hmcts/cvp-audio-ingress'
                     BusinessArea = 'Cross-Cutting'
-                    environment  = 'sandbox'
+                    environment  = $environmentObj.$env
                     Platform     = ''
                     Video        = ''
                 }    
