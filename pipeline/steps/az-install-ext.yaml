@@ -35,7 +35,7 @@ steps:
         $extPublisher="${{ parameters.extPublisher }}"
         $settingsJson='${{ parameters.settingsJson }}'
         $protectedSettingsJson='${{ parameters.protectedSettingsJson }}'
-        $restBody = ${{ parameters.restApiPutBodyJson }}'
+        $restBody = ${{ parameters.restApiPutBodyJson }}
 
         # $environmentObj = [PSCustomObject]@{
         #     "sbox" = "sandbox"
