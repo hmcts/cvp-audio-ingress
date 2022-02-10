@@ -65,8 +65,8 @@ stages:
                 vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
                 vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
 
-            - template: ../steps/az-ext-dynatrace.yaml
-              parameters:
-                subscription: ${{variables.subscriptionName}}
-                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
-                vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+            # - template: ../steps/az-ext-dynatrace.yaml
+            #   parameters:
+            #     subscription: ${{variables.subscriptionName}}
+            #     vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+            #     vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
