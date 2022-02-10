@@ -6,7 +6,10 @@ parameters:
     default: []
   - name: vmRgName
     type: string
-
+  - name: env
+    type: string
+    default: 'sbox'
+    
 steps:
   - task: AzureCLI@2
     displayName: Get Settings for OMS Extension
