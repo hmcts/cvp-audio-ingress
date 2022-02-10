@@ -9,12 +9,6 @@ parameters:
     type: string
   - name: extPublisher
     type: string
-  - name: settingsJson
-    type: string
-    default: ""
-  - name: protectedSettingsJson
-    type: string
-    default: ""
   - name: restApiPutBodyJson
     type: string
     default: ""
@@ -33,16 +27,8 @@ steps:
         $vmName="${{ parameters.vmName }}"
         $extName="${{ parameters.extName }}"
         $extPublisher="${{ parameters.extPublisher }}"
-        $settingsJson='${{ parameters.settingsJson }}'
-        $protectedSettingsJson='${{ parameters.protectedSettingsJson }}'
         $restBody = '${{ parameters.restApiPutBodyJson }}'
 
-        if ($null -eq $settingsJson -or $settingsJson -eq ""){
-          $settingsJson="{}"
-        }
-        if ($null -eq $protectedSettingsJson -or $protectedSettingsJson -eq ""){
-          $protectedSettingsJson="{}"
-        }
         if ($null -eq $restBody -or $restBody -eq ""){
           $restBody="{}"
         }
@@ -55,6 +41,9 @@ steps:
 
         } Catch {
           Write-Host "Failed"
+          Write-Host "restUri: $restUri"
+          Write-Host "restBody: $restBody"
+          Write-Host "subscriptionId: $subscriptionId  rgName: $rgName  vmName: $vmName "
         }
 
         
