@@ -67,17 +67,20 @@ steps:
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
 
+        Write-Host "========"
+        Write-Host "$restApiPutBodyJson"
+        Write-Host "========"
 
         Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
 
-  - ${{ each vm in parameters.vmNames }}:
-    - template: ./az-install-ext.yaml
-      parameters:
-        subscription: ${{ parameters.subscription }}
-        rgName: ${{ parameters.vmRgName }}
-        vmName: ${{ vm }}
-        extName: "OmsAgentForLinux"
-        extPublisher: "Microsoft.EnterpriseCloud.Monitoring"
-        restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
+  # - ${{ each vm in parameters.vmNames }}:
+  #   - template: ./az-install-ext.yaml
+  #     parameters:
+  #       subscription: ${{ parameters.subscription }}
+  #       rgName: ${{ parameters.vmRgName }}
+  #       vmName: ${{ vm }}
+  #       extName: "OmsAgentForLinux"
+  #       extPublisher: "Microsoft.EnterpriseCloud.Monitoring"
+  #       restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
