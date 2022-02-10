@@ -9,6 +9,12 @@ parameters:
     type: string
   - name: extPublisher
     type: string
+  - name: settingsJson
+    type: string
+    default: ""
+  - name: protectedSettingsJson
+    type: string
+    default: ""
   - name: restApiPutBodyJson
     type: string
     default: ""
@@ -27,18 +33,26 @@ steps:
         $vmName="${{ parameters.vmName }}"
         $extName="${{ parameters.extName }}"
         $extPublisher="${{ parameters.extPublisher }}"
+        $settingsJson='${{ parameters.settingsJson }}'
+        $protectedSettingsJson='${{ parameters.protectedSettingsJson }}'
         $restBody = '${{ parameters.restApiPutBodyJson }}'
 
+        if ($null -eq $settingsJson -or $settingsJson -eq ""){
+          $settingsJson="{}"
+        }
+        if ($null -eq $protectedSettingsJson -or $protectedSettingsJson -eq ""){
+          $protectedSettingsJson="{}"
+        }
         if ($null -eq $restBody -or $restBody -eq ""){
           $restBody="{}"
         }
                       
         Try {
+          Write-Host "Installing $extName from $extPublisher using REST API"
           $subscriptionId = az account show --query "id" -o tsv
           $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
-          Write-Host "Installing $extName from $extPublisher using REST API"
           az rest --method put --uri $restUri --body $restBody
-          Write-Host "Making REST api call"
+
         } Catch {
           Write-Host "Failed"
         }

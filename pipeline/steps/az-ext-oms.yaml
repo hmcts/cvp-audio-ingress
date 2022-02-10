@@ -80,6 +80,6 @@ steps:
         vmName: ${{ vm }}
         extName: "OmsAgentForLinux"
         extPublisher: "Microsoft.EnterpriseCloud.Monitoring"
-        # settingsJson: $(omsSettings.settingsJson)
-        # protectedSettingsJson: $(omsSettings.protectedSettingsJson)
+        settingsJson: $(omsSettings.settingsJson)
+        protectedSettingsJson: $(omsSettings.protectedSettingsJson)
         restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
