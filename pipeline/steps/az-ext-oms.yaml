@@ -64,7 +64,7 @@ steps:
                     Video        = ''
                 }    
         }
-        $restApiPutBodyJson = $extTags | ConvertTo-Json -Compress -Depth 100
+        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
 
 
