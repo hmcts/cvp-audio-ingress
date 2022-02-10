@@ -59,10 +59,10 @@ steps:
                     Video        = ''
                 }    
         }
-        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
-        $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
+        $temp = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
+        $temp = $temp -replace "`"", "\`""
 
-        $restBody = $restApiPutBodyJson 
+        $restBody = $temp 
         # '${{ parameters.restApiPutBodyJson }}'
 
         if ($null -eq $settingsJson -or $settingsJson -eq ""){
@@ -71,8 +71,8 @@ steps:
         if ($null -eq $protectedSettingsJson -or $protectedSettingsJson -eq ""){
           $protectedSettingsJson="{}"
         }
-        if ($null -eq $restBody -or $restBody -eq ""){
-          $restBody="{}"
+        if ($null -eq $temp -or $temp -eq ""){
+          $temp="{}"
         }
                       
         Try {
@@ -80,9 +80,9 @@ steps:
           $subscriptionId = az account show --query "id" -o tsv
           $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
           Write-Host "restUri: $restUri"
-          Write-Host "restBody: $restBody"
+          Write-Host "restBody: $temp"
           Write-Host "Installing $extName from $extPublisher using REST API"
-          az rest --method put --uri $restUri --body $restBody
+          az rest --method put --uri $restUri --body $temp
 
         } Catch {
           Write-Host "Failed"
