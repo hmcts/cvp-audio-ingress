@@ -9,7 +9,7 @@ parameters:
   - name: env
     type: string
     default: 'sbox'
-    
+
 steps:
   - task: AzureCLI@2
     displayName: Get Settings for OMS Extension
@@ -23,6 +23,7 @@ steps:
         $rgName="$env:WS_RG"
         $workspaceName="$env:WS_NAME"
         $workspaceSubscriptionName="$env:WS_SUB_NAME"
+        $env = "${{ parameters.env }}"
 
         az account set -s $workspaceSubscriptionName
 
@@ -71,7 +72,7 @@ steps:
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
 
         Write-Host "========"
-        Write-Host "$env"
+        Write-Host "env: $env"
         Write-Host "$restApiPutBodyJson"
         Write-Host "========"
 
