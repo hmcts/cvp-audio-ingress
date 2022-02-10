@@ -9,12 +9,6 @@ parameters:
     type: string
   - name: extPublisher
     type: string
-  - name: settingsJson
-    type: string
-    default: ""
-  - name: protectedSettingsJson
-    type: string
-    default: ""
   - name: restApiPutBodyJson
     type: string
     default: ""
@@ -33,43 +27,8 @@ steps:
         $vmName="${{ parameters.vmName }}"
         $extName="${{ parameters.extName }}"
         $extPublisher="${{ parameters.extPublisher }}"
-        $settingsJson='${{ parameters.settingsJson }}'
-        $protectedSettingsJson='${{ parameters.protectedSettingsJson }}'
         $restBody = '${{ parameters.restApiPutBodyJson }}'
 
-        # $environmentObj = [PSCustomObject]@{
-        #     "sbox" = "sandbox"
-        #     "stg" = "staging"
-        #     "prod" = "production"
-        # }
-        # $restApiPutBody = [PSCustomObject]@{
-        #     "location" = "uksouth"
-        #     "properties" = [PSCustomObject]@{
-        #             publisher = 'Microsoft.Azure.NetworkWatcher'
-        #             type = 'NetworkWatcherAgentLinux'
-        #             typeHandlerVersion = '1.4'
-        #             autoUpgradeMinorVersion = 'true'
-        #     }
-        #     "tags" = 
-        #         [PSCustomObject]@{
-        #             application  = 'Cloud'
-        #             BuiltFrom    = 'hmcts/cvp-audio-ingress'
-        #             BusinessArea = 'Cross-Cutting'
-        #             environment  = 'sandbox'
-        #             Platform     = ''
-        #             Video        = ''
-        #         }    
-        # }
-        # $temp = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
-        # $temp = $temp -replace "`"", "\`""
-
-
-        if ($null -eq $settingsJson -or $settingsJson -eq ""){
-          $settingsJson="{}"
-        }
-        if ($null -eq $protectedSettingsJson -or $protectedSettingsJson -eq ""){
-          $protectedSettingsJson="{}"
-        }
         if ($null -eq $restBody -or $restBody -eq ""){
           $restBody="{}"
         }
