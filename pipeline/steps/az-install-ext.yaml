@@ -37,12 +37,13 @@ steps:
           
           $subscriptionId = az account show --query "id" -o tsv
           $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
-          Write-Host "restUri: $restUri"
           Write-Host "Installing $extName from $extPublisher using REST API"
           az rest --method put --uri $restUri --body $restBody
 
         } Catch {
           Write-Host "Failed"
+          Write-Host "restUri: $restUri"
+          Write-Host "rgName: $rgName   vmName: $vmName"
         }
 
         
