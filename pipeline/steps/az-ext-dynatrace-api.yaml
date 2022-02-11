@@ -78,12 +78,13 @@ steps:
                 Video        = ''
             }    
         }
-
+        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
+        $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
         # Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         # Write-Host $settings
         # Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
-        # Write-Host "##vso[task.setvariable variable=restApiPutBody;isOutput=true;issecret=true]$restApiPutBody"
-        Write-Host $restApiPutBody
+        # Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
+        Write-Host $restApiPutBodyJson
 
   # - ${{ each vm in parameters.vmNames }}:
   #   - template: ./az-install-ext.yaml
