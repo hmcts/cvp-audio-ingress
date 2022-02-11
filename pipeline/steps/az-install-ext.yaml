@@ -30,6 +30,7 @@ steps:
         $restBody = '${{ parameters.restApiPutBodyJson }}'
 
         if ($null -eq $restBody -or $restBody -eq ""){
+          Write-Host "restbody is either null or empty"
           $restBody="{}"
         }
                       
@@ -38,6 +39,8 @@ steps:
           $subscriptionId = az account show --query "id" -o tsv
           $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
           Write-Host "Installing $extName from $extPublisher using REST API"
+          Write-Host "restUri: $restUri"
+          Write-Host "restBody: $restBody"
           az rest --method put --uri $restUri --body $restBody
 
         } Catch {
