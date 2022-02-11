@@ -26,40 +26,21 @@ steps:
         $env = "${{ parameters.env }}"
 
         az account set -s $workspaceSubscriptionName
-
-        $key=az monitor log-analytics workspace get-shared-keys --resource-group $rgName --workspace-name $workspaceName --query "primarySharedKey" -o tsv
-        $id=az monitor log-analytics workspace show --resource-group $rgName --workspace-name $workspaceName -o tsv --query "customerId"
-
-        Write-Host "ID: $id"
-
-        $settings = [PSCustomObject]@{
-          workspaceId           = $id
-        }
-        
-        $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
-        $settingsJson = $settingsJson -replace "`"", "\`""
-
-        $protectedSettings = [PSCustomObject]@{
-          workspaceKey           = $key
-        }
-        $protectedSettingsJson = $protectedSettings | ConvertTo-Json -Compress -Depth 100
-        $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
                                                     
         $environmentObj = [PSCustomObject]@{
             "sbox" = "sandbox"
-            "stg" = "staging"
+            "stg"  = "staging"
             "prod" = "production"
         }
         $restApiPutBody = [PSCustomObject]@{
             "location" = "uksouth"
             "properties" = [PSCustomObject]@{
-                    publisher = 'Microsoft.Azure.NetworkWatcher'
-                    type = 'NetworkWatcherAgentLinux'
-                    typeHandlerVersion = '1.4'
+                    publisher               = 'Microsoft.Azure.NetworkWatcher'
+                    type                    = 'NetworkWatcherAgentLinux'
+                    typeHandlerVersion      = '1.4'
                     autoUpgradeMinorVersion = 'true'
             }
-            "tags" = 
-                [PSCustomObject]@{
+            "tags" = [PSCustomObject]@{
                     application  = 'Cloud'
                     BuiltFrom    = 'hmcts/cvp-audio-ingress'
                     BusinessArea = 'Cross-Cutting'
@@ -71,8 +52,6 @@ steps:
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
 
-        Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
-        Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
 
   - ${{ each vm in parameters.vmNames }}:
