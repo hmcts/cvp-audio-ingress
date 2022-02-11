@@ -84,7 +84,11 @@ steps:
         # Write-Host $settings
         # Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
         # Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
+        Write-Host restApiPutBodyJson
         Write-Host $restApiPutBodyJson
+        Write-Host settingsJson
+        Write-Host $settingsJson
+        
 
   # - ${{ each vm in parameters.vmNames }}:
   #   - template: ./az-install-ext.yaml
