@@ -90,12 +90,12 @@ steps:
         Write-Host $settingsJson
         
 
-  # - ${{ each vm in parameters.vmNames }}:
-  #   - template: ./az-install-ext.yaml
-  #     parameters:
-  #       subscription: ${{ parameters.subscription }}
-  #       rgName: ${{ parameters.vmRgName }}
-  #       vmName: ${{ vm }}
-  #       extName: "oneAgentLinux"
-  #       extPublisher: "dynatrace.ruxit"
-  #       restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
+  - ${{ each vm in parameters.vmNames }}:
+    - template: ./az-install-ext.yaml
+      parameters:
+        subscription: ${{ parameters.subscription }}
+        rgName: ${{ parameters.vmRgName }}
+        vmName: ${{ vm }}
+        extName: "oneAgentLinux"
+        extPublisher: "dynatrace.ruxit"
+        restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
