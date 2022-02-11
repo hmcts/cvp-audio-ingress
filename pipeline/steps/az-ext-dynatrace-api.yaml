@@ -64,7 +64,7 @@ steps:
                 "settings" = [PSCustomObject]@{
                     "tenantId"           = $settings.tenantId
                     "token"              = $settings.token
-                    "server"             = $settings.networkZone
+                    # "server"             = "$settings.networkZone"
                     "enableLogAnalytics" = $settings.enableLogAnalytics
                     "hostGroup"          = $settings.hostGroup
                 }
