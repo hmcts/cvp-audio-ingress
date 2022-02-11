@@ -60,14 +60,14 @@ steps:
             "properties" = [PSCustomObject]@{
                 "publisher" = "dynatrace.ruxit"
                 "type" = "oneAgentLinux"
-                "autoUpgradeMinorVersion" = "true"
-                "settings" = [PSCustomObject]@{
-                    "tenantId"           = $settings.tenantId
-                    "token"              = $settings.token
-                    # "server"             = "$settings.networkZone"
-                    "enableLogAnalytics" = $settings.enableLogAnalytics
-                    "hostGroup"          = $settings.hostGroup
-                }
+                # "autoUpgradeMinorVersion" = "true"
+                # "settings" = [PSCustomObject]@{
+                #     "tenantId"           = $settings.tenantId
+                #     "token"              = $settings.token
+                #     # "server"             = "$settings.networkZone"
+                #     "enableLogAnalytics" = $settings.enableLogAnalytics
+                #     "hostGroup"          = $settings.hostGroup
+                # }
             }
             "tags" = [PSCustomObject]@{
                 application  = 'Cloud'
@@ -99,3 +99,4 @@ steps:
         extName: "oneAgentLinux"
         extPublisher: "dynatrace.ruxit"
         restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
+

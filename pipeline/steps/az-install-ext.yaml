@@ -27,7 +27,7 @@ steps:
         $vmName="${{ parameters.vmName }}"
         $extName="${{ parameters.extName }}"
         $extPublisher="${{ parameters.extPublisher }}"
-        $restBody = '${{ parameters.restApiPutBodyJson }}'
+        $restBody = "${{ parameters.restApiPutBodyJson }}"
 
         if ($null -eq $restBody -or $restBody -eq ""){
           Write-Host "restbody is either null or empty"
@@ -40,7 +40,9 @@ steps:
           $restUri = -join("https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.Compute/virtualMachines/$vmName/extensions/", "$extName", "?api-version=2021-11-01")
           Write-Host "Installing $extName from $extPublisher using REST API"
           Write-Host "restUri: $restUri"
-          Write-Host "restBody: $restBody"
+          Write-Host "restBody:"
+          Write-Host $restBody
+
           az rest --method put --uri $restUri --body $restBody
 
         } Catch {
