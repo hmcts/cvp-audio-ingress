@@ -59,12 +59,12 @@ stages:
           displayName: 'Extensions to ${{parameters.env}}'
           # dependsOn: ApplyTfToEnv
           steps:
-            - template: ../steps/az-ext-oms.yaml
-              parameters:
-                subscription: ${{variables.subscriptionName}}
-                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
-                vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-                env: ${{variables.env}}
+            # - template: ../steps/az-ext-oms.yaml
+            #   parameters:
+            #     subscription: ${{variables.subscriptionName}}
+            #     vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+            #     vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+            #     env: ${{variables.env}}
 
             - template: ../steps/az-ext-dynatrace-api.yaml
               parameters:
