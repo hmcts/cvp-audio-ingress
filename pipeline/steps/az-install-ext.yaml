@@ -27,7 +27,7 @@ steps:
         $vmName="${{ parameters.vmName }}"
         $extName="${{ parameters.extName }}"
         $extPublisher="${{ parameters.extPublisher }}"
-        $restBody="${{ parameters.restApiPutBodyJson }}"
+        $restBody = '${{ parameters.restApiPutBodyJson }}'
 
         if ($null -eq $restBody -or $restBody -eq ""){
           Write-Host "restbody is either null or empty"
