@@ -41,7 +41,7 @@ steps:
           Write-Host "Installing $extName from $extPublisher using REST API"
           Write-Host "restUri: $restUri"
           Write-Host "restBody:"
-          Write-Host $restBody
+          Write-Host "$restBody"
 
           az rest --method put --uri $restUri --body $restBody
 
