@@ -54,8 +54,14 @@ steps:
             "stg"  = "staging"
             "prod" = "production"
         }
-
-        $dynaTracePutBody =  [PSCustomObject]@{
+        
+        if ( Test-Path variable:restApiPutBody)
+        { 
+            Write-Host Cleared
+            Clear-Variable -Name "restApiPutBody"
+        }
+        
+        $restApiPutBody =  [PSCustomObject]@{
             "location" = "uksouth"
             "properties" = [PSCustomObject]@{
                 "publisher" = "dynatrace.ruxit"
@@ -78,14 +84,14 @@ steps:
                 Video        = ''
             }    
         }
-        $dynaTracePutBodyJson = $dynaTracePutBody | ConvertTo-Json -Compress -Depth 100
-        $dynaTracePutBodyJson = $dynaTracePutBodyJson -replace "`"", "\`""
+        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
+        $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
         # Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         # Write-Host $settings
         # Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
-        Write-Host "##vso[task.setvariable variable=dynaTracePutBodyJson;isOutput=true;issecret=true]$dynaTracePutBodyJson"
-        Write-Host dynaTracePutBodyJson
-        Write-Host $dynaTracePutBodyJson
+        Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
+        Write-Host restApiPutBodyJson
+        Write-Host $restApiPutBodyJson
         Write-Host settingsJson
         Write-Host $settingsJson
         
@@ -98,6 +104,6 @@ steps:
         vmName: ${{ vm }}
         extName: "oneAgentLinux"
         extPublisher: "dynatrace.ruxit"
-        restApiPutBodyJson: $(omsSettings.dynaTracePutBodyJson)
+        restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
 
 
