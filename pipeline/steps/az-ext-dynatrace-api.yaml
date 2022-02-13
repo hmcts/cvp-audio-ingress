@@ -60,7 +60,7 @@ steps:
             Write-Host Cleared
             Clear-Variable -Name "restApiPutBody"
         }
-        
+
         $restApiPutBody =  [PSCustomObject]@{
             "location" = "uksouth"
             "properties" = [PSCustomObject]@{
@@ -89,7 +89,7 @@ steps:
         # Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         # Write-Host $settings
         # Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
-        Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
+        Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=false]$restApiPutBodyJson"
         Write-Host restApiPutBodyJson
         Write-Host $restApiPutBodyJson
         Write-Host settingsJson
