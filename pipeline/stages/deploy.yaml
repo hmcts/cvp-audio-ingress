@@ -40,31 +40,31 @@ stages:
         - template: ../variables/variables-${{parameters.env}}.yaml
         - group: cvp-${{parameters.env}}
       jobs:
-        - job: ApplyTfToEnv
-          displayName: 'Terraform to ${{parameters.env}}'
-          steps:
+        # - job: ApplyTfToEnv
+        #   displayName: 'Terraform to ${{parameters.env}}'
+        #   steps:
                 
-            - template: ../steps/tf-install.yaml
+        #     - template: ../steps/tf-install.yaml
 
-            - template: ../steps/tf-apply.yaml
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                env: ${{variables.env}}
-                location: ${{variables.location}}
-                locationEng: ${{variables.locationEng}}
-                product: ${{variables.product}}
-                wowza_version: ${{variables.wowza_version}}
+        #     - template: ../steps/tf-apply.yaml
+        #       parameters:
+        #         subscriptionName: ${{variables.subscriptionName}}
+        #         env: ${{variables.env}}
+        #         location: ${{variables.location}}
+        #         locationEng: ${{variables.locationEng}}
+        #         product: ${{variables.product}}
+        #         wowza_version: ${{variables.wowza_version}}
 
         - job: ApplyExtToEnv
           displayName: 'Extensions to ${{parameters.env}}'
           # dependsOn: ApplyTfToEnv
           steps:
-            - template: ../steps/az-ext-oms.yaml
-              parameters:
-                subscription: ${{variables.subscriptionName}}
-                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
-                vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-                env: ${{variables.env}}
+            # - template: ../steps/az-ext-oms.yaml
+            #   parameters:
+            #     subscription: ${{variables.subscriptionName}}
+            #     vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+            #     vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+            #     env: ${{variables.env}}
 
             - template: ../steps/az-ext-dynatrace-api.yaml
               parameters:
