@@ -104,6 +104,6 @@ steps:
         vmName: ${{ vm }}
         extName: "oneAgentLinux"
         extPublisher: "dynatrace.ruxit"
-        restApiPutBody2Json: $(omsSettings.restApiPutBody2Json)
+        restApiPutBody2Json: $(dynaSettings.restApiPutBody2Json)
 
 
