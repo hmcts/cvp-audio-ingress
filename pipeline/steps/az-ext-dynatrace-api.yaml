@@ -27,7 +27,13 @@ steps:
         $env = "${{ parameters.env }}"
 
         $infraKvName = "$env:INFRA_KV"
+        Write-Host infraKvName
+        Write-Host $infraKvName
+        Write-Host Cleared
         $infraSecretName = "$env:DYNATRACE_TOKEN"
+        Write-Host infraSecretName
+        Write-Host $infraSecretName
+        
         Write-Host "Get Dynatrace env token from $infraKvName / $infraSecretName "
         $dynatrace_token=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/$infraSecretName  --query "value" -o tsv
 
@@ -35,9 +41,9 @@ steps:
           tenantId           = $dynatrace_tenant_id
           token              = $dynatrace_token
           hostGroup          = $dynatrace_host_group
-          networkZone        = $dynatrace_network_zone
+          # networkZone        = $dynatrace_network_zone
           enableLogAnalytics = "true"
-          #installerArguments = "--loglevel=Verbose"
+          installerArguments = "--loglevel=Verbose"
         }
         $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
         $settingsJson = $settingsJson -replace "`"", "\`""
