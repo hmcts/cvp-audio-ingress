@@ -40,20 +40,20 @@ stages:
         - template: ../variables/variables-${{parameters.env}}.yaml
         - group: cvp-${{parameters.env}}
       jobs:
-        # - job: ApplyTfToEnv
-        #   displayName: 'Terraform to ${{parameters.env}}'
-        #   steps:
+        - job: ApplyTfToEnv
+          displayName: 'Terraform to ${{parameters.env}}'
+          steps:
                 
-        #     - template: ../steps/tf-install.yaml
+            - template: ../steps/tf-install.yaml
 
-        #     - template: ../steps/tf-apply.yaml
-        #       parameters:
-        #         subscriptionName: ${{variables.subscriptionName}}
-        #         env: ${{variables.env}}
-        #         location: ${{variables.location}}
-        #         locationEng: ${{variables.locationEng}}
-        #         product: ${{variables.product}}
-        #         wowza_version: ${{variables.wowza_version}}
+            - template: ../steps/tf-apply.yaml
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+                location: ${{variables.location}}
+                locationEng: ${{variables.locationEng}}
+                product: ${{variables.product}}
+                wowza_version: ${{variables.wowza_version}}
 
         - job: ApplyExtToEnv
           displayName: 'Extensions to ${{parameters.env}}'
