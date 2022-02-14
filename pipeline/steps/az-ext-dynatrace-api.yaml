@@ -55,13 +55,13 @@ steps:
             "prod" = "production"
         }
         
-        if ( Test-Path variable:restApiPutBody2)
+        if ( Test-Path variable:restApiPutBody)
         { 
             Write-Host Cleared
-            Clear-Variable -Name "restApiPutBody2"
+            Clear-Variable -Name "restApiPutBody"
         }
 
-        $restApiPutBody2 =  [PSCustomObject]@{
+        $restApiPutBody =  [PSCustomObject]@{
             "location" = "uksouth"
             "properties" = [PSCustomObject]@{
                 "publisher" = "dynatrace.ruxit"
@@ -84,26 +84,24 @@ steps:
                 Video        = ''
             }    
         }
-        $restApiPutBody2Json = $restApiPutBody2 | ConvertTo-Json -Compress -Depth 100
-        $restApiPutBody2Json = $restApiPutBody2Json -replace "`"", "\`""
-        # Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
-        # Write-Host $settings
-        # Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
-        Write-Host "##vso[task.setvariable variable=restApiPutBody2Json;isOutput=true;issecret=false]$restApiPutBody2Json"
-        Write-Host restApiPutBody2Json
-        Write-Host $restApiPutBody2Json
+        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
+        $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
+        
+        Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=false]$restApiPutBodyJson"
+        Write-Host restApiPutBodyJson
+        Write-Host $restApiPutBodyJson
         Write-Host settingsJson
         Write-Host $settingsJson
         
 
   - ${{ each vm in parameters.vmNames }}:
-    - template: ./az-install-ext2.yaml
+    - template: ./az-install-ext.yaml
       parameters:
         subscription: ${{ parameters.subscription }}
         rgName: ${{ parameters.vmRgName }}
         vmName: ${{ vm }}
         extName: "oneAgentLinux"
         extPublisher: "dynatrace.ruxit"
-        restApiPutBody2Json: $(dynaSettings.restApiPutBody2Json)
+        restApiPutBodyJson: $(dynaSettings.restApiPutBodyJson)
 
 
