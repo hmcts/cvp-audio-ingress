@@ -55,13 +55,13 @@ steps:
             "prod" = "production"
         }
         
-        if ( Test-Path variable:restApiPutBody)
+        if ( Test-Path variable:restApiPutBody2)
         { 
             Write-Host Cleared
-            Clear-Variable -Name "restApiPutBody"
+            Clear-Variable -Name "restApiPutBody2"
         }
 
-        $restApiPutBody =  [PSCustomObject]@{
+        $restApiPutBody2 =  [PSCustomObject]@{
             "location" = "uksouth"
             "properties" = [PSCustomObject]@{
                 "publisher" = "dynatrace.ruxit"
@@ -84,26 +84,26 @@ steps:
                 Video        = ''
             }    
         }
-        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
-        $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
+        $restApiPutBody2Json = $restApiPutBody2 | ConvertTo-Json -Compress -Depth 100
+        $restApiPutBody2Json = $restApiPutBody2Json -replace "`"", "\`""
         # Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
         # Write-Host $settings
         # Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
-        Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=false]$restApiPutBodyJson"
-        Write-Host restApiPutBodyJson
-        Write-Host $restApiPutBodyJson
+        Write-Host "##vso[task.setvariable variable=restApiPutBody2Json;isOutput=true;issecret=false]$restApiPutBody2Json"
+        Write-Host restApiPutBody2Json
+        Write-Host $restApiPutBody2Json
         Write-Host settingsJson
         Write-Host $settingsJson
         
 
   - ${{ each vm in parameters.vmNames }}:
-    - template: ./az-install-ext.yaml
+    - template: ./az-install-ext2.yaml
       parameters:
         subscription: ${{ parameters.subscription }}
         rgName: ${{ parameters.vmRgName }}
         vmName: ${{ vm }}
         extName: "oneAgentLinux"
         extPublisher: "dynatrace.ruxit"
-        restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
+        restApiPutBody2Json2: $(omsSettings.restApiPutBody2Json)
 
 
