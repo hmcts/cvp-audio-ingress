@@ -23,7 +23,7 @@ steps:
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
-        $rgName="${{ parameters.rgName }}".ToUpper()
+        $rgName="${{ parameters.rgName }}"
         $vmName="${{ parameters.vmName }}"
         $extName="${{ parameters.extName }}"
         $extPublisher="${{ parameters.extPublisher }}"
