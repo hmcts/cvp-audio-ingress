@@ -41,7 +41,7 @@ steps:
           tenantId           = $dynatrace_tenant_id
           token              = $dynatrace_token
           hostGroup          = $dynatrace_host_group
-          # networkZone        = $dynatrace_network_zone
+          networkZone        = $dynatrace_network_zone
           enableLogAnalytics = "true"
           installerArguments = "--loglevel=Verbose"
         }
@@ -70,15 +70,16 @@ steps:
         $restApiPutBody =  [PSCustomObject]@{
             "location" = "uksouth"
             "properties" = [PSCustomObject]@{
-                "publisher" = "dynatrace.ruxit"
-                "type" = "oneAgentLinux"
-                "typeHandlerVersion" = "2.182"
+                "publisher"               = "dynatrace.ruxit"
+                "type"                    = "oneAgentLinux"
+                "typeHandlerVersion"      = "2.182"
                 "autoUpgradeMinorVersion" = "true"
                 "settings" = [PSCustomObject]@{
                     "tenantId"           = $dynatrace_tenant_id
                     "token"              = $dynatrace_token
                     "enableLogAnalytics" = "true"
                     "hostGroup"          = $dynatrace_host_group
+                    installerArguments   = "--loglevel=Verbose"
                 }
             }
             "tags" = [PSCustomObject]@{
