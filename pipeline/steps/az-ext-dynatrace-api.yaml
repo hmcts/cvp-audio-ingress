@@ -77,20 +77,20 @@ steps:
                 "settings" = [PSCustomObject]@{
                     "tenantId"           = $settings.tenantId
                     "token"              = $settings.token
-                    "server"             = $settings.networkZone
                     "enableLogAnalytics" = $settings.enableLogAnalytics
                     "hostGroup"          = $settings.hostGroup
                 }
             }
             "tags" = [PSCustomObject]@{
-                application  = 'Cloud'
-                BuiltFrom    = 'hmcts/cvp-audio-ingress'
-                BusinessArea = 'Cross-Cutting'
-                environment  = $environmentObj.$env
-                Platform     = ''
-                Video        = ''
+                "application"  = 'Cloud'
+                "BuiltFrom"    = 'hmcts/cvp-audio-ingress'
+                "BusinessArea" = 'Cross-Cutting'
+                "environment"  = $environmentObj.$env
+                "Platform"     = ''
+                "Video"        = ''
             }    
         }
+
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
         
