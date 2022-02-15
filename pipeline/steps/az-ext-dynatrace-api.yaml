@@ -79,7 +79,6 @@ steps:
                     "token"              = $dynatrace_token
                     "enableLogAnalytics" = "true"
                     "hostGroup"          = $dynatrace_host_group
-                    installerArguments   = "--loglevel=Verbose"
                 }
             }
             "tags" = [PSCustomObject]@{
