@@ -11,7 +11,7 @@ stages:
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
       condition: succeeded()
-      # dependsOn: Plan${{parameters.env}}
+      dependsOn: Plan${{parameters.env}}
       pool:
         vmImage: 'ubuntu-latest'
       jobs:
@@ -30,7 +30,7 @@ stages:
       displayName: 'Apply to ${{parameters.env}}'
       pool:
         vmImage: 'ubuntu-latest'
-      # dependsOn: Plan${{parameters.env}}
+      dependsOn: Plan${{parameters.env}}
               # ${{ if ne(parameters.env, 'sbox') }}:
               #   dependsOn: Wait${{parameters.env}}
               # condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
@@ -40,24 +40,24 @@ stages:
         - template: ../variables/variables-${{parameters.env}}.yaml
         - group: cvp-${{parameters.env}}
       jobs:
-        # - job: ApplyTfToEnv
-        #   displayName: 'Terraform to ${{parameters.env}}'
-        #   steps:
+        - job: ApplyTfToEnv
+          displayName: 'Terraform to ${{parameters.env}}'
+          steps:
                 
-        #     - template: ../steps/tf-install.yaml
+            - template: ../steps/tf-install.yaml
 
-        #     - template: ../steps/tf-apply.yaml
-        #       parameters:
-        #         subscriptionName: ${{variables.subscriptionName}}
-        #         env: ${{variables.env}}
-        #         location: ${{variables.location}}
-        #         locationEng: ${{variables.locationEng}}
-        #         product: ${{variables.product}}
-        #         wowza_version: ${{variables.wowza_version}}
+            - template: ../steps/tf-apply.yaml
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+                location: ${{variables.location}}
+                locationEng: ${{variables.locationEng}}
+                product: ${{variables.product}}
+                wowza_version: ${{variables.wowza_version}}
 
         - job: ApplyExtToEnv
           displayName: 'Extensions to ${{parameters.env}}'
-          # dependsOn: ApplyTfToEnv
+          dependsOn: ApplyTfToEnv
           steps:
             - template: ../steps/az-ext-oms.yaml
               parameters:
