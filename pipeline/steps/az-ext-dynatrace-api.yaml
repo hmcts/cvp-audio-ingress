@@ -102,7 +102,7 @@ steps:
         
 
   - ${{ each vm in parameters.vmNames }}:
-    - template: ./az-install-ext.yaml
+    - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
       parameters:
         subscription: ${{ parameters.subscription }}
         rgName: ${{ parameters.vmRgName }}
