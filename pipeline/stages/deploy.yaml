@@ -40,6 +40,10 @@ stages:
       jobs:
         - job: ApplyTfToEnv
           displayName: 'Terraform to ${{parameters.env}}'
+          ${{ if ne(parameters.env, 'sbox') }}:
+            dependsOn: Plan${{parameters.env}}
+          ${{ if ne(parameters.env, 'sbox') }}:
+            dependsOn: Apply${{parameters.env}}
           steps:
                 
             - template: ../steps/tf-install.yaml
