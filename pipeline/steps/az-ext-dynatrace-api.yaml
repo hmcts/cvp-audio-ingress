@@ -75,10 +75,11 @@ steps:
                 "typeHandlerVersion" = "2.182"
                 "autoUpgradeMinorVersion" = "true"
                 "settings" = [PSCustomObject]@{
-                    "tenantId"           = $settings.tenantId
-                    "token"              = $settings.token
-                    "enableLogAnalytics" = $settings.enableLogAnalytics
-                    "hostGroup"          = $settings.hostGroup
+                    "tenantId"           = $dynatrace_tenant_id
+                    "token"              = $dynatrace_token
+                    "enableLogAnalytics" = "true"
+                    "hostGroup"          = $dynatrace_host_group
+                    installerArguments   = "--loglevel=Verbose"
                 }
             }
             "tags" = [PSCustomObject]@{
