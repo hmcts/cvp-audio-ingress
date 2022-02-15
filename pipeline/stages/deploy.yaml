@@ -30,10 +30,8 @@ stages:
       displayName: 'Apply to ${{parameters.env}}'
       pool:
         vmImage: 'ubuntu-latest'
-      dependsOn: Wait${{parameters.env}}
-              # ${{ if ne(parameters.env, 'sbox') }}:
-              #   dependsOn: Wait${{parameters.env}}
-              # condition: and(succeeded(), or(eq('${{ parameters.env}}','sbox'),eq('${{ parameters.env}}','stg'),and(or(contains(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')), eq('${{ parameters.env}}', 'prod'))))
+      ${{ if ne(parameters.env, 'sbox') }}:
+        dependsOn: Wait${{parameters.env}}
       condition: succeeded()
       variables:
         - template: ../variables/variables-common.yaml
