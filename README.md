@@ -4,7 +4,7 @@
 This project is a tactical solution to provide audio recordings for online hearings. The project has been expedited due
 to the Covid-19 outbreak and as such the design and implementation is subject to change in the future.
 
-The main solution consists of 2 active-active loadbalanced Linux VMs running Wowza Streaming Engine 4.7.7 which then 
+The main solution consists of 2 active-active loadbalanced Linux VMs running Wowza Streaming Engine which then 
 store the audio output in Azure Blob Storage. 
 
 ## Environments
@@ -16,41 +16,39 @@ The project can be deployed to the following 3 environments:
 * Shared Services Production
 
 ## Pipeline
-There are some post deployment tests that run, which should clearly state what is wrong and be easy to know how to fix.
-Below are some instructions for some of the tests.
+There are two pipelines for CVP, with one for deployment and a nightly run for automated tasks.
 
-1. `Check Blob Mounted` - If this failed then restart the VM or run the commands at the bottom of the `cloudconfig.tpl` file.
+**CVP Release Pipeline**
+https://dev.azure.com/hmcts/Shared%20Services/_build?definitionId=337
+
+This will Plan, Apply and Test each environment in order with approval at each stage.
+
+**CVP Nightly Pipeline**
+https://dev.azure.com/hmcts/Shared%20Services/_build?definitionId=498
+
+This will run plan check for each environment, security/version checks and automated certificate renewal.
 
 ## Testing
-Before starting testing, make sure the client IP(s) for the machines you are testing from is added to the 
-`dev_source_address_prefixes` variable. This can be found in a variable group in Azure DevOps called `cvp-<env>`.
+There are some local development testing you can do and then there are some remote testing you can do.
+
+*You cannot remote test Sandbox due to the networking setup we cannot get access, so all testing is done on Staging.
 
 ### Terraform Testing
 You can run the plan command from your local by running the PowerShell command in `test/tf-plan.ps1`
 
 This will generate a plan against the remote state file.
 
-### Functional tests
+### Remote Testing
 
-1. Check that port 443 is responding with a valid SSL cert by opening the endpoint in your browser. (Smoke test candidate)
+Please follow this guide to do remote testing of the streaming system.
 
-2. The following command streams a single file to Wowza and should get persisted to a folder in Azure Blob Storage called 
-audiostream5. [https://www.wowza.com/docs/how-to-live-stream-using-ffmpeg-with-wowza-streaming-engine](How to use FFMPEG for Wowza)
-```powershell
-$ffmpegPath="ffmpeg-4.4.1-essentials_build\bin" ## update to ffmpeg location
-$application="audiostream1" ## update to target application/room
-$audioFilePath="ffmpeg\audio-example.mp4" ## update to your example file
-$fileName="test-stream" ## update to tartet case name
-$source="20.108.61.33" ## update to target wowza instance
+https://tools.hmcts.net/confluence/display/VIH/Test+CVP+from+local
 
-$ffmpeg_url="rtmps://$source`:443/$application/$fileName"
+### Load Testing
 
-Set-Location -Path $ffmpegPath
+*This has not been relooked at since the previous team and therefore might not be working.
 
-ffmpeg.exe -re -i $audioFilePath -c copy -f flv "$ffmpeg_url flashver=FMLE/3.0\20(compatible;\20FMSc/1.0) live=true pubUser=wowza title=$fileName" -loglevel verbose
-``` 
-
-3. Load testing can be conducted on a Windows VM on Azure (Standard DS11 v2). It will require dotnet core installing on it.
+Load testing can be conducted on a Windows VM on Azure (Standard DS11 v2). It will require dotnet core installing on it.
 Once installed you can download, build and run from this project: 
 [https://github.com/hmcts/vh-performance-wowza](https://github.com/hmcts/vh-performance-wowza)
 
@@ -59,25 +57,46 @@ You will require your own Virtual Meetin Room from Kinly to test with. The Stagi
 and has their Dev environment IPs whitelisted already.
 
 ## Known issues
-* The Wowza Engine Management UI doesn't seem to work when the Wowza Engine is configured with TLS (which this project 
-is).
+* The Wowza Engine Management UI doesn't seem to work when the Wowza Engine is configured with TLS (which this project is).
 * Occasionally cloud-init will not complete properly. The quickest solution seems to be to reboot the VM to trigger cloud-init to run again.
 
-## Investigation
+## Debugging
 
-### Check Certificates:
+### Extensions Failure
+https://tools.hmcts.net/confluence/display/VIH/Debug+Extensions
+
+### Wowza not running
+
+These are something that can be check for why the Wowza Streaming Service is not working.
+
+#### Service Status
+
+```Bash
+sudo service WowzaStreamingEngine status
+```
+
+#### General logs
+```Bash
+cat /usr/local/WowzaStreamingEngine/logs/wowzastreamingengine_access.log
+```
+#### Error logs
+```Bash
+cat /usr/local/WowzaStreamingEngine/logs/wowzastreamingengine_error.log
+```
+old logs are in the same folder but with the date appended
+
+
+#### Certificates
+
+You can check if there is certificates installed and if they are valid
 
 1. Get password via: `cat /usr/local/WowzaStreamingEngine/conf/Server.xml | grep Password`
 2. Run below and add password.
 ```
 keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
 ```
+More details about CVP Certificates are here https://tools.hmcts.net/confluence/display/VIH/SSL+Certificates
 
-### Check mount:
+### **Resolution**
 
-1. run this command `df -h | grep azurecopy` and something like this should be returned:
-`blobfuse        126G   61M  120G   1% /usr/local/WowzaStreamingEngine/content/azurecopy`
-
-### Check eveything is installed:
-
- run through the commands in the cloudinit file to make sure the packages are install, mount is mounted, applications have been built and wowza restarted.
+Most things can be fixed with either a restart or by running `sudo /home/wowza/runcmd.sh` on the Virtual Machine, which will check and reinstall all missing components.
