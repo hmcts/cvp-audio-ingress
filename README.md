@@ -95,7 +95,7 @@ You can check if there is certificates installed and if they are valid
 ```
 keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
 ```
-
+More details about CVP Certificates are here https://tools.hmcts.net/confluence/display/VIH/SSL+Certificates
 
 ### **Resolution**
 
