@@ -3,8 +3,8 @@ parameters:
     type: string
   - name: env
     type: string
-  - name: env_long
-    type: string
+  # - name: env_long
+  #   type: string
   - name: location
     type: string
   - name: product
@@ -75,14 +75,14 @@ steps:
         rgName="$(rgName)"
         kvName="$(kvName)"
         oid=$(oid)
-        echo "rsm123"
-        env_long=$(env_long)
-        echo env_long $env_long
+        # echo "rsm123"
+        # env_long=$(env_long)
+        # echo env_long $env_long
         echo "Logged in as oid $oid"
         
         echo "Creating Shared KV $kvName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env_long }}"
-        echo "businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env_long }}"
+        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
+        echo "businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
         kv_id=$(az keyvault show --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }} | jq .id)
         echo kv_id $kv_id
         newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
