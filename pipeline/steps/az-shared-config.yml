@@ -91,7 +91,7 @@ steps:
         then
           echo Keyvault $kv_id already exists.
           kv_id=$kv_existance
-          kv_tag=$(aaz tag update --resource-id $kv_id --operation merge --tags $tags)
+          kv_tag=$(az tag update --resource-id $kv_id --operation merge --tags $tags)
           echo kv_tag $kv_tag
         else
           echo creating $kvName kv
