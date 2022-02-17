@@ -3,8 +3,6 @@ parameters:
     type: string
   - name: env
     type: string
-  - name: env_long
-    type: string
   - name: location
     type: string
   - name: product
@@ -78,8 +76,8 @@ steps:
         echo "Logged in as oid $oid"
         
         echo "Creating Shared KV $kvName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env_long }}"
-        echo "businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env_long }}"
+        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ $env:env_long }}"
+        echo "businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ $env:env_long }}"
         newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
         
         kvId=$(echo $newKv | jq .id)
