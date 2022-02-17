@@ -8,9 +8,6 @@ parameters:
   - name: runStage
     type: string
     default: 'true'
-  - name: releaseBranchName
-    type: string
-    default: 'refs/heads/release'
 
 stages:
   - ${{ if eq(parameters.runStage, true)}}:
