@@ -29,7 +29,6 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        env_long: ${{env_long}}
         releaseBranchName: ${{ parameters['releaseBranchName'] }}
         ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
           runStage: 'false'
@@ -37,7 +36,6 @@ stages:
     - template: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
-        env_long: ${{env_long}}
         ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:  # prod + not release
           runStage: 'true' 
         ${{ if and(ne(env, 'prod'), eq(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), False )) }}: # not prod + not release
