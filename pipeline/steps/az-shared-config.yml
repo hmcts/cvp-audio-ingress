@@ -3,8 +3,8 @@ parameters:
     type: string
   - name: env
     type: string
-  - name: env_long
-    type: string
+  # - name: env_long
+  #   type: string
   - name: location
     type: string
   - name: product
