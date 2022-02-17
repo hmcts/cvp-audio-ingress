@@ -20,8 +20,6 @@ stages:
         vmImage: 'ubuntu-latest'
       condition: succeeded()
       dependsOn: Build
-      # ${{ if ne(parameters.dependsOnEnv, '') }}:
-      #   dependsOn: 'Test${{parameters.dependsOnEnv}}'
       variables:
         - template: ../variables/variables-common.yaml
         - template: ../variables/variables-${{parameters.env}}.yaml

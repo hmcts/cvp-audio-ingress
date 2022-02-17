@@ -3,6 +3,8 @@ parameters:
     type: string
   - name: env
     type: string
+  - name: env_long
+    type: string
   - name: location
     type: string
   - name: product
@@ -31,6 +33,7 @@ steps:
     parameters:
       subscriptionName: ${{parameters.subscriptionName}}
       env: ${{parameters.env}}
+      env_long: ${{parameters.env_long}}
       location: ${{parameters.location}}
       product: ${{parameters.product}}
       builtFrom: ${{parameters.builtFrom}}

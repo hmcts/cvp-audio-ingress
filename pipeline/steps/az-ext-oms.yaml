@@ -24,14 +24,10 @@ steps:
         $workspaceName="$env:WS_NAME"
         $workspaceSubscriptionName="$env:WS_SUB_NAME"
         $env = "${{ parameters.env }}"
+        $env_long = "${{ parameters.env_long }}"
 
         az account set -s $workspaceSubscriptionName
-                                                    
-        $environmentObj = [PSCustomObject]@{
-            "sbox" = "sandbox"
-            "stg"  = "staging"
-            "prod" = "production"
-        }
+
         $restApiPutBody = [PSCustomObject]@{
             "location" = "uksouth"
             "properties" = [PSCustomObject]@{
@@ -44,7 +40,7 @@ steps:
                     application  = 'Cloud'
                     BuiltFrom    = 'hmcts/cvp-audio-ingress'
                     BusinessArea = 'Cross-Cutting'
-                    environment  = $environmentObj.$env
+                    environment  = $env_long
                     Platform     = ''
                     Video        = ''
                 }    
