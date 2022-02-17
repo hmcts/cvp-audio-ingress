@@ -91,6 +91,7 @@ steps:
         then
           echo Keyvault $kv_existance already exists.
           kv_id=$kv_existance
+          echo kv_id $kv_id
           subscriptionId=$(az account show -s $(ws_sub_name) --query id -o tsv)
           kv_tag=$(az tag update --resource-id $kv_id --operation merge --tags $tags --subscription $subscriptionId )
           echo kv_tag $kv_tag
