@@ -81,8 +81,8 @@ steps:
         echo "Logged in as oid $oid"
         
         echo "Creating Shared KV $kvName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long"
-        echo "businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long"
+        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long rsm=rsm"
+        echo tag   $tags
 
         echo Checking if $kvName in $rgName exists
         kv_existance=$(az keyvault show --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }} | jq .id)
@@ -91,6 +91,8 @@ steps:
         then
           echo Keyvault $kv_id already exists.
           kv_id=$kv_existance
+          kv_tag=$(aaz tag update --resource-id $kv_id --operation merge --tags $tags)
+          echo kv_tag $kv_tag
         else
           echo creating $kvName kv
           newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
