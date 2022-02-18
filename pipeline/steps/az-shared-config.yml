@@ -81,8 +81,8 @@ steps:
         echo "Logged in as oid $oid"
         
         echo "Creating Shared KV $kvName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long rsm=rsm"
-        echo tag   $tags
+        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long"
+        echo tag: $tags
 
         echo Checking if $kvName in $rgName exists
         kv_existance=$(az keyvault show --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }} | jq .id)
@@ -93,8 +93,12 @@ steps:
           kv_id=$kv_existance
           echo kv_id $kv_id
           subscriptionId=$(az account show -s $(ws_sub_name) --query id -o tsv)
-          kv_tag=$(az tag update --resource-id $kv_id --operation merge --tags $tags --subscription $subscriptionId )
+          kv_tag=$(az tag update --resource-id "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-sharedinfra-prd/providers/Microsoft.KeyVault/vaults/cvp-prd-kv" --operation merge --tags $tags --subscription "5ca62022-6aa2-4cee-aaa7-e7536c8d566c" )
           echo kv_tag $kv_tag
+
+          kv_tag2=$(az tag create --name "cvp-prd-kv"  --resource-id "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-sharedinfra-prd/providers/Microsoft.KeyVault/vaults/cvp-prd-kv"  --subscription "5ca62022-6aa2-4cee-aaa7-e7536c8d566c" --tags $tags)
+          echo kv_tag2 $kv_tag2
+
         else
           echo creating $kvName kv
           newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
