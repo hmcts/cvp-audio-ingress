@@ -56,7 +56,7 @@ resource "azurerm_automation_account" "automation_account" {
 
   identity {
     type         = "SystemAssigned, UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.mi.id]
+    identity_ids = [data.azurerm_user_assigned_identity.mi.id]
   }
 
   tags = local.common_tags
