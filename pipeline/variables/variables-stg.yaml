@@ -1,5 +1,6 @@
 variables:
   env: 'stg'
+  env_long: 'staging'
   dns: 'cvp-recording.aat.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-STG'
   kv_name_prefix : 'cftapps'

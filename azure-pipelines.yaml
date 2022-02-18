@@ -2,7 +2,7 @@ trigger:
   - master
 pr:
   - master
-  
+
 resources:
   repositories:
     - repository: azTemplates
@@ -17,6 +17,10 @@ parameters:
     type: object
     values: []
     default: ['sbox','stg','prod']
+  - name: releaseBranchName 
+    displayName: Release branch substring. # if branch is release then will only run in prod. else, will run in all envs but prod env will only run plan
+    type: string
+    default: 'refs/heads/release'
 
 stages:
   - template: pipeline/stages/build.yaml 
@@ -25,17 +29,21 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
-          dependsOnEnv: ''
-        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-          dependsOnEnv: 'sbox'
-        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
-          dependsOnEnv: 'stg'
-
+        ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
+          runStage: 'false'
+          
     - template: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
+        ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:  # prod + not release
+          runStage: 'true' 
+        ${{ if and(ne(env, 'prod'), eq(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), False )) }}: # not prod + not release
+          runStage: 'true'
 
     - template: pipeline/stages/test.yaml
       parameters:
         env: ${{env}}
+        ${{ if and(eq(env, 'prod'), contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:  # prod + release
+          runStage: 'true' 
+        ${{ if and(ne(env, 'prod'), eq(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), False )) }}: # not prod + not release
+          runStage: 'true'
