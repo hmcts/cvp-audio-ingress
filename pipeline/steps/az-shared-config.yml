@@ -3,8 +3,6 @@ parameters:
     type: string
   - name: env
     type: string
-  # - name: env_long
-  #   type: string
   - name: location
     type: string
   - name: product
@@ -75,38 +73,15 @@ steps:
         rgName="$(rgName)"
         kvName="$(kvName)"
         oid=$(oid)
-        echo "rsm123"
         env_long=$(env_long)
-        echo env_long $env_long
         echo "Logged in as oid $oid"
         
         echo "Creating Shared KV $kvName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long"
+        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env_long }}"
         echo tag: $tags
-
-        echo Checking if $kvName in $rgName exists
-        kv_existance=$(az keyvault show --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }} | jq .id)
-
-        if [ $kv_existance > 0 ]
-        then
-          echo Keyvault $kv_existance already exists.
-          kv_id=$kv_existance
-          echo kv_id $kv_id
-          subscriptionId=$(az account show -s $(ws_sub_name) --query id -o tsv)
-          kv_tag=$(az tag update --resource-id "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-sharedinfra-prod/providers/Microsoft.KeyVault/vaults/cvp-prod-kv" --operation merge --tags $tags --subscription "5ca62022-6aa2-4cee-aaa7-e7536c8d566c" )
-          echo kv_tag $kv_tag
-
-          kv_tag2=$(az tag create --name "cvp-prd-kv"  --resource-id "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-sharedinfra-prod/providers/Microsoft.KeyVault/vaults/cvp-prod-kv"  --subscription "5ca62022-6aa2-4cee-aaa7-e7536c8d566c" --tags $tags)
-          echo kv_tag2 $kv_tag2
-
-        else
-          echo creating $kvName kv
-          newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
-          kvId=$(echo $newKv | jq .id)
-        fi
+        newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
         
-        # newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
-        # kvId=$(echo $newKv | jq .id)
+        kvId=$(echo $newKv | jq .id)
         echo "##vso[task.setvariable variable=kvId]$kvId"
 
         echo "Grant Service connection permissions on the KV"
