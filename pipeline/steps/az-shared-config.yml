@@ -93,10 +93,10 @@ steps:
           kv_id=$kv_existance
           echo kv_id $kv_id
           subscriptionId=$(az account show -s $(ws_sub_name) --query id -o tsv)
-          kv_tag=$(az tag update --resource-id "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-sharedinfra-prd/providers/Microsoft.KeyVault/vaults/cvp-prd-kv" --operation merge --tags $tags --subscription "5ca62022-6aa2-4cee-aaa7-e7536c8d566c" )
+          kv_tag=$(az tag update --resource-id "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-sharedinfra-prod/providers/Microsoft.KeyVault/vaults/cvp-prod-kv" --operation merge --tags $tags --subscription "5ca62022-6aa2-4cee-aaa7-e7536c8d566c" )
           echo kv_tag $kv_tag
 
-          kv_tag2=$(az tag create --name "cvp-prd-kv"  --resource-id "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-sharedinfra-prd/providers/Microsoft.KeyVault/vaults/cvp-prd-kv"  --subscription "5ca62022-6aa2-4cee-aaa7-e7536c8d566c" --tags $tags)
+          kv_tag2=$(az tag create --name "cvp-prd-kv"  --resource-id "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/cvp-sharedinfra-prod/providers/Microsoft.KeyVault/vaults/cvp-prod-kv"  --subscription "5ca62022-6aa2-4cee-aaa7-e7536c8d566c" --tags $tags)
           echo kv_tag2 $kv_tag2
 
         else
