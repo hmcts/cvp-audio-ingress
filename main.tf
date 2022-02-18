@@ -54,10 +54,10 @@ resource "azurerm_automation_account" "automation_account" {
 
   sku_name = var.automation_account_sku_name
 
-  identity {
-    type         = "SystemAssigned, UserAssigned"
-    identity_ids = [data.azurerm_user_assigned_identity.mi.id]
-  }
+  # identity {
+  #   type         = "SystemAssigned, UserAssigned"
+  #   identity_ids = [data.azurerm_user_assigned_identity.mi.id]
+  # }
 
   tags = local.common_tags
 }
