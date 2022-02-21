@@ -31,7 +31,10 @@ stages:
         env: ${{env}}
         ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
           runStage: 'false'
-          
+        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), False )) }}: # stg env + not release
+          runStage: 'true'
+          dependsOnEnv: 'sbox'
+
     - template: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
