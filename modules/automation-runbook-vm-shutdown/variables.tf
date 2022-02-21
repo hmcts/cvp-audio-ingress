@@ -25,20 +25,6 @@ variable "source_managed_identity_id" {
 }
 
 
-variable "environment" {
-  type        = string
-  description = "Environment Name e.g. sbox"
-}
-variable "product" {
-  type        = string
-  description = "Product prefix"
-}
-
-variable "key_vault_name" {
-  type        = string
-  description = "Key Vault Name to store secrets"
-}
-
 variable "automation_account_name" {
   type        = string
   description = "Automation Account Name"

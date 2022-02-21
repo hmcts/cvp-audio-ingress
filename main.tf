@@ -40,8 +40,8 @@ resource "azurerm_dns_a_record" "wowza" {
   resource_group_name = var.dns_resource_group
   ttl                 = 300
   records             = [var.lb_IPaddress]
-  
-  tags                = local.common_tags
+
+  tags = local.common_tags
 }
 
 # =================================================================
@@ -49,10 +49,10 @@ resource "azurerm_dns_a_record" "wowza" {
 # =================================================================
 
 module "vm_automation" {
-  source              = "./modules/automation-runbook-vm-shutdown"
-  aa_name             = "${var.product}-${var.env}-aa"
-  location            = var.location
-  resource_group_name = "${var.product}-recordings-${var.env}-rg"
+  source                  = "./modules/automation-runbook-vm-shutdown"
+  automation_account_name = "${var.product}-${var.env}-aa"
+  location                = var.location
+  resource_group_name     = "${var.product}-recordings-${var.env}-rg"
 
-  tags                = local.common_tags
+  tags = local.common_tags
 }
