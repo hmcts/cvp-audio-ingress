@@ -24,7 +24,16 @@ variable "source_managed_identity_id" {
   default     = ""
 }
 
-
+## Azure Automation
+variable "automation_account_sku_name" {
+  type        = string
+  description = "Azure B2C SKU name"
+  default     = "Basic"
+  validation {
+    condition     = contains(["Basic"], var.automation_account_sku_name)
+    error_message = "Azure Automation Account SKUs are limited to Basic."
+  }
+}
 variable "automation_account_name" {
   type        = string
   description = "Automation Account Name"

@@ -53,7 +53,6 @@ module "vm_automation" {
   automation_account_name = "${var.product}-${var.env}-aa"
   location                = var.location
   resource_group_name     = "${var.product}-recordings-${var.env}-rg"
-  sku_name                = var.automation_account_sku_name
 
   tags = local.common_tags
 }

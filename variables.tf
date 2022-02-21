@@ -94,14 +94,3 @@ variable "sa_recording_retention" {
   type        = number
   description = "How long to retain the recordings in blob"
 }
-
-## Azure Automation
-variable "automation_account_sku_name" {
-  type        = string
-  description = "Azure B2C SKU name"
-  default     = "Basic"
-  validation {
-    condition     = contains(["Basic"], var.automation_account_sku_name)
-    error_message = "Azure Automation Account SKUs are limited to Basic."
-  }
-}
