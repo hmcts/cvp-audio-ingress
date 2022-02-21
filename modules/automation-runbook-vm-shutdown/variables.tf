@@ -25,6 +25,11 @@ variable "source_managed_identity_id" {
 }
 
 ## Azure Automation
+variable "automation_account_name" {
+  type        = string
+  description = "automation account name"
+}
+
 variable "automation_account_sku_name" {
   type        = string
   description = "Azure B2C SKU name"
