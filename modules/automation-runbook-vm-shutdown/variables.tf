@@ -34,24 +34,4 @@ variable "automation_account_sku_name" {
     error_message = "Azure Automation Account SKUs are limited to Basic."
   }
 }
-variable "automation_account_name" {
-  type        = string
-  description = "Automation Account Name"
-}
 
-variable "target_tenant_id" {
-  type        = string
-  description = "Target Active Directory Tenant ID. If empty it will use current context"
-  default     = ""
-}
-variable "target_application_id" {
-  type        = string
-  description = "Application ID with access to Tenant. If target_tenant_id is empty this will not be used."
-  default     = ""
-}
-variable "target_application_secret" {
-  type        = string
-  description = "Application Secret with access to Tenant. If target_tenant_id is empty this will not be used."
-  default     = ""
-  sensitive   = true
-}
