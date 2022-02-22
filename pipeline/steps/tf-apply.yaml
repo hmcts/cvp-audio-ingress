@@ -67,11 +67,11 @@ steps:
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: '${{ parameters.env }}.tfplan -no-color'
     
-    - task: PublishPipelineArtifact@1
-      displayName: Publish Terraform Logs
-      inputs:
-        targetPath: $(System.DefaultWorkingDirectory)
-        artifactName: "tf_log.txt"
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Terraform Logs
+    inputs:
+      targetPath: $(System.DefaultWorkingDirectory)
+      artifactName: "tf_log.txt"  
 
   # - task: AzureCLI@2
   #   displayName: 'Enable Logging'
