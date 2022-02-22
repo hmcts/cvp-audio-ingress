@@ -72,7 +72,7 @@ steps:
     displayName: Publish Terraform Logs
     inputs:
       targetPath: $(System.DefaultWorkingDirectory)
-      artifactName: "tf_log.txt"  
+      artifactName: "tf_log.log"  
 
   # - task: AzureCLI@2
   #   displayName: 'Enable Logging'
