@@ -46,11 +46,9 @@ $wsSsubscriptionId=az account show -s $global:ws_sub_name --query id -o tsv
 
 $subscriptionId=$(az account show -s $ws_sub_name --query id -o tsv)
 
-$azResourceId="/subscriptions/$subscriptionId/resourceGroups/cvp-recordings-$env-rg/providers/Microsoft.Compute/virtualMachines/cvp-recordings-$env-vm"
-$tfConfig="module.wowza.azurerm_linux_virtual_machine.vm"
+$azResourceId="/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/core-infra-intsvc-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/A/cvprecordingssboxsa"
+$tfConfig="module.wowza.azurerm_private_dns_a_record.sa_a_record"
 
-terraform init -reconfigure
+#terraform init -reconfigure
 
-terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "ws_sub_id=$wsSsubscriptionId" $tfConfig"2" $azResourceId"2"
-
-terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "ws_sub_id=$wsSsubscriptionId" $tfConfig"1" $azResourceId"1"
+terraform import -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "ws_sub_id=$wsSsubscriptionId" $tfConfig $azResourceId

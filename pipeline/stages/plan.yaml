@@ -23,6 +23,56 @@ stages:
       - job: PlanToEnv${{parameters.env}}
         displayName: 'Plan to ${{parameters.env}}'
         steps:
+          - task: AzureCLI@2
+            displayName: Getting add vnet link 
+            inputs:
+              azureSubscription: ${{ parameters.subscriptionName }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                $subscriptionName="DTS-CFTPTL-INTSVC"
+                $subId=az account show -s $subscriptionName --query "id" -o tsv
+
+                $resourceGroupName="core-infra-intsvc-rg"
+                $location="Global"
+
+                $privateDnsName="privatelink.blob.core.windows.net"
+
+                $virtualNetworkLinkName="cvpsbox"
+
+                $virtualNetworkName="cvp-recordings-sbox-vnet"
+                $virtualNetworkRg="cvp-recordings-sbox-rg"
+                $virtualNetworkId="$(az network vnet show -g $virtualNetworkRg -n $virtualNetworkName --query "id" -o tsv)"
+
+
+                $body = [PSCustomObject]@{
+                  location = $location
+                  tags = @{
+                    "application"  = "Cloud-Video-Platform"
+                    "builtFrom"    = "hmcts/cvp-audio-ingress"
+                    "businessArea" = "Cross-Cutting"
+                    "criticality"  = "Low"
+                    "environment"  = "sandbox"
+                  }
+                  properties = @{
+                    virtualNetwork = @{
+                      id = $virtualNetworkId
+                    }
+                    registrationEnabled = $false
+                  }
+                }
+
+
+                $restUrl="https://management.azure.com/subscriptions/$subId/resourceGroups/$resourceGroupName/providers/Microsoft.Network/privateDnsZones/$privateDnsName/virtualNetworkLinks/$virtualNetworkLinkName`?api-version=2018-09-01"
+
+                Write-Host "Request: $restUrl"
+                $jsonBody = $body | ConvertTo-Json -Compress -Depth 100
+                $jsonBody = $jsonBody -replace "`"","\`""
+                Write-Host "Body: $jsonBody"
+
+                az rest --method PUT --uri $restUrl --body $jsonBody --debug
+
+              
           - template: ../steps/tf-install.yaml
           - template: ../steps/tf-init.yaml
             parameters:
