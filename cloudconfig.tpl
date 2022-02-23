@@ -402,6 +402,7 @@ write_files:
       exit 0
   - owner: wowza:wowza
     path: /home/wowza/mount.sh
+    permissions: 0775
     content: |
       #!/bin/bash
 
@@ -417,6 +418,7 @@ write_files:
       sudo -u wowza bash -c "crontab $cronTaskPath"
   - owner: wowza:wowza
     path: /home/wowza/remount.sh
+    permissions: 0775
     content: |
         mountDir="$5"
         logPath="/usr/local/WowzaStreamingEngine/azlogs/log-mount.log"
