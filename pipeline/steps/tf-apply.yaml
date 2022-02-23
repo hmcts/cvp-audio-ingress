@@ -30,8 +30,6 @@ parameters:
 
 steps:
 
-  - bash: export TF_LOG=TRACE && export TF_LOG_PATH="tf_log.txt"
-    displayName: 'Setup Terraform Logging'
   
   - template: tf-init.yaml
     parameters:
@@ -67,13 +65,7 @@ steps:
       command: 'apply'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: '${{ parameters.env }}.tfplan -no-color'
-    
-  - task: PublishPipelineArtifact@1
-    displayName: Publish Terraform Logs
-    inputs:
-      targetPath: $(System.DefaultWorkingDirectory)
-      artifactName: "tf_log.log"  
-
+       
   # - task: AzureCLI@2
   #   displayName: 'Enable Logging'
   #   inputs:
