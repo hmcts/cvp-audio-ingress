@@ -47,6 +47,8 @@ steps:
         }
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
+        Write-Output "====restApiPutBodyJson===="
+        Write-Output $restApiPutBodyJson
 
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
 
