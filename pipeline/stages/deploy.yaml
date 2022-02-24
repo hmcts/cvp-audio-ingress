@@ -63,7 +63,6 @@ stages:
                 vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
                 vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 env: ${{variables.env}}
-                env_long: ${{variables.env_long}}
 
             - template: ../steps/az-ext-dynatrace-api.yaml
               parameters:

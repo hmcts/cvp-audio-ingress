@@ -9,9 +9,6 @@ parameters:
   - name: env
     type: string
     default: 'sbox'
-  - name: env_long
-    type: string
-    default: 'sbox'
 
 steps:
   - task: AzureCLI@2
@@ -27,7 +24,7 @@ steps:
         $workspaceName="$env:WS_NAME"
         $workspaceSubscriptionName="$env:WS_SUB_NAME"
         $env = "${{ parameters.env }}"
-        $env_long = "${{ parameters.env }}"
+        $env_long = "$env:env_long"
         Write-Output "====env_long===="
         Write-Output $env_long
 
