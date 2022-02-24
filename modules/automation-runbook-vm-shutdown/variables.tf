@@ -7,36 +7,26 @@ variable "resource_group_name" {
   type        = string
   description = "Resource Group Name"
 }
+variable "env" {
+  type = string
+}
 variable "tags" {
   type        = map(string)
   description = "Runbook Tags"
 }
-
-variable "application_id_collection" {
-  type        = list(string)
-  description = "List of Application IDs to manage"
-  default     = []
-}
-
-variable "source_managed_identity_id" {
-  type        = string
-  description = "Managed Identity to authenticate with. Default will use current context."
-  default     = ""
-}
-
 ## Azure Automation
 variable "automation_account_name" {
   type        = string
   description = "automation account name"
 }
-
-variable "automation_account_sku_name" {
-  type        = string
-  description = "Azure B2C SKU name"
-  default     = "Basic"
-  validation {
-    condition     = contains(["Basic"], var.automation_account_sku_name)
-    error_message = "Azure Automation Account SKUs are limited to Basic."
-  }
+variable "vm_names" {
+  type = string
 }
-
+variable "vm_target_status" {
+  type        = string
+  description = "Target states for running state. Valid states are 'on' or 'off'"
+}
+variable "vm_change_status" {
+  type        = bool
+  description = "Should vm states be changed"
+}

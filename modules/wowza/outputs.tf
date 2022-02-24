@@ -3,6 +3,15 @@ output "vnet_id" {
   value       = azurerm_virtual_network.vnet.id
 }
 
+output "vm1_name" {
+  description = "name of virtual machine 1"
+  value       = azurerm_linux_virtual_machine.vm1.name
+}
+output "vm2_name" {
+  description = "name of virtual machine 2"
+  value       = azurerm_linux_virtual_machine.vm2.name
+}
+
 output "rest_password" {
   description = ""
   value       = random_password.restPassword.result

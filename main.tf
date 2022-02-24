@@ -45,14 +45,27 @@ resource "azurerm_dns_a_record" "wowza" {
 }
 
 # =================================================================
-# ========  automation account for vm shutdown/start  =============
+# =================    automation account    ======================
 # =================================================================
 
-module "vm_automation" {
-  source                  = "./modules/automation-runbook-vm-shutdown"
-  automation_account_name = "${var.product}-${var.env}-aa"
-  location                = var.location
-  resource_group_name     = "${var.product}-recordings-${var.env}-rg"
+resource "azurerm_automation_account" "vm-start-stop" {
+  name                = "${var.product}-${var.env}-aa"
+  location            = var.location
+  resource_group_name = "${var.product}-recordings-${var.env}-rg"
+  sku_name            = var.automation_account_sku_name
 
   tags = local.common_tags
+}
+
+#  vm shutdown/start runbook
+module "vm_automation" {
+  source                  = "./modules/automation-runbook-vm-shutdown"
+  automation_account_name = azurerm_automation_account.vm-start-stop.name
+  location                = var.location
+  env                     = var.env
+  resource_group_name     = "${var.product}-recordings-${var.env}-rg"
+  vm_names                = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
+  vm_target_status        = var.vm_target_status
+  vm_change_status        = var.vm_change_status
+  tags                    = local.common_tags
 }

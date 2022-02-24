@@ -8,3 +8,5 @@ rtmps_source_address_prefixes = ["35.204.50.163", "35.204.108.36", "34.91.92.40"
 ws_name                       = "hmcts-sandbox"
 ws_rg                         = "oms-automation"
 num_applications              = 20
+vm_target_status              = "off"
+vm_change_status              = true
