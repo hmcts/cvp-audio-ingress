@@ -1,6 +1,6 @@
 locals {
   schedule_time   = "2022-04-02T10:00:00Z"
-  runbook_content = file("${var.runbook_name}")
+  runbook_content = file("./${var.runbook_name}")
 }
 
 ############ automation account  + runbook #############
@@ -13,7 +13,7 @@ resource "azurerm_automation_runbook" "vm-start-stop" {
   log_progress            = "false"
   description             = "This is a runbook used to stop and start cvp VMs"
   runbook_type            = "PowerShell" #"PowerShellWorkflow"
-  content                 = file("${var.runbook_name}")
+  content                 = local.runbook_content
   publish_content_link {
     uri = ""
   }

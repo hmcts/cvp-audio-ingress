@@ -36,6 +36,6 @@ variable "resource_group_id" {
 }
 variable "runbook_name" {
   type        = string
-  description = "wowza resource group id"
+  description = "runbook name"
 }
 
