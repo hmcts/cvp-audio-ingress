@@ -39,14 +39,14 @@ steps:
       product: ${{parameters.product}}
       useBackend: true
 
-  - task: AzureCLI@2
-    displayName: Accept Terms of Wowza VM in Marketplace
-    inputs:
-      azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        az vm image terms accept --urn ${{ parameters.wowza_publisher }}:${{ parameters.wowza_offer }}:${{ parameters.wowza_sku }}:${{ parameters.wowza_version }}
+  # - task: AzureCLI@2
+  #   displayName: Accept Terms of Wowza VM in Marketplace
+  #   inputs:
+  #     azureSubscription: '${{ parameters.subscriptionName }}'
+  #     scriptType: 'bash'
+  #     scriptLocation: 'inlineScript'
+  #     inlineScript: |
+  #       az vm image terms accept --urn ${{ parameters.wowza_publisher }}:${{ parameters.wowza_offer }}:${{ parameters.wowza_sku }}:${{ parameters.wowza_version }}
 
   - task: DownloadPipelineArtifact@2
     displayName: Download Terraform Plan
