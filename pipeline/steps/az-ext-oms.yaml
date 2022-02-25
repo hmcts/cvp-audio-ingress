@@ -24,7 +24,7 @@ steps:
         $workspaceName="$env:WS_NAME"
         $workspaceSubscriptionName="$env:WS_SUB_NAME"
         $env = "${{ parameters.env }}"
-        $env_long = "$env:env_long"
+        $env_long = "$env:ENV_LONG"
         Write-Output "====env_long===="
         Write-Output $env_long
 
@@ -54,12 +54,12 @@ steps:
 
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
 
-#  - ${{ each vm in parameters.vmNames }}:
-#    - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
-#      parameters:
-#        subscription: ${{ parameters.subscription }}
-#        rgName: ${{ parameters.vmRgName }}
-#        vmName: ${{ vm }}
-#        extName: "OmsAgentForLinux"
-#        extPublisher: "Microsoft.EnterpriseCloud.Monitoring"
-#        restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
+  - ${{ each vm in parameters.vmNames }}:
+    - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
+      parameters:
+        subscription: ${{ parameters.subscription }}
+        rgName: ${{ parameters.vmRgName }}
+        vmName: ${{ vm }}
+        extName: "OmsAgentForLinux"
+        extPublisher: "Microsoft.EnterpriseCloud.Monitoring"
+        restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)
