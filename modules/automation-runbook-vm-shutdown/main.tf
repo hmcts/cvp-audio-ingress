@@ -1,6 +1,6 @@
 locals {
   schedule_time   = "2022-04-02T10:00:00Z"
-  runbook_content = file("./${var.runbook_name}")
+  runbook_content = file("./${var.script_name}")
 }
 
 ############ automation account  + runbook #############

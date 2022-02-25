@@ -115,7 +115,7 @@ variable "vm_change_status" {
   description = "Should VM status be changed"
   default     = false
 }
-variable "runbook_name" {
+variable "script_name" {
   type        = string
   description = "runbook name"
   default     = false

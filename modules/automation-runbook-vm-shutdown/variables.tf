@@ -32,10 +32,10 @@ variable "vm_change_status" {
 }
 variable "resource_group_id" {
   type        = string
-  description = "wowza resource group id"
+  description = "resource group id"
 }
-variable "runbook_name" {
+variable "script_name" {
   type        = string
-  description = "runbook name"
+  description = "script name for runbook"
 }
 
