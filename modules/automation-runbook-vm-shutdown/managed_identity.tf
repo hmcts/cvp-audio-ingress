@@ -27,9 +27,9 @@ resource "azurerm_role_definition" "virtual-machine-control" {
 }
 # Assign the new role to the user assigned managed identity
 resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
-  scope                = var.resource_group_id
-  role_definition_id   = azurerm_role_definition.virtual-machine-control.role_definition_resource_id
-  principal_id         = azurerm_user_assigned_identity.cvp-automation-account-mi.principal_id
+  scope              = var.resource_group_id
+  role_definition_id = azurerm_role_definition.virtual-machine-control.role_definition_resource_id
+  principal_id       = azurerm_user_assigned_identity.cvp-automation-account-mi.principal_id
 
 
   depends_on = [
