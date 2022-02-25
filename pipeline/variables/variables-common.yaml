@@ -9,3 +9,4 @@ variables:
   businessArea: 'Cross-Cutting'
   application: 'Cloud Video Platform'
   dev_source_address_prefixes: '127.0.0.1'
+  dynatrace_network_zone: "azure.sds"

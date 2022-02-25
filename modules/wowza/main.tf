@@ -297,7 +297,7 @@ data "azurerm_key_vault_secret" "ssh_pub_key" {
 resource "azurerm_linux_virtual_machine" "vm1" {
   name = "${local.service_name}-vm1"
 
-  /*  depends_on = [
+ /*  depends_on = [
     azurerm_private_dns_a_record.sa_a_record,
     azurerm_private_dns_zone_virtual_network_link.vnet_link
   ] */

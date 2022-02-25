@@ -24,7 +24,9 @@ steps:
         $workspaceName="$env:WS_NAME"
         $workspaceSubscriptionName="$env:WS_SUB_NAME"
         $env = "${{ parameters.env }}"
-        $env_long = "$env:env_long"
+        $env_long = "$env:ENV_LONG"
+        Write-Output "====env_long===="
+        Write-Output $env_long
 
         az account set -s $workspaceSubscriptionName
 

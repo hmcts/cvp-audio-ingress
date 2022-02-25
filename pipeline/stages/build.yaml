@@ -23,6 +23,3 @@ stages:
           - template: templates/tests/terraform/allTests.yaml@azTemplates
             parameters:
               terraformPath: $(System.DefaultWorkingDirectory)
-
-
-              
