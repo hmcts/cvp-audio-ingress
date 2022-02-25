@@ -21,6 +21,11 @@ There are two pipelines for CVP, with one for deployment and a nightly run for a
 **CVP Release Pipeline**
 https://dev.azure.com/hmcts/Shared%20Services/_build?definitionId=337
 
+This will Plan, Apply and Test sbox and stg environments in order. Afterwards it will run the Plan stage for the prod environment. Aproval is required prior to Apply stage in 'stg' environment.
+
+**Path to Live**
+To apply changes to prod environment, a release branch beginning with 'release' is created from main. This release branch will only run the Plan, Apply and Test stages in the prod environment. Similar to the 'stg' environment, approval is required prior to Apply stage.
+
 This will Plan, Apply and Test each environment in order with approval at each stage.
 
 **CVP Nightly Pipeline**

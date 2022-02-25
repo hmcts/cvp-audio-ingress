@@ -13,10 +13,13 @@ stages:
   - ${{ if eq(parameters.runStage, true)}}:
     - stage: 'Plan${{parameters.env}}'
       displayName: 'Plan ${{parameters.env}}'
+      ${{ if eq(parameters.dependsOnEnv, '') }}:
+        dependsOn: Build
+      ${{ if ne(parameters.dependsOnEnv, '') }}:
+        dependsOn: 'Test${{parameters.dependsOnEnv}}'
       pool:
         vmImage: 'ubuntu-latest'
       condition: succeeded()
-      dependsOn: Build
       variables:
         - template: ../variables/variables-common.yaml
         - template: ../variables/variables-${{parameters.env}}.yaml
