@@ -97,6 +97,21 @@ keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
 ```
 More details about CVP Certificates are here https://tools.hmcts.net/confluence/display/VIH/SSL+Certificates
 
+### Accepting Wowza Terms & Conditions in Marketplace
+
+For each Subscription, you will need to accept the Terms and Conditions for each Wowza VM on the Marketplace. If you need to accept the Terms & Conditions, you can add in the following task to the Apply step, after Terraform init:
+
+```
+- task: AzureCLI@2
+    displayName: Accept Terms of Wowza VM in Marketplace
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName }}'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az vm image terms accept --urn ${{ parameters.wowza_publisher }}:${{ parameters.wowza_offer }}:${{ parameters.wowza_sku }}:${{ parameters.wowza_version }}
+```
+
 ### **Resolution**
 
 Most things can be fixed with either a restart or by running `sudo /home/wowza/runcmd.sh` on the Virtual Machine, which will check and reinstall all missing components.
