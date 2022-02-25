@@ -57,16 +57,16 @@ resource "azurerm_automation_account" "vm-start-stop" {
   tags = local.common_tags
 }
 
-#  vm shutdown/start runbook
-module "vm_automation" {
-  source                  = "./modules/automation-runbook-vm-shutdown"
-  automation_account_name = azurerm_automation_account.vm-start-stop.name
-  location                = var.location
-  env                     = var.env
-  resource_group_name     = "${var.product}-recordings-${var.env}-rg"
-  resource_group_id       = module.wowza.wowza_rg_id
-  vm_names                = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
-  vm_target_status        = var.vm_target_status
-  vm_change_status        = var.vm_change_status
-  tags                    = local.common_tags
-}
+# #  vm shutdown/start runbook
+# module "vm_automation" {
+#   source                  = "./modules/automation-runbook-vm-shutdown"
+#   automation_account_name = azurerm_automation_account.vm-start-stop.name
+#   location                = var.location
+#   env                     = var.env
+#   resource_group_name     = "${var.product}-recordings-${var.env}-rg"
+#   resource_group_id       = module.wowza.wowza_rg_id
+#   vm_names                = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
+#   vm_target_status        = var.vm_target_status
+#   vm_change_status        = var.vm_change_status
+#   tags                    = local.common_tags
+# }
