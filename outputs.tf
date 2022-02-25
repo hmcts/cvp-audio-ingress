@@ -14,8 +14,3 @@ output "stream_password" {
 #   description = "Public IP for LB - This needs to be added to https://github.com/hmcts/azure-public-dns"
 #   value       = module.wowza.lb_pip
 # }
-
-output "wowza_rg_id" {
-  description = "wowza_rg_id"
-  value       = module.wowza.wowza_rg_id
-}

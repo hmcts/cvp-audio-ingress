@@ -47,3 +47,24 @@ resource "azurerm_automation_job_schedule" "vm-start-stop" {
     vm_change_status = var.vm_change_status
   }
 }
+
+output "mi_principal_id" {
+  description = "mi_principal_id"
+  value       = azurerm_user_assigned_identity.cvp-automation-account-mi.principal_id
+}
+output "vm_names" {
+  description = "vm_names"
+  value       = var.vm_names
+}
+output "resource_group_name" {
+  description = "resource_group_name"
+  value       = var.resource_group_name
+}
+output "vm_target_status" {
+  description = "vm_target_status"
+  value       = var.vm_target_status
+}
+output "vm_change_status" {
+  description = "vm_change_status"
+  value       = var.vm_change_status
+}
