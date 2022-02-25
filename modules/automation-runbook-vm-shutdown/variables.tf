@@ -30,3 +30,8 @@ variable "vm_change_status" {
   type        = bool
   description = "Should vm states be changed"
 }
+variable "resource_group_id" {
+  type        = string
+  description = "wowza resource group id"
+}
+

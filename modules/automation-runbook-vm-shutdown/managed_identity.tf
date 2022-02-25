@@ -11,7 +11,7 @@ resource "azurerm_user_assigned_identity" "cvp-automation-account-mi" {
 # Create a custom, limited role for our managed identity
 resource "azurerm_role_definition" "virtual-machine-control" {
   name        = "CVP-VM-Control-${var.env}"
-  scope       = var.resource_group_name
+  scope       = var.resource_group_id
   description = "Custom Role for controlling virtual machines"
   permissions {
     actions = [
@@ -27,7 +27,7 @@ resource "azurerm_role_definition" "virtual-machine-control" {
 }
 # Assign the new role to the user assigned managed identity
 resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
-  scope                = var.resource_group_name
+  scope                = var.resource_group_id
   role_definition_name = "CVP-VM-Control-${var.env}"
   principal_id         = azurerm_user_assigned_identity.cvp-automation-account-mi.principal_id
 

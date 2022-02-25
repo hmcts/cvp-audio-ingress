@@ -64,6 +64,7 @@ module "vm_automation" {
   location                = var.location
   env                     = var.env
   resource_group_name     = "${var.product}-recordings-${var.env}-rg"
+  resource_group_id       = module.wowza.vm1_name.wowza_rg_id
   vm_names                = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
   vm_target_status        = var.vm_target_status
   vm_change_status        = var.vm_change_status
