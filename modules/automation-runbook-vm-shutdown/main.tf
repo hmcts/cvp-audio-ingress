@@ -15,7 +15,7 @@ resource "azurerm_automation_runbook" "vm-start-stop" {
   runbook_type            = "PowerShell" #"PowerShellWorkflow"
   content                 = local.runbook_content
   publish_content_link {
-    uri = ""
+    uri = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/VIH-8544/modules/automation-runbook-vm-shutdown/vm-start-stop.ps1"
   }
 
   tags = var.tags
