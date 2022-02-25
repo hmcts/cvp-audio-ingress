@@ -71,3 +71,20 @@ module "vm_automation" {
   vm_change_status        = var.vm_change_status
   tags                    = local.common_tags
 }
+
+output "vm_names" {
+  description = "vm_names"
+  value       = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
+}
+output "resource_group_name" {
+  description = "resource_group_name"
+  value       = "${var.product}-recordings-${var.env}-rg"
+}
+output "vm_target_status" {
+  description = "vm_target_status"
+  value       = var.vm_target_status
+}
+output "vm_change_status" {
+  description = "vm_change_status"
+  value       = var.vm_change_status
+}
