@@ -22,7 +22,7 @@ resource "azurerm_role_definition" "virtual-machine-control" {
     not_actions = []
   }
   assignable_scopes = [
-    var.resource_group_name,
+    var.resource_group_id,
   ]
 }
 # Assign the new role to the user assigned managed identity
