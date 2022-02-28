@@ -162,10 +162,14 @@ stages:
                 $vm2Details = az vm get-instance-view --name $vm2 --resource-group $resourcegroup | ConvertFrom-Json
                 $statusVm1 = $vm1Details.instanceView.statuses[1].Code
                 $statusVm2 = $vm2Details.instanceView.statuses[1].Code
+                Write-Output "Initial VM status for '$vm1'= $statusVm1"
                 if ( $vm_change_status -eq $true -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm1){
+                  Write-Output "Starting VM '$vm1'"
                   az vm deallocate --name $vm1 --resource-group $resourcegroup
                 }
+                Write-Output "Initial VM status for '$vm2'= $statusVm2"
                 if ( $vm_change_status -eq $true -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm2){
+                  Write-Output "Starting VM '$vm2'"
                   az vm deallocate --name $vm2 --resource-group $resourcegroup
                 }
             
