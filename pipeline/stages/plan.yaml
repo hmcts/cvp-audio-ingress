@@ -35,7 +35,7 @@ stages:
             displayName: 'VmOn${{parameters.env}}'
             condition: always()
             inputs:
-              azureSubscription: ${{ parameters.subscription }}
+              azureSubscription: '${{variables.subscriptionName}}'
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
