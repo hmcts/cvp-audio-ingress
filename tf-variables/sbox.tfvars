@@ -9,11 +9,13 @@ ws_name                       = "hmcts-sandbox"
 ws_rg                         = "oms-automation"
 num_applications              = 20
 script_name                   = "./modules/automation-runbook-vm-shutdown/vm-start-stop.ps1"
-vm_target_status              = "off"
-vm_change_status              = true
+vm_status = {
+  "vm_target_status" = "off"
+  "vm_change_status" = true
+}
 runbook_schedule_times = {
   "frequency"  = "Day"
   "interval"   = 1
   "timezone"   = "Europe/London"
-  "start_time" = "2022-02-28T13:33:00Z"
+  "start_time" = "2022-02-28T13:50:00Z"
 }

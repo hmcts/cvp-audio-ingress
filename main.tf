@@ -72,25 +72,7 @@ module "vm_automation" {
   resource_group_id       = module.wowza.wowza_rg_id
   script_name             = var.script_name
   vm_names                = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
-  vm_target_status        = var.vm_target_status
-  vm_change_status        = var.vm_change_status
+  vm_status               = var.vm_status
   runbook_schedule_times  = var.runbook_schedule_times
   tags                    = local.common_tags
-}
-
-output "vm_names" {
-  description = "vm_names"
-  value       = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
-}
-output "resource_group_name" {
-  description = "resource_group_name"
-  value       = "${var.product}-recordings-${var.env}-rg"
-}
-output "vm_target_status" {
-  description = "vm_target_status"
-  value       = var.vm_target_status
-}
-output "vm_change_status" {
-  description = "vm_change_status"
-  value       = var.vm_change_status
 }

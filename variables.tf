@@ -105,15 +105,8 @@ variable "automation_account_sku_name" {
     error_message = "Azure Automation Account SKUs are limited to Basic."
   }
 }
-variable "vm_target_status" {
-  type        = string
-  description = "The state that VMs should be in"
-  default     = ""
-}
-variable "vm_change_status" {
-  type        = bool
-  description = "Should VM status be changed"
-  default     = false
+variable "vm_status" {
+  default = {}
 }
 variable "script_name" {
   type        = string

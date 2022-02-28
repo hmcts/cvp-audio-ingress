@@ -22,13 +22,8 @@ variable "automation_account_name" {
 variable "vm_names" {
   type = string
 }
-variable "vm_target_status" {
-  type        = string
-  description = "Target states for running state. Valid states are 'on' or 'off'"
-}
-variable "vm_change_status" {
-  type        = bool
-  description = "Should vm states be changed"
+variable "vm_status" {
+  default = {}
 }
 variable "resource_group_id" {
   type        = string
