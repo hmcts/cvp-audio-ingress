@@ -48,10 +48,10 @@ stages:
                 $statusVm1 = $vm1Details.instanceView.statuses[1].Code
                 $statusVm2 = $vm2Details.instanceView.statuses[1].Code
                 if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
-                  Start-AzVM -Name $vm1 -ResourceGroupName $resourcegroup
+                  az vm start --name $vm1 --resource-group $resourcegroup
                 }
                 if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm2){
-                  Start-AzVM -Name $vm2 -ResourceGroupName $resourcegroup
+                  az vm start --name $vm2 --resource-group $resourcegroup
                 }
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
