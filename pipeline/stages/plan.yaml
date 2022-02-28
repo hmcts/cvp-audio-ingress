@@ -11,29 +11,6 @@ parameters:
 
 stages:
   - ${{ if eq(parameters.runStage, true)}}:
-    - task: AzureCLI@2
-      stage: '${{parameters.env}}VmOn'
-      displayName: '${{parameters.env}}VmOn'
-      name: '${{parameters.env}}VmOn'
-      condition: always()
-      inputs:
-        azureSubscription: ${{ parameters.subscription }}
-        scriptType: pscore
-        scriptLocation: inlineScript
-        inlineScript: |
-          $vm_change_status="$env:VM_CHANGE_STATUS"
-          $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
-          $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
-          $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
-          $statusVm1 = (Get-AzVM -ResourceGroupName $resourcegroup -Name $vm1 -Status -DefaultProfile $AzureContext).Statuses[1].Code
-          $statusVm2 = (Get-AzVM -ResourceGroupName $resourcegroup -Name $vm2 -Status -DefaultProfile $AzureContext).Statuses[1].Code
-          if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
-            Start-AzVM -Name $vm1 -ResourceGroupName $resourcegroup
-          }
-          if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm2){
-            Start-AzVM -Name $vm2 -ResourceGroupName $resourcegroup
-          }
-
     - stage: 'Plan${{parameters.env}}'
       displayName: 'Plan ${{parameters.env}}'
       ${{ if eq(parameters.dependsOnEnv, '') }}:
@@ -50,6 +27,27 @@ stages:
         - template: ../variables/variables-${{parameters.env}}.yaml
         - group: cvp-${{parameters.env}}
       jobs:
+        - task: AzureCLI@2
+          name: 'VmOn${{parameters.env}}'
+          displayName: 'VmOn${{parameters.env}}'
+          condition: always()
+          inputs:
+            azureSubscription: ${{ parameters.subscription }}
+            scriptType: pscore
+            scriptLocation: inlineScript
+            inlineScript: |
+              $vm_change_status="$env:VM_CHANGE_STATUS"
+              $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
+              $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
+              $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
+              $statusVm1 = (Get-AzVM -ResourceGroupName $resourcegroup -Name $vm1 -Status -DefaultProfile $AzureContext).Statuses[1].Code
+              $statusVm2 = (Get-AzVM -ResourceGroupName $resourcegroup -Name $vm2 -Status -DefaultProfile $AzureContext).Statuses[1].Code
+              if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
+                Start-AzVM -Name $vm1 -ResourceGroupName $resourcegroup
+              }
+              if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm2){
+                Start-AzVM -Name $vm2 -ResourceGroupName $resourcegroup
+              }
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
           steps:
