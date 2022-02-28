@@ -133,7 +133,7 @@ stages:
 
     - stage: 'StopVM${{parameters.env}}'
       displayName: 'Turning Vm off ${{parameters.env}}'
-      dependsOn: [LoadBalancerTest, VirtualMachineTest]
+      dependsOn: Test${{parameters.env}}
       pool:
         vmImage: 'ubuntu-latest'
       condition: succeeded()
