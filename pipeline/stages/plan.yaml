@@ -43,8 +43,10 @@ stages:
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
                 $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
                 $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
-                $statusVm1 = (Get-AzVM -ResourceGroupName $resourcegroup -Name $vm1 -Status -DefaultProfile $AzureContext).Statuses[1].Code
-                $statusVm2 = (Get-AzVM -ResourceGroupName $resourcegroup -Name $vm2 -Status -DefaultProfile $AzureContext).Statuses[1].Code
+                $vm1Details = az vm get-instance-view --name $vm1 --resource-group $resourcegroup | ConvertFrom-Json
+                $vm2Details = az vm get-instance-view --name $vm2 --resource-group $resourcegroup | ConvertFrom-Json
+                $statusVm1 = $vm1Details.instanceView.statuses[1].Code
+                $statusVm2 = $vm2Details.instanceView.statuses[1].Code
                 if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
                   Start-AzVM -Name $vm1 -ResourceGroupName $resourcegroup
                 }
