@@ -131,19 +131,16 @@ stages:
                   subscriptionName: ${{ variables.subscriptionName }}
                   env: ${{ variables.env }}
 
-    - stage: 'StopVM${{parameters.env}}'
-      displayName: 'Turning Vm off ${{parameters.env}}'
-      dependsOn: Test${{parameters.env}}
-      pool:
-        vmImage: 'ubuntu-latest'
-      condition: succeeded()
-      variables:
-        - template: ../variables/variables-common.yaml
-        - template: ../variables/variables-${{parameters.env}}.yaml
-        - group: cvp-${{parameters.env}}
-      jobs:
-        - job: VmOff${{parameters.env}}
-          displayName: 'Turn off VMs'
+        - job: 'StopVM${{parameters.env}}'
+          displayName: 'Turning Vm off ${{parameters.env}}'
+          dependsOn: [LoadBalancerTest, VirtualMachineTest]
+          pool:
+            vmImage: 'ubuntu-latest'
+          condition: succeeded()
+          variables:
+            - template: ../variables/variables-common.yaml
+            - template: ../variables/variables-${{parameters.env}}.yaml
+            - group: cvp-${{parameters.env}}
           steps:
           - task: AzureCLI@2
             name: 'VmOff${{parameters.env}}'
