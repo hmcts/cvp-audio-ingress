@@ -1,5 +1,5 @@
 locals {
-  schedule_time   = "2022-04-02T10:00:00Z"
+  schedule_time   = "2022-02-28T11:35:00Z"
   runbook_content = file(var.script_name)
 }
 
