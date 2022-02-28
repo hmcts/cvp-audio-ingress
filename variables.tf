@@ -120,3 +120,6 @@ variable "script_name" {
   description = "runbook name"
   default     = false
 }
+variable "runbook_schedule_times" {
+  default = {}
+}

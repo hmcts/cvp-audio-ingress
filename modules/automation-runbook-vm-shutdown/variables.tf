@@ -38,4 +38,6 @@ variable "script_name" {
   type        = string
   description = "script name for runbook"
 }
-
+variable "runbook_schedule_times" {
+  default = {}
+}

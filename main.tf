@@ -74,6 +74,7 @@ module "vm_automation" {
   vm_names                = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
   vm_target_status        = var.vm_target_status
   vm_change_status        = var.vm_change_status
+  runbook_schedule_times  = var.runbook_schedule_times
   tags                    = local.common_tags
 }
 

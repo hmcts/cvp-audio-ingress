@@ -1,8 +1,3 @@
-locals {
-  schedule_time   = "2022-02-28T12:45:00Z"
-  runbook_content = file(var.script_name)
-}
-
 ############ automation account  + runbook #############
 resource "azurerm_automation_runbook" "vm-start-stop" {
   name                    = "cvp-VM-start-stop-${var.env}"
@@ -13,7 +8,7 @@ resource "azurerm_automation_runbook" "vm-start-stop" {
   log_progress            = "false"
   description             = "This is a runbook used to stop and start cvp VMs"
   runbook_type            = "PowerShell" #"PowerShellWorkflow"
-  content                 = local.runbook_content
+  content                 = file(var.script_name)
   publish_content_link {
     uri = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/VIH-8544/modules/automation-runbook-vm-shutdown/vm-start-stop.ps1"
   }
@@ -26,11 +21,11 @@ resource "azurerm_automation_schedule" "vm-start-stop" {
   name                    = "cvp-schedule-${var.env}"
   resource_group_name     = var.resource_group_name
   automation_account_name = var.automation_account_name
-  frequency               = "Day"
-  interval                = 1
-  timezone                = "Europe/London"
-  start_time              = local.schedule_time
-  description             = "This is a scheduled to check CVP VMs at ${local.schedule_time}"
+  frequency               = var.runbook_schedule_times.frequency
+  interval                = var.runbook_schedule_times.interval
+  timezone                = var.runbook_schedule_times.timezone
+  start_time              = var.runbook_schedule_times.start_time
+  description             = "This is a scheduled to check CVP VMs at ${var.runbook_schedule_times.start_time}"
 }
 
 resource "azurerm_automation_job_schedule" "vm-start-stop" {
