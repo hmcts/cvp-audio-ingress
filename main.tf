@@ -54,6 +54,11 @@ resource "azurerm_automation_account" "vm-start-stop" {
   resource_group_name = "${var.product}-recordings-${var.env}-rg"
   sku_name            = var.automation_account_sku_name
 
+  # identity {
+  #   type = "UserAssigned"
+  #   identity_ids = [azurerm_user_assigned_identity.automation-account-managed-id.id]
+  # }
+
   tags = local.common_tags
 }
 

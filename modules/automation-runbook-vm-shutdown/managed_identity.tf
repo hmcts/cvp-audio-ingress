@@ -8,6 +8,11 @@ resource "azurerm_user_assigned_identity" "cvp-automation-account-mi" {
   tags = var.tags
 }
 
+output "cvp_aa_mi_id" {
+  description = "user assigned id"
+  value       = azurerm_user_assigned_identity.cvp-automation-account-mi.id
+}
+
 # Create a custom, limited role for our managed identity
 resource "azurerm_role_definition" "virtual-machine-control" {
   name        = "CVP-VM-Control-${var.env}"
