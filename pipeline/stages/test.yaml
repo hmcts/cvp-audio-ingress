@@ -130,5 +130,42 @@ stages:
                 parameters:
                   subscriptionName: ${{ variables.subscriptionName }}
                   env: ${{ variables.env }}
-            
+
+    - stage: 'StopVM${{parameters.env}}'
+      displayName: 'Turning Vm off ${{parameters.env}}'
+      dependsOn: [LoadBalancerTest, VirtualMachineTest]
+      pool:
+        vmImage: 'ubuntu-latest'
+      condition: succeeded()
+      variables:
+        - template: ../variables/variables-common.yaml
+        - template: ../variables/variables-${{parameters.env}}.yaml
+        - group: cvp-${{parameters.env}}
+      jobs:
+        - job: VmOff${{parameters.env}}
+          displayName: 'Turn off VMs'
+          steps:
+          - task: AzureCLI@2
+            name: 'VmOff${{parameters.env}}'
+            displayName: 'Turning Vm Off ${{parameters.env}}'
+            condition: always()
+            inputs:
+              azureSubscription: '${{variables.subscriptionName}}'
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                $vm_change_status="$env:VM_CHANGE_STATUS"
+                $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
+                $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
+                $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
+                $vm1Details = az vm get-instance-view --name $vm1 --resource-group $resourcegroup | ConvertFrom-Json
+                $vm2Details = az vm get-instance-view --name $vm2 --resource-group $resourcegroup | ConvertFrom-Json
+                $statusVm1 = $vm1Details.instanceView.statuses[1].Code
+                $statusVm2 = $vm2Details.instanceView.statuses[1].Code
+                if ( $vm_change_status -eq $true -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm1){
+                  az vm deallocate --name $vm1 --resource-group $resourcegroup
+                }
+                if ( $vm_change_status -eq $true -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm2){
+                  az vm deallocate --name $vm2 --resource-group $resourcegroup
+                }
             

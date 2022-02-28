@@ -32,7 +32,7 @@ stages:
           steps:
           - task: AzureCLI@2
             name: 'VmOn${{parameters.env}}'
-            displayName: 'VmOn${{parameters.env}}'
+            displayName: 'Turning Vm On ${{parameters.env}}'
             condition: always()
             inputs:
               azureSubscription: '${{variables.subscriptionName}}'
