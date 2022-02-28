@@ -12,7 +12,7 @@ parameters:
 stages:
   - ${{ if eq(parameters.runStage, true)}}:
     - task: AzureCLI@2
-      stage: '${{parameters.env}}VmOn' pipeline/stages/turnVmOn.yaml 
+      stage: '${{parameters.env}}VmOn'
       displayName: '${{parameters.env}}VmOn'
       name: '${{parameters.env}}VmOn'
       condition: always()
