@@ -1,10 +1,10 @@
 Param(
     [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()] 
     [String] 
-    $mi_principal_id, 
+    $mi_principal_id,
     [parameter(Mandatory=$true)][ValidateNotNullOrEmpty()]
 	  [string]
-    $vmlist, 
+    $vmlist,
     [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()] 
     [String] 
     $resourcegroup,    
@@ -32,47 +32,45 @@ $VMssplit = $vmlist.Split(",")
 # Loop through one or more VMs which will be passed in from the terraform as a list
 # If the list is empty it will skip the block
 if ( $vm_change_status -eq $true){
-  foreach ($VM in $VMs){
-      try { # Get status of VM
-      $status = (Get-AzVM -ResourceGroupName $resourcegroup -Name $VM -Status -DefaultProfile $AzureContext).Statuses[1].Code
-      Write-Output "`r`n Initial $VM VM status: $status `r`n `r`n"
-      catch {
-          $ErrorMessage = $_.Exception.message
-          Write-Error ("Error getting the status of VM $VM : " + $ErrorMessage)
-          Break
-      }
-
-      if ( $env.value.vmTargetStatus  -eq "off" -and "VM running","VM starting","VM unknown" -contains $status) {
-          Write-Output "The vm will be turned off" 
-          try{
-            # Stop-AzVM -Name $VM -ResourceGroupName $resourcegroup -DefaultProfile $AzureContext -Force
-          } 
-          catch {
+    foreach ($VM in $VMs){
+        try { # Get status of VM
+        $status = (Get-AzVM -ResourceGroupName $resourcegroup -Name $VM -Status -DefaultProfile $AzureContext).Statuses[1].Code
+        Write-Output "Initial VM status for '$VM'= $status"
+        } catch {
             $ErrorMessage = $_.Exception.message
-            Write-Error ("Error stopping the VM $VM : " + $ErrorMessage)
+            Write-Error ("Error getting the VM status of '$VM'  " + $ErrorMessage)
             Break
-          }
-      } elseif( $env.value.vmTargetStatus  -eq "on" -and "VM deallocated","VM deallocating","VM stopped","VM stopping","VM unknown" -contains $vm.powerState) {
-          Write-Output "The vm will be turned on" 
-          try{
-            # Start-AzVM -Name $VM -ResourceGroupName $resourcegroup -DefaultProfile $AzureContext
-          } 
-          catch {
-            $ErrorMessage = $_.Exception.message
-            Write-Error ("Error starting the VM $VM : " + $ErrorMessage)
-            Break
-          }
-      }
-      else{
-          Write-Output "The VM $VM is in the desired state"
-      }
-      $status = (Get-AzVM -ResourceGroupName $resourcegroup -Name $VM -Status -DefaultProfile $AzureContext).Statuses[1].Code
-      Write-Output "`r`n Final $VM VM status: $status `r`n `r`n"
+        }
 
-  } 
-  else{
-      Write-Output "The status of the VMs in this subscription are not meant to change"
-  }
+        if ( $env.value.vmTargetStatus  -eq "off" -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $status) {
+            Write-Output "The vm will be turned off" 
+            try{
+                # Stop-AzVM -Name $VM -ResourceGroupName $resourcegroup -DefaultProfile $AzureContext -Force
+            } catch {
+                $ErrorMessage = $_.Exception.message
+                Write-Error ("Error stopping the VM $VM : " + $ErrorMessage)
+                Break
+            }
+        } elseif( $env.value.vmTargetStatus  -eq "on" -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $vm.powerState) {
+            Write-Output "The vm will be turned on" 
+            try{
+                # Start-AzVM -Name $VM -ResourceGroupName $resourcegroup -DefaultProfile $AzureContext
+            } catch {
+                $ErrorMessage = $_.Exception.message
+                Write-Error ("Error starting the VM $VM : " + $ErrorMessage)
+                Break
+            }
+        } else {
+            Write-Output "The VM $VM is in the desired state"
+        }
+        $status = (Get-AzVM -ResourceGroupName $resourcegroup -Name $VM -Status -DefaultProfile $AzureContext).Statuses[1].Code
+        Write-Output "Final $VM VM status: $status"
+        Write-Output "`r`n"
+    }
+} 
+else{
+	Write-Output "The status of the VMs in this subscription are not meant to change"
 }
+
 Write-Output "Script ended at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 
