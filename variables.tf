@@ -111,7 +111,7 @@ variable "vm_status" {
 variable "script_name" {
   type        = string
   description = "runbook name"
-  default     = false
+  default     = ""
 }
 variable "runbook_schedule_times" {
   default = {}

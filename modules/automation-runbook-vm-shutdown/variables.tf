@@ -3,10 +3,6 @@ variable "location" {
   description = "Location of Runbook"
   default     = "uksouth"
 }
-variable "resource_group_name" {
-  type        = string
-  description = "Resource Group Name"
-}
 variable "env" {
   type = string
 }
@@ -19,9 +15,6 @@ variable "automation_account_name" {
   type        = string
   description = "automation account name"
 }
-variable "vm_names" {
-  type = string
-}
 variable "vm_status" {
   default = {}
 }
@@ -29,9 +22,8 @@ variable "resource_group_id" {
   type        = string
   description = "resource group id"
 }
-variable "script_name" {
-  type        = string
-  description = "script name for runbook"
+variable "auto_acc_runbook_names" {
+  default = {}
 }
 variable "runbook_schedule_times" {
   default = {}

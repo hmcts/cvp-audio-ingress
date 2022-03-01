@@ -49,7 +49,7 @@ resource "azurerm_dns_a_record" "wowza" {
 # =================================================================
 
 resource "azurerm_automation_account" "vm-start-stop" {
-  name                = "${var.product}-${var.env}-aa"
+  name                = "${var.product}-recordings-${var.env}-aa"
   location            = var.location
   resource_group_name = "${var.product}-recordings-${var.env}-rg"
   sku_name            = var.automation_account_sku_name
@@ -68,11 +68,19 @@ module "vm_automation" {
   automation_account_name = azurerm_automation_account.vm-start-stop.name
   location                = var.location
   env                     = var.env
-  resource_group_name     = "${var.product}-recordings-${var.env}-rg"
   resource_group_id       = module.wowza.wowza_rg_id
-  script_name             = var.script_name
-  vm_names                = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
   vm_status               = var.vm_status
   runbook_schedule_times  = var.runbook_schedule_times
   tags                    = local.common_tags
+  auto_acc_runbook_names = {
+    resource_group_name         = "${var.product}-recordings-${var.env}-rg"
+    runbook_name                = "${var.product}-recordings-VM-start-stop-${var.env}"
+    schedule_name               = "${var.product}-recordings-schedule-${var.env}"
+    job_schedule_name           = "${var.product}-recordings-schedule-${var.env}"
+    user_assigned_identity_name = "${var.product}-recordings-automation-mi-${var.env}"
+    role_definition_name        = "${var.product}-recordings-vm-control-${var.env}"
+    script_name                 = var.script_name
+    vm_names                    = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
+  }
 }
+
