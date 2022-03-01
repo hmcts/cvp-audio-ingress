@@ -21,6 +21,11 @@ There are two pipelines for CVP, with one for deployment and a nightly run for a
 **CVP Release Pipeline**
 https://dev.azure.com/hmcts/Shared%20Services/_build?definitionId=337
 
+This will Plan, Apply and Test sbox and stg environments in order. Afterwards it will run the Plan stage for the prod environment. Aproval is required prior to Apply stage in 'stg' environment.
+
+**Path to Live**
+To apply changes to prod environment, a release branch beginning with 'release' is created from main. This release branch will only run the Plan, Apply and Test stages in the prod environment. Similar to the 'stg' environment, approval is required prior to Apply stage.
+
 This will Plan, Apply and Test each environment in order with approval at each stage.
 
 **CVP Nightly Pipeline**
@@ -103,6 +108,21 @@ export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
 keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -storepass $jksPass
 ```
 More details about CVP Certificates are here https://tools.hmcts.net/confluence/display/VIH/SSL+Certificates
+
+### Accepting Wowza Terms & Conditions in Marketplace
+
+For each Subscription, you will need to accept the Terms and Conditions for each Wowza VM on the Marketplace. If you need to accept the Terms & Conditions, you can add in the following task to the Apply step, after Terraform init:
+
+```
+- task: AzureCLI@2
+    displayName: Accept Terms of Wowza VM in Marketplace
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName }}'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az vm image terms accept --urn ${{ parameters.wowza_publisher }}:${{ parameters.wowza_offer }}:${{ parameters.wowza_sku }}:${{ parameters.wowza_version }}
+```
 
 ### **Resolution**
 
