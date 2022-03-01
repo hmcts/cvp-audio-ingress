@@ -8,7 +8,7 @@ resource "azurerm_automation_runbook" "vm-start-stop" {
   log_progress            = "false"
   description             = "This is a powershell runbook used to stop and start cvp VMs"
   runbook_type            = "PowerShell"
-  content                 = file(var.auto_acc_runbook_names.script_name)
+  content                 = "${file("${path.module}/${var.auto_acc_runbook_names.script_name}")}"
   publish_content_link {
     uri = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/VIH-8544/modules/automation-runbook-vm-shutdown/vm-start-stop.ps1"
   }
