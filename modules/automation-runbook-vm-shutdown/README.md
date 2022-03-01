@@ -15,7 +15,7 @@ module "vm_automation" {
   env                     = "sbox"
   resource_group_name     = "cvp-recordings-sbox-rg"
   vm_names                = "vm1, vm2"
-  vm_target_status        = "off"
+  vm_resting_state_on        = false
   vm_change_status        = true
   tags                    = local.common_tags
 }
@@ -59,7 +59,7 @@ No modules.
 | env | Environment | `string` | n/a | yes |  
 | resource_group_name | Resource group name | `string` | n/a | yes |  
 | vm_names | Virtual machine names | `string` | n/a | yes |  
-| vm_target_status | Desired state for VM to be in | `string` | n/a | yes |  
+| vm_resting_state_on | Desired state for VM to be in | `bool` | n/a | yes |  
 | vm_change_status | Automation account name | `bool` | false | yes |  
 | tags | Runbook Tags | `map(string)` | n/a | yes |
 

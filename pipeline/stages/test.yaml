@@ -136,7 +136,6 @@ stages:
           dependsOn: [LoadBalancerTest, VirtualMachineTest]
           pool:
             vmImage: 'ubuntu-latest'
-          condition: succeeded()
           variables:
             - template: ../variables/variables-common.yaml
             - template: ../variables/variables-${{parameters.env}}.yaml
@@ -145,13 +144,13 @@ stages:
           - task: AzureCLI@2
             name: 'VmOff${{parameters.env}}'
             displayName: 'Turning Vm Off ${{parameters.env}}'
-            condition: always()
             inputs:
               azureSubscription: '${{variables.subscriptionName}}'
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
                 $vm_change_status="$env:VM_CHANGE_STATUS"
+                $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
                 $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
                 $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
@@ -160,13 +159,13 @@ stages:
                 $statusVm1 = $vm1Details.instanceView.statuses[1].Code
                 $statusVm2 = $vm2Details.instanceView.statuses[1].Code
                 Write-Output "Initial VM status for '$vm1'= $statusVm1"
-                if ( $vm_change_status -eq $true -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm1){
-                  Write-Output "Starting VM '$vm1'"
+                if ( $vm_change_status -eq $true -and $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm1){
+                  Write-Output "Deallocating VM '$vm1'"
                   az vm deallocate --name $vm1 --resource-group $resourcegroup
                 }
                 Write-Output "Initial VM status for '$vm2'= $statusVm2"
-                if ( $vm_change_status -eq $true -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm2){
-                  Write-Output "Starting VM '$vm2'"
+                if ( $vm_change_status -eq $true -and $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm2){
+                  Write-Output "Deallocating VM '$vm2'"
                   az vm deallocate --name $vm2 --resource-group $resourcegroup
                 }
             

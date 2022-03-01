@@ -10,8 +10,8 @@ ws_rg                         = "oms-automation"
 num_applications              = 20
 script_name                   = "./modules/automation-runbook-vm-shutdown/vm-start-stop.ps1"
 vm_status = {
-  "vm_target_status" = "off"
-  "vm_change_status" = true
+  "vm_resting_state_on" = false
+  "vm_change_status"    = true
 }
 runbook_schedule_times = {
   "frequency"  = "Day"
