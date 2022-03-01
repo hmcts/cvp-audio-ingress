@@ -64,6 +64,7 @@ stages:
                 }
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
+          dependsOn: 'VmOn${{parameters.env}}'
           steps:
             - template: ../steps/tf-install.yaml
             - template: ../steps/tf-init.yaml
@@ -106,6 +107,7 @@ stages:
 
         - job: CertGen${{parameters.env}}
           displayName: 'Generate Certificate for ${{parameters.env}}'
+          dependsOn: 'VmOn${{parameters.env}}'
           steps:
             - template: templates\Azure\Certificates\Request.yaml@azTemplates
               parameters:
