@@ -132,7 +132,7 @@ stages:
                   env: ${{ variables.env }}
 
         - job: 'StopVM${{parameters.env}}'
-          displayName: 'Turning Vm off ${{parameters.env}}'
+          displayName: '${{parameters.env}} Turning Vm off'
           dependsOn: [LoadBalancerTest, VirtualMachineTest]
           pool:
             vmImage: 'ubuntu-latest'
@@ -158,14 +158,24 @@ stages:
                 $vm2Details = az vm get-instance-view --name $vm2 --resource-group $resourcegroup | ConvertFrom-Json
                 $statusVm1 = $vm1Details.instanceView.statuses[1].Code
                 $statusVm2 = $vm2Details.instanceView.statuses[1].Code
-                Write-Output "Initial VM status for '$vm1'= $statusVm1"
+
+                Write-Output "Initial VM status for '$vm1'= $statusVm1 "
+                Write-Output "Should state be altered: $vm_change_status"
+                Write-Output "Should resting state be off: $vm_resting_state_on"
                 if ( $vm_change_status -eq $true -and $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm1){
                   Write-Output "Deallocating VM '$vm1'"
                   az vm deallocate --name $vm1 --resource-group $resourcegroup
+                } else {
+                    Write-Output "The VM $VM is in the desired state"
                 }
+
                 Write-Output "Initial VM status for '$vm2'= $statusVm2"
+                Write-Output "Should state be altered: $vm_change_status"
+                Write-Output "Should resting state be off: $vm_resting_state_on"
                 if ( $vm_change_status -eq $true -and $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm2){
                   Write-Output "Deallocating VM '$vm2'"
                   az vm deallocate --name $vm2 --resource-group $resourcegroup
+                } else {
+                    Write-Output "The VM $VM is in the desired state"
                 }
             
