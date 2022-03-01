@@ -40,6 +40,7 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 $vm_change_status="$env:VM_CHANGE_STATUS"
+                $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
                 $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
                 $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
@@ -48,6 +49,10 @@ stages:
                 $statusVm1 = $vm1Details.instanceView.statuses[1].Code
                 $statusVm2 = $vm2Details.instanceView.statuses[1].Code
                 Write-Output "Initial VM status for '$vm1'= $statusVm1"
+                Write-Output "Initial VM status for '$vm1'= $statusVm1 "
+                Write-Output "Should state be altered: $vm_change_status"
+                Write-Output "Should resting state be off: $vm_resting_state_on"
+
                 if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
                   Write-Output "Starting VM '$vm1'"
                   az vm start --name $vm1 --resource-group $resourcegroup
