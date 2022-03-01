@@ -26,6 +26,10 @@ resource "azurerm_automation_schedule" "vm-start-stop" {
   timezone                = var.runbook_schedule_times.timezone
   start_time              = var.runbook_schedule_times.start_time
   description             = "This is a scheduled to stop or start VMs at ${var.runbook_schedule_times.start_time}"
+
+  depends_on = [
+    azurerm_automation_runbook.vm-start-stop
+  ]
 }
 
 resource "azurerm_automation_job_schedule" "vm-start-stop" {
@@ -41,4 +45,8 @@ resource "azurerm_automation_job_schedule" "vm-start-stop" {
     vm_resting_state_on = var.vm_status.vm_resting_state_on
     vm_change_status    = var.vm_status.vm_change_status
   }
+
+  depends_on = [
+    azurerm_automation_schedule.vm-start-stop
+  ]
 }
