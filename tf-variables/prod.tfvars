@@ -8,5 +8,13 @@ rtmps_source_address_prefixes = ["35.246.64.24", "35.246.125.146", "35.246.120.2
 ws_name                       = "hmcts-prod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-vm_resting_state_on           = "on"
-vm_change_status              = false
+vm_status = {
+  "vm_resting_state_on" = true
+  "vm_change_status"    = false
+}
+runbook_schedule_times = {
+  "frequency"  = "Day"
+  "interval"   = 1
+  "timezone"   = "Europe/London"
+  "start_time" = "2022-03-01T16:00:00Z"
+}

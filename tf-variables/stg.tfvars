@@ -8,5 +8,14 @@ rtmps_source_address_prefixes = ["10.11.72.32/27", "10.49.72.32/27"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-vm_resting_state_on           = false
-vm_change_status              = true
+script_name                   = "./modules/automation-runbook-vm-shutdown/vm-start-stop.ps1"
+vm_status = {
+  "vm_resting_state_on" = false
+  "vm_change_status"    = true
+}
+runbook_schedule_times = {
+  "frequency"  = "Day"
+  "interval"   = 1
+  "timezone"   = "Europe/London"
+  "start_time" = "2022-03-01T16:00:00Z"
+}
