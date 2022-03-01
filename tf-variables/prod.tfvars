@@ -10,7 +10,7 @@ ws_rg                         = "oms-automation"
 num_applications              = 3500
 vm_status = {
   "vm_resting_state_on" = true
-  "vm_change_status"    = false
+  "auto_acc_change_vm_status"    = false
 }
 runbook_schedule_times = {
   "frequency"  = "Day"

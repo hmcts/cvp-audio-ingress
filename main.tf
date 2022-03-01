@@ -49,7 +49,7 @@ resource "azurerm_dns_a_record" "wowza" {
 # =================================================================
 
 resource "azurerm_automation_account" "vm-start-stop" {
-  count = var.vm_status.vm_change_status == true ? 1 : 0
+  count = var.vm_status.auto_acc_change_vm_status == true ? 1 : 0
 
   name                = "${var.product}-recordings-${var.env}-aa"
   location            = var.location
@@ -66,9 +66,11 @@ resource "azurerm_automation_account" "vm-start-stop" {
 
 #  vm shutdown/start runbook module
 module "vm_automation" {
-  count = var.vm_status.vm_change_status == true ? 1 : 0
+  count = var.vm_status.auto_acc_change_vm_status == true ? 1 : 0
 
-  source                  = "./modules/automation-runbook-vm-shutdown"
+  source = "github.com/hmcts/cnp-module-automation-runbook-start-stop-vm"
+
+  # source                  = "./modules/automation-runbook-vm-shutdown"
   automation_account_name = azurerm_automation_account.vm-start-stop[0].name
   location                = var.location
   env                     = var.env

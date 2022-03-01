@@ -1,24 +1,73 @@
 # Automation Runbook for Application secret recycling
 
-This module is to setup a Azure Automation Runbook to start or stop VMs in a subscription.
+This module is to setup a Azure Automation Runbook to start or stop VMs within an existing AUtomation Account.
 
 
 ## Example
 
 Below is the standard example setup
 
-```terraform
-module "vm_automation" {
-  source                  = "./modules/automation-runbook-vm-shutdown"
-  automation_account_name = "cvp-sbox-aa"
-  location                = "uksouth"
-  env                     = "sbox"
-  resource_group_name     = "cvp-recordings-sbox-rg"
-  vm_names                = "vm1, vm2"
-  vm_resting_state_on        = false
-  vm_change_status        = true
-  tags                    = local.common_tags
+```tfvars
+product = "cvp"
+env = "sbox"
+automation_account_sku_name = "Basic"
+script_name  = "./modules/automation-runbook-vm-shutdown/vm-start-stop.ps1"
+vm_status = {
+  "vm_resting_state_on" = false
+  "auto_acc_change_vm_status"    = true
 }
+runbook_schedule_times = {
+  "frequency"  = "Day"
+  "interval"   = 1
+  "timezone"   = "Europe/London"
+}
+```
+
+```terraform
+# =================================================================
+# =================    automation account    ======================
+# =================================================================
+
+resource "azurerm_automation_account" "vm-start-stop" {
+  count = var.vm_status.auto_acc_change_vm_status == true ? 1 : 0
+
+  name                = "${var.product}-recordings-${var.env}-aa"
+  location            = var.location
+  resource_group_name = "${var.product}-recordings-${var.env}-rg"
+  sku_name            = var.automation_account_sku_name
+
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [module.vm_automation[0].cvp_aa_mi_id]
+  }
+
+  tags = local.common_tags
+}
+
+#  vm shutdown/start runbook module
+module "vm_automation" {
+  count = var.vm_status.auto_acc_change_vm_status == true ? 1 : 0
+
+  source                  = "./modules/automation-runbook-vm-shutdown"
+  automation_account_name = azurerm_automation_account.vm-start-stop[0].name
+  location                = var.location
+  env                     = var.env
+  resource_group_id       = module.wowza.wowza_rg_id
+  vm_status               = var.vm_status
+  runbook_schedule_times  = var.runbook_schedule_times
+  tags                    = local.common_tags
+  auto_acc_runbook_names = {
+    resource_group_name         = "${var.product}-recordings-${var.env}-rg"
+    runbook_name                = "${var.product}-recordings-VM-start-stop-${var.env}"
+    schedule_name               = "${var.product}-recordings-schedule-${var.env}"
+    job_schedule_name           = "${var.product}-recordings-schedule-${var.env}"
+    user_assigned_identity_name = "${var.product}-recordings-automation-mi-${var.env}"
+    role_definition_name        = "${var.product}-recordings-vm-control-${var.env}"
+    script_name                 = var.script_name
+    vm_names                    = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
+  }
+}
+
 
 ```
 
@@ -42,7 +91,6 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [azurerm_automation_account.vm-start-stop](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/automation_account) | resource |
 | [azurerm_automation_runbook.vm-start-stop](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/automation_runbook) | resource |
 | [azurerm_automation_schedule.vm-start-stop](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/automation_schedule) | resource |
 | [azurerm_automation_job_schedule.vm-start-stop](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/automation_job_schedule) | resource |
@@ -57,12 +105,15 @@ No modules.
 | automation_account_name | Automation account name | `string` | n/a | yes |   
 | location | Location | `string` | uksouth | no |  
 | env | Environment | `string` | n/a | yes |  
+| resource_group_id | Resource group id | `string` | n/a | yes |  
 | resource_group_name | Resource group name | `string` | n/a | yes |  
-| vm_names | Virtual machine names | `string` | n/a | yes |  
-| vm_resting_state_on | Desired state for VM to be in | `bool` | n/a | yes |  
-| vm_change_status | Automation account name | `bool` | false | yes |  
+| vm_status | Object to describe desired state of VM for env and whether VM should be adjusted by automation account | `object` | n/a | yes |  
+| runbook_schedule_times | Object to describe schedule times for automation account schedule | `object` | n/a | yes |  
+| auto_acc_runbook_names | Object containg names for resource group, runbook, schedule, job schedule, user id name, role definition name, script name & VM names | `string` | n/a | yes |   
 | tags | Runbook Tags | `map(string)` | n/a | yes |
 
 ## Outputs
 
-No outputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| cvp_aa_mi_id | Automation account managed identity id | `string` | n/a | n/a |   

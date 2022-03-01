@@ -23,8 +23,8 @@ resource "azurerm_automation_schedule" "vm-start-stop" {
   automation_account_name = var.automation_account_name
   frequency               = var.runbook_schedule_times.frequency
   interval                = var.runbook_schedule_times.interval
-  timezone                = var.runbook_schedule_times.timezone
-  start_time              = var.runbook_schedule_times.start_time
+  timezone                = try(var.runbook_schedule_times.timezone, "Europe/London")
+  start_time              = try(var.runbook_schedule_times.start_time, null)
   description             = "This is a scheduled to stop or start VMs at ${var.runbook_schedule_times.start_time}"
 
   depends_on = [
@@ -43,7 +43,7 @@ resource "azurerm_automation_job_schedule" "vm-start-stop" {
     vmlist              = var.auto_acc_runbook_names.vm_names
     resourcegroup       = var.auto_acc_runbook_names.resource_group_name
     vm_resting_state_on = var.vm_status.vm_resting_state_on
-    vm_change_status    = var.vm_status.vm_change_status
+    auto_acc_change_vm_status    = var.vm_status.auto_acc_change_vm_status
   }
 
   depends_on = [

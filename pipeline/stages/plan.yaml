@@ -39,7 +39,7 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $vm_change_status="$env:VM_CHANGE_STATUS"
+                $auto_acc_change_vm_status="$env:AUTO_ACC_CHANGE_VM_STATUS"
                 $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
                 $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
@@ -50,15 +50,15 @@ stages:
                 $statusVm2 = $vm2Details.instanceView.statuses[1].Code
                 Write-Output "Initial VM status for '$vm1'= $statusVm1"
                 Write-Output "Initial VM status for '$vm1'= $statusVm1 "
-                Write-Output "Should state be altered: $vm_change_status"
+                Write-Output "Should state be altered: $auto_acc_change_vm_status"
                 Write-Output "Should resting state be off: $vm_resting_state_on"
 
-                if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
+                if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
                   Write-Output "Starting VM '$vm1'"
                   az vm start --name $vm1 --resource-group $resourcegroup
                 }
                 Write-Output "Initial VM status for '$vm2'= $statusVm2"
-                if ( $vm_change_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm2){
+                if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm2){
                   Write-Output "Starting VM '$vm2'"
                   az vm start --name $vm2 --resource-group $resourcegroup
                 }

@@ -9,13 +9,13 @@ ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
 script_name                   = "./modules/automation-runbook-vm-shutdown/vm-start-stop.ps1"
-vm_status = {
-  "vm_resting_state_on" = false
-  "vm_change_status"    = true
-}
-runbook_schedule_times = {
-  "frequency"  = "Day"
-  "interval"   = 1
-  "timezone"   = "Europe/London"
-  "start_time" = "2022-03-01T16:00:00Z"
-}
+# vm_status = {
+#   "vm_resting_state_on" = false
+#   "auto_acc_change_vm_status"    = true
+# }
+# runbook_schedule_times = {
+#   "frequency"  = "Day"
+#   "interval"   = 1
+#   "timezone"   = "Europe/London"
+#   "start_time" = "2022-03-01T16:00:00Z"
+# }
