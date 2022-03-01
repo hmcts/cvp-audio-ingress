@@ -90,10 +90,17 @@ old logs are in the same folder but with the date appended
 
 You can check if there is certificates installed and if they are valid
 
-1. Get password via: `cat /usr/local/WowzaStreamingEngine/conf/Server.xml | grep Password`
-2. Run below and add password.
+1. Get password via: 
+```Bash
+jksPass=$(cat /usr/local/WowzaStreamingEngine/conf/Server.xml | grep KeyStorePassword)
+jksPass="${jksPass//<KeyStorePassword>/}"
+jksPass="${jksPass//<\/KeyStorePassword>/}"
+echo $jksPass
 ```
-keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
+2. Run below and add password.
+```Bash
+export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
+keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -storepass $jksPass
 ```
 More details about CVP Certificates are here https://tools.hmcts.net/confluence/display/VIH/SSL+Certificates
 
