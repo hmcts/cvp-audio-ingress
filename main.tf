@@ -85,7 +85,7 @@ module "vm_automation" {
     job_schedule_name           = "${var.product}-recordings-schedule-${var.env}"
     user_assigned_identity_name = "${var.product}-recordings-automation-mi-${var.env}"
     role_definition_name        = "${var.product}-recordings-vm-control-${var.env}"
-    script_name                 = var.script_name
+    script_name                 = "${path.module}/${var.script_name}"
     vm_names                    = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
   }
 }
