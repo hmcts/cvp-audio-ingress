@@ -58,7 +58,7 @@ resource "azurerm_automation_account" "vm-start-stop" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [module.vm_automation.cvp_aa_mi_id]
+    identity_ids = [module.vm_automation[0].cvp_aa_mi_id]
   }
 
   tags = local.common_tags
@@ -69,7 +69,7 @@ module "vm_automation" {
   count = var.vm_status.vm_change_status == true ? 1 : 0
 
   source                  = "./modules/automation-runbook-vm-shutdown"
-  automation_account_name = azurerm_automation_account.vm-start-stop.name
+  automation_account_name = azurerm_automation_account.vm-start-stop[0].name
   location                = var.location
   env                     = var.env
   resource_group_id       = module.wowza.wowza_rg_id
