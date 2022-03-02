@@ -44,8 +44,12 @@ stages:
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
 
                 Write-Output "Should state be altered by azdo pipeline: $azdo_pipe_to_change_vm_status"
-                Write-Output "Should resting state be off: $vm_resting_state_on"
+                Write-Output "Should resting state be on: $vm_resting_state_on"
                 Write-Output ""
+
+                Write-Output "STOPPING STG VM1 + VM2"
+                az vm stop --name cvp-recordings-stg-vm1 --resource-group cvp-recordings-stg-rg
+                az vm stop --name cvp-recordings-stg-vm2 --resource-group cvp-recordings-stg-rg
 
                 $rgExists = az group exists --name $resourcegroup
                 if ( $azdo_pipe_to_change_vm_status )

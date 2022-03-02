@@ -155,7 +155,7 @@ stages:
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
 
                 Write-Output "Should state be altered by AzDo pipeline: $azdo_pipe_to_change_vm_status"
-                Write-Output "Should resting state be off: $vm_resting_state_on"
+                Write-Output "Should resting state be on: $vm_resting_state_on"
                 Write-Output ""
 
                 if ( $AZDO_PIPE_TO_CHANGE_VM_STATUS )
