@@ -48,21 +48,21 @@ resource "azurerm_dns_a_record" "wowza" {
 # =================    automation account    ======================
 # =================================================================
 
-resource "azurerm_automation_account" "vm-start-stop" {
-  count = var.vm_status.auto_acc_change_vm_status == true ? 1 : 0
+# resource "azurerm_automation_account" "vm-start-stop" {
+#   count = var.vm_status.auto_acc_change_vm_status == true ? 1 : 0
 
-  name                = "${var.product}-recordings-${var.env}-aa"
-  location            = var.location
-  resource_group_name = "${var.product}-recordings-${var.env}-rg"
-  sku_name            = var.automation_account_sku_name
+#   name                = "${var.product}-recordings-${var.env}-aa"
+#   location            = var.location
+#   resource_group_name = "${var.product}-recordings-${var.env}-rg"
+#   sku_name            = var.automation_account_sku_name
 
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [module.vm_automation[0].cvp_aa_mi_id]
-  }
+#   identity {
+#     type         = "UserAssigned"
+#     identity_ids = [module.vm_automation[0].cvp_aa_mi_id]
+#   }
 
-  tags = local.common_tags
-}
+#   tags = local.common_tags
+# }
 
 # #  vm shutdown/start runbook module
 # module "vm_automation" {
