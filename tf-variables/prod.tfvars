@@ -9,8 +9,8 @@ ws_name                       = "hmcts-prod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
 vm_status = {
-  "vm_resting_state_on" = true
-  "auto_acc_change_vm_status"    = false
+  "vm_resting_state_on"       = true
+  "auto_acc_change_vm_status" = false
 }
 runbook_schedule_times = {
   "frequency"  = "Day"

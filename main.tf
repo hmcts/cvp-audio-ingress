@@ -68,15 +68,14 @@ resource "azurerm_automation_account" "vm-start-stop" {
 module "vm_automation" {
   count = var.vm_status.auto_acc_change_vm_status == true ? 1 : 0
 
-  source = "github.com/hmcts/cnp-module-automation-runbook-start-stop-vm"
-
-  # source                  = "./modules/automation-runbook-vm-shutdown"
+  source                  = "github.com/hmcts/cnp-module-automation-runbook-start-stop-vm"
   automation_account_name = azurerm_automation_account.vm-start-stop[0].name
   location                = var.location
   env                     = var.env
   resource_group_id       = module.wowza.wowza_rg_id
   vm_status               = var.vm_status
   runbook_schedule_times  = var.runbook_schedule_times
+  publish_content_link    = "https://https://raw.githubusercontent.com/hmcts/cnp-module-automation-runbook-start-stop-vm/master/vm-start-stop.ps1"
   tags                    = local.common_tags
   auto_acc_runbook_names = {
     resource_group_name         = "${var.product}-recordings-${var.env}-rg"
