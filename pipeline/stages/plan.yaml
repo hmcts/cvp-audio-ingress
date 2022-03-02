@@ -62,7 +62,7 @@ stages:
                         Write-Output "Initial status for VM '$vmName'= $statusVm"
                         if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm){
                           Write-Output "Starting VM '$vmName'"
-                          az vm start --name $vm --resource-group $resourcegroup
+                          az vm start --name $vmName --resource-group $resourcegroup
                           Write-Output ""
                         } 
                     }
