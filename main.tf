@@ -75,7 +75,7 @@ module "vm_automation" {
   resource_group_id       = module.wowza.wowza_rg_id
   vm_status               = var.vm_status
   runbook_schedule_times  = var.runbook_schedule_times
-  publish_content_link    = "https://https://raw.githubusercontent.com/hmcts/cnp-module-automation-runbook-start-stop-vm/master/vm-start-stop.ps1"
+  publish_content_link    = "https://raw.githubusercontent.com/hmcts/cnp-module-automation-runbook-start-stop-vm/master/vm-start-stop.ps1"
   tags                    = local.common_tags
   auto_acc_runbook_names = {
     resource_group_name         = "${var.product}-recordings-${var.env}-rg"
