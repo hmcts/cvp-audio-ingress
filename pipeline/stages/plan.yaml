@@ -42,42 +42,37 @@ stages:
                 $auto_acc_change_vm_status="$env:AUTO_ACC_CHANGE_VM_STATUS"
                 $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
-                $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
-                $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
 
                 Write-Output "Should state be altered: $auto_acc_change_vm_status"
                 Write-Output "Should resting state be off: $vm_resting_state_on"
                 Write-Output ""
-                try { # Get status of VM
-                  $vm1Details = az vm get-instance-view --name $vm1 --resource-group $resourcegroup | ConvertFrom-Json
-                  $statusVm1 = $vm1Details.instanceView.statuses[1].Code
-                  Write-Output "Initial VM1 status for '$vm1'= $statusVm1 "
-                  if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
-                    Write-Output "Starting VM '$vm1'"
-                    az vm start --name $vm1 --resource-group $resourcegroup
-                    Write-Output ""
+
+                $rgExists = az group exists --name $resourcegroup
+                if ( $AUTO_ACC_CHANGE_VM_STATUS )
+                {
+                  if ( $rgExists )
+                  {
+                    Write-Output "$resourcegroup does exist in subscription"
+                    $vmList = az vm list --resource-group $resourcegroup  --query "[].{name:name}"  | ConvertFrom-Json
+                    Write-Output "$vmList.Count found in resource group"
+                    foreach ($vm in $vmList) {
+                        $vmName= $vm.name
+                        $vmDetails = az vm get-instance-view --name $vmName --resource-group $resourcegroup | ConvertFrom-Json
+                        $statusVm = $vmDetails.instanceView.statuses[1].Code
+                        Write-Output "Initial status for VM '$vmName'= $statusVm"
+                        if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm){
+                          Write-Output "Starting VM '$vmName'"
+                          az vm start --name $vm --resource-group $resourcegroup
+                          Write-Output ""
+                        } 
+                    }
+                  }else
+                  {
+                      Write-Output "$resourcegroup does not exist in subscription"
                   }
-                } catch {
-                    $ErrorMessage = $_.Exception.message
-                    Write-Error ("Error getting the VM1 details of '$VM'  " + $ErrorMessage)
-                    Break
-                }
-                try { # Get status of VM
-                  $vm2Details = az vm get-instance-view --name $vm2 --resource-group $resourcegroup | ConvertFrom-Json
-                  $statusVm2 = $vm2Details.instanceView.statuses[1].Code
-                  Write-Output "Initial VM2 status for '$vm2'= $statusVm2"
-                  if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm2){
-                    Write-Output "Starting VM '$vm2'"
-                    az vm start --name $vm2 --resource-group $resourcegroup
-                    Write-Output ""
-                  }
-                } catch {
-                    $ErrorMessage = $_.Exception.message
-                    Write-Error ("Error getting the VM2 details of '$VM'  " + $ErrorMessage)
-                    Break
                 }
                 Write-Output "Stage finished: Turning Vm On"
-                
+
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
           dependsOn: 'VmOn${{parameters.env}}'
