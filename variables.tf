@@ -105,8 +105,13 @@ variable "automation_account_sku_name" {
     error_message = "Azure Automation Account SKUs are limited to Basic."
   }
 }
-variable "vm_status" {
-  default = {}
+variable "azdo_pipe_to_change_vm_status" {
+  description = "Should azdo pipeline change the status of the VMs"
+  default     = false
+}
+variable "vm_resting_state_on" {
+  description = "The desired resting state i.e. on/off for VMs"
+  default     = false
 }
 variable "script_name" {
   type        = string

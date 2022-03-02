@@ -8,14 +8,11 @@ rtmps_source_address_prefixes = ["10.11.72.32/27", "10.49.72.32/27"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-script_name                   = "vm_automation/vm-start-stop.ps1"
-vm_status = {
-  "vm_resting_state_on"            = false
-  "azdo_pipe_to_change_vm_status"  = false
-}
+script_name                   = "/.terraform/modules/vm_automation/vm-start-stop.ps1"
+vm_resting_state_on           = false
+azdo_pipe_to_change_vm_status = false
 runbook_schedule_times = {
-  "frequency"  = "Day"
-  "interval"   = 1
-  "timezone"   = "Europe/London"
-  "start_time" = "2022-03-01T16:00:00Z"
+  "frequency" = "Day"
+  "interval"  = 1
+  "timezone"  = "Europe/London"
 }

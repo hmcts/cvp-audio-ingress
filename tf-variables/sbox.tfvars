@@ -8,11 +8,9 @@ rtmps_source_address_prefixes = ["35.204.50.163", "35.204.108.36", "34.91.92.40"
 ws_name                       = "hmcts-sandbox"
 ws_rg                         = "oms-automation"
 num_applications              = 20
-script_name                   = "vm_automation/vm-start-stop.ps1"
-vm_status = {
-  "vm_resting_state_on"           = false
-  "azdo_pipe_to_change_vm_status" = true
-}
+script_name                   = "/.terraform/modules/vm_automation/vm-start-stop.ps1"
+vm_resting_state_on           = false
+azdo_pipe_to_change_vm_status = true
 runbook_schedule_times = {
   "frequency" = "Day"
   "interval"  = 1

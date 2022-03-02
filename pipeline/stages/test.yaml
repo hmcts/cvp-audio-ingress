@@ -144,6 +144,7 @@ stages:
           - task: AzureCLI@2
             name: 'VmOff${{parameters.env}}'
             displayName: 'Turning Vm Off ${{parameters.env}}'
+            condition: always()
             inputs:
               azureSubscription: '${{variables.subscriptionName}}'
               scriptType: pscore
