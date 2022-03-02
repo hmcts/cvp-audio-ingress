@@ -44,24 +44,40 @@ stages:
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
                 $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
                 $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
-                $vm1Details = az vm get-instance-view --name $vm1 --resource-group $resourcegroup | ConvertFrom-Json
-                $vm2Details = az vm get-instance-view --name $vm2 --resource-group $resourcegroup | ConvertFrom-Json
-                $statusVm1 = $vm1Details.instanceView.statuses[1].Code
-                $statusVm2 = $vm2Details.instanceView.statuses[1].Code
-                Write-Output "Initial VM status for '$vm1'= $statusVm1"
-                Write-Output "Initial VM status for '$vm1'= $statusVm1 "
+
                 Write-Output "Should state be altered: $auto_acc_change_vm_status"
                 Write-Output "Should resting state be off: $vm_resting_state_on"
-
-                if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
-                  Write-Output "Starting VM '$vm1'"
-                  az vm start --name $vm1 --resource-group $resourcegroup
+                Write-Output ""
+                try { # Get status of VM
+                  $vm1Details = az vm get-instance-view --name $vm1 --resource-group $resourcegroup | ConvertFrom-Json
+                  $statusVm1 = $vm1Details.instanceView.statuses[1].Code
+                  Write-Output "Initial VM1 status for '$vm1'= $statusVm1 "
+                  if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm1){
+                    Write-Output "Starting VM '$vm1'"
+                    az vm start --name $vm1 --resource-group $resourcegroup
+                    Write-Output ""
+                  }
+                } catch {
+                    $ErrorMessage = $_.Exception.message
+                    Write-Error ("Error getting the VM1 details of '$VM'  " + $ErrorMessage)
+                    Break
                 }
-                Write-Output "Initial VM status for '$vm2'= $statusVm2"
-                if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm2){
-                  Write-Output "Starting VM '$vm2'"
-                  az vm start --name $vm2 --resource-group $resourcegroup
+                try { # Get status of VM
+                  $vm2Details = az vm get-instance-view --name $vm2 --resource-group $resourcegroup | ConvertFrom-Json
+                  $statusVm2 = $vm2Details.instanceView.statuses[1].Code
+                  Write-Output "Initial VM2 status for '$vm2'= $statusVm2"
+                  if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm2){
+                    Write-Output "Starting VM '$vm2'"
+                    az vm start --name $vm2 --resource-group $resourcegroup
+                    Write-Output ""
+                  }
+                } catch {
+                    $ErrorMessage = $_.Exception.message
+                    Write-Error ("Error getting the VM2 details of '$VM'  " + $ErrorMessage)
+                    Break
                 }
+                Write-Output "Stage finished: Turning Vm On"
+                
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
           dependsOn: 'VmOn${{parameters.env}}'
