@@ -11,5 +11,5 @@ variables:
   ws_rg: "oms-automation"
   dynatrace_host_group: "AAT_DTS_CVP"
   dynatrace_tenant_id: "yrk32651"
-  AUTO_ACC_CHANGE_VM_STATUS: true 
+  AZDO_PIPE_TO_CHANGE_VM_STATUS: true 
   VM_RESTING_STATE_ON: false

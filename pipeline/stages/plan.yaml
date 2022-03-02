@@ -39,28 +39,29 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $auto_acc_change_vm_status="$env:AUTO_ACC_CHANGE_VM_STATUS"
+                $azdo_pipe_to_change_vm_status="$env:AZDO_PIPE_TO_CHANGE_VM_STATUS"
                 $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
 
-                Write-Output "Should state be altered: $auto_acc_change_vm_status"
+                Write-Output "Should state be altered by azdo pipeline: $azdo_pipe_to_change_vm_status"
                 Write-Output "Should resting state be off: $vm_resting_state_on"
                 Write-Output ""
 
                 $rgExists = az group exists --name $resourcegroup
-                if ( $AUTO_ACC_CHANGE_VM_STATUS )
+                if ( $azdo_pipe_to_change_vm_status )
                 {
                   if ( $rgExists )
                   {
                     Write-Output "$resourcegroup does exist in subscription"
                     $vmList = az vm list --resource-group $resourcegroup  --query "[].{name:name}"  | ConvertFrom-Json
-                    Write-Output "$vmList.Count found in resource group"
+                    $vmListCnt=$vmList.Count 
+                    Write-Output "$vmListCnt found in resource group"
                     foreach ($vm in $vmList) {
                         $vmName= $vm.name
                         $vmDetails = az vm get-instance-view --name $vmName --resource-group $resourcegroup | ConvertFrom-Json
                         $statusVm = $vmDetails.instanceView.statuses[1].Code
                         Write-Output "Initial status for VM '$vmName'= $statusVm"
-                        if ( $auto_acc_change_vm_status -eq $true -and "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm){
+                        if ( "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm){
                           Write-Output "Starting VM '$vmName'"
                           az vm start --name $vmName --resource-group $resourcegroup
                           Write-Output ""

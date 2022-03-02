@@ -149,33 +149,43 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $auto_acc_change_vm_status="$env:AUTO_ACC_CHANGE_VM_STATUS"
+                $azdo_pipe_to_change_vm_status="$env:AZDO_PIPE_TO_CHANGE_VM_STATUS"
                 $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
-                $vm1 = "cvp-recordings-${{parameters.env}}-vm1" 
-                $vm2 = "cvp-recordings-${{parameters.env}}-vm2" 
-                $vm1Details = az vm get-instance-view --name $vm1 --resource-group $resourcegroup | ConvertFrom-Json
-                $vm2Details = az vm get-instance-view --name $vm2 --resource-group $resourcegroup | ConvertFrom-Json
-                $statusVm1 = $vm1Details.instanceView.statuses[1].Code
-                $statusVm2 = $vm2Details.instanceView.statuses[1].Code
 
-                Write-Output "Initial VM status for '$vm1'= $statusVm1 "
-                Write-Output "Should state be altered: $auto_acc_change_vm_status"
+                Write-Output "Should state be altered by AzDo pipeline: $azdo_pipe_to_change_vm_status"
                 Write-Output "Should resting state be off: $vm_resting_state_on"
-                if ( $auto_acc_change_vm_status -eq $true -and $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm1){
-                  Write-Output "Deallocating VM '$vm1'"
-                  az vm deallocate --name $vm1 --resource-group $resourcegroup
-                } else {
-                    Write-Output "The VM $VM is in the desired state"
-                }
+                Write-Output ""
 
-                Write-Output "Initial VM status for '$vm2'= $statusVm2"
-                Write-Output "Should state be altered: $auto_acc_change_vm_status"
-                Write-Output "Should resting state be off: $vm_resting_state_on"
-                if ( $auto_acc_change_vm_status -eq $true -and $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm2){
-                  Write-Output "Deallocating VM '$vm2'"
-                  az vm deallocate --name $vm2 --resource-group $resourcegroup
-                } else {
-                    Write-Output "The VM $VM is in the desired state"
+                if ( $AZDO_PIPE_TO_CHANGE_VM_STATUS )
+                {
+                  $rgExists = az group exists --name $resourcegroup
+                  if ( $rgExists )
+                  {
+                    Write-Output "$resourcegroup does exist in subscription"
+                    $vmList = az vm list --resource-group $resourcegroup  --query "[].{name:name}"  | ConvertFrom-Json
+                    $vmListCnt=$vmList.Count 
+                    Write-Output "$vmListCnt found in resource group"
+                    foreach ($vm in $vmList) {
+                        $vmName= $vm.name
+                        $vmDetails = az vm get-instance-view --name $vmName --resource-group $resourcegroup | ConvertFrom-Json
+                        $statusVm = $vmDetails.instanceView.statuses[1].Code
+                        Write-Output "Initial status for VM '$vmName'= $statusVm"
+                        if ( $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm){
+                          Write-Output "Deallocating VM '$vmName'"
+                          az vm deallocate --name $vmName --resource-group $resourcegroup
+                          Write-Output ""
+                        }  else {
+                            Write-Output "The VM '$vmName' is in the desired state"
+                        }
+                    }
+                  }else
+                  {
+                      Write-Output "$resourcegroup does not exist in subscription"
+                  }
                 }
-            
+                Write-Output "Stage finished: Turning Vm Off"
+
+
+
+                
