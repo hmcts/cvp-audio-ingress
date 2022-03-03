@@ -13,11 +13,15 @@ stages:
   - ${{ if eq(parameters.runStage, true)}}:
     - stage: 'Plan${{parameters.env}}'
       displayName: 'Plan ${{parameters.env}}'
+      # ${{ if eq(parameters.env, '') }}:
+      #   dependsOn: Build
+      # ${{ if eq(parameters.env, 'sbox') }}:
+      #   dependsOn: 'Test${{parameters.dependsOnEnv}}'
+      # ${{ if eq(parameters.env, 'stg') }}:
+      #   dependsOn: 'Test${{parameters.dependsOnEnv}}'
       ${{ if eq(parameters.dependsOnEnv, '') }}:
         dependsOn: Build
-      ${{ if eq(parameters.dependsOnEnv, 'sbox') }}:
-        dependsOn: 'Test${{parameters.dependsOnEnv}}'
-      ${{ if eq(parameters.dependsOnEnv, 'stg') }}:
+      ${{ if ne(parameters.dependsOnEnv, '') }}:
         dependsOn: 'Test${{parameters.dependsOnEnv}}'
       pool:
         vmImage: 'ubuntu-latest'
