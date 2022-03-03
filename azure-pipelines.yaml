@@ -20,7 +20,7 @@ parameters:
   - name: releaseBranchName 
     displayName: Release branch substring. # if branch is release then will only run in prod. else, will run in all envs but prod env will only run plan
     type: string
-    default: 'refs/heads/VIH-8544'
+    default: 'refs/heads/release'
 
 stages:
 
@@ -30,7 +30,7 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        ${{ if and(ne(env, 'prod') , contains(variables['Build.SourceBranch'], parameters.releaseBranchName)) }}:
+        ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(parameters.releaseBranchName))) }}:
           runStage: 'false'
         ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], parameters.releaseBranchName), False )) }}: # stg env + not release
           runStage: 'true'
