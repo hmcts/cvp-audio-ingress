@@ -723,10 +723,13 @@ write_files:
     permissions: 0775
     path: /home/wowza/wowza-mount.sh
     content: |
+        echo wowza-mount.sh Last Run Date $(date) > /home/wowza/wowza-mount-last-run.txt
+
         contentDirectory="/usr/local/WowzaStreamingEngine/content/azurecopy"
         # create directories
         [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
         [ ! -d $contentDirectory ] && sudo mkdir $contentDirectory
+
 
         sudo bash /home/wowza/mount.sh $contentDirectory /mnt/blobfusetmp /home/wowza/connection.cfg "wowzaContent" "/usr/local/WowzaStreamingEngine-${wowzaVersion}+1/content/azurecopy"
   - owner: wowza:wowza
