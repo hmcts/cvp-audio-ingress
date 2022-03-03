@@ -47,6 +47,8 @@ stages:
                 $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
 
+                Write-Output "dependsOnEnv: ${{parameters.dependsOnEnv}}"
+
                 Write-Output "Should state be altered by azdo pipeline: $azdo_pipe_to_change_vm_status"
                 Write-Output "Should resting state be on: $vm_resting_state_on"
                 Write-Output ""
