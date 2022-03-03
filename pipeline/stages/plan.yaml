@@ -69,6 +69,9 @@ stages:
                   {
                       Write-Output "$resourcegroup does not exist in subscription"
                   }
+                } else
+                {
+                    Write-Output "Azdo pipeline is not meant to change VM status in this env"
                 }
                 Write-Output "Stage finished: Turning Vm On"
 
