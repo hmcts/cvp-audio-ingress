@@ -79,7 +79,7 @@ stages:
                           Write-Output "Starting VM '$vmName'"
                           az vm start --name $vmName --resource-group $resourcegroup
                           Write-Output "Remount wowza by running script on target vm; sudo sh /home/wowza/wowza-mount.sh"
-                          az vm run-command invoke -g $resourcegroup -n $vmName  --command-id RunShellScript --scripts "sudo sh wowza-mount.sh"
+                          az vm run-command invoke -g $resourcegroup -n $vmName  --command-id RunShellScript --scripts "sudo sh /home/wowza/wowza-mount.sh"
                           Write-Output ""
                           $timeToSleep = 90
                         }
