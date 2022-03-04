@@ -15,5 +15,4 @@ runbook_schedule_times = {
   "frequency" = "Day"
   "interval"  = 1
   "timezone"  = "Europe/London"
-  # "start_time" = "2022-03-01T16:00:00Z"
 }
