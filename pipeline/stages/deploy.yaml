@@ -69,6 +69,7 @@ stages:
                     $vmList = az vm list --resource-group $resourcegroup  --query "[].{name:name}"  | ConvertFrom-Json
                     $vmListCnt=$vmList.Count 
                     Write-Output "$vmListCnt found in resource group"
+                    $timeToSleep = 1
                     foreach ($vm in $vmList) {
                         $vmName= $vm.name
                         $vmDetails = az vm get-instance-view --name $vmName --resource-group $resourcegroup | ConvertFrom-Json
@@ -78,8 +79,10 @@ stages:
                           Write-Output "Starting VM '$vmName'"
                           az vm start --name $vmName --resource-group $resourcegroup
                           Write-Output ""
-                        } 
+                          $timeToSleep = 60
+                        }
                     }
+                    Start-Sleep -s $timeToSleep   
                   }else
                   {
                       Write-Output "$resourcegroup does not exist in subscription"
