@@ -173,7 +173,7 @@ stages:
                         $statusVm = $vmDetails.instanceView.statuses[1].Code
                         Write-Output "Initial status for VM '$vmName'= $statusVm"
                         if ( $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm){
-                          Write-Output "Deallocating VM '$vmName'"
+                          Write-Output "Stopping VM '$vmName'"
                           az vm stop --name $vmName --resource-group $resourcegroup
                           Write-Output ""
                         }  else {
