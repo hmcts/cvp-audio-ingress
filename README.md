@@ -96,12 +96,34 @@ old logs are in the same folder but with the date appended
 
 You can check if there is certificates installed and if they are valid
 
-1. Get password via: `cat /usr/local/WowzaStreamingEngine/conf/Server.xml | grep Password`
-2. Run below and add password.
+1. Get password via: 
+```Bash
+jksPass=$(cat /usr/local/WowzaStreamingEngine/conf/Server.xml | grep KeyStorePassword)
+jksPass="${jksPass//<KeyStorePassword>/}"
+jksPass="${jksPass//<\/KeyStorePassword>/}"
+echo $jksPass
 ```
-keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
+2. Run below and add password.
+```Bash
+export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
+keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -storepass $jksPass
 ```
 More details about CVP Certificates are here https://tools.hmcts.net/confluence/display/VIH/SSL+Certificates
+
+### Accepting Wowza Terms & Conditions in Marketplace
+
+For each Subscription, you will need to accept the Terms and Conditions for each Wowza VM on the Marketplace. If you need to accept the Terms & Conditions, you can add in the following task to the Apply step, after Terraform init:
+
+```
+- task: AzureCLI@2
+    displayName: Accept Terms of Wowza VM in Marketplace
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName }}'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az vm image terms accept --urn ${{ parameters.wowza_publisher }}:${{ parameters.wowza_offer }}:${{ parameters.wowza_sku }}:${{ parameters.wowza_version }}
+```
 
 ### **Resolution**
 

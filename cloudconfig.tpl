@@ -402,6 +402,7 @@ write_files:
       exit 0
   - owner: wowza:wowza
     path: /home/wowza/mount.sh
+    permissions: 0775
     content: |
       #!/bin/bash
 
@@ -417,13 +418,14 @@ write_files:
       sudo -u wowza bash -c "crontab $cronTaskPath"
   - owner: wowza:wowza
     path: /home/wowza/remount.sh
+    permissions: 0775
     content: |
         mountDir="$5"
-        logPath="/usr/local/WowzaStreamingEngine-${wowzaVersion}+1/azlogs/log-mount.log"
+        logPath="/usr/local/WowzaStreamingEngine/azlogs/log-mount.log"
         dt=$(date '+%d/%m/%Y %H:%M:%S')
 
         context="failed"
-        if grep -qs $mountDir ../../proc/mounts; then
+        if grep -qs $mountDir /proc/mounts; then
          context="IS"
         else
           context="WAS NOT"
@@ -730,8 +732,7 @@ write_files:
         [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
         [ ! -d $contentDirectory ] && sudo mkdir $contentDirectory
 
-
-        sudo bash /home/wowza/mount.sh $contentDirectory /mnt/blobfusetmp /home/wowza/connection.cfg "wowzaContent" "/usr/local/WowzaStreamingEngine-${wowzaVersion}+1/content/azurecopy"
+        sudo bash /home/wowza/mount.sh $contentDirectory /mnt/blobfusetmp /home/wowza/connection.cfg "wowzaContent" "/usr/local/WowzaStreamingEngine[A-Za-z0-9\-\.]*/content/azurecopy"
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/log-mount.sh
@@ -754,7 +755,7 @@ write_files:
       " > $cronTaskPath
       sudo -u wowza bash -c "crontab $cronTaskPath"
 
-      sudo bash /home/wowza/mount.sh $rootDir /mnt/blobfusetmplogs /home/wowza/connection-logs.cfg "azlogs" "/usr/local/WowzaStreamingEngine-${wowzaVersion}+1/azlogs"
+      sudo bash /home/wowza/mount.sh $rootDir /mnt/blobfusetmplogs /home/wowza/connection-logs.cfg "azlogs" "/usr/local/WowzaStreamingEngine[A-Za-z0-9\-\.]*/azlogs"
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/dir-creator.sh
