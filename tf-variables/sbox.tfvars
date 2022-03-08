@@ -12,17 +12,17 @@ script_name                   = "" #"/vm-start-stop.ps1" # "/.terraform/modules/
 azdo_pipe_to_change_vm_status = true
 auto_acc_runbooks = [
   {
-    name       = "vm_start",
-    frequency  = "Day"
-    interval   = 1
-    start_time = "2020-03-05T19:00:00Z"
-    vmStateOn  = true
+    name        = "vm_start",
+    frequency   = "Day"
+    interval    = 1
+    start_time  = "2020-03-05T19:00:00Z"
+    vm_state_on = true
   },
   {
-    name       = "vm_off",
-    frequency  = "Day"
-    interval   = 1
-    start_time = "2020-03-05T19:00:00Z"
-    vmStateOn  = false
+    name        = "vm_off",
+    frequency   = "Day"
+    interval    = 1
+    start_time  = "2020-03-05T19:00:00Z"
+    vm_state_on = false
   }
 ]

@@ -18,7 +18,7 @@ resource "azurerm_automation_account" "vm-start-stop" {
 }
 
 locals {
-  source      = "${path.module}/vm_automation"
+  source = "${path.module}/vm_automation"
 }
 
 #  vm shutdown/start runbook module
