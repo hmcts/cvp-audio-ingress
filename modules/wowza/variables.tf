@@ -120,3 +120,21 @@ variable "ws_rg" {
 variable "ws_sub_id" {
   type = string
 }
+
+variable "auto_acc_runbooks" {
+  default = []
+}
+variable "automation_account_sku_name" {
+  type        = string
+  description = "Azure B2C SKU name"
+  default     = "Basic"
+  validation {
+    condition     = contains(["Basic"], var.automation_account_sku_name)
+    error_message = "Azure Automation Account SKUs are limited to Basic."
+  }
+}
+variable "script_name" {
+  type        = string
+  description = "runbook name"
+  default     = ""
+}

@@ -20,7 +20,7 @@ parameters:
   - name: releaseBranchName 
     displayName: Release branch substring. # if branch is release then will only run in prod. else, will run in all envs but prod env will only run plan
     type: string
-    default: 'refs/heads/release'
+    default: 'refs/heads/release' #add to shared variablkes
 
 stages:
 

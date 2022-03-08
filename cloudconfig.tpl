@@ -725,7 +725,7 @@ write_files:
     permissions: 0775
     path: /home/wowza/wowza-mount.sh
     content: |
-        echo wowza-mount.sh Last Run Date $(date) > /home/wowza/wowza-mount-last-run.txt
+        echo wowza-mount.sh Last Run Date $(date) > /usr/local/WowzaStreamingEngine/azlogs/wowza-mount-last-run.txt
 
         contentDirectory="/usr/local/WowzaStreamingEngine/content/azurecopy"
         # create directories

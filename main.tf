@@ -32,6 +32,9 @@ module "wowza" {
   ws_sub_id                     = var.ws_sub_id
   ws_rg                         = var.ws_rg
   sa_recording_retention        = var.sa_recording_retention
+
+  auto_acc_runbooks = var.auto_acc_runbooks
+  script_name       = var.script_name
 }
 
 resource "azurerm_dns_a_record" "wowza" {
@@ -42,50 +45,5 @@ resource "azurerm_dns_a_record" "wowza" {
   records             = [var.lb_IPaddress]
 
   tags = local.common_tags
-}
-
-# =================================================================
-# =================    automation account    ======================
-# =================================================================
-resource "azurerm_automation_account" "vm-start-stop" {
-  count = var.azdo_pipe_to_change_vm_status == true ? 1 : 0
-
-  name                = "${var.product}-recordings-${var.env}-aa"
-  location            = var.location
-  resource_group_name = "${var.product}-recordings-${var.env}-rg"
-  sku_name            = var.automation_account_sku_name
-
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [module.vm_automation[0].cvp_aa_mi_id]
-  }
-
-  tags = local.common_tags
-}
-
-#  vm shutdown/start runbook module
-module "vm_automation" {
-  count = var.azdo_pipe_to_change_vm_status == true ? 1 : 0
-
-  source                        = "github.com/hmcts/cnp-module-automation-runbook-start-stop-vm"
-  automation_account_name       = azurerm_automation_account.vm-start-stop[0].name
-  location                      = var.location
-  env                           = var.env
-  resource_group_id             = module.wowza.wowza_rg_id
-  azdo_pipe_to_change_vm_status = var.azdo_pipe_to_change_vm_status
-  vm_resting_state_on           = var.vm_resting_state_on
-  runbook_schedule_times        = merge(var.runbook_schedule_times, { "start_time" = "${formatdate("YYYY-MM-DD", timestamp())}T19:00:00Z" })
-  publish_content_link          = "https://raw.githubusercontent.com/hmcts/cnp-module-automation-runbook-start-stop-vm/master/vm-start-stop.ps1"
-  tags                          = local.common_tags
-  auto_acc_runbook_names = {
-    resource_group_name         = "${var.product}-recordings-${var.env}-rg"
-    runbook_name                = "${var.product}-recordings-VM-start-stop-${var.env}"
-    schedule_name               = "${var.product}-recordings-schedule-${var.env}"
-    job_schedule_name           = "${var.product}-recordings-schedule-${var.env}"
-    user_assigned_identity_name = "${var.product}-recordings-automation-mi-${var.env}"
-    role_definition_name        = "${var.product}-recordings-vm-control-${var.env}"
-    script_name                 = "${path.module}${var.script_name}"
-    vm_names                    = join(",", [module.wowza.vm1_name, module.wowza.vm2_name])
-  }
 }
 

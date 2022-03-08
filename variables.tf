@@ -96,28 +96,11 @@ variable "sa_recording_retention" {
 }
 
 ## Automation Accounts
-variable "automation_account_sku_name" {
-  type        = string
-  description = "Azure B2C SKU name"
-  default     = "Basic"
-  validation {
-    condition     = contains(["Basic"], var.automation_account_sku_name)
-    error_message = "Azure Automation Account SKUs are limited to Basic."
-  }
-}
-variable "azdo_pipe_to_change_vm_status" {
-  description = "Should azdo pipeline change the status of the VMs"
-  default     = false
-}
-variable "vm_resting_state_on" {
-  description = "The desired resting state i.e. on/off for VMs"
-  default     = false
+variable "auto_acc_runbooks" {
+  default = []
 }
 variable "script_name" {
   type        = string
   description = "runbook name"
   default     = ""
-}
-variable "runbook_schedule_times" {
-  default = {}
 }
