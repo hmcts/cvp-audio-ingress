@@ -16,13 +16,13 @@ auto_acc_runbooks = [
     frequency  = "Day"
     interval   = 1
     start_time = "2020-03-05T19:00:00Z"
-    vmAction   = "On"
+    vmStateOn  = true
   },
   {
-    name       = "vm_end",
+    name       = "vm_off",
     frequency  = "Day"
     interval   = 1
     start_time = "2020-03-05T19:00:00Z"
-    vmAction   = "Off"
+    vmStateOn  = false
   }
 ]
