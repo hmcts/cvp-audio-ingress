@@ -23,7 +23,7 @@ module "vm_automation" {
 
   product                 = var.product
   env                     = var.env
-  location                      = var.location
+  location                = var.location
   automation_account_name = azurerm_automation_account.vm-start-stop.name
   tags                    = var.common_tags
   auto_acc_runbooks       = var.auto_acc_runbooks
