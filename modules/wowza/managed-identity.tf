@@ -39,7 +39,7 @@ resource "azurerm_role_assignment" "mi" {
 }
 
 resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
-  scope              = azurerm_user_assigned_identity.mi.id
+  scope              = azurerm_resource_group.rg.id
   role_definition_id = azurerm_role_definition.vm-status-control.role_definition_resource_id
   principal_id       = azurerm_user_assigned_identity.mi.principal_id
 
