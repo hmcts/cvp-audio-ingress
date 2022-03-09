@@ -14,7 +14,7 @@ auto_acc_runbooks = [
     name        = "vm-on",
     frequency   = "Day"
     interval    = 1
-    start_time  = "T19:00:00Z"
+    start_time  = "T06:00:00Z"
     vm_state_on = true
   },
   {

@@ -152,11 +152,9 @@ stages:
                 scriptLocation: inlineScript
                 inlineScript: |
                   $turn_off_vm_post_run="$env:TURN_OFF_VM_POST_RUN"
-                  $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                   $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
 
                   Write-Output "Should state be altered by AzDo pipeline: $turn_off_vm_post_run"
-                  Write-Output "Should resting state be on: $vm_resting_state_on"
                   Write-Output ""
 
                   if ( $turn_off_vm_post_run )
@@ -173,7 +171,7 @@ stages:
                           $vmDetails = az vm get-instance-view --name $vmName --resource-group $resourcegroup | ConvertFrom-Json
                           $statusVm = $vmDetails.instanceView.statuses[1].Code
                           Write-Output "Initial status for VM '$vmName'= $statusVm"
-                          if ( $vm_resting_state_on -eq $false -and "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm){
+                          if ( "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm){
                             Write-Output "Deallocating VM '$vmName'"
                             az vm deallocate --name $vmName --resource-group $resourcegroup
                             Write-Output ""

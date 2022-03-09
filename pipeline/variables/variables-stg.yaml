@@ -12,4 +12,3 @@ variables:
   dynatrace_host_group: "AAT_DTS_CVP"
   dynatrace_tenant_id: "yrk32651"
   TURN_OFF_VM_POST_RUN: true 
-  VM_RESTING_STATE_ON: false
