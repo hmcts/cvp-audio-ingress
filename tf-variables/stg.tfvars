@@ -8,4 +8,20 @@ rtmps_source_address_prefixes = ["10.11.72.32/27", "10.49.72.32/27"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-script_name                   = "/.terraform/modules/vm_automation/vm-start-stop.ps1"
+script_name                   = "/vm-start-stop.ps1"
+auto_acc_runbooks = [
+  {
+    name        = "vm-on",
+    frequency   = "Day"
+    interval    = 1
+    start_time  = "T19:00:00Z"
+    vm_state_on = true
+  },
+  {
+    name        = "vm-off",
+    frequency   = "Day"
+    interval    = 1
+    start_time  = "T20:00:00Z"
+    vm_state_on = false
+  }
+]
