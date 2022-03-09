@@ -8,7 +8,7 @@ rtmps_source_address_prefixes = ["35.204.50.163", "35.204.108.36", "34.91.92.40"
 ws_name                       = "hmcts-sandbox"
 ws_rg                         = "oms-automation"
 num_applications              = 20
-script_name                   = "/vm-start-stop.ps1" 
+script_name                   = "/vm-start-stop.ps1"
 auto_acc_runbooks = [
   {
     name        = "vm-on",

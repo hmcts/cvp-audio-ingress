@@ -11,6 +11,6 @@ variables:
   ws_rg: "oms-automation"
   dynatrace_host_group: "PROD_DTS_CVP"
   dynatrace_tenant_id: "ebe20728"
-  AZDO_PIPE_TO_CHANGE_VM_STATUS: true 
+  TURN_OFF_VM_POST_RUN: true 
   VM_RESTING_STATE_ON: true
   
