@@ -99,8 +99,3 @@ variable "sa_recording_retention" {
 variable "auto_acc_runbooks" {
   default = []
 }
-variable "script_name" {
-  type        = string
-  description = "runbook name"
-  default     = ""
-}
