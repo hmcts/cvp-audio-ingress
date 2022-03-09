@@ -11,7 +11,7 @@ resource "azurerm_automation_account" "vm-start-stop" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [module.vm_automation.aa_mi_id]
+    identity_ids = [azurerm_user_assigned_identity.mi.id] 
   }
 
   tags = var.common_tags
@@ -23,8 +23,8 @@ locals {
 
 #  vm shutdown/start runbook module
 module "vm_automation" {
-  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm?ref=VIH-8544" 
-  
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm?ref=VIH-8544"
+
   product                 = "${var.product}-recordings"
   env                     = var.env
   location                = var.location
@@ -34,4 +34,5 @@ module "vm_automation" {
   resource_group_id       = azurerm_resource_group.rg.id
   resource_group_name     = azurerm_resource_group.rg.name
   vm_names                = join(",", [azurerm_linux_virtual_machine.vm1.name, azurerm_linux_virtual_machine.vm2.name])
+  mi_principal_id         = azurerm_user_assigned_identity.mi.principal_id
 }

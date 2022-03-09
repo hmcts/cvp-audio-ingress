@@ -15,7 +15,7 @@ output "stream_password" {
 #   value       = module.wowza.lb_pip
 # }
 
-output "aa_mi_id" {
-  description = "automation account managed identity id"
-  value       = module.wowza.aa_mi_id
-}
+# output "aa_mi_id" {
+#   description = "automation account managed identity id"
+#   value       = module.wowza.aa_mi_id
+# }

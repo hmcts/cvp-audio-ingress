@@ -26,7 +26,7 @@ output "stream_password" {
 //   description = "Public IP for LB - This needs to be added to https://github.com/hmcts/azure-public-dns"
 //   value       = azurerm_private_ip.pip.ip_address
 // }
-output "aa_mi_id" {
-  description = "automation account managed identity id"
-  value       = module.vm_automation.aa_mi_id
-}
+# output "aa_mi_id" {
+#   description = "automation account managed identity id"
+#   value       = module.vm_automation.aa_mi_id
+# }
