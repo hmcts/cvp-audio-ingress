@@ -22,6 +22,9 @@ parameters:
     type: string
     default: 'refs/heads/release' #add to shared variablkes
 
+variables:
+  - template: ./pipeline/variables/variables-common.yaml #${{variables.product}}
+
 stages:
 
   - template: pipeline/stages/build.yaml 
