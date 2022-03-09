@@ -11,7 +11,7 @@ resource "azurerm_automation_account" "vm-start-stop" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = module.vm_automation.cvp_aa_mi_ids
+    identity_ids = module.vm_automation.cvp_aa_mi_id
   }
 
   tags = var.common_tags

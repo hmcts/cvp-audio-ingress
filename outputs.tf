@@ -15,7 +15,7 @@ output "stream_password" {
 #   value       = module.wowza.lb_pip
 # }
 
-output "cvp_aa_mi_ids" {
+output "cvp_aa_mi_id" {
   description = "cvp_aa_mi_id"
-  value       = module.wowza.cvp_aa_mi_ids
+  value       = module.wowza.cvp_aa_mi_id
 }

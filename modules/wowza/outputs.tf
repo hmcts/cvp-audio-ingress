@@ -31,7 +31,7 @@ output "stream_password" {
 //   description = "Public IP for LB - This needs to be added to https://github.com/hmcts/azure-public-dns"
 //   value       = azurerm_private_ip.pip.ip_address
 // }
-output "cvp_aa_mi_ids" {
+output "cvp_aa_mi_id" {
   description = "cvp_aa_mi_id"
-  value       = module.vm_automation.cvp_aa_mi_ids
+  value       = module.vm_automation.cvp_aa_mi_id
 }
