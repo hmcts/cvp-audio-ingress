@@ -9,4 +9,3 @@ ws_name                       = "hmcts-prod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
 script_name                   = "/.terraform/modules/vm_automation/vm-start-stop.ps1"
-azdo_pipe_to_change_vm_status = true

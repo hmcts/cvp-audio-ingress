@@ -52,47 +52,40 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $azdo_pipe_to_change_vm_status="$env:AZDO_PIPE_TO_CHANGE_VM_STATUS"
                 $vm_resting_state_on="$env:VM_RESTING_STATE_ON"
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
 
-                Write-Output "Should state be altered by azdo pipeline: $azdo_pipe_to_change_vm_status"
                 Write-Output "Should resting state be on: $vm_resting_state_on"
                 Write-Output ""
 
                 $rgExists = az group exists --name $resourcegroup
-                if ( $azdo_pipe_to_change_vm_status )
+                if ( $rgExists )
                 {
-                  if ( $rgExists )
-                  {
-                    Write-Output "$resourcegroup does exist in subscription"
-                    $vmList = az vm list --resource-group $resourcegroup  --query "[].{name:name}"  | ConvertFrom-Json
-                    $vmListCnt=$vmList.Count 
-                    Write-Output "$vmListCnt found in resource group"
-                    $timeToSleep = 1
-                    foreach ($vm in $vmList) {
-                        $vmName= $vm.name
-                        $vmDetails = az vm get-instance-view --name $vmName --resource-group $resourcegroup | ConvertFrom-Json
-                        $statusVm = $vmDetails.instanceView.statuses[1].Code
-                        Write-Output "Initial status for VM '$vmName'= $statusVm"
-                        if ( "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm){
-                          Write-Output "Starting VM '$vmName'"
-                          az vm start --name $vmName --resource-group $resourcegroup
-                          Write-Output "Mount wowza by running script on target vm; sudo sh /home/wowza/wowza-mount.sh"
-                          az vm run-command invoke -g $resourcegroup -n $vmName  --command-id RunShellScript --scripts "sudo sh /home/wowza/wowza-mount.sh"
-                          Write-Output ""
-                          $timeToSleep = 90
-                        }
-                    }
-                    Start-Sleep -s $timeToSleep   
-                  }else
-                  {
-                      Write-Output "$resourcegroup does not exist in subscription"
+                  Write-Output "$resourcegroup does exist in subscription"
+                  $vmList = az vm list --resource-group $resourcegroup  --query "[].{name:name}"  | ConvertFrom-Json
+                  $vmListCnt=$vmList.Count 
+                  Write-Output "$vmListCnt found in resource group"
+                  $timeToSleep = 1
+                  foreach ($vm in $vmList) {
+                      $vmName= $vm.name
+                      $vmDetails = az vm get-instance-view --name $vmName --resource-group $resourcegroup | ConvertFrom-Json
+                      $statusVm = $vmDetails.instanceView.statuses[1].Code
+                      Write-Output "Initial status for VM '$vmName'= $statusVm"
+                      if ( "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm){
+                        Write-Output "Starting VM '$vmName'"
+                        az vm start --name $vmName --resource-group $resourcegroup
+                        Write-Output "Mount wowza by running script on target vm; sudo sh /home/wowza/wowza-mount.sh"
+                        az vm run-command invoke -g $resourcegroup -n $vmName  --command-id RunShellScript --scripts "sudo sh /home/wowza/wowza-mount.sh"
+                        Write-Output ""
+                        $timeToSleep = 90
+                      }
                   }
-                } else
+                  Start-Sleep -s $timeToSleep   
+                }else
                 {
-                    Write-Output "Azdo pipeline is not meant to change VM status in this env"
+                    Write-Output "$resourcegroup does not exist in subscription"
                 }
+
                 Write-Output "Stage finished: Turning Vm On"
 
         - job: ApplyTfToEnv
