@@ -54,7 +54,7 @@ stages:
               inlineScript: |
                 $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
                 $rgExists = az group exists --name $resourcegroup
-                
+
                 if ( $rgExists )
                 {
                   Write-Output "$resourcegroup does exist in subscription"
@@ -71,7 +71,7 @@ stages:
                         Write-Output "Starting VM '$vmName'"
                         az vm start --name $vmName --resource-group $resourcegroup
                         Write-Output "Mount wowza by running script on target vm; sudo sh /home/wowza/wowza-mount.sh"
-                        az vm run-command invoke -g $resourcegroup -n $vmName  --command-id RunShellScript --scripts "sudo sh /home/wowza/wowza-mount.sh"
+                        az vm run-command invoke -g $resourcegroup -n $vmName  --command-id RunShellScript --scripts "sudo /home/wowza/runcmd.sh"
                         Write-Output ""
                         $timeToSleep = 90
                       }
