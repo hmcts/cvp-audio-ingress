@@ -31,6 +31,7 @@ resource "azurerm_role_definition" "vm-status-control" {
       "Microsoft.Compute/virtualMachines/read",
       "Microsoft.Compute/virtualMachines/start/action",
       "Microsoft.Compute/virtualMachines/deallocate/action",
+      "Microsoft.Compute/virtualMachines/runCommand/action",
     ]
     not_actions = []
   }
