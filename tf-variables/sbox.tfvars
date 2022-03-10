@@ -10,17 +10,17 @@ ws_rg                         = "oms-automation"
 num_applications              = 20
 auto_acc_runbooks = [
   {
-    name        = "vm-on",
-    frequency   = "Day"
-    interval    = 1
-    start_time  = "T06:00:00Z"
-    vm_state_on = true
+    name       = "vm-on",
+    frequency  = "Day"
+    interval   = 1
+    run_time = "06:00:00"
+    start_vm   = true
   },
   {
-    name        = "vm-off",
-    frequency   = "Day"
-    interval    = 1
-    start_time  = "T20:00:00Z"
-    vm_state_on = false
+    name       = "vm-off",
+    frequency  = "Day"
+    interval   = 1
+    run_time = "20:00:00"
+    start_vm   = false
   }
 ]
