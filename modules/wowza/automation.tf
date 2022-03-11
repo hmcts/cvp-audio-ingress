@@ -1,7 +1,3 @@
-
-# =================================================================
-# =================    automation account    ======================
-# =================================================================
 resource "azurerm_automation_account" "vm-start-stop" {
 
   name                = "${var.product}-recordings-${var.env}-aa"
@@ -21,9 +17,8 @@ locals {
   source = "${path.module}/vm_automation"
 }
 
-#  vm shutdown/start runbook module
 module "vm_automation" {
-  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm?ref=VIH-8544"
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm"
 
   product                 = "${var.product}-recordings"
   env                     = var.env

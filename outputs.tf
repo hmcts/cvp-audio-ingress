@@ -14,8 +14,3 @@ output "stream_password" {
 #   description = "Public IP for LB - This needs to be added to https://github.com/hmcts/azure-public-dns"
 #   value       = module.wowza.lb_pip
 # }
-
-# output "aa_mi_id" {
-#   description = "automation account managed identity id"
-#   value       = module.wowza.aa_mi_id
-# }
