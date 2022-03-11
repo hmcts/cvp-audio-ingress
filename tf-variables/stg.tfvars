@@ -8,19 +8,19 @@ rtmps_source_address_prefixes = ["10.11.72.32/27", "10.49.72.32/27"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-auto_acc_runbooks = [
+schedules = [
   {
-    name       = "vm-on",
-    frequency  = "Day"
-    interval   = 1
-    run_time   = "T06:00:00Z"
-    start_vm   = true
+    name      = "vm-on",
+    frequency = "Day"
+    interval  = 1
+    run_time  = "T06:00:00Z"
+    start_vm  = true
   },
   {
-    name       = "vm-off",
-    frequency  = "Day"
-    interval   = 1
-    run_time   = "T20:00:00Z"
-    start_vm   = false
+    name      = "vm-off",
+    frequency = "Day"
+    interval  = 1
+    run_time  = "T20:00:00Z"
+    start_vm  = false
   }
 ]

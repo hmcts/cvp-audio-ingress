@@ -96,6 +96,6 @@ variable "sa_recording_retention" {
 }
 
 ## Automation Accounts
-variable "auto_acc_runbooks" {
+variable "schedules" {
   default = []
 }

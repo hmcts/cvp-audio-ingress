@@ -11,7 +11,7 @@ resource "azurerm_automation_account" "vm-start-stop" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.mi.id] 
+    identity_ids = [azurerm_user_assigned_identity.mi.id]
   }
 
   tags = var.common_tags
@@ -30,7 +30,7 @@ module "vm_automation" {
   location                = var.location
   automation_account_name = azurerm_automation_account.vm-start-stop.name
   tags                    = var.common_tags
-  auto_acc_runbooks       = var.auto_acc_runbooks
+  schedules               = var.schedules
   resource_group_name     = azurerm_resource_group.rg.name
   vm_names                = [azurerm_linux_virtual_machine.vm1.name, azurerm_linux_virtual_machine.vm2.name]
   mi_principal_id         = azurerm_user_assigned_identity.mi.principal_id

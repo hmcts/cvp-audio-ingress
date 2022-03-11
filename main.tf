@@ -32,7 +32,7 @@ module "wowza" {
   ws_sub_id                     = var.ws_sub_id
   ws_rg                         = var.ws_rg
   sa_recording_retention        = var.sa_recording_retention
-  auto_acc_runbooks             = var.auto_acc_runbooks
+  schedules                     = var.schedules
 }
 
 resource "azurerm_dns_a_record" "wowza" {

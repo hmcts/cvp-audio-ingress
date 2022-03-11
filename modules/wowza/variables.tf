@@ -121,7 +121,7 @@ variable "ws_sub_id" {
   type = string
 }
 
-variable "auto_acc_runbooks" {
+variable "schedules" {
   default = []
 }
 variable "automation_account_sku_name" {
