@@ -13,14 +13,14 @@ schedules = [
     name      = "vm-on",
     frequency = "Day"
     interval  = 1
-    run_time  = "T06:00:00Z"
+    run_time  = "06:00:00"
     start_vm  = true
   },
   {
     name      = "vm-off",
     frequency = "Day"
     interval  = 1
-    run_time  = "T20:00:00Z"
+    run_time  = "20:00:00"
     start_vm  = false
   }
 ]
