@@ -8,3 +8,12 @@ rtmps_source_address_prefixes = ["35.246.64.24", "35.246.125.146", "35.246.120.2
 ws_name                       = "hmcts-prod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
+schedules = [
+  {
+    name      = "vm-on",
+    frequency = "Day"
+    interval  = 1
+    run_time  = "06:00:00"
+    start_vm  = true
+  }
+]
