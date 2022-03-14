@@ -28,6 +28,11 @@ variable "admin_ssh_key_path" {
   default = "~/.ssh/wowza.pub"
 }
 
+# VM
+variable "vm_size" {
+  type = string
+}
+
 # DNS
 variable "dns_zone_name" {
   type = string
