@@ -122,11 +122,18 @@ variable "ws_sub_id" {
 }
 
 variable "schedules" {
+  type = list(object({
+    name      = string
+    frequency = string
+    interval  = number
+    run_time  = string
+    start_vm  = bool
+  }))
   default = []
 }
 variable "automation_account_sku_name" {
   type        = string
-  description = "Azure B2C SKU name"
+  description = "Azure Automation Account SKU name"
   default     = "Basic"
   validation {
     condition     = contains(["Basic"], var.automation_account_sku_name)

@@ -8,6 +8,36 @@ parameters:
 
 stages:
   - ${{ if and(eq(parameters.runStage, true), ne(parameters.env, 'sbox') )}}:
+    - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
+      - job: 'StopVM${{parameters.env}}'
+        displayName: '${{parameters.env}} Turning Vm off'
+        dependsOn: [LoadBalancerTest, VirtualMachineTest]
+        pool:
+          vmImage: 'ubuntu-latest'
+        variables:
+          - template: ../variables/variables-${{parameters.env}}.yaml
+          - group: cvp-${{parameters.env}}
+        steps:
+          - template: ../steps/start-stop-vm.yaml
+            parameters:
+              env: ${{parameters.env}}
+              pipelineStart: true
+
+    - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
+      - job: 'StopVM${{parameters.env}}'
+        displayName: '${{parameters.env}} Turning Vm off'
+        dependsOn: [LoadBalancerTest, VirtualMachineTest]
+        pool:
+          vmImage: 'ubuntu-latest'
+        variables:
+          - template: ../variables/variables-${{parameters.env}}.yaml
+          - group: cvp-${{parameters.env}}
+        steps:
+          - template: ../steps/start-stop-vm.yaml
+            parameters:
+              env: ${{parameters.env}}
+              pipelineStart: false
+
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
       condition: succeeded()
