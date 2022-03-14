@@ -139,7 +139,7 @@ stages:
             - template: ../steps/start-stop-vm.yaml
               parameters:
                 env: ${{parameters.env}}
-                pipelineStart: true
+                pipelineStart: "true"
 
         - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
           - job: 'StopVM${{parameters.env}}'
@@ -155,4 +155,4 @@ stages:
               - template: ../steps/start-stop-vm.yaml
                 parameters:
                   env: ${{parameters.env}}
-                  pipelineStart: false
+                  pipelineStart: "false"
