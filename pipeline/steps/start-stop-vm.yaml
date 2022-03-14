@@ -16,12 +16,7 @@ steps:
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
-        $turn_off_vm_post_run="$env:TURN_OFF_VM_POST_RUN"
-        Write-Output "turn_off_vm_post_run: $turn_off_vm_post_run"
-        $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
-        Write-Output "resourcegroup: $resourcegroup"
-        $pipelineStart="${{parameters.pipelineStart}}"
-        Write-Output "pipelineStart: $pipelineStart"
+        Write-Output "Task started: startStopVm"
         Write-Output ""
 
         $rgExists = az group exists --name $resourcegroup
@@ -31,6 +26,7 @@ steps:
           $vmList = az vm list --resource-group $resourcegroup  --query "[].{name:name}"  | ConvertFrom-Json
           $vmListCnt=$vmList.Count 
           Write-Output "$vmListCnt found in resource group"
+          $timeToSleep = 1
           foreach ($vm in $vmList) {
               $vmName= $vm.name
               $vmDetails = az vm get-instance-view --name $vmName --resource-group $resourcegroup | ConvertFrom-Json
@@ -41,6 +37,12 @@ steps:
                   Write-Output "Start VM '$vmName'"
                   az vm start --name $vmName --resource-group $resourcegroup
                   Write-Output ""
+                  Write-Output "Starting VM '$vmName'"
+                  az vm start --name $vmName --resource-group $resourcegroup
+                  Write-Output "Running script on target vm; sudo sh /home/wowza/runcmd.sh"
+                  az vm run-command invoke -g $resourcegroup -n $vmName  --command-id RunShellScript --scripts "sudo /home/wowza/runcmd.sh"
+                  Write-Output ""
+                  $timeToSleep = 90
               } 
               elseif ( $pipelineStart -eq $false -And "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm){
                 if ( $turn_off_vm_post_run )
@@ -54,9 +56,10 @@ steps:
                   Write-Output "The VM '$vmName' is in the desired state"
               }
           }
+          Start-Sleep -s $timeToSleep   
         }else
         {
             Write-Output "$resourcegroup does not exist in subscription"
         }
         
-        Write-Output "Stage finished: Turning Vm Off"
+        Write-Output "Task finished: startStopVm"
