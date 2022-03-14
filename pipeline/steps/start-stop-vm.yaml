@@ -38,15 +38,12 @@ steps:
               $statusVm = $vmDetails.instanceView.statuses[1].Code
               Write-Output "Initial status for VM '$vmName'= $statusVm"
 
-              if ( $pipelineStart eq $true -And "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm){
-                if ( $turn_off_vm_post_run )
-                {
-                  Write-Output "Deallocating VM '$vmName'"
-                  az vm deallocate --name $vmName --resource-group $resourcegroup
+              if ( $pipelineStart -eq $true -And "PowerState/deallocated","PowerState/deallocating","PowerState/stopped","PowerState/stopping","PowerState/unknown" -contains $statusVm){
+                  Write-Output "Start VM '$vmName'"
+                  az vm start --name $vmName --resource-group $resourcegroup
                   Write-Output ""
-                }
               } 
-              elseif ( $pipelineStart eq $false -And "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm){
+              elseif ( $pipelineStart -eq $false -And "PowerState/running","PowerState/starting","PowerState/unknown" -contains $statusVm){
                 if ( $turn_off_vm_post_run )
                 {
                   Write-Output "Deallocating VM '$vmName'"
