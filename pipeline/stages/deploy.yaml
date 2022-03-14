@@ -43,7 +43,7 @@ stages:
         - job: VmOn${{parameters.env}}
           displayName: 'Turn on VMs'
           steps:
-            - template: ../steps/start-stop-vm.yaml
+            - template: templates/Azure/Vm/start-stop-vm.yaml@azTemplates
               parameters:
                 env: ${{parameters.env}}
                 pipelineStart: true

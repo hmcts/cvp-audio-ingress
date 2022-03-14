@@ -142,7 +142,7 @@ stages:
               - template: ../variables/variables-${{parameters.env}}.yaml
               - group: cvp-${{parameters.env}}
             steps:
-              - template: ../steps/start-stop-vm.yaml
+              - template: templates/Azure/Vm/start-stop-vm.yaml@azTemplates
                 parameters:
                   env: ${{parameters.env}}
                   pipelineStart: false
