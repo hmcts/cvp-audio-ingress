@@ -10,7 +10,7 @@ steps:
     name: startStopVm
     condition: always()
     inputs:
-      azureSubscription: 'DTS-SHAREDSERVICES-SBOX'
+      azureSubscription: "${{variables.subscriptionName}}"
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
