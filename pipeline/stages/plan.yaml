@@ -28,25 +28,8 @@ stages:
         - template: ../variables/variables-${{parameters.env}}.yaml
         - group: cvp-${{parameters.env}}
       jobs:  
-        - job: 'StartVM${{parameters.env}}'
-          displayName: '${{parameters.env}} Turning Vm on'
-          # dependsOn: VmOn1${{parameters.env}}
-          pool:
-            vmImage: 'ubuntu-latest'
-          variables:
-            - template: ../variables/variables-common.yaml
-            - template: ../variables/variables-${{parameters.env}}.yaml
-            - group: cvp-${{parameters.env}}
-          steps:
-            - template: ../steps/start-stop-vm.yaml
-              parameters:
-                env: ${{parameters.env}}
-                pipelineStart: true
-                subscriptionName: ${{variables.subscriptionName}}
-
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
-          dependsOn: 'StartVM${{parameters.env}}' #DELETE
           steps:
             - template: ../steps/tf-install.yaml
             - template: ../steps/tf-init.yaml
