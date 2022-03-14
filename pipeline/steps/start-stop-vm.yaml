@@ -1,4 +1,6 @@
 parameters:
+  - name: subscription
+    type: string
   - name: env
     type: string
   - name: pipelineStart
@@ -10,7 +12,7 @@ steps:
     name: startStopVm
     condition: always()
     inputs:
-      azureSubscription: ${{variables.subscriptionName}}
+      azureSubscription: ${{parameters.subscription}}
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |

@@ -75,9 +75,7 @@ steps:
         rgName="$(rgName)"
         kvName="$(kvName)"
         oid=$(oid)
-        echo "rsm123"
         env_long=$(env_long)
-        echo env_long $env_long
         echo "Logged in as oid $oid"
         
         echo "Creating Shared KV $kvName"
