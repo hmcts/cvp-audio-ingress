@@ -43,21 +43,6 @@ stages:
                 env: ${{parameters.env}}
                 pipelineStart: "true"
 
-        - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
-          - job: 'StopVM${{parameters.env}}'
-            displayName: '${{parameters.env}} Turning Vm off'
-            dependsOn: 'StartVM${{parameters.env}}'
-            pool:
-              vmImage: 'ubuntu-latest'
-            variables:
-              - template: ../variables/variables-common.yaml
-              - template: ../variables/variables-${{parameters.env}}.yaml
-              - group: cvp-${{parameters.env}}
-            steps:
-              - template: ../steps/start-stop-vm.yaml
-                parameters:
-                  env: ${{parameters.env}}
-                  pipelineStart: "false"   
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
           dependsOn: 'StartVM${{parameters.env}}' #DELETE
@@ -157,33 +142,33 @@ stages:
 
         #         Write-Output "Stage finished: Turning Vm On"
 
-        - job: 'StartVM${{parameters.env}}'
-          displayName: '${{parameters.env}} Turning Vm on'
-          dependsOn: VmOn1${{parameters.env}}
-          pool:
-            vmImage: 'ubuntu-latest'
-          variables:
-            - template: ../variables/variables-common.yaml
-            - template: ../variables/variables-${{parameters.env}}.yaml
-            - group: cvp-${{parameters.env}}
-          steps:
-            - template: ../steps/start-stop-vm.yaml
-              parameters:
-                env: ${{parameters.env}}
-                pipelineStart: "true"
+        # - job: 'StartVM${{parameters.env}}'
+        #   displayName: '${{parameters.env}} Turning Vm on'
+        #   dependsOn: VmOn1${{parameters.env}}
+        #   pool:
+        #     vmImage: 'ubuntu-latest'
+        #   variables:
+        #     - template: ../variables/variables-common.yaml
+        #     - template: ../variables/variables-${{parameters.env}}.yaml
+        #     - group: cvp-${{parameters.env}}
+        #   steps:
+        #     - template: ../steps/start-stop-vm.yaml
+        #       parameters:
+        #         env: ${{parameters.env}}
+        #         pipelineStart: "true"
 
-        - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
-          - job: 'StopVM${{parameters.env}}'
-            displayName: '${{parameters.env}} Turning Vm off'
-            dependsOn: 'StartVM${{parameters.env}}'
-            pool:
-              vmImage: 'ubuntu-latest'
-            variables:
-              - template: ../variables/variables-common.yaml
-              - template: ../variables/variables-${{parameters.env}}.yaml
-              - group: cvp-${{parameters.env}}
-            steps:
-              - template: ../steps/start-stop-vm.yaml
-                parameters:
-                  env: ${{parameters.env}}
-                  pipelineStart: "false"
+        # - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
+        #   - job: 'StopVM${{parameters.env}}'
+        #     displayName: '${{parameters.env}} Turning Vm off'
+        #     dependsOn: 'StartVM${{parameters.env}}'
+        #     pool:
+        #       vmImage: 'ubuntu-latest'
+        #     variables:
+        #       - template: ../variables/variables-common.yaml
+        #       - template: ../variables/variables-${{parameters.env}}.yaml
+        #       - group: cvp-${{parameters.env}}
+        #     steps:
+        #       - template: ../steps/start-stop-vm.yaml
+        #         parameters:
+        #           env: ${{parameters.env}}
+        #           pipelineStart: "false"

@@ -19,7 +19,7 @@ steps:
         Write-Output "2"
         $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
         Write-Output "3"
-        $pipelineStart=${{parameters.pipelineStart}}
+        $pipelineStart="${{parameters.pipelineStart}}"
         Write-Output "4"
 
         Write-Output "Should state be altered by AzDo pipeline: $turn_off_vm_post_run"
