@@ -16,7 +16,7 @@ resource "azurerm_automation_account" "vm-start-stop" {
 module "vm_automation" {
   source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm"
 
-  product                 = "${var.product}-recordings"
+  product                 = "${var.product}"
   env                     = var.env
   location                = var.location
   automation_account_name = azurerm_automation_account.vm-start-stop.name
