@@ -96,7 +96,6 @@ stages:
               parameters:
                 env: ${{parameters.env}}
                 pipelineStart: true
-                subscription: ${{variables.subscriptionName}}
 
         - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
           - job: 'StopVM${{parameters.env}}'
@@ -113,4 +112,3 @@ stages:
                 parameters:
                   env: ${{parameters.env}}
                   pipelineStart: false
-                  subscription: ${{variables.subscriptionName}}
