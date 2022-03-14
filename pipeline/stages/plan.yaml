@@ -41,7 +41,7 @@ stages:
             - template: ../steps/start-stop-vm.yaml
               parameters:
                 env: ${{parameters.env}}
-                pipelineStart: "true"
+                pipelineStart: true
 
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'

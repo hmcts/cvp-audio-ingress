@@ -2,7 +2,7 @@ parameters:
   - name: env
     type: string
   - name: pipelineStart
-    type: string
+    type: boolean
 
 steps:
   - task: AzureCLI@2
