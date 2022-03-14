@@ -46,7 +46,7 @@ stages:
             - template: ../steps/start-stop-vm.yaml
               parameters:
                 env: ${{parameters.env}}
-                pipelineStart: true
+                pipelineStart: false
                 subscriptionName: ${{variables.subscriptionName}}
         - job: VmOn${{parameters.env}}
           displayName: 'Turn on VMs'
