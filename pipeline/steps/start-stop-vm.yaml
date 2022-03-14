@@ -14,9 +14,13 @@ steps:
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
+        Write-Output "1"
         $turn_off_vm_post_run="$env:TURN_OFF_VM_POST_RUN"
+        Write-Output "2"
         $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
+        Write-Output "3"
         $pipelineStart=${{parameters.pipelineStart}}
+        Write-Output "4"
 
         Write-Output "Should state be altered by AzDo pipeline: $turn_off_vm_post_run"
         Write-Output ""
