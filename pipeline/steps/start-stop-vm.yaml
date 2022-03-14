@@ -6,8 +6,8 @@ parameters:
 
 steps:
   - task: AzureCLI@2
-    displayName: Get Settings for Dynatrace Extension
-    name: dynaSettings
+    displayName: Start and Stop Vms during pipeline run
+    name: startStopVm
     condition: always()
     inputs:
       azureSubscription: ${{variables.subscriptionName}}
