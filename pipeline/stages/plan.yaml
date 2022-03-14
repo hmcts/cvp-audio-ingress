@@ -31,7 +31,6 @@ stages:
         - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
           - job: 'StartVM${{parameters.env}}'
             displayName: '${{parameters.env}} Turning Vm on'
-            dependsOn: [LoadBalancerTest, VirtualMachineTest]
             pool:
               vmImage: 'ubuntu-latest'
             variables:
@@ -46,7 +45,7 @@ stages:
         - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
           - job: 'StopVM${{parameters.env}}'
             displayName: '${{parameters.env}} Turning Vm off'
-            dependsOn: [LoadBalancerTest, VirtualMachineTest]
+            dependsOn: 'StartVM${{parameters.env}}'
             pool:
               vmImage: 'ubuntu-latest'
             variables:
