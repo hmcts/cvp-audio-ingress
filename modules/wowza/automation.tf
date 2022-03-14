@@ -13,10 +13,6 @@ resource "azurerm_automation_account" "vm-start-stop" {
   tags = var.common_tags
 }
 
-locals {
-  source = "${path.module}/vm_automation"
-}
-
 module "vm_automation" {
   source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm"
 
