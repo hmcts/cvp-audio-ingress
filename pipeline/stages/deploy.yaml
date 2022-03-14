@@ -42,7 +42,6 @@ stages:
       jobs:
         - job: VmOn${{parameters.env}}
           displayName: 'Turn on VMs'
-          dependsOn: 'VmOff${{parameters.env}}'
           steps:
             - template: ../steps/start-stop-vm.yaml
               parameters:
