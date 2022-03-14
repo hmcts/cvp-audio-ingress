@@ -3,14 +3,16 @@ parameters:
     type: string
   - name: pipelineStart
     type: boolean
-
+  - name: subscriptionName
+    type: string
+    
 steps:
   - task: AzureCLI@2
     displayName: Start and Stop Vms during pipeline run
     name: startStopVm
     condition: always()
     inputs:
-      azureSubscription: "${{variables.subscriptionName}}"
+      azureSubscription: '${{ parameters.subscriptionName }}'
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
