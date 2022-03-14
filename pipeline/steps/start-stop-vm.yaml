@@ -17,7 +17,9 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
         Write-Output "Task started: startStopVm"
-        Write-Output ""
+        $turn_off_vm_post_run="$env:TURN_OFF_VM_POST_RUN"
+        $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
+        $pipelineStart="${{parameters.pipelineStart}}"
 
         $rgExists = az group exists --name $resourcegroup
         if ( $rgExists )
