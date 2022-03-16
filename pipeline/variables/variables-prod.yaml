@@ -11,3 +11,5 @@ variables:
   ws_rg: "oms-automation"
   dynatrace_host_group: "PROD_DTS_CVP"
   dynatrace_tenant_id: "ebe20728"
+  TURN_OFF_VM_POST_RUN: false 
+  

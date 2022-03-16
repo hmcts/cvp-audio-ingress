@@ -8,3 +8,20 @@ rtmps_source_address_prefixes = ["35.204.50.163", "35.204.108.36", "34.91.92.40"
 ws_name                       = "hmcts-sandbox"
 ws_rg                         = "oms-automation"
 num_applications              = 20
+vm_size                       = "Standard_F4s_v2"
+schedules = [
+  {
+    name      = "vm-on",
+    frequency = "Day"
+    interval  = 1
+    run_time  = "06:00:00"
+    start_vm  = true
+  },
+  {
+    name      = "vm-off",
+    frequency = "Day"
+    interval  = 1
+    run_time  = "20:00:00"
+    start_vm  = false
+  }
+]

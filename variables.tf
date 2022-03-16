@@ -28,6 +28,11 @@ variable "admin_ssh_key_path" {
   default = "~/.ssh/wowza.pub"
 }
 
+# VM
+variable "vm_size" {
+  type = string
+}
+
 # DNS
 variable "dns_zone_name" {
   type = string
@@ -95,4 +100,7 @@ variable "sa_recording_retention" {
   description = "How long to retain the recordings in blob"
 }
 
-
+## Automation Accounts
+variable "schedules" {
+  default = []
+}

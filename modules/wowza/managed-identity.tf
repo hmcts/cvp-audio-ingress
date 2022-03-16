@@ -21,3 +21,31 @@ resource "azurerm_role_assignment" "mi" {
   role_definition_name = "Reader"
   principal_id         = azurerm_user_assigned_identity.mi.principal_id
 }
+
+resource "azurerm_role_definition" "vm-status-control" {
+  name        = "${var.product}-vm-status-control-${var.env}"
+  scope       = azurerm_resource_group.rg.id
+  description = "Custom Role for controlling virtual machines on off status"
+  permissions {
+    actions = [
+      "Microsoft.Compute/virtualMachines/read",
+      "Microsoft.Compute/virtualMachines/start/action",
+      "Microsoft.Compute/virtualMachines/deallocate/action",
+      "Microsoft.Compute/virtualMachines/runCommand/action",
+    ]
+    not_actions = []
+  }
+  assignable_scopes = [
+    azurerm_resource_group.rg.id,
+  ]
+}
+
+resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
+  scope              = azurerm_resource_group.rg.id
+  role_definition_id = azurerm_role_definition.vm-status-control.role_definition_resource_id
+  principal_id       = azurerm_user_assigned_identity.mi.principal_id
+
+  depends_on = [
+    azurerm_role_definition.vm-status-control # Required otherwise terraform destroy will fail
+  ]
+}

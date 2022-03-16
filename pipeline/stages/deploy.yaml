@@ -40,8 +40,17 @@ stages:
         - template: ../variables/variables-${{parameters.env}}.yaml
         - group: cvp-${{parameters.env}}
       jobs:
+        - job: VmOn${{parameters.env}}
+          displayName: 'Turn on VMs'
+          steps:
+            - template: templates/Azure/Vm/start-stop-vm.yaml@azTemplates
+              parameters:
+                env: ${{parameters.env}}
+                pipelineStart: true
+                subscriptionName: ${{variables.subscriptionName}}
         - job: ApplyTfToEnv
           displayName: 'Terraform to ${{parameters.env}}'
+          dependsOn: 'VmOn${{parameters.env}}'
           steps:
                 
             - template: ../steps/tf-install.yaml
