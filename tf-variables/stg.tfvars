@@ -11,17 +11,10 @@ num_applications              = 3500
 vm_size                       = "Standard_F4s_v2"
 schedules = [
   {
-    name      = "vm-on",
-    frequency = "Day"
-    interval  = 1
-    run_time  = "06:00:00"
-    start_vm  = true
-  },
-  {
     name      = "vm-off",
     frequency = "Day"
     interval  = 1
-    run_time  = "20:00:00"
+    run_time  = "06:00:00"
     start_vm  = false
   }
 ]
