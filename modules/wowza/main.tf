@@ -52,7 +52,7 @@ data "azurerm_private_dns_zone" "blob" {
   resource_group_name = "core-infra-intsvc-rg"
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
+ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   provider = azurerm.shared-dns-zone
   
   name                  = "${azurerm_virtual_network.vnet.name}-link"
