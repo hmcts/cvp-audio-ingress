@@ -6,6 +6,9 @@ parameters:
     default: []
   - name: vmRgName
     type: string
+  - name: env
+    type: string
+    default: 'sbox'
 
 steps:
   - task: AzureCLI@2
@@ -20,36 +23,43 @@ steps:
         $rgName="$env:WS_RG"
         $workspaceName="$env:WS_NAME"
         $workspaceSubscriptionName="$env:WS_SUB_NAME"
+        $env = "${{ parameters.env }}"
+        $env_long = "$env:ENV_LONG"
+        Write-Output "====env_long===="
+        Write-Output $env_long
 
         az account set -s $workspaceSubscriptionName
 
-        $key=az monitor log-analytics workspace get-shared-keys --resource-group $rgName --workspace-name $workspaceName --query "primarySharedKey" -o tsv
-        $id=az monitor log-analytics workspace show --resource-group $rgName --workspace-name $workspaceName -o tsv --query "customerId"
-
-        Write-Host "ID: $id"
-
-        $settings = [PSCustomObject]@{
-          workspaceId           = $id
+        $restApiPutBody = [PSCustomObject]@{
+            "location" = "uksouth"
+            "properties" = [PSCustomObject]@{
+                    publisher               = 'Microsoft.Azure.NetworkWatcher'
+                    type                    = 'NetworkWatcherAgentLinux'
+                    typeHandlerVersion      = '1.4'
+                    autoUpgradeMinorVersion = 'true'
+            }
+            "tags" = [PSCustomObject]@{
+                    application  = 'Cloud'
+                    BuiltFrom    = 'hmcts/cvp-audio-ingress'
+                    BusinessArea = 'Cross-Cutting'
+                    environment  = $env_long
+                    Platform     = ''
+                    Video        = ''
+                }    
         }
-        $settingsJson = $settings | ConvertTo-Json -Compress -Depth 100
-        $settingsJson = $settingsJson -replace "`"", "\`""
+        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
+        $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
+        Write-Output "====restApiPutBodyJson===="
+        Write-Output $restApiPutBodyJson
 
-        $protectedSettings = [PSCustomObject]@{
-          workspaceKey           = $key
-        }
-        $protectedSettingsJson = $protectedSettings | ConvertTo-Json -Compress -Depth 100
-        $protectedSettingsJson = $protectedSettingsJson -replace "`"", "\`""
-
-        Write-Host "##vso[task.setvariable variable=settingsJson;isOutput=true]$settingsJson"
-        Write-Host "##vso[task.setvariable variable=protectedSettingsJson;isOutput=true;issecret=true]$protectedSettingsJson"
+        Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
 
   - ${{ each vm in parameters.vmNames }}:
-    - template: templates\Azure\Vm\install.yaml@azTemplates
+    - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
       parameters:
         subscription: ${{ parameters.subscription }}
         rgName: ${{ parameters.vmRgName }}
         vmName: ${{ vm }}
         extName: "OmsAgentForLinux"
         extPublisher: "Microsoft.EnterpriseCloud.Monitoring"
-        settingsJson: $(omsSettings.settingsJson)
-        protectedSettingsJson: $(omsSettings.protectedSettingsJson)
+        restApiPutBodyJson: $(omsSettings.restApiPutBodyJson)

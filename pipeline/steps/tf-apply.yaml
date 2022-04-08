@@ -17,7 +17,7 @@ parameters:
     default: 'linux-paid-4-8'
   - name: wowza_version
     type: string
-    default: '4.8.17'
+    default: '4.8.16'
   - name: wowza_publisher
     type: string
     default: 'wowza'
@@ -39,15 +39,6 @@ steps:
       locationEng: ${{parameters.locationEng}}
       product: ${{parameters.product}}
       useBackend: true
-
-  - task: AzureCLI@2
-    displayName: Accept Terms of Wowza VM in Marketplace
-    inputs:
-      azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        az vm image terms accept --urn ${{ parameters.wowza_publisher }}:${{ parameters.wowza_offer }}:${{ parameters.wowza_sku }}:${{ parameters.wowza_version }}
 
   - task: DownloadPipelineArtifact@2
     displayName: Download Terraform Plan

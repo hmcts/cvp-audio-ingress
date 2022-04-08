@@ -22,6 +22,7 @@ module "wowza" {
   address_space                 = var.address_space
   lb_IPaddress                  = var.lb_IPaddress
   num_applications              = var.num_applications
+  vm_size                       = var.vm_size
   wowza_sku                     = var.wowza_sku
   wowza_version                 = var.wowza_version
   wowza_publisher               = var.wowza_publisher
@@ -32,6 +33,7 @@ module "wowza" {
   ws_sub_id                     = var.ws_sub_id
   ws_rg                         = var.ws_rg
   sa_recording_retention        = var.sa_recording_retention
+  schedules                     = var.schedules
 }
 
 resource "azurerm_dns_a_record" "wowza" {
@@ -40,5 +42,7 @@ resource "azurerm_dns_a_record" "wowza" {
   resource_group_name = var.dns_resource_group
   ttl                 = 300
   records             = [var.lb_IPaddress]
-  tags                = local.common_tags
+
+  tags = local.common_tags
 }
+

@@ -1,5 +1,6 @@
 variables:
   env: 'stg'
+  env_long: 'staging'
   dns: 'cvp-recording.aat.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-STG'
   kv_name_prefix : 'cftapps'
@@ -10,3 +11,4 @@ variables:
   ws_rg: "oms-automation"
   dynatrace_host_group: "AAT_DTS_CVP"
   dynatrace_tenant_id: "yrk32651"
+  TURN_OFF_VM_POST_RUN: true 

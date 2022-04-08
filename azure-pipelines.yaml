@@ -2,7 +2,7 @@ trigger:
   - master
 pr:
   - master
-  
+
 resources:
   repositories:
     - repository: azTemplates
@@ -18,24 +18,39 @@ parameters:
     values: []
     default: ['sbox','stg','prod']
 
+variables:
+  - template: ./pipeline/variables/variables-common.yaml
+
 stages:
+
   - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        ${{ if or(eq(env, 'sbox'), contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-')) }}:
-          dependsOnEnv: ''
-        ${{ if and(eq(env, 'stg'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+        ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:
+          runStage: 'false'
+        ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release
+          runStage: 'true'
           dependsOnEnv: 'sbox'
-        ${{ if and(eq(env, 'prod'), eq(contains(variables['Build.SourceBranch'], 'refs/heads/hotfix-'), False)) }}:
+        ${{ if and(eq(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # prod env + not release
+          runStage: 'true'
           dependsOnEnv: 'stg'
 
+          
     - template: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
+        ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + not release
+          runStage: 'true' 
+        ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
+          runStage: 'true'
 
     - template: pipeline/stages/test.yaml
       parameters:
         env: ${{env}}
+        ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + release
+          runStage: 'true' 
+        ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
+          runStage: 'true'
