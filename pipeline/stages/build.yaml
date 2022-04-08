@@ -16,7 +16,7 @@ stages:
     jobs:
       - job: privatelink
         steps:
-          - task: AzureCLI@2
+          - task AzureCLI@2
             name: 'vnetlink'
             displayName: Add Vnet Link
             inputs:
@@ -68,7 +68,7 @@ stages:
 
                 Write-Host $repsonse
 
-                
+
       - job: BasicValidation
         steps:
           - template: ../steps/tf-install.yaml
