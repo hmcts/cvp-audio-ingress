@@ -88,18 +88,6 @@ steps:
         echo "Env: $envName"
         tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$envName"
         
-<<<<<<< HEAD
-        if [[ $(az keyvault list --resource-group $rgName --query "[?name=='$kvName'] | length(@)") > 0 ]]
-        then
-            echo "KV $kvName Already exists"
-            newKv=$(az keyvault show --name $kvName)
-        else
-            echo "Creating Shared KV $kvName"
-            newKv=$(az keyvault create --location $location --name $kvName --resource-group $rgName  --subscription $sub --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
-        fi 
-        
-        kvId=$(echo $newKv | jq .id | sed 's/"//g')
-=======
         echo "Creating Shared KV $kvName"
         tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long"
         echo tag: $tags
@@ -118,7 +106,6 @@ steps:
           kvId=$(echo $newKv | jq .id)
         fi
         
->>>>>>> master
         echo "##vso[task.setvariable variable=kvId]$kvId"
 
         echo "Tagging $kvId"

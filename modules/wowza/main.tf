@@ -303,13 +303,8 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
   /*  depends_on = [
     azurerm_private_dns_a_record.sa_a_record,
-<<<<<<< HEAD
-    #azurerm_private_dns_zone_virtual_network_link.vnet_link
-  ]
-=======
     azurerm_private_dns_zone_virtual_network_link.vnet_link
   ] */
->>>>>>> master
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -360,13 +355,8 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   /* depends_on = [
     azurerm_private_dns_a_record.sa_a_record,
-<<<<<<< HEAD
-    #azurerm_private_dns_zone_virtual_network_link.vnet_link
-  ]
-=======
     azurerm_private_dns_zone_virtual_network_link.vnet_link
   ] */
->>>>>>> master
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
