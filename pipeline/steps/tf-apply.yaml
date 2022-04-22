@@ -30,6 +30,7 @@ parameters:
 
 steps:
 
+  
   - template: tf-init.yaml
     parameters:
       subscriptionName: ${{parameters.subscriptionName}}
@@ -54,7 +55,7 @@ steps:
       command: 'apply'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: '${{ parameters.env }}.tfplan -no-color'
-
+       
   # - task: AzureCLI@2
   #   displayName: 'Enable Logging'
   #   inputs:

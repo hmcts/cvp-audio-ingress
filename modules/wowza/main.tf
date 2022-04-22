@@ -46,29 +46,33 @@ resource "azurerm_private_endpoint" "endpoint" {
   tags = var.common_tags
 }
 
-/* resource "azurerm_private_dns_zone" "blob" {
+data "azurerm_private_dns_zone" "blob" {
+  provider            = azurerm.shared-dns-zone
   name                = "privatelink.blob.core.windows.net"
-  resource_group_name = azurerm_resource_group.rg.name
-  tags                = var.common_tags
+  resource_group_name = "core-infra-intsvc-rg"
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
+  provider = azurerm.shared-dns-zone
+
   name                  = "${azurerm_virtual_network.vnet.name}-link"
-  resource_group_name   = azurerm_resource_group.rg.name
-  private_dns_zone_name = azurerm_private_dns_zone.blob.name
+  resource_group_name   = "core-infra-intsvc-rg"
+  private_dns_zone_name = data.azurerm_private_dns_zone.blob.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
-  registration_enabled  = true
+  registration_enabled  = false
   tags                  = var.common_tags
 }
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
+  provider = azurerm.shared-dns-zone
+
   name                = module.sa.storageaccount_name
-  zone_name           = azurerm_private_dns_zone.blob.name
-  resource_group_name = azurerm_resource_group.rg.name
+  zone_name           = data.azurerm_private_dns_zone.blob.name
+  resource_group_name = "core-infra-intsvc-rg"
   ttl                 = 300
   records             = [azurerm_private_endpoint.endpoint.private_service_connection.0.private_ip_address]
   tags                = var.common_tags
-} */
+}
 
 #tfsec:ignore:azure-network-ssh-blocked-from-internet
 resource "azurerm_network_security_group" "sg" {
