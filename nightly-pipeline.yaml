@@ -261,7 +261,7 @@ stages:
                       vmName="${service_name}vm${i}"
                       echo "Renew Cert on $vmName in $rgName."
 
-                      response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts 'sudo /home/wowza/renew-cert.sh' --query "value[0].message")
+                      response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts 'sudo /home/wowza/renew-cert.sh;sudo service WowzaStreamingEngine restart' --query "value[0].message")
 
                       echo "$response"
                       echo ""
