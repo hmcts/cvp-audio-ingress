@@ -275,6 +275,9 @@ data "template_file" "cloudconfig" {
     keyVaultName            = "cvp-${var.env}-kv"
     domain                  = "cvp-recording.${local.domain_dns_prefix}.platform.hmcts.net"
     wowzaVersion            = var.wowza_version
+    project                 = "CVP"
+    dynatrace_tenant        = var.env == "prod" ? "ebe20728" : "yrk32651" 
+    dynatrace_token         = var.env == "stg" || var.env == "prod" ? data.azurerm_key_vault_secret.dynatrace_token[0].value : ""
   }
 }
 
@@ -295,6 +298,12 @@ data "azurerm_client_config" "current" {
 }
 data "azurerm_key_vault_secret" "ssh_pub_key" {
   name         = "cvp-ssh-pub-key"
+  key_vault_id = data.azurerm_key_vault.cvp_kv.id
+}
+
+data "azurerm_key_vault_secret" "dynatrace_token" {
+  count        = var.env == "stg" || var.env == "prod" ? 1 : 0
+  name         = "dynatrace-token"
   key_vault_id = data.azurerm_key_vault.cvp_kv.id
 }
 
