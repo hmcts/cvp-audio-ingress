@@ -178,10 +178,9 @@ steps:
       scriptType: 'pscore'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        $rgName="$(rgName)"
-        $kvName="$(kvName)"
-
-        $secrets="$($kvName-secrets)" | ConvertFrom-Json -AsHashTable
+        $rgName  = "$(rgName)"
+        $kvName  = "$(kvName)"
+        $secrets = "$(${{variables.kvName}}-secrets)" | ConvertFrom-Json -AsHashTable
 
         Write-Host "$secrets"
 
