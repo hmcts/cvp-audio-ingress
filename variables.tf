@@ -104,3 +104,7 @@ variable "sa_recording_retention" {
 variable "schedules" {
   default = []
 }
+
+variable "dynatrace_tenant" {
+  type = string
+}
