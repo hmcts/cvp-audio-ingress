@@ -181,7 +181,7 @@ steps:
         $rgName="$(rgName)"
         $kvName="$(kvName)"
 
-        $secrets="$(${{variables.kvName}}-secrets)" | ConvertFrom-Json -AsHashTable
+        $secrets="$($kvName-secrets)" | ConvertFrom-Json -AsHashTable
 
         Write-Host "$secrets"
 
