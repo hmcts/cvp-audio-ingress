@@ -182,13 +182,16 @@ steps:
         $organisation="https://dev.azure.com/hmcts"
         $env="${{ parameters.env }}"
         $groupName="cvp-$env-kv"
+        $kvName="$(kvName)"
         
         echo $(System.AccessToken) | az devops login --organization $organisation
-        $secrets=$(az pipelines variable-group variable list --org $organisation --project $project --query "[?name=='$groupName'].{id:id}[0]" -o json --only-show-errors) | ConvertFrom-Json -AsHashTable
+        $groupId=$(az pipelines variable-group list --org $organisation --project "$project" --query "[?name=='$groupName'].{id:id}[0]" -o tsv --only-show-errors)
+
+        $secrets=$(az pipelines variable-group variable list --org $organisation --project $project --id $groupId) | ConvertFrom-Json -AsHashTable
         Write-Host "$secrets"
 
         foreach ($secret in $secrets.GetEnumerator()) {
-          az keyvault secret set --name $secret.Name --vault-name ${kvName} --value $secret.Value
+          az keyvault secret set --name $secret.Name --vault-name $kvName --value $secret.Value
         }
 
   - task: AzureCLI@2
