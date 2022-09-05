@@ -178,8 +178,8 @@ steps:
       scriptType: 'pscore'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        rgName="$(rgName)"
-        kvName="$(kvName)"
+        $rgName="$(rgName)"
+        $kvName="$(kvName)"
 
         $secrets="$(${{variables.kvName}}-secrets)" | ConvertFrom-Json -AsHashTable
 
