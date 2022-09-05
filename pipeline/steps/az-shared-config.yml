@@ -194,7 +194,7 @@ steps:
         $secrets=$(az pipelines variable-group variable list --org $organisation --project $project --id $groupId) | ConvertFrom-Json -AsHashTable
 
         foreach ($secret in $secrets.GetEnumerator()) {
-          az keyvault secret set --name $secret.Name --vault-name $kvName --value $secret.Value.Values[0] --only-show-errors
+          $null = az keyvault secret set --name $secret.Name --vault-name $kvName --value $secret.Value.Values[0] --only-show-errors
         }
 
   - task: AzureCLI@2
