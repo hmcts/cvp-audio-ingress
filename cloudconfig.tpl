@@ -850,7 +850,7 @@ write_files:
         #!/bin/bash
 
         # Project
-        project="${project}" 
+        project="CVP"
 
         # Set Dynatrace Details.
         dynatrace_token="${dynatrace_token}"
@@ -858,8 +858,7 @@ write_files:
 
         # Java Key Store Details.
         jksPath="/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks"
-        wowzaServerPath="/usr/local/WowzaStreamingEngine/conf/Server.xml"
-        jksPass=$(cat $wowzaServerPath | grep -i KeyStorePassword | sed 's/<KeyStorePassword>//' | sed 's/<\/KeyStorePassword>//')
+        jksPass="${certPassword}"
 
         # Set Log Path.
         logFolder="/home/wowza/logs"

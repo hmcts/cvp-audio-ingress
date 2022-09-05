@@ -275,8 +275,7 @@ data "template_file" "cloudconfig" {
     keyVaultName            = "cvp-${var.env}-kv"
     domain                  = "cvp-recording.${local.domain_dns_prefix}.platform.hmcts.net"
     wowzaVersion            = var.wowza_version
-    project                 = "CVP"
-    dynatrace_tenant        = var.env == "prod" ? "ebe20728" : "yrk32651" 
+    dynatrace_tenant        = var.dynatrace_tenant
     dynatrace_token         = var.env == "stg" || var.env == "prod" ? data.azurerm_key_vault_secret.dynatrace_token[0].value : ""
   }
 }

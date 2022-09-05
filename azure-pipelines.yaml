@@ -20,6 +20,7 @@ parameters:
 
 variables:
   - template: ./pipeline/variables/variables-common.yaml
+  - group: cvp-kv-vars
 
 stages:
 

@@ -9,6 +9,7 @@ ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
 vm_size                       = "Standard_F4s_v2"
+dynatrace_tenant              = "yrk32651"
 schedules = [
   {
     name      = "vm-off",

@@ -172,6 +172,24 @@ steps:
         echo "##vso[task.setvariable variable=pubKey]$pubKey"
 
   - task: AzureCLI@2
+    displayName: 'Create KV Secrets'
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName }}'
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        rgName="$(rgName)"
+        kvName="$(kvName)"
+
+        $secrets="$(${{variables.kvName}}-secrets)" | ConvertFrom-Json -AsHashTable
+
+        Write-Host "$secrets"
+
+        foreach ($secret in $secrets.GetEnumerator()) {
+          az keyvault secret set --name $secret.Name --vault-name ${kvName} --value $secret.Value
+        }
+
+  - task: AzureCLI@2
     displayName: Get Log Analytics Workspace Subscription ID by name
     name: log_analytics
     inputs:
