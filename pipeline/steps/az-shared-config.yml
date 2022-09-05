@@ -184,9 +184,9 @@ steps:
         $groupName="cvp-$env-kv"
         $kvName="$(kvName)"
 
-        Write-Host "##[warning]!!!"
+        Write-Host "##[warning]!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         Write-Host "##[warning]THIS SCRIPT WILL ONLY WORK WITH NON-SECRET VARIABLES!"
-        Write-Host "##[warning]!!!"
+        Write-Host "##[warning]!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         
         echo $(System.AccessToken) | az devops login --organization $organisation
         $groupId=$(az pipelines variable-group list --org $organisation --project "$project" --query "[?name=='$groupName'].{id:id}[0]" -o tsv --only-show-errors)
@@ -194,7 +194,7 @@ steps:
         $secrets=$(az pipelines variable-group variable list --org $organisation --project $project --id $groupId) | ConvertFrom-Json -AsHashTable
 
         foreach ($secret in $secrets.GetEnumerator()) {
-          az keyvault secret set --name $secret.Name --vault-name $kvName --value $secret.Value.Values[0]
+          az keyvault secret set --name $secret.Name --vault-name $kvName --value $secret.Value.Values[0] --only-show-errors
         }
 
   - task: AzureCLI@2
