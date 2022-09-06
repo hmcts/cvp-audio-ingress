@@ -172,29 +172,28 @@ steps:
         echo "##vso[task.setvariable variable=pubKey]$pubKey"
 
   - task: AzureCLI@2
-    displayName: 'Create KV Secrets'
+    displayName: 'Create Dynatrace Secrets'
     inputs:
       azureSubscription: '${{ parameters.subscriptionName }}'
       scriptType: 'pscore'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        $project="Shared Services"
-        $organisation="https://dev.azure.com/hmcts"
-        $env="${{ parameters.env }}"
-        $groupName="cvp-$env-kv"
         $kvName="$(kvName)"
-
-        Write-Host "##[warning]!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        Write-Host "##[warning]THIS SCRIPT WILL ONLY WORK WITH NON-SECRET VARIABLES!"
-        Write-Host "##[warning]!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        
-        echo $(System.AccessToken) | az devops login --organization $organisation
-        $groupId=$(az pipelines variable-group list --org $organisation --project "$project" --query "[?name=='$groupName'].{id:id}[0]" -o tsv --only-show-errors)
-
-        $secrets=$(az pipelines variable-group variable list --org $organisation --project $project --id $groupId) | ConvertFrom-Json -AsHashTable
+  
+        $secrets=@{
+          "dynatrace-token = "$(dynatrace-token)"
+        }
 
         foreach ($secret in $secrets.GetEnumerator()) {
-          $null = az keyvault secret set --name $secret.Name --vault-name $kvName --value $secret.Value.Values[0] --only-show-errors
+          $currentSecretValue=$(az keyvault secret show --name $secret.Name --vault-name $kvName)
+
+          if ($currentSecretValue -eq $secret.Value) {
+            Write-Host "##[warning]Key Vault Secret Already Exists, Exiting..."
+          }
+          else {
+            Write-Host "##[section]Creating Key Vault Secret 'dynatrace-token'."
+            $null = az keyvault secret set --name $secret.Name --vault-name $kvName --value $secret.Value
+          }
         }
 
   - task: AzureCLI@2
