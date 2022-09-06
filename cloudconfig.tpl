@@ -1017,7 +1017,7 @@ write_files:
         sudo /home/wowza/renew-cert.sh
 
         # set up cronjobs
-        /home/wowza/cron.sh
+        sudo /home/wowza/cron.sh
 
         # restart wowza
         sudo service WowzaStreamingEngine restart
