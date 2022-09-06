@@ -188,7 +188,7 @@ steps:
           $currentSecretValue=$(az keyvault secret show --name $secret.Name --vault-name $kvName | ConvertFrom-Json)
 
           if ($currentSecretValue.Value -eq $secret.Value) {
-            Write-Host "##[warning]Key Vault Secret '$secret.Name' Already Exists with the Same Value."
+            Write-Host "##[warning]Key Vault Secret '$($secret.Name)' Already Exists with the Same Value."
           }
           else {
             Write-Host "##[section]Creating Key Vault Secret 'dynatrace-token'."

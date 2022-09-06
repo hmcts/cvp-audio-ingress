@@ -819,6 +819,7 @@ write_files:
         #!/bin/bash
         # Prepare Script.
         cronTaskPath='/home/wowza/cronjobs.txt'
+        touch $cronTaskPath
         sudo chmod 777 $cronTaskPath
 
         # Cron For Mounting.
