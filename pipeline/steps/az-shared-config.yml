@@ -187,7 +187,7 @@ steps:
         foreach ($secret in $secrets.GetEnumerator()) {
           $currentSecretValue=$(az keyvault secret show --name $secret.Name --vault-name $kvName | ConvertFrom-Json)
 
-          if ($currentSecretValue -eq $secret.Value) {
+          if ($currentSecretValue.Value -eq $secret.Value) {
             Write-Host "##[warning]Key Vault Secret Already Exists, Exiting..."
           }
           else {
