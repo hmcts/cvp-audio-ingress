@@ -408,13 +408,6 @@ write_files:
 
       # Add BlobFuse
       blobfuse $1 --tmp-path=$2 -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$3 -o allow_other -o nonempty
-
-      # # Cron to check remounting
-      # cronTaskPath="/home/wowza/cronjobs.txt"
-      # sudo touch $cronTaskPath
-      # sudo chmod 777 $cronTaskPath
-      # echo "*/5 * * * * /home/wowza/remount.sh $1 $2 $3 $4 $5" > $cronTaskPath
-      # sudo -u wowza bash -c "crontab $cronTaskPath"
   - owner: wowza:wowza
     path: /home/wowza/remount.sh
     permissions: 0775
@@ -747,13 +740,6 @@ write_files:
       destination="$rootDir/$hostname"
       mkdir $destination
 
-      #cronTaskPath="/home/wowza/log_copy.txt"
-      #sudo touch $cronTaskPath
-      #sudo chmod 777 $cronTaskPath
-      #echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination
-      #" > $cronTaskPath
-      #sudo -u wowza bash -c "crontab $cronTaskPath"
-
       sudo bash /home/wowza/mount.sh $rootDir /mnt/blobfusetmplogs /home/wowza/connection-logs.cfg "azlogs" "/usr/local/WowzaStreamingEngine[A-Za-z0-9\-\.]*/azlogs"
   - owner: wowza:wowza
     permissions: 0775
@@ -827,29 +813,13 @@ write_files:
       echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
 
   - owner: wowza:wowza
-    permissions: 0775
-    path: /home/wowza/schedule-cert.sh
-    content: |
-        #!/bin/bash
-        #cronTaskPath="/home/wowza/cert-renew.txt"
-        #sudo touch $cronTaskPath
-        #sudo chmod 777 $cronTaskPath
-
-        #echo "0 0 * * * /home/wowza/renew-cert.sh" >> $cronTaskPath
-        
-        #if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
-        #   echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
-        #fi
-
-        #sudo -u wowza bash -c "crontab $cronTaskPath"
-  - owner: wowza:wowza
     path: /home/wowza/cron.sh
     permissions: 0775
     content: |
         #!/bin/bash
-        # CronJobs
+        # Prepare Script.
         cronTaskPath='/home/wowza/cronjobs.txt'
-        sudo chmod $cronTaskPath
+        sudo chmod 777 $cronTaskPath
 
         # Cron For Mounting.
         echo "*/5 * * * * /home/wowza/remount.sh $1 $2 $3 $4 $5" >> $cronTaskPath
@@ -866,6 +836,9 @@ write_files:
         fi
 
         sudo -u wowza bash -c "crontab $cronTaskPath"
+        
+        # Remove To Avoid Duplicates.
+        rm -f $cronTaskPath
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/check-cert.sh
@@ -1041,7 +1014,6 @@ write_files:
         # install certificates
         sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
         sudo /home/wowza/renew-cert.sh
-        sudo /home/wowza/schedule-cert.sh
 
         # set up cronjobs
         /home/wowza/cron.sh
