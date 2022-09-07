@@ -685,12 +685,12 @@ write_files:
         df -h > $mountsTmp
 
         # Add BlobFuse
-        echo "Starting Blob Fuse Mount For $1 @ $(date)" >> $logPath
+        echo "Starting Blob Fuse Mount For $1 @ $(date)" 
 
         if grep -q "$(realpath $contentDirectory)" $mountsTmp && grep -q "blobfuse" $mountsTmp; then
-           echo "Blob IS Mounted." >> $logPath
+           echo "Blob IS Mounted."
         else
-           echo "Blob IS NOT Mounted, Mounting Blob Fuse..." >> $logPath
+           echo "Blob IS NOT Mounted, Mounting Blob Fuse..." 
            blobfuse $1 --tmp-path=$2 -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$3 -o allow_other -o nonempty
         fi
 
