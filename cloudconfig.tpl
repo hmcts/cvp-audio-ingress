@@ -643,26 +643,6 @@ write_files:
                         </Properties>
                 </Application>
         </Root>
-#   - owner: root:root
-#     permissions: '770' 
-#     path: /etc/rc.local
-#     content: |
-#       #!/bin/sh -e
-#       #
-#       # rc.local
-#       #
-#       # This script is executed at the end of each multiuser runlevel.
-#       # Make sure that the script will "exit 0" on success or any other
-#       # value on error.
-#       #
-#       # In order to enable or disable this script just change the execution
-#       # bits.
-#       #
-#       # By default this script does nothing.
-
-#       sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
-
-#       exit 0
   - owner: wowza:wowza
     path: /home/wowza/connection.cfg
     content: |
@@ -707,7 +687,7 @@ write_files:
         # Add BlobFuse
         echo "Starting Blob Fuse Mount For $1 @ $(date)" >> $logPath
 
-        if grep -q "$contentDirectory" $mountsTmp && grep -q "blobfuse" $mountsTmp; then
+        if grep -q "$(realpath $contentDirectory)" $mountsTmp && grep -q "blobfuse" $mountsTmp; then
            echo "Blob IS Mounted." >> $logPath
         else
            echo "Blob IS NOT Mounted, Mounting Blob Fuse..." >> $logPath
@@ -715,34 +695,6 @@ write_files:
         fi
 
         rm -f $mountsTmp
-#   - owner: wowza:wowza
-#     permissions: 0775
-#     path: /home/wowza/wowza-mount.sh
-#     content: |
-#         echo wowza-mount.sh Last Run Date $(date) > /usr/local/WowzaStreamingEngine/azlogs/wowza-mount-last-run.txt
-
-#         contentDirectory="/usr/local/WowzaStreamingEngine/content/azurecopy"
-#         # create directories
-#         [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
-#         [ ! -d $contentDirectory ] && sudo mkdir $contentDirectory
-
-#         sudo bash /home/wowza/mount.sh $contentDirectory /mnt/blobfusetmp /home/wowza/connection.cfg "wowzaContent" "/usr/local/WowzaStreamingEngine[A-Za-z0-9\-\.]*/content/azurecopy"
-#   - owner: wowza:wowza
-#     permissions: 0775
-#     path: /home/wowza/log-mount.sh
-#     content: |
-#       #!/bin/bash
-      
-#       wowzaSource="/usr/local/WowzaStreamingEngine/logs"
-
-#       rootDir="/usr/local/WowzaStreamingEngine/azlogs"
-#       mkdir $rootDir
-
-#       hostname=$(cat /proc/sys/kernel/hostname)
-#       destination="$rootDir/$hostname"
-#       mkdir $destination
-
-#       sudo bash /home/wowza/mount.sh $rootDir /mnt/blobfusetmplogs /home/wowza/connection-logs.cfg 
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/dir-creator.sh
@@ -972,8 +924,10 @@ write_files:
         cronTaskPathRoot='/home/wowza/cronjobsRoot.txt'
 
         # Cron For Mounting.
-        echo "*/5 * * * * /home/wowza/mount.sh $1 $2 $3" >> $cronTaskPathRoot
-        echo "*/5 * * * * /home/wowza/mount.sh $4 $5 $6" >> $cronTaskPathRoot
+        logFolder='/home/wowza/logs'
+        mkdir -p $logFolder
+        echo "*/5 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "*/5 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Log Mount.
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
