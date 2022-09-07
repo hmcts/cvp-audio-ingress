@@ -972,8 +972,8 @@ write_files:
         cronTaskPathRoot='/home/wowza/cronjobsRoot.txt'
 
         # Cron For Mounting.
-        echo "*/5 * * * * /home/wowza/mount.sh $1 $2 $3 >> $cronTaskPathRoot
-        echo "*/5 * * * * /home/wowza/mount.sh $4 $5 $6 >> $cronTaskPathRoot
+        echo "*/5 * * * * /home/wowza/mount.sh $1 $2 $3" >> $cronTaskPathRoot
+        echo "*/5 * * * * /home/wowza/mount.sh $4 $5 $6" >> $cronTaskPathRoot
 
         # Cron For Log Mount.
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
@@ -991,10 +991,9 @@ write_files:
         # Set Up Cron Jobs for Wowza & Root.
         crontab -u wowza $cronTaskPath
         crontab $cronTaskPathRoot
-        
-        # Set Up Cron Jobs for Wowza & Root.
-        crontab -u wowza $cronTaskPath
-        crontab $cronTaskPathRoot
+
+        rm -f $cronTaskPath
+        rm -f $cronTaskPathRoot
 # PLEASE LEAVE THIS AT THE BOTTOM
   - owner: wowza:wowza
     permissions: 0775
