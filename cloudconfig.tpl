@@ -675,11 +675,7 @@ write_files:
 
         # This Script Should Be Run As ROOT!
 
-        logPath="/home/wowza/mount.log"
-        contentDirectory="$1"
-        fuseTmpPath="$2"
-
-        mkdir -p $contentDirectory $fuseTmpPath
+        mkdir -p $1 $2
 
         mountsTmp='/home/wowza/mounts.txt'
         df -h > $mountsTmp
@@ -687,7 +683,7 @@ write_files:
         # Add BlobFuse
         echo "Starting Blob Fuse Mount For $1 @ $(date)" 
 
-        if grep -q "$(realpath $contentDirectory)" $mountsTmp && grep -q "blobfuse" $mountsTmp; then
+        if grep -q "$(realpath $1)" $mountsTmp && grep -q "blobfuse" $mountsTmp; then
            echo "Blob IS Mounted."
         else
            echo "Blob IS NOT Mounted, Mounting Blob Fuse..." 
@@ -945,7 +941,8 @@ write_files:
         # Set Up Cron Jobs for Wowza & Root.
         crontab -u wowza $cronTaskPath
         crontab $cronTaskPathRoot
-
+        
+        # Remove To Avoid Duplicates.
         rm -f $cronTaskPath
         rm -f $cronTaskPathRoot
 # PLEASE LEAVE THIS AT THE BOTTOM
