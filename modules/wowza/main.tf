@@ -173,6 +173,12 @@ resource "azurerm_public_ip" "pip_vm1" {
   allocation_method = "Static"
   sku               = "Standard"
   tags              = var.common_tags
+
+  lifecycle {
+    ignore_changes = [
+     zones 
+    ]
+  }
 }
 resource "azurerm_network_interface" "nic1" {
   name = "${local.service_name}-nic1"
@@ -197,6 +203,12 @@ resource "azurerm_public_ip" "pip_vm2" {
   allocation_method = "Static"
   sku               = "Standard"
   tags              = var.common_tags
+
+  lifecycle {
+    ignore_changes = [
+     zones 
+    ]
+  }
 }
 resource "azurerm_network_interface" "nic2" {
   name = "${local.service_name}-nic2"
