@@ -181,7 +181,7 @@ steps:
         $kvName="$(kvName)"
   
         $secrets=@{
-          "dynatrace-token" = "$(dynatrace-token)"
+          "dynatrace-token" = "$(dynatrace-token-kv)"
         }
 
         foreach ($secret in $secrets.GetEnumerator()) {
