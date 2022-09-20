@@ -27,7 +27,6 @@ stages:
         - template: ../variables/variables-common.yaml
         - template: ../variables/variables-${{parameters.env}}.yaml
         - group: cvp-${{parameters.env}}
-        - group: cvp-${{parameters.env}}-kv
       jobs:
         - job: PlanToEnv${{parameters.env}}
           displayName: 'Plan to ${{parameters.env}}'
