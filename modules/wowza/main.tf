@@ -176,7 +176,7 @@ resource "azurerm_public_ip" "pip_vm1" {
 
   lifecycle {
     ignore_changes = [
-     zones 
+      zones
     ]
   }
 }
@@ -206,7 +206,7 @@ resource "azurerm_public_ip" "pip_vm2" {
 
   lifecycle {
     ignore_changes = [
-     zones 
+      zones
     ]
   }
 }

@@ -1,6 +1,7 @@
-local {
-  la_id = replace(local.la_id, "resourcegroups", "resourceGroups")
+locals {
+  la_id = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
 }
+
 resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
   name                       = "cvp-kv-${var.env}-diag-set"
   target_resource_id         = data.azurerm_key_vault.cvp_kv.id

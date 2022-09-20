@@ -142,6 +142,6 @@ variable "automation_account_sku_name" {
 }
 
 variable "dynatrace_tenant" {
-  type = string
+  type        = string
   description = "Name Given To Dynatrace Tenant."
 }
