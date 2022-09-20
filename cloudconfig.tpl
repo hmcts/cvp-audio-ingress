@@ -380,84 +380,6 @@ write_files:
                       </Properties>
               </VHost>
       </Root>
-  - owner: root:root
-    permissions: '770' 
-    path: /etc/rc.local
-    content: |
-      #!/bin/sh -e
-      #
-      # rc.local
-      #
-      # This script is executed at the end of each multiuser runlevel.
-      # Make sure that the script will "exit 0" on success or any other
-      # value on error.
-      #
-      # In order to enable or disable this script just change the execution
-      # bits.
-      #
-      # By default this script does nothing.
-
-      sudo bash /home/wowza/mount.sh /usr/local/WowzaStreamingEngine/content/azurecopy
-
-      exit 0
-  - owner: wowza:wowza
-    path: /home/wowza/mount.sh
-    permissions: 0775
-    content: |
-      #!/bin/bash
-
-      ## Add BlobFuse
-      blobfuse $1 --tmp-path=$2 -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$3 -o allow_other -o nonempty
-
-      ## Cron to check remounting
-      cronTaskPath="/home/wowza/remount_$4.txt"
-      sudo touch $cronTaskPath
-      sudo chmod 777 $cronTaskPath
-      echo "*/5 * * * * /home/wowza/remount.sh $1 $2 $3 $4 $5
-      " > $cronTaskPath
-      sudo -u wowza bash -c "crontab $cronTaskPath"
-  - owner: wowza:wowza
-    path: /home/wowza/remount.sh
-    permissions: 0775
-    content: |
-        mountDir="$5"
-        logPath="/usr/local/WowzaStreamingEngine/azlogs/log-mount.log"
-        dt=$(date '+%d/%m/%Y %H:%M:%S')
-
-        context="failed"
-        if grep -qs $mountDir /proc/mounts; then
-         context="IS"
-        else
-          context="WAS NOT"
-          echo "Remounting $mountDir"
-          sudo /home/wowza/mount.sh $1 $2 $3 $4 $5
-        fi
-        echo "$dt :: drive $context mounted. :: $mountDir" >> $logPath
-
-  - owner: wowza:wowza
-    path: /home/wowza/connection.cfg
-    content: |
-      accountName ${storageAccountName}
-      accountKey ${storageAccountKey}
-      containerName ${containerName}
-  - owner: wowza:wowza
-    path: /home/wowza/connection-logs.cfg
-    content: |
-      accountName ${storageAccountName}
-      accountKey ${storageAccountKey}
-      containerName ${logsContainerName}
-  - owner: wowza:wowza
-    path: /usr/local/WowzaStreamingEngine/conf/admin.password
-    content: |
-      # Admin password file (format [username][space][password])
-      # username password group|group
-      wowza ${restPassword} admin
-  - owner: wowza:wowza
-    path: /usr/local/WowzaStreamingEngine/conf/publish.password
-    content: |
-      # Publish password file (format [username][space][password])
-      # username password
-      wowza ${streamPassword}
   - owner: wowza:wowza
     path: /home/wowza/Application.xml
     content: |
@@ -722,40 +644,53 @@ write_files:
                 </Application>
         </Root>
   - owner: wowza:wowza
-    permissions: 0775
-    path: /home/wowza/wowza-mount.sh
+    path: /home/wowza/connection.cfg
     content: |
-        echo wowza-mount.sh Last Run Date $(date) > /usr/local/WowzaStreamingEngine/azlogs/wowza-mount-last-run.txt
-
-        contentDirectory="/usr/local/WowzaStreamingEngine/content/azurecopy"
-        # create directories
-        [ ! -d /mnt/blobfusetmp ] && sudo mkdir /mnt/blobfusetmp
-        [ ! -d $contentDirectory ] && sudo mkdir $contentDirectory
-
-        sudo bash /home/wowza/mount.sh $contentDirectory /mnt/blobfusetmp /home/wowza/connection.cfg "wowzaContent" "/usr/local/WowzaStreamingEngine[A-Za-z0-9\-\.]*/content/azurecopy"
+      accountName ${storageAccountName}
+      accountKey ${storageAccountKey}
+      containerName ${containerName}
   - owner: wowza:wowza
-    permissions: 0775
-    path: /home/wowza/log-mount.sh
+    path: /home/wowza/connection-logs.cfg
     content: |
-      #!/bin/bash
-      
-      wowzaSource="/usr/local/WowzaStreamingEngine/logs"
+      accountName ${storageAccountName}
+      accountKey ${storageAccountKey}
+      containerName ${logsContainerName}
+  - owner: wowza:wowza
+    path: /usr/local/WowzaStreamingEngine/conf/admin.password
+    content: |
+      # Admin password file (format [username][space][password])
+      # username password group|group
+      wowza ${restPassword} admin
+  - owner: wowza:wowza
+    path: /usr/local/WowzaStreamingEngine/conf/publish.password
+    content: |
+      # Publish password file (format [username][space][password])
+      # username password
+      wowza ${streamPassword}
+  - owner: wowza:wowza
+    path: /home/wowza/mount.sh
+    permissions: 0775
+    content: |
+        #!/bin/bash
 
-      rootDir="/usr/local/WowzaStreamingEngine/azlogs"
-      mkdir $rootDir
+        # This Script Should Be Run As ROOT!
 
-      hostname=$(cat /proc/sys/kernel/hostname)
-      destination="$rootDir/$hostname"
-      mkdir $destination
+        mkdir -p $1 $2
 
-      cronTaskPath="/home/wowza/log_copy.txt"
-      sudo touch $cronTaskPath
-      sudo chmod 777 $cronTaskPath
-      echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination
-      " > $cronTaskPath
-      sudo -u wowza bash -c "crontab $cronTaskPath"
+        mountsTmp='/home/wowza/mounts.txt'
+        df -h > $mountsTmp
 
-      sudo bash /home/wowza/mount.sh $rootDir /mnt/blobfusetmplogs /home/wowza/connection-logs.cfg "azlogs" "/usr/local/WowzaStreamingEngine[A-Za-z0-9\-\.]*/azlogs"
+        # Add BlobFuse
+        echo "Starting Blob Fuse Mount For $1 @ $(date)" 
+
+        if grep -q "$(realpath $1)" $mountsTmp && grep -q "blobfuse" $mountsTmp; then
+           echo "Blob IS Mounted."
+        else
+           echo "Blob IS NOT Mounted, Mounting Blob Fuse..." 
+           blobfuse $1 --tmp-path=$2 -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$3 -o allow_other -o nonempty
+        fi
+
+        rm -f $mountsTmp
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/dir-creator.sh
@@ -826,21 +761,61 @@ write_files:
       cd /usr/local/WowzaStreamingEngine/conf/ || exit
       appDirs=$(ls -d $${prefix}*)
       echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
-
   - owner: wowza:wowza
     permissions: 0775
-    path: /home/wowza/schedule-cert.sh
+    path: /home/wowza/check-cert.sh
     content: |
         #!/bin/bash
-        cronTaskPath="/home/wowza/cert-renew.txt"
-        sudo touch $cronTaskPath
-        sudo chmod 777 $cronTaskPath
 
-        echo "0 0 * * * /home/wowza/renew-cert.sh
-        " > $cronTaskPath
+        # Project
+        project="CVP"
 
-        sudo -u wowza bash -c "crontab $cronTaskPath"
+        # Set Dynatrace Details.
+        dynatrace_token="${dynatrace_token}"
+        dynatrace_tenant="${dynatrace_tenant}"
 
+        # Java Key Store Details.
+        jksPath="/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks"
+        jksPass="${certPassword}"
+
+        # Set Log Path.
+        logFolder="/home/wowza/logs"
+        logPath="/home/wowza/logs/check-cert.log"
+
+        # Wowza Engine Path.
+        export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
+
+        # Get Certificate Expiry Date.
+        expiryDate=$(keytool -list -v -keystore $jksPath -storepass $jksPass | grep until | head -1 | sed 's/.*until: //')
+        echo "Certificate Expires $expiryDate"
+        certExpiryDate=$expiryDate
+        expiryDate="$(date -d "$expiryDate - 12 days" +%Y%m%d)"
+        echo "Certificate Forced Expiry is $expiryDate"
+        today=$(date +%Y%m%d)
+
+        # Send Alert to Dynatrace if Expirary Date within 12 Days.
+        NOW=`date '+%F %H:%M:%S'`
+        mkdir -p $logFolder
+        touch $logPath
+
+        echo "Starting Check at $NOW" >> $logPath
+        if [[ $expiryDate -lt $today ]]; then
+                echo "Wowza Certificate Has Expired" >> $logPath
+                curl --location --request POST "https://$dynatrace_tenant.live.dynatrace.com/api/v2/events/ingest" \
+                --header "Authorization: API-Token $dynatrace_token" \
+                --header 'Content-Type: application/json' \
+                --data-raw "{
+                        \"eventType\": \"ERROR_EVENT\",
+                        \"title\": \"FH - $project - Wowza Certificte Expiry\",
+                        \"entitySelector\": \"type(HOST),entityName.startsWith($HOSTNAME)\",
+                        \"properties\": {
+                        \"Certificte.expiry\": \"$certExpiryDate\",
+                        \"Certificte.renewal\": \"$expiryDate\"
+                        }
+                }" >> $logPath
+        else
+                echo "Wowza Certificate Has NOT Expired" >> $logPath
+        fi
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/renew-cert.sh
@@ -935,13 +910,54 @@ write_files:
 
         ## Start Wowza
         sudo service WowzaStreamingEngine start
+  - owner: wowza:wowza
+    path: /home/wowza/cron.sh
+    permissions: 0775
+    content: |
+        #!/bin/bash
+        # Prepare Script.
+        cronTaskPath='/home/wowza/cronjobs.txt'
+        cronTaskPathRoot='/home/wowza/cronjobsRoot.txt'
 
+        # Cron For Mounting.
+        logFolder='/home/wowza/logs'
+        mkdir -p $logFolder
+        echo "*/5 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "*/5 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
+
+        # Cron For Log Mount.
+        wowzaSource="/usr/local/WowzaStreamingEngine/logs"
+        destination="/usr/local/WowzaStreamingEngine/azlogs/$HOSTNAME"
+        mkdir -p $destination
+        echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination" >> $cronTaskPath
+
+        # Cron For Certs.
+        echo "0 0 * * * /home/wowza/renew-cert.sh" >> $cronTaskPath
+
+        if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
+        echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
+        fi
+
+        # Set Up Cron Jobs for Wowza & Root.
+        crontab -u wowza $cronTaskPath
+        crontab $cronTaskPathRoot
+        
+        # Remove To Avoid Duplicates.
+        rm -f $cronTaskPath
+        rm -f $cronTaskPathRoot
 # PLEASE LEAVE THIS AT THE BOTTOM
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/runcmd.sh
     content: |
         #!/bin/bash
+
+        blobMount="/usr/local/WowzaStreamingEngine/content/azurecopy"
+        blobTmp="/mnt/blobfusetmp"
+        blobCfg="/home/wowza/connection.cfg"
+        logMount="/usr/local/WowzaStreamingEngine/azlogs"
+        logTmp="/mnt/blobfusetmplogs"
+        logCfg="/home/wowza/connection-logs.cfg"
 
         # Install packages
         dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
@@ -951,19 +967,21 @@ write_files:
         [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
         sudo /home/wowza/log4j-fix.sh
 
-        # create wowza apps
+        # Create Wowza Apps
         /home/wowza/dir-creator.sh ${numApplications}
 
-        # mount drives
-        /home/wowza/wowza-mount.sh
-        /home/wowza/log-mount.sh
+        # Mount Drives For Wowza & Logs.
+        /home/wowza/mount.sh $blobMount $blobTmp $blobCfg
+        /home/wowza/mount.sh $logMount $logTmp $logCfg
 
-        # install certificates
+        # Install Certificates.
         sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
         sudo /home/wowza/renew-cert.sh
-        sudo /home/wowza/schedule-cert.sh
 
-        # restart wowza
+        # Set Up CronJobs.
+        /home/wowza/cron.sh $blobMount $blobTmp $blobCfg $logMount $logTmp $logCfg
+
+        # Restart Wowza
         sudo service WowzaStreamingEngine restart
 runcmd:
   - 'sudo /home/wowza/runcmd.sh'

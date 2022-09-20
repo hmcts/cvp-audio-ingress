@@ -34,6 +34,7 @@ module "wowza" {
   ws_rg                         = var.ws_rg
   sa_recording_retention        = var.sa_recording_retention
   schedules                     = var.schedules
+  dynatrace_tenant              = var.dynatrace_tenant
 }
 
 resource "azurerm_dns_a_record" "wowza" {
