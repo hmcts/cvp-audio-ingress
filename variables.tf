@@ -106,5 +106,6 @@ variable "schedules" {
 }
 
 variable "dynatrace_tenant" {
-  type = string
+  type        = string
+  description = "Name Given To Dynatrace Tenant."
 }
