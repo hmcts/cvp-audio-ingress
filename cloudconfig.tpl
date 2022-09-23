@@ -763,6 +763,54 @@ write_files:
       echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
   - owner: wowza:wowza
     permissions: 0775
+    path: /home/wowza/check-file-size.sh
+    content: |
+        #!/bin/bash
+
+        # Project
+        project="CVP"
+
+        # Set Log Path.
+        logFolder="/home/wowza/logs"
+        logPath="/home/wowza/logs/check-file-size.log"
+
+        # Set Dynatrace Details.
+        dynatrace_token="${dynatrace_token}"
+        dynatrace_tenant="${dynatrace_tenant}"
+
+        # test 
+        size="1MB"
+        date="_$(date '+%Y-%m-%d')-"
+        fileName="*$date*"
+        sourcePath="/usr/local/WowzaStreamingEngine/content/azurecopy/"
+        foundItems=$(find $sourcePath -type f -name  $fileName  -size -1M;)
+
+        # Set logs
+        NOW=`date '+%F %H:%M:%S'`
+        mkdir -p $logFolder
+        touch $logPath
+
+        echo "Starting Check at $NOW" >> $logPath
+        if [ -z "$foundItems" ]; then
+                echo "No files under $size found today" >> $logPath
+        else
+                echo "Files under $size found" >> $logPath
+                echo "$foundItems" >> $logPath
+                curl --location --request POST "https://$dynatrace_tenant.live.dynatrace.com/api/v2/events/ingest" \
+                --header "Authorization: API-Token $dynatrace_token" \
+                --header 'Content-Type: application/json' \
+                --data-raw "{
+                        \"eventType\": \"ERROR_EVENT\",
+                        \"title\": \"FH - $project - Files under $size\",
+                        \"entitySelector\": \"type(HOST),entityName.startsWith($HOSTNAME)\",
+                        \"properties\": {
+                        \"Size\": \"$size\",
+                        \"Files\": \"$foundItems\"
+                        }
+                }" >> $logPath
+        fi
+  - owner: wowza:wowza
+    permissions: 0775
     path: /home/wowza/check-cert.sh
     content: |
         #!/bin/bash
@@ -866,7 +914,6 @@ write_files:
         #!/bin/bash
 
         home_dir="/home/wowza"
-        wowza_version="${wowzaVersion}"
 
         ## Vars
         log4core_name="log4j-core-2.17.0.jar"
@@ -877,7 +924,7 @@ write_files:
         lof4j_zip_name="apache-log4j-2.17.0-bin"
         lof4j_zip_url="https://dlcdn.apache.org/logging/log4j/2.17.0/$lof4j_zip_name.zip"
 
-        wowza_dir="/usr/local/WowzaStreamingEngine-$wowza_version"
+        wowza_dir="/usr/local/WowzaStreamingEngine"
         wowza_lib_dir="$wowza_dir/lib"
         wowza_tune_dir="$wowza_dir/conf/Tune.xml"
         wowza_startmgr_dir="$wowza_dir/manager/bin/startmgr.sh"
@@ -936,6 +983,7 @@ write_files:
 
         if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
         echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
+        echo "10 0 * * * /home/wowza/check-file-size.sh" >> $cronTaskPath
         fi
 
         # Set Up Cron Jobs for Wowza & Root.
