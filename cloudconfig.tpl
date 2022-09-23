@@ -774,6 +774,10 @@ write_files:
         logFolder="/home/wowza/logs"
         logPath="/home/wowza/logs/check-file-size.log"
 
+        # Set Dynatrace Details.
+        dynatrace_token="${dynatrace_token}"
+        dynatrace_tenant="${dynatrace_tenant}"
+
         # test 
         size="1MB"
         date="_$(date '+%Y-%m-%d')-"
@@ -813,6 +817,10 @@ write_files:
 
         # Project
         project="CVP"
+
+        # Set Dynatrace Details.
+        dynatrace_token="${dynatrace_token}"
+        dynatrace_tenant="${dynatrace_tenant}"
 
         # Java Key Store Details.
         jksPath="/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks"
