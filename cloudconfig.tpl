@@ -778,10 +778,10 @@ write_files:
         size="1MB"
         date="_$(date '+%Y-%m-%d')-"
         fileName="*$date*"
-        $sourcePath="/usr/local/WowzaStreamingEngine/content/azurecopy\"
-        foundItems=$find $sourcePath -type f -name  $fileName  -size -1M;)
+        sourcePath="/usr/local/WowzaStreamingEngine/content/azurecopy/"
+        foundItems=$(find $sourcePath -type f -name  $fileName  -size -1M;)
 
-        # Send Alert to Dynatrace if Expirary Date within 12 Days.
+        # Set logs
         NOW=`date '+%F %H:%M:%S'`
         mkdir -p $logFolder
         touch $logPath
@@ -791,6 +791,7 @@ write_files:
                 echo "No files under $size found today" >> $logPath
         else
                 echo "Files under $size found" >> $logPath
+                echo "$foundItems" >> $logPath
                 curl --location --request POST "https://$dynatrace_tenant.live.dynatrace.com/api/v2/events/ingest" \
                 --header "Authorization: API-Token $dynatrace_token" \
                 --header 'Content-Type: application/json' \
