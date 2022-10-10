@@ -124,20 +124,20 @@ write_files:
                       </Properties>
               </Server>
       </Root>
-  - owner: wowza:wowza
-    path: /usr/local/WowzaStreamingEngine/conf/Tune.xml
-    content: |
-      <?xml version="1.0" encoding="UTF-8"?>
-      <Root>
-            <Tune>
-                <HeapSize>$${com.wowza.wms.TuningHeapSizeProduction}</HeapSize>
-                <GarbageCollector>-XX:+UseConcMarkSweepGC -XX:NewSize=512m</GarbageCollector>
-                <VMOptions>
-                        <VMOption>-server</VMOption>
-                        <VMOption>-Djava.net.preferIPv4Stack=true</VMOption>
-                </VMOptions>
-            </Tune>
-      </Root>
+#   - owner: wowza:wowza
+#     path: /usr/local/WowzaStreamingEngine/conf/Tune.xml
+#     content: |
+#       <?xml version="1.0" encoding="UTF-8"?>
+#       <Root>
+#             <Tune>
+#                 <HeapSize>$${com.wowza.wms.TuningHeapSizeProduction}</HeapSize>
+#                 <GarbageCollector>-XX:+UseConcMarkSweepGC -XX:NewSize=512m</GarbageCollector>
+#                 <VMOptions>
+#                         <VMOption>-server</VMOption>
+#                         <VMOption>-Djava.net.preferIPv4Stack=true</VMOption>
+#                 </VMOptions>
+#             </Tune>
+#       </Root>
   - owner: wowza:wowza
     path: /usr/local/WowzaStreamingEngine/conf/VHost.xml
     content: |
@@ -187,6 +187,11 @@ write_files:
                                               <HTTPProvider>
                                                       <BaseClass>com.wowza.wms.http.HTTPProviderMediaList</BaseClass>
                                                       <RequestFilters>*jwplayer.rss|*jwplayer.smil|*medialist.smil|*manifest-rtmp.f4m</RequestFilters>
+                                                      <AuthenticationMethod>none</AuthenticationMethod>
+                                              </HTTPProvider>
+                                              <HTTPProvider>
+                                                      <BaseClass>com.wowza.wms.http.HTTPServerVersion</BaseClass>
+                                                      <RequestFilters>*</RequestFilters>
                                                       <AuthenticationMethod>none</AuthenticationMethod>
                                               </HTTPProvider>
                                       </HTTPProviders>
@@ -243,11 +248,15 @@ write_files:
                                                       <RequestFilters>livestreamrecord*</RequestFilters>
                                                       <AuthenticationMethod>admin-digest</AuthenticationMethod>
                                               </HTTPProvider>
+                                              <HTTPProvider>
+                                                      <BaseClass>com.wowza.wms.http.HTTPServerVersion</BaseClass>
+                                                      <RequestFilters>*</RequestFilters>
+                                                      <AuthenticationMethod>none</AuthenticationMethod>
+                                              </HTTPProvider>
                                       </HTTPProviders>
                               </HostPort>
                       </HostPortList>
-                      <HTTPStreamerAdapters>
-                      </HTTPStreamerAdapters>
+                      <HTTPStreamerAdapters></HTTPStreamerAdapters>
                       <!-- When set to zero, thread pool configuration is done in Server.xml -->
                       <HandlerThreadPool>
                               <PoolSize>0</PoolSize>
@@ -1012,8 +1021,8 @@ write_files:
         dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
 
         # install Wowza patch
-        [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
-        sudo /home/wowza/log4j-fix.sh
+        [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar && chmod 775 /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
+        #sudo /home/wowza/log4j-fix.sh
 
         # Create Wowza Apps
         /home/wowza/dir-creator.sh ${numApplications}
