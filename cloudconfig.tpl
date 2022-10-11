@@ -100,10 +100,10 @@ write_files:
                               -->
                       </VHostListeners>
                       <HandlerThreadPool>
-                              <PoolSize>1024</PoolSize>
+                              <PoolSize>$${com.wowza.wms.TuningAuto}</PoolSize>
                       </HandlerThreadPool>
                       <TransportThreadPool>
-                              <PoolSize>1024</PoolSize>
+                              <PoolSize>$${com.wowza.wms.TuningAuto}</PoolSize>
                       </TransportThreadPool>
                       <RTP>
                               <DatagramStartingPort>6970</DatagramStartingPort>
@@ -130,8 +130,8 @@ write_files:
       <?xml version="1.0" encoding="UTF-8"?>
       <Root>
             <Tune>
-                <HeapSize>$${com.wowza.wms.TuningHeapSizeProduction}</HeapSize>
-                <GarbageCollector>-XX:+UseConcMarkSweepGC -XX:NewSize=512m</GarbageCollector>
+                <HeapSize>4096M</HeapSize>
+                <GarbageCollector>$${com.wowza.wms.TuningGarbageCollectorG1Default}</GarbageCollector>
                 <VMOptions>
                         <VMOption>-server</VMOption>
                         <VMOption>-Djava.net.preferIPv4Stack=true</VMOption>
@@ -149,7 +149,7 @@ write_files:
                               <HostPort>
                                       <Name>Default SSL Streaming</Name>
                                       <Type>Streaming</Type>
-                                      <ProcessorCount>256</ProcessorCount>
+                                      <ProcessorCount>$${com.wowza.wms.TuningAuto}</ProcessorCount>
                                       <IpAddress>*</IpAddress>
                                       <Port>443</Port>
                                       <HTTPIdent2Response></HTTPIdent2Response>
@@ -676,8 +676,9 @@ write_files:
         # This Script Should Be Run As ROOT!
 
         mkdir -p $1 $2
+        lastPath="$(basename $1)"
 
-        mountsTmp='/home/wowza/mounts.txt'
+        mountsTmp="/home/wowza/$lastPath-mounts.txt"
         df -h > $mountsTmp
 
         # Add BlobFuse
@@ -1006,6 +1007,10 @@ write_files:
         logMount="/usr/local/WowzaStreamingEngine/azlogs"
         logTmp="/mnt/blobfusetmplogs"
         logCfg="/home/wowza/connection-logs.cfg"
+        logDir="/home/wowza/logs"
+
+        # Create Log Dir
+        mkdir -p $logDir && chown wowza:wowza $logDir
 
         # Install packages
         dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
