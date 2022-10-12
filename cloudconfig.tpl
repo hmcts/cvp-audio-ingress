@@ -130,7 +130,7 @@ write_files:
       <?xml version="1.0" encoding="UTF-8"?>
       <Root>
             <Tune>
-                <HeapSize>4096M</HeapSize>
+                <HeapSize>8192M</HeapSize>
                 <GarbageCollector>$${com.wowza.wms.TuningGarbageCollectorG1Default}</GarbageCollector>
                 <VMOptions>
                         <VMOption>-server</VMOption>
@@ -688,6 +688,8 @@ write_files:
            echo "Blob IS Mounted."
         else
            echo "Blob IS NOT Mounted, Mounting Blob Fuse..." 
+           echo "Removing Redunant Mounts..."
+           fusermount -u "$(realpath $1)"
            blobfuse $1 --tmp-path=$2 -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$3 -o allow_other -o nonempty
         fi
 
@@ -970,8 +972,8 @@ write_files:
         # Cron For Mounting.
         logFolder='/home/wowza/logs'
         mkdir -p $logFolder
-        echo "*/5 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
-        echo "*/5 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "5-59/10 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "*/10 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Log Mount.
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
