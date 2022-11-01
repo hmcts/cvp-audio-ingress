@@ -886,7 +886,7 @@ write_files:
 
         export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
 
-        expiryDate=$(keytool -list -v -keystore $jksPath -storepass $jksPass | grep until | sed 's/.*until: //')
+        expiryDate=$(keytool -list -v -keystore $jksPath -storepass $jksPass | grep until | head -1 | sed 's/.*until: //')
 
         echo "Certificate Expires $expiryDate"
         expiryDate="$(date -d "$expiryDate - 14 days" +%Y%m%d)"
@@ -974,6 +974,7 @@ write_files:
         mkdir -p $logFolder
         echo "5-59/10 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
         echo "*/10 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "0 0 * * * /home/wowza/renew-cert.sh >> $logFolder/renew-cert.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Log Mount.
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
@@ -982,8 +983,6 @@ write_files:
         echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination" >> $cronTaskPath
 
         # Cron For Certs.
-        echo "0 0 * * * /home/wowza/renew-cert.sh" >> $cronTaskPath
-
         if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
         echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
         echo "10 0 * * * /home/wowza/check-file-size.sh" >> $cronTaskPath
