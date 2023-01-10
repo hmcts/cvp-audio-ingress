@@ -6,7 +6,7 @@ resource "azurerm_recovery_services_vault" "backup_vault" {
   storage_mode_type   = "LocallyRedundant"
 
   soft_delete_enabled = true
-  tags                = var.common_tags 
+  tags                = var.common_tags
 }
 
 resource "azurerm_backup_policy_vm" "vm_backup" {
@@ -16,27 +16,38 @@ resource "azurerm_backup_policy_vm" "vm_backup" {
 
   timezone = "UTC"
 
+  instant_restore_retention_days = 5
+
   backup {
-    frequency = "Daily"
-    time      = "23:00"
+    frequency = "Weekly"
+    time      = "20:00"
+    weekdays  = ["Sunday"]
   }
 
-  retention_daily {
-    count = 7
+  retention_weekly {
+    count    = 1
+    weekdays = ["Sunday"]
+  }
+
+  retention_monthly {
+    count    = 3
+    weekdays = ["Sunday"]
+    weeks    = ["Last"]
   }
 
 }
 
-resource "azurerm_backup_protected_vm" "vm1-backup" {
-  resource_group_name = azurerm_resource_group.rg.name
-  recovery_vault_name = azurerm_recovery_services_vault.backup_vault.name
-  source_vm_id        = azurerm_linux_virtual_machine.vm1.id
-  backup_policy_id    = azurerm_backup_policy_vm.vm_backup.id
+locals {
+  vms = {
+    vm1 = azurerm_linux_virtual_machine.vm1.id
+    vm2 = azurerm_linux_virtual_machine.vm2.id
+  }
 }
 
-resource "azurerm_backup_protected_vm" "vm2-backup" {
+resource "azurerm_backup_protected_vm" "vms-backup" {
+  for_each            = local.vms
   resource_group_name = azurerm_resource_group.rg.name
   recovery_vault_name = azurerm_recovery_services_vault.backup_vault.name
-  source_vm_id        = azurerm_linux_virtual_machine.vm2.id
+  source_vm_id        = azurerm_linux_virtual_machine.each.key.id
   backup_policy_id    = azurerm_backup_policy_vm.vm_backup.id
 }
