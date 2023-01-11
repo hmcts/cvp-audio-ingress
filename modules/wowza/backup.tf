@@ -28,13 +28,6 @@ resource "azurerm_backup_policy_vm" "vm_backup" {
     count    = 1
     weekdays = ["Sunday"]
   }
-
-  retention_monthly {
-    count    = 3
-    weekdays = ["Sunday"]
-    weeks    = ["Last"]
-  }
-
 }
 
 locals {
