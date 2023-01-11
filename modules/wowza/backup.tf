@@ -30,13 +30,6 @@ resource "azurerm_backup_policy_vm" "vm_backup" {
   }
 }
 
-locals {
-  vms = {
-    vm1 = azurerm_linux_virtual_machine.vm1.id
-    vm2 = azurerm_linux_virtual_machine.vm2.id
-  }
-}
-
 resource "azurerm_backup_protected_vm" "vms-backup" {
   for_each            = local.vms
   resource_group_name = azurerm_resource_group.rg.name
