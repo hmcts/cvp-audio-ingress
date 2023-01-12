@@ -41,6 +41,6 @@ resource "azurerm_backup_protected_vm" "vms-backup" {
   for_each            = local.vmids
   resource_group_name = azurerm_resource_group.rg.name
   recovery_vault_name = azurerm_recovery_services_vault.backup_vault.name
-  source_vm_id        = azurerm_linux_virtual_machine.each.key.id
+  source_vm_id        = each.value
   backup_policy_id    = azurerm_backup_policy_vm.vm_backup.id
 }
