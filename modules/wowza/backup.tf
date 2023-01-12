@@ -1,3 +1,10 @@
+locals {
+  vms = {
+    vm1 = azurerm_linux_virtual_machine.vm1.id
+    vm2 = azurerm_linux_virtual_machine.vm2.id
+  }
+}
+
 resource "azurerm_recovery_services_vault" "backup_vault" {
   name                = "${local.service_name}-rsv"
   location            = var.location
