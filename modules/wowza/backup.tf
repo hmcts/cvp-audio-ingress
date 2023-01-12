@@ -1,7 +1,7 @@
 locals {
-  vms = {
-    vm1 = azurerm_linux_virtual_machine.vm1.id
-    vm2 = azurerm_linux_virtual_machine.vm2.id
+  vmids = {
+    vm1id = azurerm_linux_virtual_machine.vm1.id
+    vm2id = azurerm_linux_virtual_machine.vm2.id
   }
 }
 
@@ -38,7 +38,7 @@ resource "azurerm_backup_policy_vm" "vm_backup" {
 }
 
 resource "azurerm_backup_protected_vm" "vms-backup" {
-  for_each            = local.vms
+  for_each            = local.vmids
   resource_group_name = azurerm_resource_group.rg.name
   recovery_vault_name = azurerm_recovery_services_vault.backup_vault.name
   source_vm_id        = azurerm_linux_virtual_machine.each.key.id
