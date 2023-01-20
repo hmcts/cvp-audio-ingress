@@ -167,7 +167,6 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-rsv-diag-set" {
 
   enabled_log {
     category = "AddonAzureBackupAlerts"
-    enabled  = true
 
     retention_policy {
       enabled = false
@@ -177,7 +176,6 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-rsv-diag-set" {
 
   enabled_log {
     category = "AddonAzureBackupJobs"
-    enabled  = true
 
     retention_policy {
       enabled = false
