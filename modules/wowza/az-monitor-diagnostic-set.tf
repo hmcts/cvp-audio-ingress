@@ -159,3 +159,37 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
     }
   }
 }
+
+resource "azurerm_monitor_diagnostic_setting" "cvp-rsv-diag-set" {
+  name                       = "cvp-rsv-${var.env}-diag-set"
+  target_resource_id         = azurerm_recovery_services_vault.backup_vault.id
+  log_analytics_workspace_id = local.la_id
+
+  enabled_log {
+    category = "AddonAzureBackupAlerts"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+
+  enabled_log {
+    category = "AddonAzureBackupJobs"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+}
