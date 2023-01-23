@@ -174,7 +174,6 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-rsv-diag-set" {
     }
   }
 
-
   log {
     category = "AddonAzureBackupJobs"
     enabled  = true
