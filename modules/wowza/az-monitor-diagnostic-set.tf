@@ -165,8 +165,9 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-rsv-diag-set" {
   target_resource_id         = azurerm_recovery_services_vault.backup_vault.id
   log_analytics_workspace_id = local.la_id
 
-  enabled_log {
+  log {
     category = "AddonAzureBackupAlerts"
+    enabled  = true
 
     retention_policy {
       enabled = false
@@ -174,8 +175,9 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-rsv-diag-set" {
   }
 
 
-  enabled_log {
+  log {
     category = "AddonAzureBackupJobs"
+    enabled  = true
 
     retention_policy {
       enabled = false
