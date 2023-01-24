@@ -100,10 +100,10 @@ write_files:
                               -->
                       </VHostListeners>
                       <HandlerThreadPool>
-                              <PoolSize>1024</PoolSize>
+                              <PoolSize>$${com.wowza.wms.TuningAuto}</PoolSize>
                       </HandlerThreadPool>
                       <TransportThreadPool>
-                              <PoolSize>1024</PoolSize>
+                              <PoolSize>$${com.wowza.wms.TuningAuto}</PoolSize>
                       </TransportThreadPool>
                       <RTP>
                               <DatagramStartingPort>6970</DatagramStartingPort>
@@ -130,8 +130,8 @@ write_files:
       <?xml version="1.0" encoding="UTF-8"?>
       <Root>
             <Tune>
-                <HeapSize>$${com.wowza.wms.TuningHeapSizeProduction}</HeapSize>
-                <GarbageCollector>-XX:+UseConcMarkSweepGC -XX:NewSize=512m</GarbageCollector>
+                <HeapSize>8192M</HeapSize>
+                <GarbageCollector>$${com.wowza.wms.TuningGarbageCollectorG1Default}</GarbageCollector>
                 <VMOptions>
                         <VMOption>-server</VMOption>
                         <VMOption>-Djava.net.preferIPv4Stack=true</VMOption>
@@ -149,7 +149,7 @@ write_files:
                               <HostPort>
                                       <Name>Default SSL Streaming</Name>
                                       <Type>Streaming</Type>
-                                      <ProcessorCount>256</ProcessorCount>
+                                      <ProcessorCount>$${com.wowza.wms.TuningAuto}</ProcessorCount>
                                       <IpAddress>*</IpAddress>
                                       <Port>443</Port>
                                       <HTTPIdent2Response></HTTPIdent2Response>
@@ -676,8 +676,9 @@ write_files:
         # This Script Should Be Run As ROOT!
 
         mkdir -p $1 $2
+        lastPath="$(basename $1)"
 
-        mountsTmp='/home/wowza/mounts.txt'
+        mountsTmp="/home/wowza/$lastPath-mounts.txt"
         df -h > $mountsTmp
 
         # Add BlobFuse
@@ -687,6 +688,8 @@ write_files:
            echo "Blob IS Mounted."
         else
            echo "Blob IS NOT Mounted, Mounting Blob Fuse..." 
+           echo "Removing Redunant Mounts..."
+           fusermount -u "$(realpath $1)"
            blobfuse $1 --tmp-path=$2 -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$3 -o allow_other -o nonempty
         fi
 
@@ -883,7 +886,7 @@ write_files:
 
         export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
 
-        expiryDate=$(keytool -list -v -keystore $jksPath -storepass $jksPass | grep until | sed 's/.*until: //')
+        expiryDate=$(keytool -list -v -keystore $jksPath -storepass $jksPass | grep until | head -1 | sed 's/.*until: //')
 
         echo "Certificate Expires $expiryDate"
         expiryDate="$(date -d "$expiryDate - 14 days" +%Y%m%d)"
@@ -969,8 +972,9 @@ write_files:
         # Cron For Mounting.
         logFolder='/home/wowza/logs'
         mkdir -p $logFolder
-        echo "*/5 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
-        echo "*/5 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "5-59/10 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "*/10 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "0 0 * * * /home/wowza/renew-cert.sh >> $logFolder/renew-cert.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Log Mount.
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
@@ -979,8 +983,6 @@ write_files:
         echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination" >> $cronTaskPath
 
         # Cron For Certs.
-        echo "0 0 * * * /home/wowza/renew-cert.sh" >> $cronTaskPath
-
         if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
         echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
         echo "10 0 * * * /home/wowza/check-file-size.sh" >> $cronTaskPath
@@ -1006,13 +1008,17 @@ write_files:
         logMount="/usr/local/WowzaStreamingEngine/azlogs"
         logTmp="/mnt/blobfusetmplogs"
         logCfg="/home/wowza/connection-logs.cfg"
+        logDir="/home/wowza/logs"
+
+        # Create Log Dir
+        mkdir -p $logDir && chown wowza:wowza $logDir
 
         # Install packages
         dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
         dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
 
         # install Wowza patch
-        [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
+        [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar && chmod 775 /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
         sudo /home/wowza/log4j-fix.sh
 
         # Create Wowza Apps
