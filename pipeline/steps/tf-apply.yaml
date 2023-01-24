@@ -53,6 +53,7 @@ steps:
     displayName: Apply
     inputs:
       command: 'apply'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: '${{ parameters.env }}.tfplan -no-color'
        

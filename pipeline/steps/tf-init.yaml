@@ -28,6 +28,7 @@ steps:
       displayName: 'Terraform init'
       inputs:
         command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         commandOptions: '-input=false'
         backendType: 'azurerm'
         backendServiceArm: '${{ parameters.subscriptionName }}'

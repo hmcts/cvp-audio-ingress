@@ -42,6 +42,7 @@ steps:
     displayName: 'Plan ${{parameters.env}}'
     inputs:
       command: 'plan'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: >
         -var-file "$(Build.SourcesDirectory)/terraform/envs/shared.tfvars"
