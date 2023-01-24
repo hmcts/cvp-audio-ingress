@@ -1,7 +1,6 @@
-locals {
-  main_container_name       = "recordings"
-  wowza_logs_container_name = "wowzalogs"
-}
+#---------------------------------------------------
+# Storage Account (via module)
+#---------------------------------------------------
 #tfsec:ignore:azure-storage-default-action-deny
 module "sa" {
   source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=master"
@@ -9,7 +8,7 @@ module "sa" {
   env = var.env
 
   storage_account_name = "${replace(lower(local.service_name), "-", "")}sa"
-  common_tags          = var.common_tags
+  common_tags          = local.common_tags
 
   default_action = "Allow"
 
@@ -57,6 +56,9 @@ module "sa" {
   ]
 }
 
+#---------------------------------------------------
+# Lock to prevent deletion of storage account
+#---------------------------------------------------
 resource "azurerm_management_lock" "sa" {
   name       = "resource-sa"
   scope      = module.sa.storageaccount_id

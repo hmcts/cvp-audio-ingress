@@ -1,15 +1,13 @@
-locals {
-  la_id = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
-}
-
+#---------------------------------------------------
+# Diagnostic settings - KeyVault
+#---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
   name                       = "cvp-kv-${var.env}-diag-set"
   target_resource_id         = data.azurerm_key_vault.cvp_kv.id
   log_analytics_workspace_id = local.la_id
 
-  log {
+  enabled_log {
     category = "AuditEvent"
-    enabled  = false
 
     retention_policy {
       days    = 0
@@ -26,29 +24,9 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
   }
 }
 
-
-// resource "azurerm_monitor_diagnostic_setting" "cvp-vm1-diag-set" {
-//  name               = "cvp-vm1-${var.env}-diag-set"
-//  target_resource_id = azurerm_linux_virtual_machine.vm1.id
-//  log_analytics_workspace_id = local.la_id
-
-//  metric {
-//    category = "AllMetrics"
-//    enabled  = true
-//  }
-// }
-
-// resource "azurerm_monitor_diagnostic_setting" "cvp-vm2-diag-set" {
-//  name               = "cvp-vm2-${var.env}-diag-set"
-//  target_resource_id = azurerm_linux_virtual_machine.vm2.id
-//  log_analytics_workspace_id = local.la_id
-
-//  metric {
-//    category = "AllMetrics"
-//    enabled  = true
-//  }
-// }
-
+#---------------------------------------------------
+# Diagnostic settings - Storage Account
+#---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "cvp-sa-diag-set" {
   name                       = "cvp-sa-${var.env}-diag-set"
   target_resource_id         = module.sa.storageaccount_id
@@ -73,23 +51,26 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-sa-diag-set" {
   }
 }
 
+#---------------------------------------------------
+# Diagnostic settings - NSG
+#---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
   name                       = "cvp-nsg-${var.env}-diag-set"
   target_resource_id         = azurerm_network_security_group.sg.id
   log_analytics_workspace_id = local.la_id
 
-  log {
+  enabled_log {
     category = "NetworkSecurityGroupEvent"
-    enabled  = true
+
     retention_policy {
       days    = 0
       enabled = false
     }
   }
 
-  log {
+  enabled_log {
     category = "NetworkSecurityGroupRuleCounter"
-    enabled  = true
+
     retention_policy {
       days    = 0
       enabled = false
@@ -97,9 +78,14 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
   }
 }
 
-resource "azurerm_monitor_diagnostic_setting" "cvp-nic1-diag-set" {
-  name                       = "cvp-nic1-${var.env}-diag-set"
-  target_resource_id         = azurerm_network_interface.nic1.id
+#---------------------------------------------------
+# Diagnostic settings - Wowoza VM NIC
+#---------------------------------------------------
+resource "azurerm_monitor_diagnostic_setting" "cvp-nic-diag-set" {
+  count = var.vm_count
+
+  name                       = "cvp-nic${count.index + 1}-${var.env}-diag-set"
+  target_resource_id         = azurerm_network_interface.wowza_nic[count.index].id
   log_analytics_workspace_id = local.la_id
 
   metric {
@@ -112,38 +98,24 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nic1-diag-set" {
   }
 }
 
-resource "azurerm_monitor_diagnostic_setting" "cvp-nic2-diag-set" {
-  name                       = "cvp-nic2-${var.env}-diag-set"
-  target_resource_id         = azurerm_network_interface.nic2.id
-  log_analytics_workspace_id = local.la_id
-
-  metric {
-    category = "AllMetrics"
-    enabled  = true
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
-  }
-}
-
+#---------------------------------------------------
+# Diagnostic settings - Load Balancer
+#---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
   name                       = "cvp-lb-${var.env}-diag-set"
   target_resource_id         = azurerm_lb.lb.id
   log_analytics_workspace_id = local.la_id
 
-  log {
+  enabled_log {
     category = "LoadBalancerAlertEvent"
-    enabled  = true
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
+  enabled_log {
     category = "LoadBalancerProbeHealthStatus"
-    enabled  = true
 
     retention_policy {
       enabled = false

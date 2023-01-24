@@ -44,8 +44,8 @@ steps:
       command: 'plan'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: >
-        -var-file "$(Build.SourcesDirectory)/tf-variables/shared.tfvars"
-        -var-file "$(Build.SourcesDirectory)/tf-variables/${{parameters.env}}.tfvars"
+        -var-file "$(Build.SourcesDirectory)/terraform/envs/shared.tfvars"
+        -var-file "$(Build.SourcesDirectory)/terraform/envs/${{parameters.env}}.tfvars"
         -var "builtFrom=${{ parameters.builtFrom }}"
         -var "ws_sub_id=$(ws_sub_id)"
         -out="${{ parameters.env }}.tfplan" -no-color -input=false
