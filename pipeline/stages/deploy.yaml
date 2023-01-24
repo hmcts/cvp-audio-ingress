@@ -31,9 +31,9 @@ stages:
       displayName: 'Apply to ${{parameters.env}}'
       pool:
         vmImage: 'ubuntu-latest'
-      ${{ if eq(parameters.env, 'sbox')  }}:
-        dependsOn: Plan${{parameters.env}}
-      ${{ if ne(parameters.env, 'sbox') }}:
+      # ${{ if eq(parameters.env, 'sbox')  }}:
+      #   dependsOn: Plan${{parameters.env}}
+      # ${{ if ne(parameters.env, 'sbox') }}:
         dependsOn: Wait${{parameters.env}}
       condition: succeeded()
       variables:
