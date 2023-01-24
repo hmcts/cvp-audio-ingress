@@ -97,7 +97,7 @@ variable "os_disk_size" {
 
 variable "cloud_init_file" {
   type        = string
-  default     = "./terraform/cloudconfig/cloudconfig.tpl"
+  default     = "./cloudconfig/cloudconfig.tpl"
   description = "The location of the cloud init configuration file. Defaults to \"./cloudconfig.tpl\"."
 }
 
