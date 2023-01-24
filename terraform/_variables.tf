@@ -197,11 +197,11 @@ variable "ws_sub_id" {
 variable "sa_access_tier" {
   type        = string
   default     = "Cool"
-  description = "Defines the access tier for BlobStorage and StorageV2 accounts. Valid options are Hot and Cold, Defaults to Cold."
+  description = "Defines the access tier for BlobStorage and StorageV2 accounts. Valid options are Hot and Cool, Defaults to Cool."
 
   validation {
-    condition     = can(regex("^(Hot|Cold)$", var.sa_access_tier))
-    error_message = "Invalid input, options: \"Hot\", \"Cold\"."
+    condition     = can(regex("^(Hot|Cool)$", var.sa_access_tier))
+    error_message = "Invalid input, options: \"Hot\", \"Cool\"."
   }
 }
 
