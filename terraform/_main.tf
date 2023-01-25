@@ -23,6 +23,16 @@ resource "azurerm_resource_group" "rg" {
 # TODO: put these somewhere
 #---------------------------------------------------
 
+resource "azurerm_dns_a_record" "wowza" {
+  name                = "${var.product}-media-service-${var.env}"
+  zone_name           = var.dns_zone_name
+  resource_group_name = var.dns_resource_group
+  ttl                 = 300
+  records             = [var.lb_IPaddress]
+
+  tags = local.common_tags
+}
+
 resource "random_password" "certPassword" {
   length           = 32
   special          = true
