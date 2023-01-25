@@ -28,7 +28,7 @@ module "vm_automation" {
   automation_account_name = azurerm_automation_account.vm-start-stop.name
   schedules               = var.schedules
   resource_group_name     = azurerm_resource_group.rg.name
-  vm_names                = [azurerm_linux_virtual_machine.wowza_vm.*.name]
+  vm_names                = azurerm_linux_virtual_machine.wowza_vm[*].name
   mi_principal_id         = azurerm_user_assigned_identity.mi.principal_id
 
   tags = local.common_tags
