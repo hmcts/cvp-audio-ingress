@@ -40,3 +40,7 @@ resource "random_password" "streamPassword" {
   special          = true
   override_special = "_%*"
 }
+
+module "wowza" {
+  source                        = "./modules/wowza"
+}
