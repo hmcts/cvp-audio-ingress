@@ -62,4 +62,4 @@ steps:
     displayName: 'Publish Terraform Plan'
     inputs:
       targetPath: '${{ parameters.workingDirectory }}/${{ parameters.env }}.tfplan'
-      artifact: ${{ parameters.env }}.tfplan
+      artifact: 'terraform/${{ parameters.env }}.tfplan'
