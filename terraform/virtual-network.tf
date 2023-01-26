@@ -20,5 +20,5 @@ resource "azurerm_subnet" "sn" {
   address_prefixes     = [var.address_space]
   service_endpoints    = ["Microsoft.KeyVault"]
 
-  private_endpoint_network_policies_enabled  = true
+  enforce_private_link_endpoint_network_policies = true
 }
