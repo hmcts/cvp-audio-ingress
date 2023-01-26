@@ -6,7 +6,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
   target_resource_id         = data.azurerm_key_vault.cvp_kv.id
   log_analytics_workspace_id = local.la_id
 
-  enabled_log {
+  log {
     category = "AuditEvent"
 
     retention_policy {
@@ -59,7 +59,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
   target_resource_id         = azurerm_network_security_group.sg.id
   log_analytics_workspace_id = local.la_id
 
-  enabled_log {
+  log {
     category = "NetworkSecurityGroupEvent"
 
     retention_policy {
@@ -68,7 +68,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
     }
   }
 
-  enabled_log {
+  log {
     category = "NetworkSecurityGroupRuleCounter"
 
     retention_policy {
@@ -106,7 +106,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
   target_resource_id         = azurerm_lb.lb.id
   log_analytics_workspace_id = local.la_id
 
-  enabled_log {
+  log {
     category = "LoadBalancerAlertEvent"
 
     retention_policy {
@@ -114,7 +114,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
     }
   }
 
-  enabled_log {
+  log {
     category = "LoadBalancerProbeHealthStatus"
 
     retention_policy {

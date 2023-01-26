@@ -45,7 +45,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "be_add_po
 resource "azurerm_public_ip" "wowza_pip" {
   count = var.vm_count
 
-  name = "${local.service_name}-pip${count.index + 1}"
+  name = "${local.service_name}-pipvm${count.index + 1}"
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
