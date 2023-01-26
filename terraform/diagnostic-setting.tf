@@ -8,6 +8,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
 
   log {
     category = "AuditEvent"
+    enabled  = false
 
     retention_policy {
       days    = 0
@@ -61,7 +62,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
 
   log {
     category = "NetworkSecurityGroupEvent"
-
+    enabled  = true
     retention_policy {
       days    = 0
       enabled = false
@@ -70,7 +71,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
 
   log {
     category = "NetworkSecurityGroupRuleCounter"
-
+    enabled  = true
     retention_policy {
       days    = 0
       enabled = false
@@ -108,7 +109,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
 
   log {
     category = "LoadBalancerAlertEvent"
-
+    enabled  = true
     retention_policy {
       enabled = false
     }
@@ -116,7 +117,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
 
   log {
     category = "LoadBalancerProbeHealthStatus"
-
+    enabled  = true
     retention_policy {
       enabled = false
     }
