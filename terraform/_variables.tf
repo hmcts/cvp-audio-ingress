@@ -159,11 +159,6 @@ variable "rtmps_source_address_prefixes" {
   type        = list(string)
   description = "Real-Time Messaging Protocol source IP addresses."
   # From <env>.tfvars
-
-  validation {
-    condition     = can([for ip in var.rtmps_source_address_prefixes : regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", ip)])
-    error_message = "Incorrect IP in list."
-  }
 }
 
 variable "dev_source_address_prefixes" {
