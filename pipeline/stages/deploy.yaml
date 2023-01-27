@@ -7,8 +7,7 @@ parameters:
     default: 'false'
 
 stages:
-  # - ${{ if and(eq(parameters.runStage, true), ne(parameters.env, 'sbox') )}}:
-  - ${{ if eq(parameters.runStage, true) }}: # TEMP
+  - ${{ if and(eq(parameters.runStage, true), ne(parameters.env, 'sbox') )}}:
     - stage: Wait${{parameters.env}}
       displayName: '${{parameters.env}} Waiting for Approval'
       condition: succeeded()
@@ -31,9 +30,9 @@ stages:
       displayName: 'Apply to ${{parameters.env}}'
       pool:
         vmImage: 'ubuntu-latest'
-      # ${{ if eq(parameters.env, 'sbox')  }}:
-      #   dependsOn: Plan${{parameters.env}}
-      # ${{ if ne(parameters.env, 'sbox') }}:
+      ${{ if eq(parameters.env, 'sbox')  }}:
+        dependsOn: Plan${{parameters.env}}
+      ${{ if ne(parameters.env, 'sbox') }}:
         dependsOn: Wait${{parameters.env}}
       condition: succeeded()
       variables:
