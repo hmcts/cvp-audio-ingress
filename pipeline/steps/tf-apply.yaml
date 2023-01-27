@@ -44,9 +44,9 @@ steps:
     displayName: Download Terraform Plan
     inputs:
       artifactName: ${{ parameters.env }}.tfplan
-      targetPath: ${{ parameters.workingDirectory }}
+      targetPath: ${{ parameters.workingDirectory }}/terraform
 
-  - bash: chmod a+x '${{ parameters.workingDirectory }}/${{ parameters.env }}.tfplan' && ls -ltra     
+  - bash: chmod a+x '${{ parameters.workingDirectory }}/terraform/${{ parameters.env }}.tfplan' && ls -ltra     
     displayName: 'Download Plan and change perms'
 
   - task: TerraformCLI@0
