@@ -8,7 +8,7 @@ module "sa" {
   env = var.env
 
   storage_account_name = "${replace(lower(local.service_name), "-", "")}sa"
-  common_tags          = local.common_tags
+  common_tags          = module.ctags.common_tags
 
   default_action = "Allow"
 

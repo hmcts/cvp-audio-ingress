@@ -13,7 +13,7 @@ resource "azurerm_automation_account" "vm-start-stop" {
     identity_ids = [azurerm_user_assigned_identity.mi.id]
   }
 
-  tags = local.common_tags
+  tags = module.ctags.common_tags
 }
 
 #---------------------------------------------------
@@ -31,5 +31,5 @@ module "vm_automation" {
   vm_names                = azurerm_linux_virtual_machine.wowza_vm[*].name
   mi_principal_id         = azurerm_user_assigned_identity.mi.principal_id
 
-  tags = local.common_tags
+  tags = module.ctags.common_tags
 }

@@ -14,7 +14,7 @@ resource "azurerm_lb" "lb" {
     private_ip_address_allocation = "Static"
   }
 
-  tags = local.common_tags
+  tags = module.ctags.common_tags
 }
 
 #---------------------------------------------------

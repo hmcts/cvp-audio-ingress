@@ -15,7 +15,7 @@ resource "azurerm_network_interface" "wowza_nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.wowza_pip[count.index].id
   }
-  tags = local.common_tags
+  tags = module.ctags.common_tags
 }
 
 #---------------------------------------------------
@@ -52,7 +52,7 @@ resource "azurerm_public_ip" "wowza_pip" {
 
   allocation_method = "Static"
   sku               = "Standard"
-  tags              = local.common_tags
+  tags              = module.ctags.common_tags
 
   lifecycle {
     ignore_changes = [

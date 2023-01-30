@@ -88,7 +88,7 @@ resource "azurerm_network_security_group" "sg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-  tags = local.common_tags
+  tags = module.ctags.common_tags
 }
 
 #---------------------------------------------------

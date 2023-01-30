@@ -50,5 +50,5 @@ resource "azurerm_linux_virtual_machine" "wowza_vm" {
     identity_ids = [azurerm_user_assigned_identity.mi.id]
   }
 
-  tags = local.common_tags
+  tags = module.ctags.common_tags
 }

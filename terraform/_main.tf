@@ -16,7 +16,7 @@ module "ctags" {
 resource "azurerm_resource_group" "rg" {
   name     = "${local.service_name}-rg"
   location = var.location
-  tags     = local.common_tags
+  tags     = module.ctags.common_tags
 }
 
 #---------------------------------------------------
@@ -30,7 +30,7 @@ resource "azurerm_dns_a_record" "wowza" {
   ttl                 = 300
   records             = [var.lb_IPaddress]
 
-  tags = local.common_tags
+  tags = module.ctags.common_tags
 }
 
 resource "random_password" "certPassword" {

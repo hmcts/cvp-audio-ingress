@@ -21,7 +21,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   private_dns_zone_name = data.azurerm_private_dns_zone.blob.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
   registration_enabled  = false
-  tags                  = local.common_tags
+  tags                  = module.ctags.common_tags
 }
 
 #---------------------------------------------------
@@ -36,7 +36,7 @@ resource "azurerm_private_dns_a_record" "sa_a_record" {
   resource_group_name = "core-infra-intsvc-rg"
   ttl                 = 300
   records             = [azurerm_private_endpoint.endpoint.private_service_connection.0.private_ip_address]
-  tags                = local.common_tags
+  tags                = module.ctags.common_tags
 }
 
 #---------------------------------------------------
@@ -57,5 +57,5 @@ resource "azurerm_private_endpoint" "endpoint" {
     subresource_names              = ["Blob"]
     is_manual_connection           = false
   }
-  tags = local.common_tags
+  tags = module.ctags.common_tags
 }
