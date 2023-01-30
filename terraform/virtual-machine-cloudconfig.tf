@@ -18,7 +18,7 @@ data "template_file" "cloudconfig" {
     domain                  = "cvp-recording.${local.domain_dns_prefix}.platform.hmcts.net"
     wowzaVersion            = var.wowza_version
     dynatrace_tenant        = var.dynatrace_tenant
-    dynatrace_token         = var.env == "stg" || var.env == "prod" ? data.azurerm_key_vault_secret.dynatrace_token[0].value : ""
+    dynatrace_token         = try(data.azurerm_key_vault_secret.dynatrace_token[0].value, "")
   }
 }
 
