@@ -68,16 +68,44 @@ stages:
           displayName: 'Extensions to ${{parameters.env}}'
           dependsOn: ApplyTfToEnv
           steps:
+            - task: AzureCLI@2
+              displayName: Get VM names
+              name: getvmnames
+              inputs:
+                azureSubscription: ${{ parameters.subscription }}
+                scriptType: pscore
+                scriptLocation: inlineScript
+                inlineScript: |
+                  Write-Output "Task started: getvmnames"
+                  $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
+
+                  $rgExists = az group exists --name $resourcegroup
+
+                  if ( $rgExists )
+                  {
+                      Write-Output "$resourcegroup exists in subscription"
+                      $vmList = (az vm list --resource-group  $resourcegroup --query "[].{name:name}" -o tsv) -join ","
+                      
+                      Write-Host "##vso[task.setvariable variable=vmListString;isOutput=true]$vmList"
+                      Write-Host "New variable 'vmListString' set to '$vmList'"
+                  }
+                  else
+                  {
+                  Write-Output "$resourcegroup does not exist in subscription"
+                  }
+
+                  Write-Output "Task finished: getvmnames"
+
             - template: ../steps/az-ext-oms.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
-                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+                vmNames: split(getvmnames.vmListString, ',')
                 vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 env: ${{variables.env}}
 
             - template: ../steps/az-ext-dynatrace-api.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
-                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+                vmNames: split(getvmnames.vmListString, ',')
                 vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
                 env: ${{variables.env}}
