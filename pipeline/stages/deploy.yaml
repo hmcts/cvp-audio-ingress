@@ -52,9 +52,7 @@ stages:
           displayName: 'Terraform to ${{parameters.env}}'
           dependsOn: 'VmOn${{parameters.env}}'
           steps:
-                
             - template: ../steps/tf-install.yaml
-
             - template: ../steps/tf-apply.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
@@ -63,16 +61,18 @@ stages:
                 locationEng: ${{variables.locationEng}}
                 product: ${{variables.product}}
                 wowza_version: ${{variables.wowza_version}}
-
         - job: ApplyExtToEnv
           displayName: 'Extensions to ${{parameters.env}}'
           dependsOn: ApplyTfToEnv
+          variables:
+            - template: ../variables/variables-common.yaml
+            - template: ../variables/variables-${{parameters.env}}.yaml
           steps:
             - task: AzureCLI@2
               displayName: Get VM names
               name: getvmnames
               inputs:
-                azureSubscription: ${{ parameters.subscription }}
+                azureSubscription: ${{ variables.subscriptionName }}
                 scriptType: pscore
                 scriptLocation: inlineScript
                 inlineScript: |
