@@ -95,7 +95,7 @@ steps:
         Write-Host $settingsJson
         
 
-  - ${{ each vm in split(parameters.vmNames, ",") }}:
+  - ${{ each vm in split(parameters.vmNames, ',') }}:
     - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
       parameters:
         subscription: ${{ parameters.subscription }}
