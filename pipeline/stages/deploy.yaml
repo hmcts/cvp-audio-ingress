@@ -99,13 +99,13 @@ stages:
             - template: ../steps/az-ext-oms.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
-                vmNames: split(getvmnames.vmListString, ',')
+                vmNames: ${{ split(getvmnames.vmListString, ',') }}
                 vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 env: ${{variables.env}}
 
             - template: ../steps/az-ext-dynatrace-api.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
-                vmNames: split(getvmnames.vmListString, ',')
+                vmNames: ${{ split(getvmnames.vmListString, ',') }}
                 vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
                 env: ${{variables.env}}
