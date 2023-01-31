@@ -62,7 +62,7 @@ stages:
 
             - task: AzureCLI@2
               name: 'machineconfig'
-              displayName: Check Machine Config - $vm
+              displayName: Check Machine Config
               env:
                 VMS: $(getvmnames.vmListString)
               inputs:
@@ -72,7 +72,7 @@ stages:
                 inlineScript: |
                   rgName="${service_name}rg"
                   allOk=true
-                  IFS=';' read -ra vms <<< "$env:VMS"
+                  IFS=';' read -ra vms <<< "$VMS"
                   for i in "${vms[@]}"
                   do
 
@@ -107,7 +107,7 @@ stages:
                 inlineScript: |
                   rgName="${service_name}rg"
                   allOk=true
-                  IFS=';' read -ra vms <<< "$env:VMS"
+                  IFS=';' read -ra vms <<< "$VMS"
                   for i in "${vms[@]}"
                   do
 
