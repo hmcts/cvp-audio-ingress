@@ -63,6 +63,8 @@ stages:
             - task: AzureCLI@2
               name: 'machineconfig'
               displayName: Check Machine Config - $vm
+              env:
+                VMS: $(getvmnames.vmListString)
               inputs:
                 azureSubscription: '${{variables.subscriptionName}}'
                 scriptType: 'bash'
@@ -70,7 +72,7 @@ stages:
                 inlineScript: |
                   rgName="${service_name}rg"
                   allOk=true
-                  IFS=';' read -ra vms <<< "${getvmnames.vmListString}"
+                  IFS=';' read -ra vms <<< "$env:VMS"
                   for i in "${vms[@]}"
                   do
 
@@ -96,6 +98,8 @@ stages:
             - task: AzureCLI@2
               name: 'vminstalls'
               displayName: Check VM Installs
+              env:
+                VMS: $(getvmnames.vmListString)
               inputs:
                 azureSubscription: '${{variables.subscriptionName}}'
                 scriptType: 'bash'
@@ -103,7 +107,7 @@ stages:
                 inlineScript: |
                   rgName="${service_name}rg"
                   allOk=true
-                  IFS=';' read -ra vms <<< "${getvmnames.vmListString}"
+                  IFS=';' read -ra vms <<< "$env:VMS"
                   for i in "${vms[@]}"
                   do
 
