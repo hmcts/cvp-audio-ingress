@@ -61,8 +61,7 @@ stages:
                 locationEng: ${{variables.locationEng}}
                 product: ${{variables.product}}
                 wowza_version: ${{variables.wowza_version}}
-        - job: ApplyExtToEnv
-          displayName: 'Extensions to ${{parameters.env}}'
+        - job: Get_VM_Names
           dependsOn: ApplyTfToEnv
           variables:
             - template: ../variables/variables-common.yaml
@@ -96,16 +95,23 @@ stages:
 
                   Write-Output "Task finished: getvmnames"
 
+        - job: ApplyExtToEnv
+          displayName: 'Extensions to ${{parameters.env}}'
+          dependsOn: Get_VM_Names
+          variables:
+            VMS: $[ dependencies.Get_VM_Names.outputs['getvmnames.vmListString'] ]
+          steps:
+
             - template: ../steps/az-ext-oms.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
-                vmNames: $(getvmnames.vmListString)
+                vmNames: $(VMS)
                 vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 env: ${{variables.env}}
 
             - template: ../steps/az-ext-dynatrace-api.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
-                vmNames: $(getvmnames.vmListString)
+                vmNames: $(VMS)
                 vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
                 env: ${{variables.env}}
