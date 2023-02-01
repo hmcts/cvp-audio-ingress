@@ -73,7 +73,7 @@ stages:
                   service_name="${{variables.product}}-recordings-${{parameters.env}}-"
                   rgName="${service_name}rg"
                   allOk=true
-                  IFS=';' read -ra vms <<< "$VMS"
+                  IFS=',' read -ra vms <<< "$VMS"
                   for i in "${vms[@]}"
                   do
 
@@ -109,7 +109,7 @@ stages:
                   service_name="${{variables.product}}-recordings-${{parameters.env}}-"
                   rgName="${service_name}rg"
                   allOk=true
-                  IFS=';' read -ra vms <<< "$VMS"
+                  IFS=',' read -ra vms <<< "$VMS"
                   for i in "${vms[@]}"
                   do
 
