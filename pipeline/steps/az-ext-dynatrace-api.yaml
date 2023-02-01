@@ -93,16 +93,14 @@ steps:
         Write-Host $restApiPutBodyJson
         Write-Host settingsJson
         Write-Host $settingsJson
-        
 
-  - ${{ each vm in split(parameters.vmNames, ',') }}:
-    - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
-      parameters:
-        subscription: ${{ parameters.subscription }}
-        rgName: ${{ parameters.vmRgName }}
-        vmName: ${{ vm }}
-        extName: "oneAgentLinux"
-        extPublisher: "dynatrace.ruxit"
-        restApiPutBodyJson: $(dynaSettings.restApiPutBodyJson)
+  - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
+    parameters:
+      subscription: ${{ parameters.subscription }}
+      rgName: ${{ parameters.vmRgName }}
+      vmName: ${{ parameters.vmNames }}
+      extName: "oneAgentLinux"
+      extPublisher: "dynatrace.ruxit"
+      restApiPutBodyJson: $(dynaSettings.restApiPutBodyJson)
 
 
