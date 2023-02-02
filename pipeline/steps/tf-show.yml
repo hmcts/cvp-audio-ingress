@@ -33,6 +33,7 @@ steps:
 
   - powershell: |
       $outputlocation = "${{parameters.outputLocation}}"
+      cd $(System.DefaultWorkingDirectory)/terraform
       if ($outputlocation -eq "") {
         terraform show ${{parameters.planOrStateFilePath}}
       } else {

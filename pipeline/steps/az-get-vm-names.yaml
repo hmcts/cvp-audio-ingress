@@ -1,0 +1,34 @@
+parameters:
+  - name: subscriptionName
+    type: string
+  - name: env
+    type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Get VM names
+    name: getvmnames
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        Write-Output "Task started: getvmnames"
+        $resourcegroup="cvp-recordings-${{parameters.env}}-rg"
+
+        $rgExists = az group exists --name $resourcegroup
+
+        if ( $rgExists )
+        {
+            Write-Output "$resourcegroup exists in subscription"
+            $vmList = (az vm list --resource-group  $resourcegroup --query "[].{name:name}" -o tsv) -join ","
+            
+            Write-Host "##vso[task.setvariable variable=vmListString;isOutput=true]$vmList"
+            Write-Host "New variable 'vmListString' set to '$vmList'"
+        }
+        else
+        {
+        Write-Output "$resourcegroup does not exist in subscription"
+        }
+
+        Write-Output "Task finished: getvmnames"

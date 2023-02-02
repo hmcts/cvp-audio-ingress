@@ -42,10 +42,11 @@ steps:
     displayName: 'Plan ${{parameters.env}}'
     inputs:
       command: 'plan'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: >
-        -var-file "$(Build.SourcesDirectory)/tf-variables/shared.tfvars"
-        -var-file "$(Build.SourcesDirectory)/tf-variables/${{parameters.env}}.tfvars"
+        -var-file "$(Build.SourcesDirectory)/terraform/envs/shared.tfvars"
+        -var-file "$(Build.SourcesDirectory)/terraform/envs/${{parameters.env}}.tfvars"
         -var "builtFrom=${{ parameters.builtFrom }}"
         -var "ws_sub_id=$(ws_sub_id)"
         -out="${{ parameters.env }}.tfplan" -no-color -input=false
@@ -60,5 +61,5 @@ steps:
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Terraform Plan'
     inputs:
-      targetPath: '${{ parameters.workingDirectory }}/${{ parameters.env }}.tfplan'
-      artifact: ${{ parameters.env }}.tfplan
+      targetPath: '${{ parameters.workingDirectory }}/terraform/${{ parameters.env }}.tfplan'
+      artifact: '${{ parameters.env }}.tfplan'

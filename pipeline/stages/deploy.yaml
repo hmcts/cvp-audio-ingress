@@ -48,13 +48,12 @@ stages:
                 env: ${{parameters.env}}
                 pipelineStart: true
                 subscriptionName: ${{variables.subscriptionName}}
+
         - job: ApplyTfToEnv
           displayName: 'Terraform to ${{parameters.env}}'
           dependsOn: 'VmOn${{parameters.env}}'
           steps:
-                
             - template: ../steps/tf-install.yaml
-
             - template: ../steps/tf-apply.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
@@ -67,17 +66,26 @@ stages:
         - job: ApplyExtToEnv
           displayName: 'Extensions to ${{parameters.env}}'
           dependsOn: ApplyTfToEnv
+          variables:
+            - template: ../variables/variables-common.yaml
+            - template: ../variables/variables-${{parameters.env}}.yaml
           steps:
+          
+            - template: ../steps/az-get-vm-names.yaml
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+
             - template: ../steps/az-ext-oms.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
-                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+                vmNames: $(getvmnames.vmListString)
                 vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 env: ${{variables.env}}
 
             - template: ../steps/az-ext-dynatrace-api.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
-                vmNames: ["${{variables.product}}-recordings-${{variables.env}}-vm1","${{variables.product}}-recordings-${{variables.env}}-vm2" ]
+                vmNames: $(getvmnames.vmListString)
                 vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
                 env: ${{variables.env}}

@@ -1,4 +1,6 @@
-
+#---------------------------------------------------
+# Load Balancer
+#---------------------------------------------------
 resource "azurerm_lb" "lb" {
   name                = "${local.service_name}-lb"
   location            = azurerm_resource_group.rg.location
@@ -12,14 +14,20 @@ resource "azurerm_lb" "lb" {
     private_ip_address_allocation = "Static"
   }
 
-  tags = var.common_tags
+  tags = module.ctags.common_tags
 }
 
+#---------------------------------------------------
+# Load Balancer - Backend pool
+#---------------------------------------------------
 resource "azurerm_lb_backend_address_pool" "be_add_pool" {
   loadbalancer_id = azurerm_lb.lb.id
   name            = "BackEndAddressPool"
 }
 
+#---------------------------------------------------
+# Load Balancer - Probe
+#---------------------------------------------------
 resource "azurerm_lb_probe" "lb_probe" {
   loadbalancer_id = azurerm_lb.lb.id
   name            = "wowza-running-probe"
@@ -27,6 +35,9 @@ resource "azurerm_lb_probe" "lb_probe" {
   protocol        = "Tcp"
 }
 
+#---------------------------------------------------
+# Load Balancer - Rule
+#---------------------------------------------------
 resource "azurerm_lb_rule" "rtmps_lb_rule" {
   loadbalancer_id                = azurerm_lb.lb.id
   name                           = "RTMPS"

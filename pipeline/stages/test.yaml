@@ -32,9 +32,16 @@ stages:
           displayName: '${{parameters.env}} Virtual Machine Tests '
           steps:
 
+            - template: ../steps/az-get-vm-names.yaml
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                env: ${{variables.env}}
+
             - task: AzureCLI@2
               name: 'machineconfig'
               displayName: Check Machine Config
+              env:
+                VMS: $(getvmnames.vmListString)
               inputs:
                 azureSubscription: '${{variables.subscriptionName}}'
                 scriptType: 'bash'
@@ -42,12 +49,12 @@ stages:
                 inlineScript: |
                   service_name="${{variables.product}}-recordings-${{parameters.env}}-"
                   rgName="${service_name}rg"
-
                   allOk=true
-                  for i in {1..2}
+                  IFS=',' read -ra vms <<< "$VMS"
+                  for i in "${vms[@]}"
                   do
 
-                      vmName="${service_name}vm${i}"
+                      vmName="${i}"
                       echo "Testing $vmName in $rgName."
 
                       #az vm show --resource-group $rgName --name $vmName
@@ -57,7 +64,7 @@ stages:
                           echo "##vso[task.LogIssue type=error;]$vmName in $rgName has password access enabled."
                           allOk=false
                       fi
-                      
+                  
                   done
 
                   if [ "$allOk" = "false" ]
@@ -65,9 +72,12 @@ stages:
                       echo "##vso[task.LogIssue type=error;]There are issues with vms in $rgName"
                       exit 1
                   fi
+
             - task: AzureCLI@2
               name: 'vminstalls'
               displayName: Check VM Installs
+              env:
+                VMS: $(getvmnames.vmListString)
               inputs:
                 azureSubscription: '${{variables.subscriptionName}}'
                 scriptType: 'bash'
@@ -75,12 +85,12 @@ stages:
                 inlineScript: |
                   service_name="${{variables.product}}-recordings-${{parameters.env}}-"
                   rgName="${service_name}rg"
-
                   allOk=true
-                  for i in {1..2}
+                  IFS=',' read -ra vms <<< "$VMS"
+                  for i in "${vms[@]}"
                   do
 
-                      vmName="${service_name}vm${i}"
+                      vmName="${i}"
                       echo "Testing $vmName in $rgName."
 
                       response=$(az vm run-command invoke --resource-group $rgName --name $vmName --command-id RunShellScript --scripts '[ -d "/usr/local/WowzaStreamingEngine/content/azurecopy" ] && echo "Directory exists." || echo "Error: Directory does not exists." && dpkg -s fuse |grep "install ok installed" && echo "fuse pgk installed" || echo "fuse pgk failed" && dpkg -s blobfuse |grep "install ok installed" && echo "blobfuse installed" || echo "blobfuse failed" && systemctl is-active --quiet WowzaStreamingEngine && echo "Service Running" || echo "Error: Service not Running"' --query "value[0].message")

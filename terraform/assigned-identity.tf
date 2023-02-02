@@ -1,4 +1,6 @@
-
+#---------------------------------------------------
+# User assigned Identity
+#---------------------------------------------------
 resource "azurerm_user_assigned_identity" "mi" {
   resource_group_name = "managed-identities-${var.env}-rg"
   location            = azurerm_resource_group.rg.location
@@ -6,6 +8,9 @@ resource "azurerm_user_assigned_identity" "mi" {
   name = "cvp-${var.env}-mi"
 }
 
+#---------------------------------------------------
+# Key Vault access policy
+#---------------------------------------------------
 resource "azurerm_key_vault_access_policy" "policy" {
   key_vault_id            = data.azurerm_key_vault.cvp_kv.id
   tenant_id               = data.azurerm_client_config.current.tenant_id
@@ -16,16 +21,24 @@ resource "azurerm_key_vault_access_policy" "policy" {
   storage_permissions     = []
 }
 
+#---------------------------------------------------
+# Add role assignment to read identity
+#---------------------------------------------------
 resource "azurerm_role_assignment" "mi" {
   scope                = azurerm_user_assigned_identity.mi.id
   role_definition_name = "Reader"
   principal_id         = azurerm_user_assigned_identity.mi.principal_id
 }
 
+#---------------------------------------------------
+# Role definition for controlling Wowza VMs
+#---------------------------------------------------
 resource "azurerm_role_definition" "vm-status-control" {
-  name        = "${var.product}-vm-status-control-${var.env}"
+  name = "${var.product}-vm-status-control-${var.env}"
+
   scope       = azurerm_resource_group.rg.id
   description = "Custom Role for controlling virtual machines on off status"
+
   permissions {
     actions = [
       "Microsoft.Compute/virtualMachines/read",
@@ -40,6 +53,9 @@ resource "azurerm_role_definition" "vm-status-control" {
   ]
 }
 
+#---------------------------------------------------
+# Assign VM role to identity
+#---------------------------------------------------
 resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
   scope              = azurerm_resource_group.rg.id
   role_definition_id = azurerm_role_definition.vm-status-control.role_definition_resource_id
@@ -48,4 +64,4 @@ resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
   depends_on = [
     azurerm_role_definition.vm-status-control # Required otherwise terraform destroy will fail
   ]
-}
+} 

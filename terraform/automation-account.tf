@@ -1,7 +1,10 @@
+#---------------------------------------------------
+# Automation account
+#---------------------------------------------------
 resource "azurerm_automation_account" "vm-start-stop" {
+  name = "${var.product}-recordings-${var.env}-aa"
 
-  name                = "${var.product}-recordings-${var.env}-aa"
-  location            = var.location
+  location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku_name            = var.automation_account_sku_name
 
@@ -10,19 +13,23 @@ resource "azurerm_automation_account" "vm-start-stop" {
     identity_ids = [azurerm_user_assigned_identity.mi.id]
   }
 
-  tags = var.common_tags
+  tags = module.ctags.common_tags
 }
 
+#---------------------------------------------------
+# Start/Stop VM runbook (via module)
+#---------------------------------------------------
 module "vm_automation" {
   source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm"
 
   product                 = var.product
   env                     = var.env
-  location                = var.location
+  location                = azurerm_resource_group.rg.location
   automation_account_name = azurerm_automation_account.vm-start-stop.name
-  tags                    = var.common_tags
   schedules               = var.schedules
   resource_group_name     = azurerm_resource_group.rg.name
-  vm_names                = [azurerm_linux_virtual_machine.vm1.name, azurerm_linux_virtual_machine.vm2.name]
+  vm_names                = azurerm_linux_virtual_machine.wowza_vm[*].name
   mi_principal_id         = azurerm_user_assigned_identity.mi.principal_id
+
+  tags = module.ctags.common_tags
 }
