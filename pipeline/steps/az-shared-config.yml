@@ -87,10 +87,10 @@ steps:
         echo "Logged in as oid $oid"
         echo "Env: $envName"
 
-        extDate=$(date -d "$(date +%Y-%m-%d) + 720 hours" +%Y-%m-%d) # Add epire to comply with PltOps policy
+        extDate=$(date -d "$(date +%Y-%m-%d) + 720 hours" +%Y-%m-%d) # Add expire to comply with PltOps policy
         
         echo "Creating Shared KV $kvName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long expiresAfter=$extDate"
+        tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$env_long expiresAfter=$extDate"
         echo tag: $tags
 
         echo Checking if $kvName in $rgName exists
@@ -110,6 +110,7 @@ steps:
         echo "##vso[task.setvariable variable=kvId]$kvId"
 
         echo "Tagging $kvId"
+        echo az tag update --resource-id ${kvId//[$'\t\r\n']/} --operation replace --subscription ${{ parameters.subscriptionName }} --tags $tags
         az tag update --resource-id ${kvId//[$'\t\r\n']/} --operation replace --subscription ${{ parameters.subscriptionName }} --tags $tags
 
         echo "Grant Service connection permissions on the KV"
