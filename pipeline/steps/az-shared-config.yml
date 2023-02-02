@@ -87,13 +87,12 @@ steps:
         echo "Logged in as oid $oid"
         echo "Env: $envName"
 
-        $date = (Get-date).AddHours(720)
-        $expDate = Get-Date $date -Format yyyy-MM-dd
+        extDate=$(date -d "$(date +%Y-%m-%d) + 720 hours" +%Y-%m-%d)
 
-        tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$envName expiresAfter=$expDate"
+        tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$envName expiresAfter=$extDate"
         
         echo "Creating Shared KV $kvName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long expiresAfter=$expDate"
+        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long expiresAfter=$extDate"
         echo tag: $tags
 
         echo Checking if $kvName in $rgName exists
