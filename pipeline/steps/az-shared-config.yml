@@ -87,9 +87,7 @@ steps:
         echo "Logged in as oid $oid"
         echo "Env: $envName"
 
-        extDate=$(date -d "$(date +%Y-%m-%d) + 720 hours" +%Y-%m-%d)
-
-        tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$envName expiresAfter=$extDate"
+        extDate=$(date -d "$(date +%Y-%m-%d) + 720 hours" +%Y-%m-%d) # Add epire to comply with PltOps policy
         
         echo "Creating Shared KV $kvName"
         tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=$env_long expiresAfter=$extDate"
@@ -101,8 +99,8 @@ steps:
         if [ $kv_existance > 0 ]
         then
           echo Keyvault $kv_existance already exists.
-          kv_id=$kv_existance
-          echo kv_id $kv_id
+          kvId=$kv_existance
+          echo kvId $kvId
         else
           echo creating $kvName kv
           newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
