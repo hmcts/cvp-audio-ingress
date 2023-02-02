@@ -1,3 +1,7 @@
+#---------------------------------------------------
+# This whole file will need to be removed after first deploy to prod
+#---------------------------------------------------
+
 provider "azurerm" {
   features {}
 }
