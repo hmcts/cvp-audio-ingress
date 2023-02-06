@@ -1,0 +1,23 @@
+#---------------------------------------------------
+# SAS token renewal runbook (via module)
+#---------------------------------------------------
+module "automation_runbook_sas_token_renewal" {
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-sas-token-renewal?ref=master"
+  
+  for_each = local.sas_tokens
+
+  name = "rotate-sas-tokens-${each.value.storage_account}-${each.value.container}-${each.value.blob}-${each.value.permissions}"
+
+  resource_group_name     = var.resource_group
+  environment             = var.env
+  storage_account_name    = each.value.storage_account
+  container_name          = each.value.container
+  blob_name               = each.value.blob
+  key_vault_name          = local.key_vault_name
+  secret_name             = "cvp-sas-${each.value.container}-${each.value.blob}-${each.value.permissions}"
+  expiry_date             = each.value.expiry_date
+  automation_account_name = azurerm_automation_account.cvp.name
+
+  tags = module.ctags.common_tags
+
+}
