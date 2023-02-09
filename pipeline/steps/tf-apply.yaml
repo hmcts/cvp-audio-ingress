@@ -49,6 +49,13 @@ steps:
   - bash: chmod a+x '${{ parameters.workingDirectory }}/terraform/${{ parameters.env }}.tfplan' && ls -ltra     
     displayName: 'Download Plan and change perms'
 
+  - ${{ if eq( parameters.environment,'stg' ) }}:
+    - template:  templates\Azure\Common\unlock-resource-group.yml@azTemplates
+      parameters:
+        subscriptionName:  ${{ parameters.subscription }}
+        resourceGroupName: ${{ parameters.resourceGroup }}
+        lockName: "${{ parameters.environment }}-lock"
+
   - task: TerraformCLI@0
     displayName: Apply
     inputs:
