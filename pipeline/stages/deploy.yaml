@@ -62,6 +62,7 @@ stages:
                 locationEng: ${{variables.locationEng}}
                 product: ${{variables.product}}
                 wowza_version: ${{variables.wowza_version}}
+                resourceGroup: "${{variables.product}}-recordings-${{parameters.env}}-rg"
 
         - job: ApplyExtToEnv
           displayName: 'Extensions to ${{parameters.env}}'
