@@ -19,7 +19,7 @@ resource "azurerm_monitor_metric_alert" "cvp-backup-alert" {
     threshold        = 0
 
     dimension {
-      name     = "Health Status"
+      name     = "HealthStatus"
       operator = "Exclude"
       values   = ["Healthy"]
     }
