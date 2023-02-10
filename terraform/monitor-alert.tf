@@ -7,15 +7,16 @@ resource "azurerm_monitor_metric_alert" "cvp-backup-alert" {
   scopes              = azurerm_recovery_services_vault.backup_vault.id
   description         = "Alert will be triggered when a non-healthy backup event happens."
 
+  frequency        = "PT1H"
+  window_size      = "PT12H"
+  severity         = 1
+  
   criteria {
     metric_namespace = "Microsoft.RecoveryServices/vaults"
     metric_name      = "BackupHealthEvent"
     aggregation      = "Count"
     operator         = "GreaterThan"
     threshold        = 0
-    frequency        = "PT1H"
-    window_size      = "PT12H"
-    severity         = 1
 
     dimension {
       name     = "Health Status"
