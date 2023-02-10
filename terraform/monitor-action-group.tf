@@ -4,13 +4,11 @@ resource "azurerm_monitor_action_group" "cvp-ag" {
   short_name          = "CVPBackup"
 
   dynamic "email_receiver" {
-    for_each = var.vm_backup_alert_email
+    for_each = var.vm_backup_alert_emails
     content {
-      name                    = replace(split("@", email_receiver.value)[0], ".", " ")
-      email_address           = email_receiver.value
+      name                    = email_receiver.value.name
+      email_address           = email_receiver.value.email
     }
   }
 }
-
-
 
