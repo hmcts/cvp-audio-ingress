@@ -23,7 +23,7 @@ resource "azurerm_automation_webhook" "webhook_back_unhealthy" {
   automation_account_name = azurerm_automation_account.cvp.name
   expiry_time             = "2028-12-31T00:00:00Z"
   enabled                 = true
-  runbook_name            = module.dynatrace_runbook.name
+  runbook_name            = module.dynatrace_runbook.runbook_name
 
   parameters = {  
     dynatracetenant  = var.dynatrace_tenant
