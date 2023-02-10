@@ -10,5 +10,5 @@ resource "azurerm_recovery_services_vault" "backup_vault" {
   sku                 = "Standard"
   storage_mode_type   = "LocallyRedundant"
   soft_delete_enabled = false
-  tags                = var.common_tags
+  tags                = local.common_tags
 }
