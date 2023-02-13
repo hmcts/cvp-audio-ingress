@@ -16,7 +16,7 @@ module "dynatrace_runbook" {
 #---------------------------------------------------
 resource "azurerm_automation_webhook" "webhook_back_unhealthy" {
 
-  count = var.vm_count
+  count = var.env == "stg" || var.env == "prod" ? var.vm_count : 0
 
   name                    = "CVP - '${local.service_name}-vm${count.index + 1}' backup not healthy."
   resource_group_name     = azurerm_resource_group.rg.name

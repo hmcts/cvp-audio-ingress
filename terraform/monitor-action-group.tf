@@ -3,7 +3,7 @@
 #---------------------------------------------------
 
 resource "azurerm_monitor_action_group" "cvp-backup-ag" {
-  count = var.vm_count
+  count = var.env == "stg" || var.env == "prod" ? var.vm_count : 0
 
   name                = "${local.service_name}-vm${count.index + 1}-backup-alerts-ag"
   short_name          = "CVPBackupVM${count.index + 1}"

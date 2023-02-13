@@ -17,10 +17,12 @@ resource "azurerm_automation_account" "cvp" {
 
 
 resource "azurerm_automation_credential" "credential" {
+  count = var.env == "stg" || var.env == "prod" ? 1 : 0
+
   name                    = "Dynatrace-Token"
   resource_group_name     = azurerm_resource_group.rg.name
   automation_account_name = azurerm_automation_account.cvp.name
   username                = "Dynatrace"
-  password                = data.azurerm_key_vault_secret.dynatrace_token
+  password                = data.azurerm_key_vault_secret.dynatrace_token.value
   description             = "Dynatrace API Token"
 }
