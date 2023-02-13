@@ -119,14 +119,6 @@ variable "num_applications" {
   description = "Number of Wowza applications to create as part of cloudinit, defaults to 1."
 }
 
-variable "vm_backup_alert_emails" {
-  type = list(object({
-    name  = string
-    email = string
-  }))
-  description = "(Required) Email adresses to recieve VM backup alerts."
-}
-
 #---------------------------------------------------
 # Networking settings
 #---------------------------------------------------
