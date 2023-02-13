@@ -11,12 +11,6 @@ ws_rg                         = "oms-automation"
 num_applications              = 3500
 vm_size                       = "Standard_F8s_v2"
 dynatrace_tenant              = "yrk32651"
-vm_backup_alert_emails = [
-  {
-    name  = "Ben",
-    email = "benjamin.garside@hmcts.net"
-  }
-]
 schedules = [
   {
     name      = "vm-off",
