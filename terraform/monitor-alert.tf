@@ -36,7 +36,7 @@ resource "azurerm_monitor_metric_alert" "cvp-backup-alert" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.cvp-ag.id
+    action_group_id = azurerm_monitor_action_group.cvp-backup-ag[count.index].id
   }
 
   tags = module.ctags.common_tags
