@@ -23,6 +23,6 @@ resource "azurerm_automation_credential" "credential" {
   resource_group_name     = azurerm_resource_group.rg.name
   automation_account_name = azurerm_automation_account.cvp.name
   username                = "Dynatrace"
-  password                = data.azurerm_key_vault_secret.dynatrace_token.value
+  password                = data.azurerm_key_vault_secret.dynatrace_token[0].value
   description             = "Dynatrace API Token"
 }
