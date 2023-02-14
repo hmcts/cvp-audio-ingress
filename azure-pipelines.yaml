@@ -17,6 +17,14 @@ parameters:
     type: object
     values: []
     default: ['sbox','stg','prod']
+  - name: shutdown_sbox
+    displayName: Shutdown SBOX after tests
+    type: boolean
+    default: true
+  - name: shutdown_stg
+    displayName: Shutdown STG after tests
+    type: boolean
+    default: true
 
 variables:
   - template: ./pipeline/variables/variables-common.yaml
@@ -42,7 +50,7 @@ stages:
     - template: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
-        ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + not release
+        ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + is release
           runStage: 'true' 
         ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
           runStage: 'true'
@@ -50,6 +58,8 @@ stages:
     - template: pipeline/stages/test.yaml
       parameters:
         env: ${{env}}
+        shutdown_sbox: ${{parameters.shutdown_sbox}}
+        shutdown_stg: ${{parameters.shutdown_stg}}
         ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + release
           runStage: 'true' 
         ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release

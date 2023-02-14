@@ -5,6 +5,12 @@ parameters:
   - name: runStage
     type: string
     default: 'false'
+  - name: shutdown_sbox
+    type: boolean
+    default: true
+  - name: shutdown_stg
+    type: boolean
+    default: true
 
 stages:
   - ${{ if eq(parameters.runStage, true)}}:
@@ -141,7 +147,7 @@ stages:
                   subscriptionName: ${{ variables.subscriptionName }}
                   env: ${{ variables.env }}
 
-        - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
+        - ${{ if or( and( eq(parameters.env, 'sbox'), eq(parameters.shutdown_sbox, true)), and( eq(parameters.env, 'stg'), eq(parameters.shutdown_stg, true)))}}:
           - job: 'StopVM${{parameters.env}}'
             displayName: '${{parameters.env}} Turning Vm off'
             dependsOn: [LoadBalancerTest, VirtualMachineTest]
