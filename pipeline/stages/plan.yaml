@@ -58,8 +58,8 @@ stages:
                 subscriptionName:  ${{variables.subscriptionName}}
                 resourceGroupName: "managed-identities-${{variables.env}}-rg"
                 lockName: "${{variables.env}}-lock"
-                
-            - template: ../steps/add-sa-ip.yaml
+
+            - template: ../steps/sa-network-allow.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
@@ -76,7 +76,7 @@ stages:
                 businessArea: ${{variables.businessArea}}
                 application: ${{variables.application}}
 
-            - template: ../steps/remove-sa-ip.yaml
+            - template: ../steps/sa-network-deny.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"

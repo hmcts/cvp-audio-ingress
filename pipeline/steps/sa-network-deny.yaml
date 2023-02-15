@@ -8,7 +8,7 @@ parameters:
 
 steps:
   - task: AzureCLI@2
-    displayName: Remove IP in SA network allow list in ${{ parameters.storageAccountName }}
+    displayName: Update defualt action to 'Deny' in ${{ parameters.storageAccountName }}
     inputs:
       azureSubscription: '${{parameters.subscriptionName}}'
       scriptType: 'pscore'
@@ -17,8 +17,6 @@ steps:
         $storageAccountName = "${{ parameters.storageAccountName }}"
         $resourceGroupName = "${{ parameters.resourceGroupName }}"
 
-        Write-Host "Starting Task: Remove IP in SA network allow list"
+        Write-Host "Starting Task: Update defualt action to 'Deny'"
 
-        $ip = Invoke-RestMethod -Method GET -Uri https://api.ipify.org
-
-        az storage account network-rule remove --account-name $storageAccountName -g $resourceGroupName --ip-address $ip
+        az storage account update -g $resourceGroupName --name $storageAccountName --default-action Deny

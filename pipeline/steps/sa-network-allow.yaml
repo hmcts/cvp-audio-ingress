@@ -8,7 +8,7 @@ parameters:
 
 steps:
   - task: AzureCLI@2
-    displayName: Add IP to SA network allow list in ${{ parameters.storageAccountName }}
+    displayName: Update defualt action to 'Allow' in ${{ parameters.storageAccountName }}
     inputs:
       azureSubscription: '${{parameters.subscriptionName}}'
       scriptType: 'pscore'
@@ -17,10 +17,6 @@ steps:
         $storageAccountName = "${{ parameters.storageAccountName }}"
         $resourceGroupName = "${{ parameters.resourceGroupName }}"
 
-        Write-Host "Starting Task: Add IP to SA network allow list"
+        Write-Host "Starting Task: Update defualt action to 'Allow'"
 
-        $ip = Invoke-RestMethod -Method GET -Uri https://api.ipify.org
-
-        Write-Host "Using IP: $ip ..."
-
-        az storage account network-rule add --account-name $storageAccountName -g $resourceGroupName --ip-address $ip
+        az storage account update -g $resourceGroupName --name $storageAccountName --default-action Allow
