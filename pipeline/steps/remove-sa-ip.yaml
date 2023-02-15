@@ -1,0 +1,24 @@
+parameters:
+    - name: subscriptionName
+      type: string
+    - name: resourceGroupName
+      type: string
+    - name: storageAccountName
+      type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Remove IP in SA network allow list in ${{ parameters.storageAccountName }}
+    inputs:
+      azureSubscription: '${{parameters.subscriptionName}}'
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        $storageAccountName = "${{ parameters.storageAccountName }}"
+        $resourceGroupName = "${{ parameters.resourceGroupName }}"
+
+        Write-Host "Starting Task: Remove IP in SA network allow list"
+
+        $ip = Invoke-RestMethod -Method GET -Uri https://api.ipify.org
+
+        az storage account network-rule remove --account-name $storageAccountName -g $resourceGroupName --ip-address $ip
