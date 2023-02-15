@@ -59,7 +59,7 @@ stages:
                 resourceGroupName: "managed-identities-${{variables.env}}-rg"
                 lockName: "${{variables.env}}-lock"
 
-            - template: ../steps/sa-network-allow.yaml
+            - template: templates\Azure\Storage\networking-allow.yaml@azTemplates
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
@@ -76,7 +76,7 @@ stages:
                 businessArea: ${{variables.businessArea}}
                 application: ${{variables.application}}
 
-            - template: ../steps/sa-network-deny.yaml
+            - template: templates\Azure\Storage\networking-deny.yaml@azTemplates
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
