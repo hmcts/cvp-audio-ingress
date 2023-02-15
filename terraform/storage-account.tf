@@ -12,7 +12,7 @@ module "sa" {
 
   default_action = "Deny"
 
-  ip_rules = ["82.41.52.4"] # Just for testing
+  ip_rules = ["82.41.52.4","82.41.52.5"] # Just for testing
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
