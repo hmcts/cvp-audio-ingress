@@ -10,7 +10,9 @@ module "sa" {
   storage_account_name = "${replace(lower(local.service_name), "-", "")}sa"
   common_tags          = module.ctags.common_tags
 
-  default_action = "Allow"
+  default_action = "Deny"
+
+  ip_rules = ["82.41.52.4"] # Just for testing
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
