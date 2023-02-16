@@ -8,7 +8,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: improve-sa-networking-steps
       endpoint: hmcts
 
 parameters:

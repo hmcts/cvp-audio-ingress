@@ -53,12 +53,13 @@ stages:
           displayName: 'Terraform to ${{parameters.env}}'
           dependsOn: 'VmOn${{parameters.env}}'
           steps:
-            - template: templates\Azure\Storage\networking-allow.yaml@azTemplates
+            - template: ../steps/tf-install.yaml
+            - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
-            - template: ../steps/tf-install.yaml
+                action: Allow
             - template: ../steps/tf-apply.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
@@ -68,11 +69,13 @@ stages:
                 product: ${{variables.product}}
                 wowza_version: ${{variables.wowza_version}}
                 resourceGroup: "${{variables.product}}-recordings-${{parameters.env}}-rg"
-            - template: templates\Azure\Storage\networking-deny.yaml@azTemplates
+            - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
+                action: Deny
+                alwaysRun: true
 
         - job: ApplyExtToEnv
           displayName: 'Extensions to ${{parameters.env}}'
