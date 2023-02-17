@@ -15,7 +15,7 @@ resource "azurerm_virtual_network_peering" "vpn_hub_to_vnet" {
 
   name                      = azurerm_virtual_network.vnet.name
   resource_group_name       = local.peering_vpn_resourcegroup
-  virtual_network_name      = each.value
+  virtual_network_name      = local.peering_vpn_vnet
   remote_virtual_network_id = azurerm_virtual_network.vnet.id
   allow_forwarded_traffic   = true
 }
