@@ -24,7 +24,9 @@ resource "azurerm_nat_gateway" "cvp" {
   tags = module.ctags.common_tags
 }
 
-
+#---------------------------------------------------
+# Assiciate NAT with subnet and PIP
+#---------------------------------------------------
 resource "azurerm_nat_gateway_public_ip_association" "cvp" {
   nat_gateway_id       = azurerm_nat_gateway.cvp.id
   public_ip_address_id = azurerm_public_ip.cvp_nat.id
