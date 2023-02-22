@@ -13,7 +13,7 @@ resource "azurerm_network_interface" "wowza_nic" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.wowza_pip[count.index].id
+    # public_ip_address_id          = azurerm_public_ip.wowza_pip[count.index].id
   }
   tags = module.ctags.common_tags
 }
