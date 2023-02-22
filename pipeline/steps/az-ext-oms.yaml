@@ -29,6 +29,9 @@ steps:
 
         az account set -s $workspaceSubscriptionName
 
+        $date = (Get-date).AddHours(720)
+        $expDate = Get-Date $date -Format yyyy-MM-dd
+
         $restApiPutBody = [PSCustomObject]@{
             "location" = "uksouth"
             "properties" = [PSCustomObject]@{
@@ -44,6 +47,7 @@ steps:
                     environment  = $env_long
                     Platform     = ''
                     Video        = ''
+                    expiresAfter = $expDate
                 }    
         }
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
