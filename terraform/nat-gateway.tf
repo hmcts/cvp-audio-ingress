@@ -1,5 +1,5 @@
 #---------------------------------------------------
-# NAT Gateway
+# PIP for NAT gateway (used for all outbound internet connections)
 #---------------------------------------------------
 resource "azurerm_public_ip" "cvp_nat" {
   name = "${local.service_name}-nat-pip"
@@ -12,6 +12,9 @@ resource "azurerm_public_ip" "cvp_nat" {
   tags = module.ctags.common_tags
 }
 
+#---------------------------------------------------
+# NAT Gateway
+#---------------------------------------------------
 resource "azurerm_nat_gateway" "cvp" {
   name                = "${local.service_name}-nat"
   resource_group_name = azurerm_resource_group.rg.name
@@ -20,6 +23,7 @@ resource "azurerm_nat_gateway" "cvp" {
 
   tags = module.ctags.common_tags
 }
+
 
 resource "azurerm_nat_gateway_public_ip_association" "cvp" {
   nat_gateway_id       = azurerm_nat_gateway.cvp.id
