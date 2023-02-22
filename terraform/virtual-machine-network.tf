@@ -13,7 +13,6 @@ resource "azurerm_network_interface" "wowza_nic" {
     name                          = "wowzaConfiguration"
     subnet_id                     = azurerm_subnet.sn.id
     private_ip_address_allocation = "Dynamic"
-    # public_ip_address_id          = azurerm_public_ip.wowza_pip[count.index].id
   }
   tags = module.ctags.common_tags
 }
@@ -37,26 +36,4 @@ resource "azurerm_network_interface_backend_address_pool_association" "be_add_po
   network_interface_id    = azurerm_network_interface.wowza_nic[count.index].id
   ip_configuration_name   = azurerm_network_interface.wowza_nic[count.index].ip_configuration.0.name
   backend_address_pool_id = azurerm_lb_backend_address_pool.be_add_pool.id
-}
-
-#---------------------------------------------------
-# VM PIP
-#---------------------------------------------------
-resource "azurerm_public_ip" "wowza_pip" {
-  count = var.vm_count
-
-  name = "${local.service_name}-pipvm${count.index + 1}"
-
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-
-  allocation_method = "Static"
-  sku               = "Standard"
-  tags              = module.ctags.common_tags
-
-  lifecycle {
-    ignore_changes = [
-      zones
-    ]
-  }
 }
