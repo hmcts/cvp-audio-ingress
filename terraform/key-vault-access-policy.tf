@@ -5,7 +5,7 @@
 resource "azurerm_key_vault_access_policy" "sas_renewal" {
   key_vault_id            = data.azurerm_key_vault.cvp_kv.id
   tenant_id               = data.azurerm_client_config.current.tenant_id
-  object_id               = azurerm_automation_account.cvp.identity.principal_id
+  object_id               = azurerm_automation_account.cvp.identity[0].principal_id
 
   key_permissions         = []
   secret_permissions      = ["Get", "List", "Set", "Delete"]
