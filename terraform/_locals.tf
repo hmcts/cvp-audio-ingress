@@ -7,11 +7,14 @@ locals {
   la_id                     = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
   sas_tokens = {
     "recordings-rlw" = {
-        permissions     = "rlw"
-        storage_account = "${replace(lower(local.service_name), "-", "")}sa"
-        container       = local.main_container_name
-        blob            = ""
-        expiry_date     = timeadd(timestamp(), "167h")
+      permissions     = "rlw"
+      storage_account = "${replace(lower(local.service_name), "-", "")}sa"
+      container       = local.main_container_name
+      blob            = ""
+      expiry_date     = timeadd(timestamp(), "167h")
     }
-}
+  }
+  peering_vpn_vnet          = "core-infra-vnet-mgmt"
+  peering_vpn_subscription  = "ed302caf-ec27-4c64-a05e-85731c3ce90e"
+  peering_vpn_resourcegroup = "rg-mgmt"
 }

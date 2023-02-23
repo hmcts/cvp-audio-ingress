@@ -166,6 +166,22 @@ variable "dev_source_address_prefixes" {
 }
 
 #---------------------------------------------------
+# Peering creds
+#---------------------------------------------------
+variable "network_client_id" {
+  type = string
+  description = "(Required) Network peering client id"
+}
+variable "network_client_secret" {
+  type = string
+  description = "(Required) Network peering client secret"
+}
+variable "network_tenant_id" {
+  type = string
+  description = "(Required) Network peering tenant id"
+}
+
+#---------------------------------------------------
 # Workspace settings
 #---------------------------------------------------
 variable "ws_name" {
