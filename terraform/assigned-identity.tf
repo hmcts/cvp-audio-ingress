@@ -9,19 +9,6 @@ resource "azurerm_user_assigned_identity" "mi" {
 }
 
 #---------------------------------------------------
-# Key Vault access policy
-#---------------------------------------------------
-resource "azurerm_key_vault_access_policy" "policy" {
-  key_vault_id            = data.azurerm_key_vault.cvp_kv.id
-  tenant_id               = data.azurerm_client_config.current.tenant_id
-  object_id               = azurerm_user_assigned_identity.mi.principal_id
-  key_permissions         = []
-  secret_permissions      = ["Get", "List"]
-  certificate_permissions = ["Get", "List"]
-  storage_permissions     = []
-}
-
-#---------------------------------------------------
 # Add role assignment to read identity
 #---------------------------------------------------
 resource "azurerm_role_assignment" "mi" {
