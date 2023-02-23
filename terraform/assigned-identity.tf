@@ -21,7 +21,7 @@ resource "azurerm_role_assignment" "mi" {
 # Allow MI to manage AKV (used by SAS runbook)
 #---------------------------------------------------
 resource "azurerm_role_assignment" "mi_akv" {
-  scope                = azurerm_resource_group.rg.id
+  scope                = data.azurerm_key_vault.cvp_kv.id
   role_definition_name = "Key Vault Contributor"
   principal_id         = azurerm_user_assigned_identity.mi.principal_id
 }
