@@ -18,6 +18,15 @@ resource "azurerm_role_assignment" "mi" {
 }
 
 #---------------------------------------------------
+# Allow MI to manage AKV (used by SAS runbook)
+#---------------------------------------------------
+resource "azurerm_role_assignment" "mi" {
+  scope                = azurerm_resource_group.rg.id
+  role_definition_name = "Key Vault Contributor"
+  principal_id         = azurerm_user_assigned_identity.mi.principal_id
+}
+
+#---------------------------------------------------
 # Role definition for controlling Wowza VMs
 #---------------------------------------------------
 resource "azurerm_role_definition" "vm-status-control" {

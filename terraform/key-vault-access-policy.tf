@@ -1,19 +1,4 @@
 #---------------------------------------------------
-# KV Access policy to allow SAS rotaion access to rotate the SAS 
-#---------------------------------------------------
-
-resource "azurerm_key_vault_access_policy" "sas_renewal" {
-  key_vault_id            = data.azurerm_key_vault.cvp_kv.id
-  tenant_id               = data.azurerm_client_config.current.tenant_id
-  object_id               = azurerm_automation_account.cvp.identity[0].principal_id
-
-  key_permissions         = []
-  secret_permissions      = ["Get", "List", "Set", "Delete"]
-  certificate_permissions = []
-  storage_permissions     = []
-}
-
-#---------------------------------------------------
 # Key Vault access policy - MI
 #---------------------------------------------------
 resource "azurerm_key_vault_access_policy" "policy" {
@@ -21,7 +6,7 @@ resource "azurerm_key_vault_access_policy" "policy" {
   tenant_id               = data.azurerm_client_config.current.tenant_id
   object_id               = azurerm_user_assigned_identity.mi.principal_id
   key_permissions         = []
-  secret_permissions      = ["Get", "List"]
+  secret_permissions      = ["Get", "List", "Set", "Delete"]
   certificate_permissions = ["Get", "List"]
   storage_permissions     = []
 }
