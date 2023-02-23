@@ -6,13 +6,6 @@ locals {
   splunk_admin_username     = "splunkadmin"
   la_id                     = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
   sas_tokens = {
-    "recordings-rl" = {
-        permissions     = "rl"
-        storage_account = "${replace(lower(local.service_name), "-", "")}sa"
-        container       = local.main_container_name
-        blob            = ""
-        expiry_date     = timeadd(timestamp(), "167h")
-    },
     "recordings-rlw" = {
         permissions     = "rlw"
         storage_account = "${replace(lower(local.service_name), "-", "")}sa"
