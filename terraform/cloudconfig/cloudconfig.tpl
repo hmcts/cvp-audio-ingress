@@ -644,18 +644,6 @@ write_files:
                 </Application>
         </Root>
   - owner: wowza:wowza
-    path: /home/wowza/connection.cfg
-    content: |
-      accountName ${storageAccountName}
-      accountKey ${storageAccountKey}
-      containerName ${containerName}
-  - owner: wowza:wowza
-    path: /home/wowza/connection-logs.cfg
-    content: |
-      accountName ${storageAccountName}
-      accountKey ${storageAccountKey}
-      containerName ${logsContainerName}
-  - owner: wowza:wowza
     path: /usr/local/WowzaStreamingEngine/conf/admin.password
     content: |
       # Admin password file (format [username][space][password])
