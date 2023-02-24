@@ -2,7 +2,7 @@
 # SAS token renewal runbook (via module)
 #---------------------------------------------------
 module "automation_runbook_sas_token_renewal" {
-  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-sas-token-renewal?ref=master"
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-sas-token-renewal?ref=add-umi-and-network-bypass"
   
   for_each = local.sas_tokens
 
