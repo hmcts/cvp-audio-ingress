@@ -27,6 +27,15 @@ resource "azurerm_role_assignment" "mi_akv" {
 }
 
 #---------------------------------------------------
+# Allow MI to manage Storage (used by SAS runbook)
+#---------------------------------------------------
+resource "azurerm_role_assignment" "mi_sa" {
+  scope                = module.sa.storageaccount_id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_user_assigned_identity.mi.principal_id
+}
+
+#---------------------------------------------------
 # Role definition for controlling Wowza VMs
 #---------------------------------------------------
 resource "azurerm_role_definition" "vm-status-control" {
