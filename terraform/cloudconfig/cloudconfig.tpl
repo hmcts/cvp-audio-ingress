@@ -971,7 +971,7 @@ write_files:
 
         echo accountName $accountName >> $tempFilewowzalogs
         echo authType SAS >> $tempFilewowzalogs
-        echo sasToken $${sas//[$'\"']/} >> $tempFilewowzalogs
+        echo sasToken $${sas_wowzalogs//[$'\"']/} >> $tempFilewowzalogs
         echo containerName $containerNameRecordings >> $tempFilewowzalogs
 
         mv $tempFilewowzalogs $connFilewowzalogs
@@ -980,16 +980,16 @@ write_files:
         secret_sas_recordings="cvp-sas-recordings--rlw"
         containerNameRecordings="recordings"
         tempFileRecordings="connection_temp.cfg"
-        connFileRecordeings="connection.cfg"
+        connFileRecordings="connection.cfg"
 
         sas_recordings=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_recordings --query "value")
 
         echo accountName $accountName >> $tempFileRecordings
         echo authType SAS >> $tempFileRecordings
-        echo sasToken $${sas//[$'\"']/} >> $tempFileRecordings
+        echo sasToken $${sas_recordings//[$'\"']/} >> $tempFileRecordings
         echo containerName $containerNameRecordings >> $tempFileRecordings
 
-        mv $tempFileRecordings $connFileRecordeings
+        mv $tempFileRecordings $connFileRecordings
   - owner: wowza:wowza
     path: /home/wowza/cron.sh
     permissions: 0775
@@ -1057,7 +1057,7 @@ write_files:
         # Create Wowza Apps
         /home/wowza/dir-creator.sh ${numApplications}
 
-        # Update SAS for storage.
+        # Update blobfuse connection configuration.
         /home/wowza/get-sas.sh
 
         # Mount Drives For Wowza & Logs.
