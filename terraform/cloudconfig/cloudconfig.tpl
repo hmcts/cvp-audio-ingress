@@ -983,7 +983,7 @@ write_files:
 
         echo accountName $accountName >> $tempFilewowzalogs
         echo authType SAS >> $tempFilewowzalogs
-        echo sasToken ${sas//[$'\"']/} >> $tempFilewowzalogs
+        echo sasToken $${sas//[$'\"']/} >> $tempFilewowzalogs
         echo containerName $containerNameRecordings >> $tempFilewowzalogs
 
         mv $tempFilewowzalogs $connFilewowzalogs
@@ -998,7 +998,7 @@ write_files:
 
         echo accountName $accountName >> $tempFileRecordings
         echo authType SAS >> $tempFileRecordings
-        echo sasToken ${sas//[$'\"']/} >> $tempFileRecordings
+        echo sasToken $${sas//[$'\"']/} >> $tempFileRecordings
         echo containerName $containerNameRecordings >> $tempFileRecordings
 
         mv $tempFileRecordings $connFileRecordeings
