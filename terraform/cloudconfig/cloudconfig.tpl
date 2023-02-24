@@ -961,6 +961,48 @@ write_files:
         ## Start Wowza
         sudo service WowzaStreamingEngine start
   - owner: wowza:wowza
+    path: /home/wowza/get-sas.sh
+    permissions: 0775
+    content: |
+        #!/bin/bash
+
+        miClientId="${managedIdentityClientId}"
+        az login --identity --username $miClientId
+
+        keyVaultName="${keyVaultName}"
+        accountName="${storageAccountName}"
+
+        # WowzaLogs
+
+        secret_sas_wowzalogs="cvp-sas-wowzalogs--rlw"
+        containerNameWowzalogs="${logsContainerName}"
+        tempFilewowzalogs="connection-logs_temp.cfg"
+        connFilewowzalogs="connection-logs.cfg"
+
+        sas_wowzalogs=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_wowzalogs --query "value")
+
+        echo accountName $accountName >> $tempFilewowzalogs
+        echo authType SAS >> $tempFilewowzalogs
+        echo sasToken ${sas//[$'\"']/} >> $tempFilewowzalogs
+        echo containerName $containerNameRecordings >> $tempFilewowzalogs
+
+        mv $tempFilewowzalogs $connFilewowzalogs
+
+        # Recordings
+        secret_sas_recordings="cvp-sas-recordings--rlw"
+        containerNameRecordings="recordings"
+        tempFileRecordings="connection_temp.cfg"
+        connFileRecordeings="connection.cfg"
+
+        sas_recordings=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_recordings --query "value")
+
+        echo accountName $accountName >> $tempFileRecordings
+        echo authType SAS >> $tempFileRecordings
+        echo sasToken ${sas//[$'\"']/} >> $tempFileRecordings
+        echo containerName $containerNameRecordings >> $tempFileRecordings
+
+        mv $tempFileRecordings $connFileRecordeings
+  - owner: wowza:wowza
     path: /home/wowza/cron.sh
     permissions: 0775
     content: |
@@ -968,6 +1010,9 @@ write_files:
         # Prepare Script.
         cronTaskPath='/home/wowza/cronjobs.txt'
         cronTaskPathRoot='/home/wowza/cronjobsRoot.txt'
+
+        # Cron for getting SAS
+        echo "@reboot /home/wowza/get-sas.sh >> $logFolder/get_sas.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Mounting.
         logFolder='/home/wowza/logs'
@@ -1023,6 +1068,9 @@ write_files:
 
         # Create Wowza Apps
         /home/wowza/dir-creator.sh ${numApplications}
+
+        # Update SAS for storage.
+        /home/wowza/get-sas.sh
 
         # Mount Drives For Wowza & Logs.
         /home/wowza/mount.sh $blobMount $blobTmp $blobCfg
