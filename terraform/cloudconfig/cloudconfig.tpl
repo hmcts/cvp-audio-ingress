@@ -1049,6 +1049,7 @@ write_files:
         # Install packages
         dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
         dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
+        sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
 
         # install Wowza patch
         [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar && chmod 775 /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
@@ -1065,7 +1066,6 @@ write_files:
         /home/wowza/mount.sh $logMount $logTmp $logCfg
 
         # Install Certificates.
-        sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
         sudo /home/wowza/renew-cert.sh
 
         # Set Up CronJobs.
