@@ -999,8 +999,6 @@ write_files:
         cronTaskPath='/home/wowza/cronjobs.txt'
         cronTaskPathRoot='/home/wowza/cronjobsRoot.txt'
 
-        # Cron for getting SAS
-        echo "@reboot /home/wowza/get-sas.sh >> $logFolder/get_sas.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Mounting.
         logFolder='/home/wowza/logs'
@@ -1008,6 +1006,9 @@ write_files:
         echo "5-59/10 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
         echo "*/10 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
         echo "0 0 * * * /home/wowza/renew-cert.sh >> $logFolder/renew-cert.log 2>&1" >> $cronTaskPathRoot
+
+        # Cron for getting SAS
+        echo "@reboot /home/wowza/get-sas.sh >> $logFolder/get_sas.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Log Mount.
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
