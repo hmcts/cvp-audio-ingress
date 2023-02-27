@@ -23,4 +23,8 @@ module "automation_runbook_sas_token_renewal" {
 
   tags = module.ctags.common_tags
 
+  depends_on = [
+    azurerm_automation_account.cvp
+  ]
+
 }

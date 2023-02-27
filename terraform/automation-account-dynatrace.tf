@@ -9,6 +9,11 @@ module "dynatrace_runbook" {
   location                = azurerm_resource_group.rg.location
 
   tags = module.ctags.common_tags
+
+  depends_on = [
+    azurerm_automation_account.cvp
+  ]
+  
 }
 
 #---------------------------------------------------

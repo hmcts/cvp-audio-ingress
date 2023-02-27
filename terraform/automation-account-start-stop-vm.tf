@@ -14,4 +14,9 @@ module "vm_automation" {
   mi_principal_id         = azurerm_user_assigned_identity.mi.principal_id
 
   tags = module.ctags.common_tags
+
+  depends_on = [
+    azurerm_automation_account.cvp
+  ]
+  
 }
