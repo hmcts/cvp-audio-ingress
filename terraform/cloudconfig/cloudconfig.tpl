@@ -954,6 +954,8 @@ write_files:
     content: |
         #!/bin/bash
 
+        echo "Getting SAS keys for BLOBFuse"
+
         miClientId="${managedIdentityClientId}"
         az login --identity --username $miClientId
 
@@ -961,27 +963,31 @@ write_files:
         accountName="${storageAccountName}"
 
         # WowzaLogs
-
+        echo "Wowza Logs..."
         secret_sas_wowzalogs="cvp-sas-wowzalogs--rlw"
         containerNameWowzalogs="${logsContainerName}"
-        tempFilewowzalogs="connection-logs_temp.cfg"
-        connFilewowzalogs="connection-logs.cfg"
-
+        tempFilewowzalogs="/home/wowza/connection-logs_temp.cfg"
+        connFilewowzalogs="/home/wowza/connection-logs.cfg"
+        
+        echo "Getting SAS..."
         sas_wowzalogs=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_wowzalogs --query "value")
 
         echo accountName $accountName >> $tempFilewowzalogs
         echo authType SAS >> $tempFilewowzalogs
         echo sasToken $${sas_wowzalogs//[$'\"']/} >> $tempFilewowzalogs
         echo containerName $containerNameRecordings >> $tempFilewowzalogs
-
+        
+        echo $tempFilewowzalogs
         mv $tempFilewowzalogs $connFilewowzalogs
 
         # Recordings
+        echo "Recordings..."
         secret_sas_recordings="cvp-sas-recordings--rlw"
         containerNameRecordings="recordings"
-        tempFileRecordings="connection_temp.cfg"
-        connFileRecordings="connection.cfg"
+        tempFileRecordings="/home/wowza/connection_temp.cfg"
+        connFileRecordings="/home/wowza/connection.cfg"
 
+        echo "Getting SAS..."
         sas_recordings=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_recordings --query "value")
 
         echo accountName $accountName >> $tempFileRecordings
