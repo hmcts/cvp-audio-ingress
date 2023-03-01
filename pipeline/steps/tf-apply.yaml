@@ -58,7 +58,7 @@ steps:
         resourceGroupName: ${{ parameters.resourceGroup }}
         lockName: "${{ parameters.env }}-lock"
   
-  - bash:  export TF_LOG=DEBUG
+  - powershell:  $env:TF_LOG = "DEBUG"
 
   - task: TerraformCLI@0
     displayName: Apply
