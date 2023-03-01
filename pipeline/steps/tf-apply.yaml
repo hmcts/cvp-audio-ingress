@@ -57,8 +57,6 @@ steps:
         subscriptionName:  ${{ parameters.subscriptionName }}
         resourceGroupName: ${{ parameters.resourceGroup }}
         lockName: "${{ parameters.env }}-lock"
-  
-  - powershell:  $env:TF_LOG = "DEBUG"
 
   - task: TerraformCLI@0
     displayName: Apply
@@ -67,19 +65,3 @@ steps:
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: '${{ parameters.env }}.tfplan -no-color'
-       
-  # - task: AzureCLI@2
-  #   displayName: 'Enable Logging'
-  #   inputs:
-  #     azureSubscription: '${{ parameters.subscriptionName }}'
-  #     scriptType: 'bash'
-  #     scriptLocation: 'inlineScript'
-  #     inlineScript: |
-  #       rgName="cvp-recordings-$(env)-rg"
-
-  #       az storage logging update \
-  #       --log wrd \
-  #       --retention 365 \
-  #       --subscription ${{ parameters.subscriptionName }} \
-  #       --account-name $rgName \
-  #       --services b
