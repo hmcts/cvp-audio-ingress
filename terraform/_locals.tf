@@ -24,4 +24,21 @@ locals {
   peering_vpn_vnet          = "core-infra-vnet-mgmt"
   peering_vpn_subscription  = "ed302caf-ec27-4c64-a05e-85731c3ce90e"
   peering_vpn_resourcegroup = "rg-mgmt"
+  lb-rules = {
+    RTMPS = {
+      protocol      = "Tcp"
+      frontend_port = 443
+      backend_port  = 443
+    }
+    WowzaManager = {
+      protocol      = "Tcp"
+      frontend_port = 8080
+      backend_port  = 8080
+    }
+    WowzaAPI = {
+      protocol      = "Tcp"
+      frontend_port = 8087
+      backend_port  = 8087
+    }
+  }
 }
