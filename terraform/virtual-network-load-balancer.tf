@@ -1,7 +1,7 @@
 #---------------------------------------------------
 # Load Balancer
 #---------------------------------------------------
-resource "azurerm_lb" "lb" {
+resource "azurerm_lb" "cvp" {
   name                = "${local.service_name}-lb"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -21,7 +21,7 @@ resource "azurerm_lb" "lb" {
 # Load Balancer - Backend pool
 #---------------------------------------------------
 resource "azurerm_lb_backend_address_pool" "wowza" {
-  loadbalancer_id = azurerm_lb.lb.id
+  loadbalancer_id = azurerm_lb.cvp.id
   name            = "BackEndAddressPool"
 }
 
@@ -31,7 +31,7 @@ resource "azurerm_lb_backend_address_pool" "wowza" {
 resource "azurerm_lb_probe" "wowza" {
   for_each = local.lb-rules
 
-  loadbalancer_id = azurerm_lb.lb.id
+  loadbalancer_id = azurerm_lb.cvp.id
   name            = "${lower(each.key)}-probe"
   port            = each.value.backend_port
   protocol        = each.value.protocol
@@ -43,13 +43,13 @@ resource "azurerm_lb_probe" "wowza" {
 resource "azurerm_lb_rule" "wowza" {
   for_each = local.lb-rules
 
-  loadbalancer_id                = azurerm_lb.lb.id
+  loadbalancer_id                = azurerm_lb.cvp.id
   name                           = each.key
   protocol                       = each.value.protocol
   frontend_port                  = each.value.frontend_port
   backend_port                   = each.value.backend_port
-  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.0.name
-  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.be_add_pool.id]
+  frontend_ip_configuration_name = azurerm_lb.cvp.frontend_ip_configuration.0.name
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.wowza.id]
   probe_id                       = azurerm_lb_probe.wowza[each.key].id
   load_distribution              = "Default"
   idle_timeout_in_minutes        = 30

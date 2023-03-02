@@ -35,5 +35,5 @@ resource "azurerm_network_interface_backend_address_pool_association" "be_add_po
 
   network_interface_id    = azurerm_network_interface.wowza_nic[count.index].id
   ip_configuration_name   = azurerm_network_interface.wowza_nic[count.index].ip_configuration.0.name
-  backend_address_pool_id = azurerm_lb_backend_address_pool.be_add_pool.id
+  backend_address_pool_id = azurerm_lb_backend_address_pool.wowza.id
 }

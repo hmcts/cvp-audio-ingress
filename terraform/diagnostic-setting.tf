@@ -104,7 +104,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nic-diag-set" {
 #---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
   name                       = "cvp-lb-${var.env}-diag-set"
-  target_resource_id         = azurerm_lb.lb.id
+  target_resource_id         = azurerm_lb.cvp.id
   log_analytics_workspace_id = local.la_id
 
   log {
