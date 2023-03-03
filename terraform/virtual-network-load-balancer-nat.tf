@@ -1,20 +1,14 @@
 
-resource "azurerm_lb_nat_rule" "wowza_nat" {
-  count = var.vm_count
+resource "azurerm_lb_nat_rule" "wowza" {
+  for_each = local.lb-rules
 
-  name                           = "wowza-443-${azurerm_linux_virtual_machine.wowza_vm[count.index].name}"
-  protocol                       = local.lb-rules["wowza"].protocol
-  frontend_port                  = local.lb-rules["wowza"].frontend_port + count.index + 1
-  backend_port                   = local.lb-rules["wowza"].backend_port
-  frontend_ip_configuration_name = azurerm_lb.cvp.frontend_ip_configuration[0].name  
-  resource_group_name            = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.cvp.id
-}
-
-resource "azurerm_network_interface_nat_rule_association" "wowza_nat_ass" {
-  count = var.vm_count
-
-  network_interface_id  = azurerm_network_interface.wowza_nic[count.index].id
-  ip_configuration_name = azurerm_network_interface.wowza_nic[count.index].ip_configuration[0].name 
-  nat_rule_id           = azurerm_lb_nat_rule.wowza_nat[count.index].id
+  name                           = "${each.key}-nat"
+  protocol                       = each.value.protocol
+  frontend_port_start            = each.value.frontend_port + 1
+  frontend_port_end              = each.value.frontend_port + 10
+  backend_port                   = each.value.backend_port
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.wowza.id
+  frontend_ip_configuration_name = "PrivateIPAddress"
 }
