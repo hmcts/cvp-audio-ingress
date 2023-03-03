@@ -2,7 +2,7 @@
 resource "azurerm_lb_nat_rule" "wowza" {
   for_each = local.lb-rules
 
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.cvp.id
   name                           = "${each.key}-nat"
   protocol                       = each.value.protocol
