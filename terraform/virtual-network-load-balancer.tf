@@ -26,7 +26,7 @@ resource "azurerm_lb_backend_address_pool" "wowza" {
 }
 
 #---------------------------------------------------
-# Load Balancer - Probe
+# Load Balancer - Probes
 #---------------------------------------------------
 resource "azurerm_lb_probe" "wowza" {
   for_each = local.lb-rules
@@ -35,10 +35,14 @@ resource "azurerm_lb_probe" "wowza" {
   name            = "${lower(each.key)}-probe"
   port            = each.value.backend_port
   protocol        = each.value.protocol
+
+  depends_on = [
+    azurerm_lb.cvp
+  ]
 }
 
 #---------------------------------------------------
-# Load Balancer - Rule
+# Load Balancer - Rules
 #---------------------------------------------------
 resource "azurerm_lb_rule" "wowza" {
   for_each = local.lb-rules
@@ -53,4 +57,8 @@ resource "azurerm_lb_rule" "wowza" {
   probe_id                       = azurerm_lb_probe.wowza[each.key].id
   load_distribution              = "Default"
   idle_timeout_in_minutes        = 30
+
+  depends_on = [
+    azurerm_lb.cvp
+  ]
 }
