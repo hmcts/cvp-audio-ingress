@@ -25,7 +25,7 @@ locals {
   peering_vpn_subscription  = "ed302caf-ec27-4c64-a05e-85731c3ce90e"
   peering_vpn_resourcegroup = "rg-mgmt"
   lb-rules = {
-    RTMPS = {
+    wowza = {
       protocol      = "Tcp"
       frontend_port = 443
       backend_port  = 443
