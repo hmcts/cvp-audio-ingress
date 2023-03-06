@@ -32,8 +32,8 @@ locals {
     }
     WowzaManager = {
       protocol      = "Tcp"
-      frontend_port = 8080
-      backend_port  = 8080
+      frontend_port = 8090
+      backend_port  = 8090
     }
     WowzaAPI = {
       protocol      = "Tcp"
