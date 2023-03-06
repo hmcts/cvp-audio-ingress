@@ -656,6 +656,12 @@ write_files:
       # username password
       wowza ${streamPassword}
   - owner: wowza:wowza
+    path: /usr/local/WowzaStreamingEngine/manager/conf/tomcat.properties
+    content: |
+      httpsPort=8090
+      httpsKeyStore=/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
+      httpsKeyStorePassword=${certPassword}
+  - owner: wowza:wowza
     path: /home/wowza/mount.sh
     permissions: 0775
     content: |
