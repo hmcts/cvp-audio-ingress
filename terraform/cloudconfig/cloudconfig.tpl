@@ -1084,8 +1084,9 @@ write_files:
         # Set Up CronJobs.
         /home/wowza/cron.sh $blobMount $blobTmp $blobCfg $logMount $logTmp $logCfg
 
-        # Restart Wowza
+        # Restart Wowza and WSEM
         sudo service WowzaStreamingEngine restart
+        sudo service WowzaStreamingEngineManager restart
 runcmd:
   - 'sudo /home/wowza/runcmd.sh'
 
