@@ -40,7 +40,7 @@ resource "azurerm_network_security_group" "sg" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_ranges    = ["8091","8092"]
+    destination_port_ranges    = ["8091", "8092"]
     source_address_prefixes    = var.vpn_source_address_prefixes
     destination_address_prefix = var.lb_IPaddress
   }
@@ -52,8 +52,8 @@ resource "azurerm_network_security_group" "sg" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_ranges    = ["8088","8089"]
-    source_address_prefixes    = concat(var.vpn_source_address_prefixes,var.rtmps_source_address_prefixes)
+    destination_port_ranges    = ["8088", "8089"]
+    source_address_prefixes    = concat(var.vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
     destination_address_prefix = var.lb_IPaddress
   }
   security_rule {
@@ -64,7 +64,7 @@ resource "azurerm_network_security_group" "sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "*"
-    source_address_prefixes    = "*"
+    source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
 
