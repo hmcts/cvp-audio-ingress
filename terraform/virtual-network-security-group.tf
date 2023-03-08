@@ -21,6 +21,53 @@ resource "azurerm_network_security_group" "sg" {
     destination_address_prefix = "*"
   }
 
+  security_rule {
+    name                       = "Allow_VPN_SSH"
+    priority                   = 1050
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefixes    = var.vpn_source_address_prefixes
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow_WSEM"
+    priority                   = 1060
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_ranges    = ["8091","8092"]
+    source_address_prefixes    = var.vpn_source_address_prefixes
+    destination_address_prefix = var.lb_IPaddress
+  }
+
+  security_rule {
+    name                       = "Allow_WSE_API"
+    priority                   = 1070
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_ranges    = ["8088","8089"]
+    source_address_prefixes    = concat(var.vpn_source_address_prefixes,var.rtmps_source_address_prefixes)
+    destination_address_prefix = var.lb_IPaddress
+  }
+  security_rule {
+    name                       = "Deny_all"
+    priority                   = 2000
+    direction                  = "Inbound"
+    access                     = "Deny"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefixes    = "*"
+    destination_address_prefix = "*"
+  }
+
   #egress rules
   security_rule {
     name                       = "Required_Packages_443"

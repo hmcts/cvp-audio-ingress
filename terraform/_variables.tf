@@ -157,7 +157,13 @@ variable "lb_IPaddress" {
 
 variable "rtmps_source_address_prefixes" {
   type        = list(string)
-  description = "Real-Time Messaging Protocol source IP addresses."
+  description = "(Required) Real-Time Messaging Protocol source IP addresses."
+  # From <env>.tfvars
+}
+
+variable "vpn_source_address_prefixes" {
+  type = list(string)
+  description = "(Required) IP addresses of VPN"
   # From <env>.tfvars
 }
 
