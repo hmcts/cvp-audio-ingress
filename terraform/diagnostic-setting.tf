@@ -57,7 +57,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-sa-diag-set" {
 #---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
   name                       = "cvp-nsg-${var.env}-diag-set"
-  target_resource_id         = module.nsg.id
+  target_resource_id         = module.nsg.network_security_group_id
   log_analytics_workspace_id = local.la_id
 
   log {
