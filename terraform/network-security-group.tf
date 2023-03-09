@@ -41,7 +41,7 @@ module "nsg" {
       access                     = "Allow"
       description                = "Allow access to Wowza SE Manager"
       destination_address_prefix = var.lb_IPaddress
-      destination_port_ranges    = ["8091","8092"]
+      destination_port_ranges    = ["8090","8091","8092"]
       direction                  = "Inbound"
       name                       = "Allow_WSEM"
       priority                   = 300
@@ -53,7 +53,7 @@ module "nsg" {
       access                     = "Allow"
       description                = "Allow access to Wowza API"
       destination_address_prefix = var.lb_IPaddress
-      destination_port_ranges    = ["8088","8089"]
+      destination_port_ranges    = ["8087","8088","8089"]
       direction                  = "Inbound"
       name                       = "Allow_WSE_API"
       priority                   = 400
@@ -81,7 +81,7 @@ module "nsg" {
       destination_port_range     = "443"
       direction                  = "Outbound"
       name                       = "Allow_Required_Packages_443"
-      priority                   = 100
+      priority                   = 200
       protocol                   = "Tcp"
       source_address_prefix      = "*"
       source_port_range          = "*"
@@ -93,7 +93,7 @@ module "nsg" {
       destination_port_range     = "53"
       direction                  = "Outbound"
       name                       = "Allow_DNS_53"
-      priority                   = 100
+      priority                   = 300
       protocol                   = "Udp"
       source_address_prefix      = "*"
       source_port_range          = "*"
@@ -105,7 +105,7 @@ module "nsg" {
       destination_port_range     = "22"
       direction                  = "Outbound"
       name                       = "Allow_SFTP_22"
-      priority                   = 100
+      priority                   = 400
       protocol                   = "Udp"
       source_address_prefix      = "*"
       source_port_range          = "*"
