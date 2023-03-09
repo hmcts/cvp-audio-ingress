@@ -69,7 +69,7 @@ module "nsg" {
       destination_port_range     = "80"
       direction                  = "Outbound"
       name                       = "Allow_Required_Packages_80"
-      priority                   = 100
+      priority                   = 500
       protocol                   = "Tcp"
       source_address_prefix      = "*"
       source_port_range          = "*"
@@ -81,7 +81,7 @@ module "nsg" {
       destination_port_range     = "443"
       direction                  = "Outbound"
       name                       = "Allow_Required_Packages_443"
-      priority                   = 200
+      priority                   = 600
       protocol                   = "Tcp"
       source_address_prefix      = "*"
       source_port_range          = "*"
@@ -93,7 +93,7 @@ module "nsg" {
       destination_port_range     = "53"
       direction                  = "Outbound"
       name                       = "Allow_DNS_53"
-      priority                   = 300
+      priority                   = 700
       protocol                   = "Udp"
       source_address_prefix      = "*"
       source_port_range          = "*"
@@ -105,7 +105,7 @@ module "nsg" {
       destination_port_range     = "22"
       direction                  = "Outbound"
       name                       = "Allow_SFTP_22"
-      priority                   = 400
+      priority                   = 800
       protocol                   = "Udp"
       source_address_prefix      = "*"
       source_port_range          = "*"
