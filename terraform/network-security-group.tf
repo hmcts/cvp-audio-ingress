@@ -9,6 +9,8 @@ module "nsg" {
     "${azurerm_subnet.sn.name}" = azurerm_subnet.sn.id
   }
 
+  tags = module.ctags.common_tags
+
   custom_rules = [
     # INGRESS
     {
