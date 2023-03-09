@@ -18,16 +18,6 @@ resource "azurerm_network_interface" "wowza_nic" {
 }
 
 #---------------------------------------------------
-# NSG association
-#---------------------------------------------------
-resource "azurerm_network_interface_security_group_association" "sg_assoc" {
-  count = var.vm_count
-
-  network_interface_id      = azurerm_network_interface.wowza_nic[count.index].id
-  network_security_group_id = azurerm_network_security_group.sg.id
-}
-
-#---------------------------------------------------
 # Backend accociation
 #---------------------------------------------------
 resource "azurerm_network_interface_backend_address_pool_association" "be_add_pool_assoc" {
