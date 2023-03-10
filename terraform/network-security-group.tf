@@ -12,7 +12,6 @@ module "nsg" {
   tags = module.ctags.common_tags
 
   custom_rules = [
-    # INGRESS
     {
       access                     = "Allow"
       description                = "Allow SSH from VPN"
@@ -26,22 +25,22 @@ module "nsg" {
       source_port_range          = "*"
     },
     {
-      access                       = "Allow"
-      description                  = "Allow Wowza RTMPS"
-      destination_address_prefix   = "*"
-      destination_port_range       = "443"
-      direction                    = "Inbound"
-      name                         = "Allow_RTMPS"
-      priority                     = 1200
-      protocol                     = "Tcp"
-      source_address_prefixes      = var.rtmps_source_address_prefixes
-      source_port_range            = "*"
+      access                     = "Allow"
+      description                = "Allow Wowza RTMPS"
+      destination_address_prefix = "*"
+      destination_port_ranges    = ["443", "444", "445"]
+      direction                  = "Inbound"
+      name                       = "Allow_RTMPS"
+      priority                   = 1200
+      protocol                   = "Tcp"
+      source_address_prefixes    = concat(var.vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
+      source_port_range          = "*"
     },
     {
       access                     = "Allow"
       description                = "Allow access to Wowza SE Manager"
-      destination_address_prefix = var.lb_IPaddress
-      destination_port_ranges    = ["8090","8091","8092"]
+      destination_address_prefix = "*"
+      destination_port_ranges    = ["8090", "8091", "8092"]
       direction                  = "Inbound"
       name                       = "Allow_WSEM"
       priority                   = 1300
@@ -52,8 +51,8 @@ module "nsg" {
     {
       access                     = "Allow"
       description                = "Allow access to Wowza API"
-      destination_address_prefix = var.lb_IPaddress
-      destination_port_ranges    = ["8087","8088","8089"]
+      destination_address_prefix = "*"
+      destination_port_ranges    = ["8087", "8088", "8089"]
       direction                  = "Inbound"
       name                       = "Allow_WSE_API"
       priority                   = 1400
@@ -64,8 +63,8 @@ module "nsg" {
     {
       access                     = "Allow"
       description                = "Allow LB probes"
-      destination_address_prefix = var.lb_IPaddress
-      destination_port_ranges    = ["8087","8090","443"]
+      destination_address_prefix = "*"
+      destination_port_ranges    = ["8087", "8090", "443"]
       direction                  = "Inbound"
       name                       = "Allow_LB"
       priority                   = 1500
