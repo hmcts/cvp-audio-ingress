@@ -38,6 +38,39 @@ steps:
       application: ${{parameters.application}}
       workingDirectory: ${{parameters.workingDirectory}}
 
+
+  - task: AzureCLI@2
+    displayName: 'GlobalNetworkPeering SC Details'
+    name: GlobalNetworkPeering
+    inputs: 
+      azureSubscription: 'GlobalNetworkPeering'
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      addSpnToEnvironment: true
+      InlineScript: |
+        Write-Host "##vso[task.setvariable variable=GNP_CLIENT_ID;isOutput=true]$($env:servicePrincipalId)"
+        Write-Host "Client ID: $($env:servicePrincipalId)"
+        Write-Host "##vso[task.setvariable variable=GNP_CLIENT_SECRET;isOutput=true]$($env:servicePrincipalKey)"
+        Write-Host "Client Secret: ******"
+        Write-Host "##vso[task.setvariable variable=GNP_TENANT_ID;isOutput=true]$($env:tenantId)"
+        Write-Host "Tenant ID: $($env:tenantId)"
+
+  - bash: |
+      variables=""
+      variables="${variables} -var \"network_client_id=${GNP_CLIENT_ID} \""
+      variables="${variables} -var \"network_client_secret=${GNP_CLIENT_SECRET} \""
+      variables="${variables} -var \"network_tenant_id=${GNP_TENANT_ID} \""
+      echo "Variables set as: "
+      echo "${variables}"
+      echo "##vso[task.setvariable variable=variableName]${variables}"
+      
+    displayName: 'Set Shared Services TF Variables'
+    name: tfVariables
+    env:
+      GNP_CLIENT_ID: $(GlobalNetworkPeering.GNP_CLIENT_ID) 
+      GNP_CLIENT_SECRET: $(GlobalNetworkPeering.GNP_CLIENT_SECRET) 
+      GNP_TENANT_ID: $(GlobalNetworkPeering.GNP_TENANT_ID) 
+
   - task: TerraformCLI@0
     displayName: 'Plan ${{parameters.env}}'
     inputs:
@@ -50,7 +83,7 @@ steps:
         -var "builtFrom=${{ parameters.builtFrom }}"
         -var "ws_sub_id=$(ws_sub_id)"
         -out="${{ parameters.env }}.tfplan" -no-color -input=false
-#      publishPlanResults: ${{ parameters.env }}.tfplan
+        $(variableName)
 
   - ${{ if ne(variables['System.StageAttempt'], 1) }}:
     - task: DeleteFiles@1

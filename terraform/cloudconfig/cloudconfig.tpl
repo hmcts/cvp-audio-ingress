@@ -644,18 +644,6 @@ write_files:
                 </Application>
         </Root>
   - owner: wowza:wowza
-    path: /home/wowza/connection.cfg
-    content: |
-      accountName ${storageAccountName}
-      accountKey ${storageAccountKey}
-      containerName ${containerName}
-  - owner: wowza:wowza
-    path: /home/wowza/connection-logs.cfg
-    content: |
-      accountName ${storageAccountName}
-      accountKey ${storageAccountKey}
-      containerName ${logsContainerName}
-  - owner: wowza:wowza
     path: /usr/local/WowzaStreamingEngine/conf/admin.password
     content: |
       # Admin password file (format [username][space][password])
@@ -961,6 +949,54 @@ write_files:
         ## Start Wowza
         sudo service WowzaStreamingEngine start
   - owner: wowza:wowza
+    path: /home/wowza/get-sas.sh
+    permissions: 0775
+    content: |
+        #!/bin/bash
+
+        echo "Getting SAS keys for BLOBFuse"
+
+        miClientId="${managedIdentityClientId}"
+        az login --identity --username $miClientId
+
+        keyVaultName="${keyVaultName}"
+        accountName="${storageAccountName}"
+
+        # WowzaLogs
+        echo "Wowza Logs..."
+        secret_sas_wowzalogs="cvp-sas-wowzalogs--rlw"
+        containerNameWowzalogs="${logsContainerName}"
+        tempFilewowzalogs="/home/wowza/connection-logs_temp.cfg"
+        connFilewowzalogs="/home/wowza/connection-logs.cfg"
+        
+        echo "Getting SAS..."
+        sas_wowzalogs=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_wowzalogs --query "value")
+
+        echo accountName $accountName >> $tempFilewowzalogs
+        echo authType SAS >> $tempFilewowzalogs
+        echo sasToken $${sas_wowzalogs//[$'\"']/} >> $tempFilewowzalogs
+        echo containerName $containerNameRecordings >> $tempFilewowzalogs
+        
+        echo $tempFilewowzalogs
+        mv $tempFilewowzalogs $connFilewowzalogs
+
+        # Recordings
+        echo "Recordings..."
+        secret_sas_recordings="cvp-sas-recordings--rlw"
+        containerNameRecordings="recordings"
+        tempFileRecordings="/home/wowza/connection_temp.cfg"
+        connFileRecordings="/home/wowza/connection.cfg"
+
+        echo "Getting SAS..."
+        sas_recordings=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_recordings --query "value")
+
+        echo accountName $accountName >> $tempFileRecordings
+        echo authType SAS >> $tempFileRecordings
+        echo sasToken $${sas_recordings//[$'\"']/} >> $tempFileRecordings
+        echo containerName $containerNameRecordings >> $tempFileRecordings
+
+        mv $tempFileRecordings $connFileRecordings
+  - owner: wowza:wowza
     path: /home/wowza/cron.sh
     permissions: 0775
     content: |
@@ -969,12 +1005,16 @@ write_files:
         cronTaskPath='/home/wowza/cronjobs.txt'
         cronTaskPathRoot='/home/wowza/cronjobsRoot.txt'
 
+
         # Cron For Mounting.
         logFolder='/home/wowza/logs'
         mkdir -p $logFolder
         echo "5-59/10 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
         echo "*/10 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
         echo "0 0 * * * /home/wowza/renew-cert.sh >> $logFolder/renew-cert.log 2>&1" >> $cronTaskPathRoot
+
+        # Cron for getting SAS
+        echo "@reboot /home/wowza/get-sas.sh >> $logFolder/get_sas.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Log Mount.
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
@@ -1016,6 +1056,7 @@ write_files:
         # Install packages
         dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
         dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
+        sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
 
         # install Wowza patch
         [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar && chmod 775 /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
@@ -1024,12 +1065,14 @@ write_files:
         # Create Wowza Apps
         /home/wowza/dir-creator.sh ${numApplications}
 
+        # Update blobfuse connection configuration.
+        /home/wowza/get-sas.sh
+
         # Mount Drives For Wowza & Logs.
         /home/wowza/mount.sh $blobMount $blobTmp $blobCfg
         /home/wowza/mount.sh $logMount $logTmp $logCfg
 
         # Install Certificates.
-        sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
         sudo /home/wowza/renew-cert.sh
 
         # Set Up CronJobs.
