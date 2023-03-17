@@ -34,3 +34,4 @@ override.tf.json
 **/test/*.pem
 **/test/*.json
 **/test/*.tfplan
+**/test/audio/*
