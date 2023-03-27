@@ -1,8 +1,11 @@
 # Make sure you have installed ffmpeg before running
 
-$env = "stg"
-$ports = ("443") #443 for LB, allows additional ports to test VM vis NAT rules
+param(
+    $env,    # SBOXX, STG, PROD
+    $ports   # 443,444
+)
 
+az account set -n "DTS-SHAREDSERVICES-$($env)"
 
 $containerName = "recordings"
 $accountName = "cvprecordings$($env)sa"
@@ -60,7 +63,7 @@ foreach ($port in $ports){
     } else {
         # Run FFMPEG TEST
         Write-Host "Running a stream to $ip..."
-        $ffmpeg_url="rtmps://$($ip):443/$wowzaApplication/$fileName"
+        $ffmpeg_url="rtmps://$($ip):$($port)/$wowzaApplication/$fileName"
 
         Write-Host "URL: $ffmpeg_url"
         Write-Host "File: $audioFile"
@@ -91,8 +94,8 @@ foreach ($port in $ports){
 
     }
 }
-Write-Host "####################################"
+Write-Host "`n####################################"
 Write-Host "############ RESULTS ###############"
 Write-Host "####################################"
 $r
-Write-Host "####################################"
+Write-Host "####################################`n"
