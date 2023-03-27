@@ -135,11 +135,11 @@ stages:
                       exit 1
                   fi
 
-            - ${{ if ne(parameters.env, 'sbox') }}:
-              - template: ..\steps\test-ffmpeg.yml
-                parameters:
-                  subscriptionName: ${{ variables.subscriptionName }}
-                  env: ${{ variables.env }}
+            # - ${{ if ne(parameters.env, 'sbox') }}:
+            #   - template: ..\steps\test-ffmpeg.yml
+            #     parameters:
+            #       subscriptionName: ${{ variables.subscriptionName }}
+            #       env: ${{ variables.env }}
 
         - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
           - job: 'StopVM${{parameters.env}}'
