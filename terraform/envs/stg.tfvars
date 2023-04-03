@@ -17,7 +17,7 @@ schedules = [
     name      = "vm-off",
     frequency = "Day"
     interval  = 1
-    run_time  = "06:00:00"
+    run_time  = "18:00:00"
     start_vm  = false
   }
 ]

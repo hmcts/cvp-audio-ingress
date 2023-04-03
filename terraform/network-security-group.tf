@@ -13,16 +13,16 @@ module "nsg" {
 
   custom_rules = [
     {
-      access                     = "Allow"
-      description                = "Allow SSH from VPN"
-      destination_address_prefix = "*"
-      destination_port_range     = "22"
-      direction                  = "Inbound"
-      name                       = "Allow_VPN_SSH"
-      priority                   = 1100
-      protocol                   = "Tcp"
-      source_address_prefixes    = var.vpn_source_address_prefixes
-      source_port_range          = "*"
+      access                       = "Allow"
+      description                  = "Allow SSH from VPN"
+      destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
+      destination_port_range       = "22"
+      direction                    = "Inbound"
+      name                         = "Allow_VPN_SSH"
+      priority                     = 1100
+      protocol                     = "Tcp"
+      source_address_prefixes      = var.vpn_source_address_prefixes
+      source_port_range            = "*"
     },
     {
       access                     = "Allow"

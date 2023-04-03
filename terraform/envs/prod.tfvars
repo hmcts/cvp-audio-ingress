@@ -14,10 +14,10 @@ vm_size                       = "Standard_F8s_v2"
 dynatrace_tenant              = "ebe20728"
 schedules = [
   {
-    name      = "vm-on",
-    frequency = "Day"
+    name      = "vm-off-weekly",
+    frequency = "Week"
     interval  = 1
-    run_time  = "06:00:00"
+    run_time  = "05:00:00"
     start_vm  = true
   }
 ]
