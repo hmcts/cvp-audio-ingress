@@ -25,40 +25,40 @@ module "nsg" {
       source_port_range            = "*"
     },
     {
-      access                     = "Allow"
-      description                = "Allow Wowza RTMPS"
-      destination_address_prefix = "*"
-      destination_port_ranges    = ["443", "444", "445"]
-      direction                  = "Inbound"
-      name                       = "Allow_RTMPS"
-      priority                   = 1200
-      protocol                   = "Tcp"
-      source_address_prefixes    = concat(var.vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
-      source_port_range          = "*"
+      access                       = "Allow"
+      description                  = "Allow Wowza RTMPS"
+      destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
+      destination_port_ranges      = ["443", "444", "445"]
+      direction                    = "Inbound"
+      name                         = "Allow_RTMPS"
+      priority                     = 1200
+      protocol                     = "Tcp"
+      source_address_prefixes      = concat(var.vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
+      source_port_range            = "*"
     },
     {
-      access                     = "Allow"
-      description                = "Allow access to Wowza SE Manager"
-      destination_address_prefix = "*"
-      destination_port_ranges    = ["8090", "8091", "8092"]
-      direction                  = "Inbound"
-      name                       = "Allow_WSEM"
-      priority                   = 1300
-      protocol                   = "Tcp"
-      source_address_prefixes    = var.vpn_source_address_prefixes
-      source_port_range          = "*"
+      access                       = "Allow"
+      description                  = "Allow access to Wowza SE Manager"
+      destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
+      destination_port_ranges      = ["8090", "8091", "8092"]
+      direction                    = "Inbound"
+      name                         = "Allow_WSEM"
+      priority                     = 1300
+      protocol                     = "Tcp"
+      source_address_prefixes      = var.vpn_source_address_prefixes
+      source_port_range            = "*"
     },
     {
-      access                     = "Allow"
-      description                = "Allow access to Wowza API"
-      destination_address_prefix = "*"
-      destination_port_ranges    = ["8087", "8088", "8089"]
-      direction                  = "Inbound"
-      name                       = "Allow_WSE_API"
-      priority                   = 1400
-      protocol                   = "Tcp"
-      source_address_prefixes    = concat(var.vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
-      source_port_range          = "*"
+      access                       = "Allow"
+      description                  = "Allow access to Wowza API"
+      destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
+      destination_port_ranges      = ["8087", "8088", "8089"]
+      direction                    = "Inbound"
+      name                         = "Allow_WSE_API"
+      priority                     = 1400
+      protocol                     = "Tcp"
+      source_address_prefixes      = concat(var.vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
+      source_port_range            = "*"
     },
     {
       access                     = "Allow"
