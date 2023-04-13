@@ -77,7 +77,7 @@ stages:
                 businessArea: ${{variables.businessArea}}
                 application: ${{variables.application}}
 
-            ${{ if variables.sa_private }}:
+            - ${{ if variables.sa_private }}:
               - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
                 parameters:
                   subscriptionName: ${{variables.subscriptionName}}

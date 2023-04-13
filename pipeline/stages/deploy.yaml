@@ -69,7 +69,7 @@ stages:
                 product: ${{variables.product}}
                 wowza_version: ${{variables.wowza_version}}
                 resourceGroup: "${{variables.product}}-recordings-${{parameters.env}}-rg"
-            ${{ if variables.sa_private }}:
+            - ${{ if variables.sa_private }}:
               - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
                 parameters:
                   subscriptionName: ${{variables.subscriptionName}}
