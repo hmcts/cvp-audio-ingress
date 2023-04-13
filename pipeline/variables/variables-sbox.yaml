@@ -12,3 +12,4 @@ variables:
   dynatrace_host_group: "SBOX_DTS_CVP"
   dynatrace_tenant_id: "yrk32651"
   TURN_OFF_VM_POST_RUN: true 
+  sa_private: false
