@@ -2,7 +2,7 @@
 # Start/Stop VM runbook (via module)
 #---------------------------------------------------
 module "vm_automation" {
-  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm?ref=fix-weekly"
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-start-stop-vm?ref=adding-days"
 
   product                 = var.product
   env                     = var.env
