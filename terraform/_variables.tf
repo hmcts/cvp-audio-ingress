@@ -103,13 +103,19 @@ variable "cloud_init_file" {
 
 variable "schedules" {
   type = list(object({
-    name      = string
-    frequency = string
-    interval  = number
-    run_time  = string
-    start_vm  = bool
+    name       = string
+    frequency  = string
+    interval   = number
+    run_time   = string
+    start_vm   = bool
+    week_days  = optional(list(string))
+    month_days = optional(list(number))
+    monthly_occurrence = optional(object({
+      day        = optional(string)
+      occurrence = optional(number)
+    }))
   }))
-  default     = []
+  default = []
   description = "(Required) Start/Stop schedule for VM(s)."
 }
 
