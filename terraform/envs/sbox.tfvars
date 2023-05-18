@@ -26,6 +26,6 @@ schedules = [
     interval  = 1
     run_time  = "15:00:00"
     start_vm  = false
-    week_days = ["Monday","Saturday"]
+    week_days = ["Sunday"]
   }
 ]
