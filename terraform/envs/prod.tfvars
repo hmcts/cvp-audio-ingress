@@ -12,6 +12,8 @@ ws_rg                         = "oms-automation"
 num_applications              = 3500
 vm_size                       = "Standard_F8s_v2"
 dynatrace_tenant              = "ebe20728"
+sas_days                      = 20
+remaining_days                = 5
 schedules = [
   {
     name      = "vm-off-weekly",

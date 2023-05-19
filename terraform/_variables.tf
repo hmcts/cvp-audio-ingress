@@ -115,7 +115,7 @@ variable "schedules" {
       occurrence = optional(number)
     }))
   }))
-  default = []
+  default     = []
   description = "(Required) Start/Stop schedule for VM(s)."
 }
 
@@ -168,7 +168,7 @@ variable "rtmps_source_address_prefixes" {
 }
 
 variable "vpn_source_address_prefixes" {
-  type = list(string)
+  type        = list(string)
   description = "(Required) IP addresses of VPN"
   # From <env>.tfvars
 }
@@ -178,28 +178,32 @@ variable "dev_source_address_prefixes" {
 }
 
 #---------------------------------------------------
-# Peering creds
+# SAS 
 #---------------------------------------------------
 
-variable "sas_days" {
-  type = number
-  description = "Number of days SAS tokens should live. Defaults to 20"
-  default = 20
+variable "expiry_days" {
+  type        = number
+  description = "Number of days that the SAS token should last. Default 30 days"
+}
+
+variable "remaining_days" {
+  type        = number
+  description = "Number of days remaining for which the SAS token should be renewed. Default 5 days"
 }
 
 #---------------------------------------------------
 # Peering creds
 #---------------------------------------------------
 variable "network_client_id" {
-  type = string
+  type        = string
   description = "(Required) Network peering client id"
 }
 variable "network_client_secret" {
-  type = string
+  type        = string
   description = "(Required) Network peering client secret"
 }
 variable "network_tenant_id" {
-  type = string
+  type        = string
   description = "(Required) Network peering tenant id"
 }
 
