@@ -11,7 +11,7 @@ locals {
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.main_container_name
       blob            = ""
-      expiry_days     = var.sas_days
+      expiry_days     = var.expiry_days
       remaining_days  = var.remaining_days
     }
     "wowzalogas-rlw" = {
@@ -19,7 +19,7 @@ locals {
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.wowza_logs_container_name
       blob            = ""
-      expiry_days     = var.sas_days
+      expiry_days     = var.expiry_days
       remaining_days  = var.remaining_days
     }
   }
