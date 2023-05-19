@@ -11,14 +11,14 @@ locals {
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.main_container_name
       blob            = ""
-      expiry_days     = 10
+      expiry_days     = var.sas_days
     }
     "wowzalogas-rlw" = {
       permissions     = "rlw"
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.wowza_logs_container_name
       blob            = ""
-      expiry_days     = 10
+      expiry_days     = var.sas_days
     }
   }
   peering_vpn_vnet          = "core-infra-vnet-mgmt"

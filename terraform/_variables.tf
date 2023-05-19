@@ -180,6 +180,16 @@ variable "dev_source_address_prefixes" {
 #---------------------------------------------------
 # Peering creds
 #---------------------------------------------------
+
+variable "sas_days" {
+  type = number
+  description = "Number of days SAS tokens should live. Defaults to 20"
+  default = 20
+}
+
+#---------------------------------------------------
+# Peering creds
+#---------------------------------------------------
 variable "network_client_id" {
   type = string
   description = "(Required) Network peering client id"
