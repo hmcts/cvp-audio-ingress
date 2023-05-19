@@ -955,6 +955,21 @@ write_files:
         ## Start Wowza
         sudo service WowzaStreamingEngine start
   - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/wowza-restart.sh
+    content: |
+        #!/bin/bash
+
+        # Restart the WowzaStreamingEngine
+        sudo service WowzaStreamingEngine restart
+
+        # Restart the WowzaStreamingEngineManager
+        sudo service WowzaStreamingEngineManager restart
+
+        # Log the restart command 
+        dt=$(date)
+        echo $HOSTNAME "Wowza Restart commanded at:" $dt#!/bin/bash
+  - owner: wowza:wowza
     path: /home/wowza/get-sas.sh
     permissions: 0775
     content: |
@@ -1076,6 +1091,11 @@ write_files:
         if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
         echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
         echo "10 0 * * * /home/wowza/check-file-size.sh" >> $cronTaskPath
+        fi
+
+        # Cron for nightly service restart
+        if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
+        0 5 * * * /home/wowza/wowza-restart.sh >> $logFolder/wowzaRestartLog.txt
         fi
 
         # Set Up Cron Jobs for Wowza & Root.
