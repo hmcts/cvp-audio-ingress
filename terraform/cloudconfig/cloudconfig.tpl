@@ -978,7 +978,7 @@ write_files:
 
         echo "Getting recordings SAS..."
         sas_recordings=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_recordings --query "value" --output tsv)
-        sas_recordings=${sas_recordings//[$'\"']/}
+        sas_recordings=$${sas_recordings//[$'\"']/}
         sas_recordings=$(echo "$sas_recordings" | tr -d '[:space:]')
 
         echo "AKV:$sas_recordings"
@@ -1018,7 +1018,7 @@ write_files:
 
         echo "Getting recordings SAS..."
         sas_wowzalogs=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_wowzalogs --query "value" --output tsv)
-        sas_wowzalogs=${sas_wowzalogs//[$'\"']/}
+        sas_wowzalogs=$${sas_wowzalogs//[$'\"']/}
         sas_wowzalogs=$(echo "$sas_wowzalogs" | tr -d '[:space:]')
 
         echo "AKV:$sas_wowzalogs"
