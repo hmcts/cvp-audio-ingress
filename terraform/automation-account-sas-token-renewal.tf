@@ -2,7 +2,7 @@
 # SAS token renewal runbook (via module)
 #---------------------------------------------------
 module "automation_runbook_sas_token_renewal" {
-  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-sas-token-renewal?ref=master"
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-sas-token-renewal"
 
   for_each = local.sas_tokens
 
@@ -15,7 +15,7 @@ module "automation_runbook_sas_token_renewal" {
   blob_name                        = each.value.blob
   key_vault_name                   = data.azurerm_key_vault.cvp_kv.name
   secret_name                      = "cvp-sas-${each.value.container}-${each.value.blob}-${each.value.permissions}"
-  expiry_date                      = each.value.expiry_date
+  expiry_days                      = each.value.expiry_days
   automation_account_name          = azurerm_automation_account.cvp.name
   sas_permissions                  = each.value.permissions
   bypass_kv_networking             = true
