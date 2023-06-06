@@ -12,8 +12,8 @@ ws_rg                         = "oms-automation"
 num_applications              = 3500
 vm_size                       = "Standard_F8s_v2"
 dynatrace_tenant              = "yrk32651"
-expiry_days                   = 3
-remaining_days                = 1
+expiry_days                   = 10
+remaining_days                = 3
 schedules = [
   {
     name      = "vm-off-weekly",
@@ -27,7 +27,7 @@ schedules = [
     name      = "vm-on-weekly",
     frequency = "Week"
     interval  = 1
-    run_time  = "06:00:00"
+    run_time  = "05:00:00"
     start_vm  = true
     week_days = ["Monday"]
   }
