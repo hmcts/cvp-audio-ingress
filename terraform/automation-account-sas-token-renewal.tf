@@ -2,7 +2,7 @@
 # SAS token renewal runbook (via module)
 #---------------------------------------------------
 module "automation_runbook_sas_token_renewal" {
-  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-sas-token-renewal?ref=fix-expiry"
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-sas-token-renewal"
 
   for_each = local.sas_tokens
 
