@@ -13,9 +13,10 @@ $overrideContent = "terraform {
     }
   }
 "
+$overridePath = "./"
 
 $rootPath = split-path -parent $MyInvocation.MyCommand.Definition;
-Set-Location "$rootPath/.."
+Set-Location "$rootPath/../terraform"
 $fileName = "override.tf"
 if (!(Test-Path $fileName))
 {
@@ -31,7 +32,7 @@ else
 $builtFrom="hmcts/cvp-audio-ingress"
 
 $global:ws_sub_name="";
-Get-Content "pipeline/variables/variables-$env.yaml" | Foreach-Object{
+Get-Content "../pipeline/variables/variables-$env.yaml" | Foreach-Object{
   $var = $_.Split(':')
   $var_name = $var[0]
   #write-host "got $var_name"
@@ -48,6 +49,6 @@ $outputJson = "test/plan.json"
 
 terraform init -reconfigure
 
-terraform plan -var-file "tf-variables/shared.tfvars" -var-file "tf-variables/$env.tfvars" -var "builtFrom=$builtFrom" -var "ws_sub_id=$wsSsubscriptionId" -out="$outputState" -input=false
+terraform plan -var-file "envs/shared.tfvars" -var-file "envs/$env.tfvars" -var "builtFrom=$builtFrom" -var "ws_sub_id=$wsSsubscriptionId" -out="$outputState" -input=false
 
 terraform show -json $outputState > $outputJson

@@ -11,17 +11,36 @@ locals {
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.main_container_name
       blob            = ""
-      expiry_date     = timeadd(timestamp(), "167h")
+      expiry_days     = var.expiry_days
+      remaining_days  = var.remaining_days
     }
     "wowzalogas-rlw" = {
       permissions     = "rlw"
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.wowza_logs_container_name
       blob            = ""
-      expiry_date     = timeadd(timestamp(), "167h")
+      expiry_days     = var.expiry_days
+      remaining_days  = var.remaining_days
     }
   }
   peering_vpn_vnet          = "core-infra-vnet-mgmt"
   peering_vpn_subscription  = "ed302caf-ec27-4c64-a05e-85731c3ce90e"
   peering_vpn_resourcegroup = "rg-mgmt"
+  lb-rules = {
+    wowza = {
+      protocol      = "Tcp"
+      frontend_port = 443
+      backend_port  = 443
+    }
+    WowzaManager = {
+      protocol      = "Tcp"
+      frontend_port = 8090
+      backend_port  = 8090
+    }
+    WowzaAPI = {
+      protocol      = "Tcp"
+      frontend_port = 8087
+      backend_port  = 8087
+    }
+  }
 }

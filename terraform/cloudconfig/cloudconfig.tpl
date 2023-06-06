@@ -656,6 +656,12 @@ write_files:
       # username password
       wowza ${streamPassword}
   - owner: wowza:wowza
+    path: /usr/local/WowzaStreamingEngine/manager/conf/tomcat.properties
+    content: |
+      httpsPort=8090
+      httpsKeyStore=/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
+      httpsKeyStorePassword=${certPassword}
+  - owner: wowza:wowza
     path: /home/wowza/mount.sh
     permissions: 0775
     content: |
@@ -949,12 +955,25 @@ write_files:
         ## Start Wowza
         sudo service WowzaStreamingEngine start
   - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/wowza-restart.sh
+    content: |
+        #!/bin/bash
+
+        # Restart the WowzaStreamingEngine
+        sudo service WowzaStreamingEngine restart
+
+        # Restart the WowzaStreamingEngineManager
+        sudo service WowzaStreamingEngineManager restart
+
+        # Log the restart command 
+        dt=$(date)
+        echo $HOSTNAME "Wowza Restart commanded at:" $dt#!/bin/bash
+  - owner: wowza:wowza
     path: /home/wowza/get-sas.sh
     permissions: 0775
     content: |
         #!/bin/bash
-
-        echo "Getting SAS keys for BLOBFuse"
 
         miClientId="${managedIdentityClientId}"
         az login --identity --username $miClientId
@@ -962,40 +981,85 @@ write_files:
         keyVaultName="${keyVaultName}"
         accountName="${storageAccountName}"
 
-        # WowzaLogs
-        echo "Wowza Logs..."
-        secret_sas_wowzalogs="cvp-sas-wowzalogs--rlw"
-        containerNameWowzalogs="${logsContainerName}"
-        tempFilewowzalogs="/home/wowza/connection-logs_temp.cfg"
-        connFilewowzalogs="/home/wowza/connection-logs.cfg"
-        
-        echo "Getting SAS..."
-        sas_wowzalogs=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_wowzalogs --query "value")
+        # RECORDINGS #
 
-        echo accountName $accountName >> $tempFilewowzalogs
-        echo authType SAS >> $tempFilewowzalogs
-        echo sasToken $${sas_wowzalogs//[$'\"']/} >> $tempFilewowzalogs
-        echo containerName $containerNameRecordings >> $tempFilewowzalogs
-        
-        echo $tempFilewowzalogs
-        mv $tempFilewowzalogs $connFilewowzalogs
-
-        # Recordings
-        echo "Recordings..."
         secret_sas_recordings="cvp-sas-recordings--rlw"
         containerNameRecordings="recordings"
         tempFileRecordings="/home/wowza/connection_temp.cfg"
         connFileRecordings="/home/wowza/connection.cfg"
 
-        echo "Getting SAS..."
-        sas_recordings=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_recordings --query "value")
+        blobMount="/usr/local/WowzaStreamingEngine/content/azurecopy"
+        blobTmp="/mnt/blobfusetmp"
 
-        echo accountName $accountName >> $tempFileRecordings
-        echo authType SAS >> $tempFileRecordings
-        echo sasToken $${sas_recordings//[$'\"']/} >> $tempFileRecordings
-        echo containerName $containerNameRecordings >> $tempFileRecordings
+        echo "Getting recordings SAS..."
+        sas_recordings=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_recordings --query "value" --output tsv)
+        sas_recordings=$${sas_recordings//[$'\"']/}
+        sas_recordings=$(echo "$sas_recordings" | tr -d '[:space:]')
 
-        mv $tempFileRecordings $connFileRecordings
+        echo "AKV:$sas_recordings"
+
+        sas_recordings_line=$(grep -E "^sasToken" $connFileRecordings)
+        sas_recordings_current=$(echo "$sas_recordings_line" | awk -F' ' '{print $2}' | tr -d '[:space:]')
+
+        echo "CFG:$sas_recordings_current"
+
+        if [ "$sas_recordings" == "$sas_recordings_current" ]; then
+                echo "No change to recordings SAS"
+        else
+                echo "Recordings SAS has changed, need to update and remount"
+                echo accountName $accountName >> $tempFileRecordings
+                echo authType SAS >> $tempFileRecordings
+                echo sasToken $sas_recordings >> $tempFileRecordings
+                echo containerName $containerNameRecordings >> $tempFileRecordings
+                sudo mv $tempFileRecordings $connFileRecordings
+
+                echo "Remove mount"
+                sudo fusermount -u $blobMount
+
+                echo "Mounting"
+                sudo blobfuse $blobMount --tmp-path=$blobTmp -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$connFileRecordings -o allow_other -o nonempty
+
+        fi
+
+        # LOGS #
+
+        secret_sas_wowzalogs="cvp-sas-wowzalogs--rlw"
+        containerNameWowzalogs="wowzalogs"
+        tempFilewowzalogs="/home/wowza/connection-logs_temp.cfg"
+        connFilewowzalogs="/home/wowza/connection-logs.cfg"
+
+        logMount="/usr/local/WowzaStreamingEngine/azlogs"
+        logTmp="/mnt/blobfusetmplogs"
+
+        echo "Getting recordings SAS..."
+        sas_wowzalogs=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_wowzalogs --query "value" --output tsv)
+        sas_wowzalogs=$${sas_wowzalogs//[$'\"']/}
+        sas_wowzalogs=$(echo "$sas_wowzalogs" | tr -d '[:space:]')
+
+        echo "AKV:$sas_wowzalogs"
+
+        sas_wowzalogs_line=$(grep -E "^sasToken" $connFilewowzalogs)
+        sas_wowzalogs_current=$(echo "$sas_wowzalogs_line" | awk -F' ' '{print $2}' | tr -d '[:space:]')
+
+        echo "CFG:$sas_wowzalogs_current"
+
+        if [ "$sas_wowzalogs" == "$sas_wowzalogs_current" ]; then
+                echo "No change to log SAS"
+        else
+                echo "Log SAS has changed, need to update and remount"
+                echo accountName $accountName >> $tempFilewowzalogs
+                echo authType SAS >> $tempFilewowzalogs
+                echo sasToken $sas_wowzalogs >> $tempFilewowzalogs
+                echo containerName $containerNameWowzalogs >> $tempFilewowzalogs
+                sudo mv $tempFilewowzalogs $connFilewowzalogs
+
+                echo "Remove mount"
+                sudo fusermount -u $logMount
+
+                echo "Mounting"
+                sudo blobfuse $logMount --tmp-path=$logTmp -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$connFilewowzalogs -o allow_other -o nonempty
+
+        fi
   - owner: wowza:wowza
     path: /home/wowza/cron.sh
     permissions: 0775
@@ -1015,6 +1079,7 @@ write_files:
 
         # Cron for getting SAS
         echo "@reboot /home/wowza/get-sas.sh >> $logFolder/get_sas.log 2>&1" >> $cronTaskPathRoot
+        echo "0 1 * * * /home/wowza/get-sas.sh >> $logFolder/get_sas.log 2>&1" >> $cronTaskPathRoot
 
         # Cron For Log Mount.
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
@@ -1026,6 +1091,11 @@ write_files:
         if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
         echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
         echo "10 0 * * * /home/wowza/check-file-size.sh" >> $cronTaskPath
+        fi
+
+        # Cron for nightly service restart
+        if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
+        0 5 * * * /home/wowza/wowza-restart.sh >> $logFolder/wowzaRestartLog.txt
         fi
 
         # Set Up Cron Jobs for Wowza & Root.
@@ -1078,8 +1148,9 @@ write_files:
         # Set Up CronJobs.
         /home/wowza/cron.sh $blobMount $blobTmp $blobCfg $logMount $logTmp $logCfg
 
-        # Restart Wowza
+        # Restart Wowza and WSEM
         sudo service WowzaStreamingEngine restart
+        sudo service WowzaStreamingEngineManager restart
 runcmd:
   - 'sudo /home/wowza/runcmd.sh'
 

@@ -103,11 +103,17 @@ variable "cloud_init_file" {
 
 variable "schedules" {
   type = list(object({
-    name      = string
-    frequency = string
-    interval  = number
-    run_time  = string
-    start_vm  = bool
+    name       = string
+    frequency  = string
+    interval   = number
+    run_time   = string
+    start_vm   = bool
+    week_days  = optional(list(string))
+    month_days = optional(list(number))
+    monthly_occurrence = optional(object({
+      day        = optional(string)
+      occurrence = optional(number)
+    }))
   }))
   default     = []
   description = "(Required) Start/Stop schedule for VM(s)."
@@ -157,7 +163,13 @@ variable "lb_IPaddress" {
 
 variable "rtmps_source_address_prefixes" {
   type        = list(string)
-  description = "Real-Time Messaging Protocol source IP addresses."
+  description = "(Required) Real-Time Messaging Protocol source IP addresses."
+  # From <env>.tfvars
+}
+
+variable "vpn_source_address_prefixes" {
+  type        = list(string)
+  description = "(Required) IP addresses of VPN"
   # From <env>.tfvars
 }
 
@@ -166,18 +178,32 @@ variable "dev_source_address_prefixes" {
 }
 
 #---------------------------------------------------
+# SAS 
+#---------------------------------------------------
+
+variable "expiry_days" {
+  type        = number
+  description = "Number of days that the SAS token should last. Default 30 days"
+}
+
+variable "remaining_days" {
+  type        = number
+  description = "Number of days remaining for which the SAS token should be renewed. Default 5 days"
+}
+
+#---------------------------------------------------
 # Peering creds
 #---------------------------------------------------
 variable "network_client_id" {
-  type = string
+  type        = string
   description = "(Required) Network peering client id"
 }
 variable "network_client_secret" {
-  type = string
+  type        = string
   description = "(Required) Network peering client secret"
 }
 variable "network_tenant_id" {
-  type = string
+  type        = string
   description = "(Required) Network peering tenant id"
 }
 

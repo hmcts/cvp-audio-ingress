@@ -6,17 +6,28 @@ dns_resource_group            = "cvp-sharedinfra-sbox"
 address_space                 = "10.50.11.0/28"
 lb_IPaddress                  = "10.50.11.10"
 rtmps_source_address_prefixes = ["35.204.50.163", "35.204.108.36", "34.91.92.40", "34.91.75.226", "81.109.71.47"]
+vpn_source_address_prefixes   = ["10.99.19.4"]
 ws_name                       = "hmcts-sandbox"
 ws_rg                         = "oms-automation"
 num_applications              = 20
 vm_size                       = "Standard_F4s_v2"
 dynatrace_tenant              = "yrk32651"
+expiry_days                   = 3
+remaining_days                = 1
 schedules = [
   {
     name      = "vm-off",
     frequency = "Day"
     interval  = 1
-    run_time  = "06:00:00"
+    run_time  = "18:00:00"
     start_vm  = false
+  },
+  {
+    name      = "vm-off-weekly",
+    frequency = "Week"
+    interval  = 1
+    run_time  = "15:00:00"
+    start_vm  = false
+    week_days = ["Sunday"]
   }
 ]

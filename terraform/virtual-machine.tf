@@ -10,6 +10,8 @@ resource "azurerm_linux_virtual_machine" "wowza_vm" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
 
+  zone = count.index + 1
+
   size           = var.vm_size
   admin_username = var.admin_user
 
