@@ -61,5 +61,5 @@ resource "random_password" "splunk_admin_password" {
 # The following is required for the first deploy to prod to allow the update to new TF
 #---------------------------------------------------
 module "wowza" {
-  source                        = "./modules/wowza"
+  source = "./modules/wowza"
 }
