@@ -1,6 +1,6 @@
-#---------------------------------------------------
+#----------------------------------------------------
 # Splunk Ext (via module)
-#---------------------------------------------------
+#----------------------------------------------------
  module "splunk-uf" {
   source = "git::https://github.com/hmcts/terraform-module-splunk-universal-forwarder.git?ref=Splunk-alter"
   
