@@ -1,7 +1,7 @@
 #---------------------------------------------------
 # Splunk Ext (via module)
 #---------------------------------------------------
-module "splunk-uf" {
+/**module "splunk-uf" {
   source = "git::https://github.com/hmcts/terraform-module-splunk-universal-forwarder.git?ref=Splunk-change"
 
   count = var.vm_count
@@ -16,4 +16,4 @@ module "splunk-uf" {
 
   tags = module.ctags.common_tags
 
-}
+}**/
