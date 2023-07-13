@@ -155,7 +155,7 @@ write_files:
                                       <HTTPIdent2Response></HTTPIdent2Response>
                                       <SSLConfig>
                                               <Enable>true</Enable>
-                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks</KeyStorePath>
+                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/</KeyStorePath>
                                               <KeyStorePassword>${certPassword}</KeyStorePassword>
                                               <KeyStoreType>JKS</KeyStoreType>
                                               <DomainToKeyStoreMapPath></DomainToKeyStoreMapPath>
@@ -897,7 +897,7 @@ write_files:
             
             rm -rf $signedPfxPath || true
             openssl pkcs12 -in $downloadedPfxPath -out tmpmycert.pem -passin pass: -passout pass:$jksPass
-            openssl pkcs12 -export -out $signedPfxPath -in tmpmycert.pem -passin pass:$jksPass -passout pass:$jksPass
+            openssl pkcs12 -export -out $signedPfxPath -in tmpmycert.pem -passin pass:$jksPass -passout pass:$jksPass -certpbe PBE-SHA1-3DES -keypbe PBE-SHA1-3DES -macalg sha1
 
             keytool -delete -alias 1 -keystore $jksPath -storepass $jksPass
             keytool -importkeystore -srckeystore $signedPfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
