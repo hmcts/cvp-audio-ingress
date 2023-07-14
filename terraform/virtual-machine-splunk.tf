@@ -16,4 +16,26 @@ module "splunk-uf" {
 
   tags = module.ctags.common_tags
 
+  depends_on = [ 
+    azurerm_virtual_machine_extension.acl
+  ]
+
+}
+
+resource "azurerm_virtual_machine_extension" "acl" {
+
+  count = var.vm_count
+
+  name                       = "splunk-universal-forwarder"
+  virtual_machine_id         = azurerm_linux_virtual_machine.wowza_vm[count.index].id
+  publisher                  = "Microsoft.Azure.Extensions"
+  type                       = "CustomScript"
+  type_handler_version       = "2.1"
+  auto_upgrade_minor_version = false
+  tags                       = module.ctags.common_tags
+  protected_settings         = <<PROTECTED_SETTINGS
+    {
+      "commandToExecute": "sudo apt-get install -y acl"
+    }
+    PROTECTED_SETTINGS
 }
