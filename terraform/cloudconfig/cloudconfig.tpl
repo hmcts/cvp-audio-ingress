@@ -1127,6 +1127,7 @@ write_files:
         # Install packages
         dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
         dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
+        dpkg-query -l acl && echo "acl already installed" || sudo apt-get install -y acl
         sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
 
         # install Wowza patch
