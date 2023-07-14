@@ -26,7 +26,7 @@ resource "azurerm_virtual_machine_extension" "acl" {
 
   count = var.vm_count
 
-  name                       = "splunk-universal-forwarder"
+  name                       = "install-acl"
   virtual_machine_id         = azurerm_linux_virtual_machine.wowza_vm[count.index].id
   publisher                  = "Microsoft.Azure.Extensions"
   type                       = "CustomScript"
