@@ -5,6 +5,7 @@ package_upgrade: true
 packages:
   - blobfuse
   - fuse
+  - acl
 write_files:
   - owner: wowza:wowza
     path: /usr/local/WowzaStreamingEngine/conf/Server.xml
