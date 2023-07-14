@@ -156,7 +156,7 @@ write_files:
                                       <HTTPIdent2Response></HTTPIdent2Response>
                                       <SSLConfig>
                                               <Enable>true</Enable>
-                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks</KeyStorePath>
+                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/</KeyStorePath>
                                               <KeyStorePassword>${certPassword}</KeyStorePassword>
                                               <KeyStoreType>JKS</KeyStoreType>
                                               <DomainToKeyStoreMapPath></DomainToKeyStoreMapPath>
