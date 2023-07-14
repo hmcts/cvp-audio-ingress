@@ -156,7 +156,7 @@ write_files:
                                       <HTTPIdent2Response></HTTPIdent2Response>
                                       <SSLConfig>
                                               <Enable>true</Enable>
-                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks</KeyStorePath>
+                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/</KeyStorePath>
                                               <KeyStorePassword>${certPassword}</KeyStorePassword>
                                               <KeyStoreType>JKS</KeyStoreType>
                                               <DomainToKeyStoreMapPath></DomainToKeyStoreMapPath>
@@ -1127,7 +1127,7 @@ write_files:
         # Install packages
         dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
         dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
-        sudo apt-get install acl
+        dpkg-query -l acl && echo "acl already installed" || sudo apt-get install -y acl
         sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
 
         # install Wowza patch
