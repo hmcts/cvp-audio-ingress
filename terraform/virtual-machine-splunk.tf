@@ -3,11 +3,11 @@
 #---------------------------------------------------
 
 locals {
-  cse_script = "sudo apt-get install -y acl && ./install-splunk-forwarder-service.sh ${local.splunk_admin_username} ${random_password.splunk_admin_password.result} dynatrace_forwarders"
+  cse_script = "apt-get install -y acl && ./install-splunk-forwarder-service.sh ${local.splunk_admin_username} ${random_password.splunk_admin_password.result} dynatrace_forwarders"
   script_uri = "https://raw.githubusercontent.com/hmcts/terraform-module-splunk-universal-forwarder/master/scripts/install-splunk-forwarder-service.sh"
 }
 
-resource "azurerm_virtual_machine_extension" "acl" {
+resource "azurerm_virtual_machine_extension" "splunk" {
 
   count = var.vm_count
 
