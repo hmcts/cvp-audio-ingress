@@ -23,7 +23,7 @@ steps:
         $env = "${{ parameters.env }}"
         $env_long = "$env:ENV_LONG"
 
-        $infraKvName = "$env:INFRA_KV"
+        $infraKvName = "$env:cvp_kv"
         Write-Host infraKvName
         Write-Host $infraKvName
 

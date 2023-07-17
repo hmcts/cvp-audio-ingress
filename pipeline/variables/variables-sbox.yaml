@@ -7,6 +7,7 @@ variables:
   ws_sub_name: "DCD-CFT-Sandbox"
   dynatrace_token: 'dynatrace-nonprod-token'
   infra_kv: 'infra-vault-sandbox'
+  cvp_kv: "cvp-sbox-kv"
   ws_name: "hmcts-sandbox"
   ws_rg: "oms-automation"
   dynatrace_host_group: "SBOX_DTS_CVP"
