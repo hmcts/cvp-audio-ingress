@@ -91,6 +91,13 @@ stages:
                 subscriptionName: ${{variables.subscriptionName}}
                 env: ${{variables.env}}
 
+            - template: ../steps/az-ext-splunk.yaml
+              parameters:
+                subscription: ${{variables.subscriptionName}}
+                vmNames: $(getvmnames.vmListString)
+                vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
+                env: ${{variables.env}}
+
             - template: ../steps/az-ext-oms.yaml
               parameters:
                 subscription: ${{variables.subscriptionName}}
@@ -104,3 +111,4 @@ stages:
                 vmNames: $(getvmnames.vmListString)
                 vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
                 env: ${{variables.env}}
+                
