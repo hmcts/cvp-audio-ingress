@@ -26,19 +26,19 @@
 #     PROTECTED_SETTINGS
 # }
 
-module "splunk-uf" {
-  source = "git::https://github.com/hmcts/terraform-module-splunk-universal-forwarder.git?ref=master"
+# module "splunk-uf" {
+#   source = "git::https://github.com/hmcts/terraform-module-splunk-universal-forwarder.git?ref=master"
   
-  count = var.vm_count
+#   count = var.vm_count
 
-  auto_upgrade_minor_version = true
+#   auto_upgrade_minor_version = true
 
-  virtual_machine_type = "vm"
-  virtual_machine_id   = azurerm_linux_virtual_machine.wowza_vm[count.index].id
+#   virtual_machine_type = "vm"
+#   virtual_machine_id   = azurerm_linux_virtual_machine.wowza_vm[count.index].id
 
-  splunk_username = local.splunk_admin_username
-  splunk_password = random_password.splunk_admin_password.result
+#   splunk_username = local.splunk_admin_username
+#   splunk_password = random_password.splunk_admin_password.result
 
-  tags = module.ctags.common_tags
+#   tags = module.ctags.common_tags
 
-}
+# }
