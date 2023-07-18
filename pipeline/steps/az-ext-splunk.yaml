@@ -37,6 +37,9 @@ steps:
 
         $splunk_password=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/splunk-password  --query "value" -o tsv
 
+        $branchSource = "$(Build.SourceBranch)"
+
+
         $date = (Get-date).AddHours(720)
         $expDate = Get-Date $date -Format yyyy-MM-dd
 
@@ -48,7 +51,7 @@ steps:
                 "typeHandlerVersion"      = "2.1"
                 "autoUpgradeMinorVersion" = "false"
                 "protectedSettings" = [PSCustomObject]@{
-                    "fileUris"           = @("https://raw.githubusercontent.com/hmcts/terraform-module-splunk-universal-forwarder/Splunk-change/scripts/install-splunk-forwarder-service.sh")
+                    "fileUris"           = @("https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/$branchSource/scripts/install-splunk-forwarder-service.sh")
                     "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"
                 }
             }
@@ -65,9 +68,6 @@ steps:
 
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
-
-        $testUrl = "https://webhook.site/290aeb9d-b3a0-4900-83ae-60bd52537a92"
-        invoke-WebRequest -Uri $testUrl -Method POST -Body $restApiPutBodyJson
         
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
         Write-Host restApiPutBodyJson
