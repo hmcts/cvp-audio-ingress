@@ -97,7 +97,7 @@ stages:
                 vmNames: $(getvmnames.vmListString)
                 vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
                 env: ${{variables.env}}
-                kvName: ${{variables.infra_kv}}
+                kvName: ${{variables.cvp_kv}}
 
             - template: ../steps/az-ext-oms.yaml
               parameters:
