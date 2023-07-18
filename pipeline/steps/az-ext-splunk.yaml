@@ -48,7 +48,7 @@ steps:
                 "typeHandlerVersion"      = "2.1"
                 "autoUpgradeMinorVersion" = "false"
                 "protectedSettings" = [PSCustomObject]@{
-                    "fileUris"           = @("https://raw.githubusercontent.com/hmcts/terraform-module-splunk-universal-forwarder/master/scripts/install-splunk-forwarder-service.sh")
+                    "fileUris"           = @("https://raw.githubusercontent.com/hmcts/terraform-module-splunk-universal-forwarder/Splunk-change/scripts/install-splunk-forwarder-service.sh")
                     "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"
                 }
             }
