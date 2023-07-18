@@ -11,7 +11,7 @@ parameters:
 
 steps:
 
-  - template: templates\Azure\KeyVaults\firewall-exception-add.yaml@azTemplates
+  - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscription }}
       keyVaultName: $(kvName)
