@@ -8,13 +8,15 @@ parameters:
   - name: env
     type: string
     default: ''
+  - name: kvName
+    type: string
 
 steps:
 
   - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscription }}
-      keyVaultName: $(kvName)
+      keyVaultName: ${{ parameters.kvName }}
 
   - task: AzureCLI@2
     displayName: Get Settings for Splunk Extension
@@ -29,7 +31,7 @@ steps:
         $env = "${{ parameters.env }}"
         $env_long = "$env:ENV_LONG"
 
-        $infraKvName = "$env:CVP_KV"
+        $infraKvName = ${{ parameters.kvName }}
         Write-Host infraKvName
         Write-Host $infraKvName
 
@@ -75,5 +77,10 @@ steps:
       extName: "splunk-uf"
       extPublisher: "Microsoft.Azure.Extensions"
       restApiPutBodyJson: $(splunkSettings.restApiPutBodyJson)
+
+  - template: templates\Azure\KeyVault\firewall-exception-remove.yaml@azTemplates
+    parameters:
+      subscription: ${{ parameters.subscription }}
+      keyVaultName: ${{ parameters.kvName }}
 
 
