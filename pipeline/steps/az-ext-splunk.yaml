@@ -60,7 +60,6 @@ steps:
         
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
         Write-Host restApiPutBodyJson
-        Write-Host $restApiPutBodyJson[0,1] $restApiPutBodyJson[1,100]
 
   - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
     parameters:
@@ -69,6 +68,6 @@ steps:
       vmName: ${{ parameters.vmNames }}
       extName: "splunk-uf"
       extPublisher: "Microsoft.Azure.Extensions"
-      restApiPutBodyJson: $(dynaSettings.restApiPutBodyJson)
+      restApiPutBodyJson: $(splunkSettings.restApiPutBodyJson)
 
 
