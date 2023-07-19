@@ -11,6 +11,13 @@ parameters:
   - name: kvName
     type: string
 
+variables:
+  - name: currentBranch
+    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      value: $(System.PullRequest.SourceBranch)
+    ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+      value: $(Build.SourceBranch)
+
 steps:
 
   - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
@@ -37,8 +44,7 @@ steps:
 
         $splunk_password=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/splunk-password  --query "value" -o tsv
 
-        $branchSource = "$(Build.SourceBranch)"
-        $scriptUrl = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/$branchSource/scripts/install-splunk-forwarder-service.sh"
+        $scriptUrl = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/$(currentBranch)/scripts/install-splunk-forwarder-service.sh"
         Write-Host "Getting script from:"
         Write-Host $scriptUrl
 
