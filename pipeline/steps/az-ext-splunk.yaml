@@ -10,8 +10,6 @@ parameters:
     default: ''
   - name: kvName
     type: string
-
-variables:
   - name: currentBranch
     ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
       value: $(System.PullRequest.SourceBranch)
@@ -44,7 +42,7 @@ steps:
 
         $splunk_password=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/splunk-password  --query "value" -o tsv
 
-        $scriptUrl = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/$(currentBranch)/scripts/install-splunk-forwarder-service.sh"
+        $scriptUrl = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/${{ parameters.currentBranch }})/scripts/install-splunk-forwarder-service.sh"
         Write-Host "Getting script from:"
         Write-Host $scriptUrl
 
