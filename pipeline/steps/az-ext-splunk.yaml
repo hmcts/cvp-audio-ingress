@@ -11,10 +11,8 @@ parameters:
   - name: kvName
     type: string
   - name: currentBranch
-    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-      value: $(System.PullRequest.SourceBranch)
-    ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-      value: $(Build.SourceBranch)
+    type: string
+
 
 steps:
 
