@@ -85,10 +85,10 @@ stages:
             - template: ../variables/variables-common.yaml
             - template: ../variables/variables-${{parameters.env}}.yaml
             - name: currentBranch
-            ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-              value: $(System.PullRequest.SourceBranch)
-            ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-              value: $(Build.SourceBranch)
+              ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+                value: $(System.PullRequest.SourceBranch)
+              ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+                value: $(Build.SourceBranch)
           steps:
           
             - template: ../steps/az-get-vm-names.yaml
