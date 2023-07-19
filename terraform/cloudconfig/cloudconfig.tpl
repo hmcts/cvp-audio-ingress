@@ -891,17 +891,16 @@ write_files:
         if [[ $expiryDate -lt $today ]]; then
             echo "Certificate has expired"
             downloadedPfxPath="downloadedCert.pfx"
-            signedPfxPath="signedCert.pfx"
         
             rm -rf $downloadedPfxPath || true
             az keyvault secret download --file $downloadedPfxPath --vault-name $keyVaultName --encoding base64 --name $certName
             
-            rm -rf $signedPfxPath || true
-            openssl pkcs12 -in $downloadedPfxPath -out tmpmycert.pem -passin pass: -passout pass:$jksPass
-            openssl pkcs12 -export -out $signedPfxPath -in tmpmycert.pem -passin pass:$jksPass -passout pass:$jksPass -certpbe PBE-SHA1-3DES -keypbe PBE-SHA1-3DES -macalg sha1
+            keytool -storepasswd -new $jksPass -keystore $downloadedPfxPath -storepass "" -storetype PKCS12
 
             keytool -delete -alias 1 -keystore $jksPath -storepass $jksPass
-            keytool -importkeystore -srckeystore $signedPfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
+            keytool -importkeystore -srckeystore $downloadedPfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
+
+            sudo service WowzaStreamingEngine restart
         else
             echo "Certificate has NOT expired"
         fi
