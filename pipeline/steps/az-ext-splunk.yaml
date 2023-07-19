@@ -38,7 +38,9 @@ steps:
         $splunk_password=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/splunk-password  --query "value" -o tsv
 
         $branchSource = "$(Build.SourceBranch)"
-
+        $scriptUrl = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/$branchSource/scripts/install-splunk-forwarder-service.sh"
+        Write-Host "Getting script from:"
+        Write-Host $scriptUrl
 
         $date = (Get-date).AddHours(720)
         $expDate = Get-Date $date -Format yyyy-MM-dd
@@ -51,7 +53,7 @@ steps:
                 "typeHandlerVersion"      = "2.1"
                 "autoUpgradeMinorVersion" = "false"
                 "protectedSettings" = [PSCustomObject]@{
-                    "fileUris"           = @("https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/$branchSource/scripts/install-splunk-forwarder-service.sh")
+                    "fileUris"           = @($scriptUrl)
                     "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"
                 }
             }
