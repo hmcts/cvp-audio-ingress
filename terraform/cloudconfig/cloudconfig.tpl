@@ -156,7 +156,7 @@ write_files:
                                       <HTTPIdent2Response></HTTPIdent2Response>
                                       <SSLConfig>
                                               <Enable>true</Enable>
-                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/</KeyStorePath>
+                                              <KeyStorePath>/usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks</KeyStorePath>
                                               <KeyStorePassword>${certPassword}</KeyStorePassword>
                                               <KeyStoreType>JKS</KeyStoreType>
                                               <DomainToKeyStoreMapPath></DomainToKeyStoreMapPath>
@@ -894,10 +894,8 @@ write_files:
         
             rm -rf $downloadedPfxPath || true
             az keyvault secret download --file $downloadedPfxPath --vault-name $keyVaultName --encoding base64 --name $certName
-            
-            keytool -storepasswd -new $jksPass -keystore $downloadedPfxPath -storepass "" -storetype PKCS12
 
-            keytool -delete -alias 1 -keystore $jksPath -storepass $jksPass
+            keytool -storepasswd -new $jksPass -keystore $downloadedPfxPath -storepass "" -storetype PKCS12
             keytool -importkeystore -srckeystore $downloadedPfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
 
             sudo service WowzaStreamingEngine restart
