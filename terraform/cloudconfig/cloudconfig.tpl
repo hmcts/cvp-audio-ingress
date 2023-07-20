@@ -5,6 +5,7 @@ package_upgrade: true
 packages:
   - blobfuse
   - fuse
+  - acl
 write_files:
   - owner: wowza:wowza
     path: /usr/local/WowzaStreamingEngine/conf/Server.xml
@@ -53,7 +54,7 @@ write_files:
                               <ObjectList>Server,VHost,VHostItem,Application,ApplicationInstance,MediaCaster,Module,IdleWorker</ObjectList>
                       </AdminInterface>
                       <Stats>
-                              <Enable>true</Enable>
+                              <Enable>false</Enable>
                       </Stats>
                       <!-- JMXUrl: service:jmx:rmi://localhost:8084/jndi/rmi://localhost:8085/jmxrmi -->
                       <JMXRemoteConfiguration>
@@ -890,17 +891,14 @@ write_files:
         if [[ $expiryDate -lt $today ]]; then
             echo "Certificate has expired"
             downloadedPfxPath="downloadedCert.pfx"
-            signedPfxPath="signedCert.pfx"
         
             rm -rf $downloadedPfxPath || true
             az keyvault secret download --file $downloadedPfxPath --vault-name $keyVaultName --encoding base64 --name $certName
-            
-            rm -rf $signedPfxPath || true
-            openssl pkcs12 -in $downloadedPfxPath -out tmpmycert.pem -passin pass: -passout pass:$jksPass
-            openssl pkcs12 -export -out $signedPfxPath -in tmpmycert.pem -passin pass:$jksPass -passout pass:$jksPass
 
-            keytool -delete -alias 1 -keystore $jksPath -storepass $jksPass
-            keytool -importkeystore -srckeystore $signedPfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
+            keytool -storepasswd -new $jksPass -keystore $downloadedPfxPath -storepass "" -storetype PKCS12
+            keytool -importkeystore -srckeystore $downloadedPfxPath -srcstoretype pkcs12 -destkeystore $jksPath -deststoretype JKS -deststorepass $jksPass -srcstorepass $jksPass
+
+            sudo service WowzaStreamingEngine restart
         else
             echo "Certificate has NOT expired"
         fi
@@ -1126,6 +1124,7 @@ write_files:
         # Install packages
         dpkg-query -l fuse && echo "Fuse already installed" || sudo apt-get install -y fuse
         dpkg-query -l blobfuse && echo "Blobfuse already installed" || sudo apt-get install -y blobfuse
+        dpkg-query -l acl && echo "acl already installed" || sudo apt-get install -y acl
         sudo curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash # Az cli install
 
         # install Wowza patch

@@ -13,7 +13,7 @@ module "dynatrace_runbook" {
   depends_on = [
     azurerm_automation_account.cvp
   ]
-  
+
 }
 
 #---------------------------------------------------
@@ -30,7 +30,7 @@ resource "azurerm_automation_webhook" "webhook_back_unhealthy" {
   enabled                 = true
   runbook_name            = module.dynatrace_runbook.runbook_name
 
-  parameters = {  
+  parameters = {
     dynatracetenant  = var.dynatrace_tenant
     credentialname   = "Dynatrace-Token"
     alertname        = "CVP - '${local.service_name}-vm${count.index + 1}' backup not healthy."

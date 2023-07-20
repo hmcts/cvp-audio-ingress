@@ -7,6 +7,7 @@ variables:
   ws_sub_name: "DCD-CNP-DEV"
   dynatrace_token: 'dynatrace-nonprod-token'
   infra_kv: 'infra-vault-nonprod'
+  cvp_kv: "cvp-nonprod-kv"
   ws_name: "hmcts-nonprod"
   ws_rg: "oms-automation"
   dynatrace_host_group: "AAT_DTS_CVP"
