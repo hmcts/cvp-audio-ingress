@@ -70,3 +70,16 @@ resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
     azurerm_role_definition.vm-status-control # Required otherwise terraform destroy will fail
   ]
 } 
+
+#---------------------------------------------------
+# Assign access to blobs
+#---------------------------------------------------
+resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
+  scope                = module.sa.storageaccount_id
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = var.blob_access_group
+
+  depends_on = [
+    module.sa
+  ]
+} 
