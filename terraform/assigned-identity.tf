@@ -74,7 +74,7 @@ resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
 #---------------------------------------------------
 # Assign access to blobs
 #---------------------------------------------------
-resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
+resource "azurerm_role_assignment" "cvp-sa-reader" {
   scope                = module.sa.storageaccount_id
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = var.blob_access_group
