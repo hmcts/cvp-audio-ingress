@@ -281,12 +281,6 @@ variable "sa_recording_retention" {
   # From shared.tfvars
 }
 
-variable "blob_access_group" {
-  type        = string
-  description = "Object ID of the group to give read access to recordings BLOB store"
-  # From shared.tfvars
-}
-
 #---------------------------------------------------
 # Automation Account settings
 #---------------------------------------------------
