@@ -182,7 +182,8 @@ steps:
         $kvName="$(kvName)"
   
         $secrets=@{
-          "dynatrace-token" = "$(dynatrace-token-kv)"
+          "dynatrace-token" = "$(dynatrace-token-kv)";
+          "splunk-password" = "$(splunk-password)"
         }
 
         foreach ($secret in $secrets.GetEnumerator()) {
