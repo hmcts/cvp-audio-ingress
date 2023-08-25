@@ -48,7 +48,7 @@ resource "azurerm_storage_management_policy" "sa" {
   storage_account_id = module.sa.storageaccount_id
   rule {
     name = "RecordingRetention"
-    filters = {
+    filters {
       prefix_match = ["${local.main_container_name}/"]
       blob_types   = ["blockBlob"]
     }
