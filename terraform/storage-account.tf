@@ -23,18 +23,6 @@ module "sa" {
   team_name    = "CVP DevOps"
   team_contact = "#vh-devops"
 
-  policy = [
-    {
-      name = "RecordingRetention"
-      filters = {
-        prefix_match = ["${local.main_container_name}/"]
-        blob_types   = ["blockBlob"]
-      }
-      actions = {
-        version_delete_after_days_since_creation = var.sa_recording_retention
-      }
-    }
-  ]
   containers = [
     {
       name        = local.main_container_name
@@ -54,6 +42,22 @@ module "sa" {
       access_type = "private"
     }
   ]
+}
+
+resource "azurerm_storage_management_policy" "sa" {
+  storage_account_id = module.sa.storageaccount_id
+  rule {
+    name = "RecordingRetention"
+    filters = {
+      prefix_match = ["${local.main_container_name}/"]
+      blob_types   = ["blockBlob"]
+    }
+    actions {
+      base_blob {
+        delete_after_days_since_creation_greater_than = var.sa_recording_retention
+      }
+    }
+  }
 }
 
 #---------------------------------------------------
