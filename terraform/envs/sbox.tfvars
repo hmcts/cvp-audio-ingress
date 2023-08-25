@@ -14,6 +14,7 @@ vm_size                       = "Standard_F4s_v2"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 3
 remaining_days                = 1
+sa_recording_retention        = 125 # 7 years
 schedules = [
   {
     name      = "vm-off",
