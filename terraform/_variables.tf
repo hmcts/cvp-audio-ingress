@@ -42,7 +42,7 @@ variable "vm_count" {
 
 variable "vm_size" {
   type        = string
-  default     = "Standard_F16s_v2"
+  default     = "Standard_D8ds_v5"
   description = "Size of VM. Defaults to \"Standard_F16s_v2\"."
   # From <env>.tfvars
 }
