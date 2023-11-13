@@ -9,3 +9,11 @@ parameters:
   values:
   - 'STG'
   - 'SBOX'
+  
+- name: vms
+  displayName: 'Number of Wowza VMs that should be running?'
+  type: number
+  values:
+  - 0
+  - 1
+  - 2
