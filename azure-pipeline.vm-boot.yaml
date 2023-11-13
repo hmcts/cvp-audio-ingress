@@ -1,0 +1,11 @@
+trigger: none
+
+pr: none
+
+parameters:
+- name: environment
+  displayName: WWowza Environment
+  type: string
+  values:
+  - 'STG'
+  - 'SBOX'
