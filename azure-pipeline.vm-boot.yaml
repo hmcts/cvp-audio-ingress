@@ -28,7 +28,7 @@ jobs:
   - task: AzureCLI@2
     displayName: Spin up VMs
     inputs:
-      azureSubscription: 'DTS-SHAREDSERVICES-${{ parameters.environment }}'
+      azureSubscription: 'DTS-SHAREDSERVICES-${{parameters.environment}}'
       scriptType: 'pscore'
       scriptLocation: 'scriptPath'
       scriptPath: 'scripts/set-vmStatus.ps1'
