@@ -20,9 +20,6 @@ module "sa" {
   account_replication_type = var.sa_account_replication_type
   access_tier              = var.sa_access_tier
 
-  team_name    = "CVP DevOps"
-  team_contact = "#vh-devops"
-
   policy = [
     {
       name = "RecordingRetention"
