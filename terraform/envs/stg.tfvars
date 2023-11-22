@@ -16,19 +16,10 @@ expiry_days                   = 10
 remaining_days                = 3
 schedules = [
   {
-    name      = "vm-off-weekly",
-    frequency = "Week"
+    name      = "vm-off",
+    frequency = "Day"
     interval  = 1
-    run_time  = "15:00:00"
+    run_time  = "18:00:00"
     start_vm  = false
-    week_days = ["Saturday"]
   },
-  {
-    name      = "vm-on-weekly",
-    frequency = "Week"
-    interval  = 1
-    run_time  = "05:00:00"
-    start_vm  = true
-    week_days = ["Monday"]
-  }
 ]
