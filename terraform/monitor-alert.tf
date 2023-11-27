@@ -3,7 +3,7 @@
 #---------------------------------------------------
 resource "azurerm_monitor_metric_alert" "cvp-backup-alert" {
 
-  count = var.env == "stg" || var.env == "prod" ? var.vm_count : 0
+  count = var.env == "prod" ? var.vm_count : 0
 
   name                = "${local.service_name}-vm${count.index + 1}-backup-alert"
   resource_group_name = azurerm_resource_group.rg.name
