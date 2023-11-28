@@ -10,7 +10,7 @@ vpn_source_address_prefixes   = ["10.99.19.4"]
 ws_name                       = "hmcts-sandbox"
 ws_rg                         = "oms-automation"
 num_applications              = 20
-vm_size                       = "Standard_D8ds_v5"
+vm_size                       = "Standard_D2ds_v5"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 3
 remaining_days                = 1
@@ -23,12 +23,4 @@ schedules = [
     run_time  = "18:00:00"
     start_vm  = false
   },
-  {
-    name      = "vm-off-weekly",
-    frequency = "Week"
-    interval  = 1
-    run_time  = "15:00:00"
-    start_vm  = false
-    week_days = ["Sunday"]
-  }
 ]

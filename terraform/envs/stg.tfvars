@@ -10,26 +10,17 @@ vpn_source_address_prefixes   = ["10.99.19.4"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-vm_size                       = "Standard_D8ds_v5"
+vm_size                       = "Standard_D4ds_v5"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 10
 remaining_days                = 3
 sa_recording_retention        = 90 # 7 years
 schedules = [
   {
-    name      = "vm-off-weekly",
-    frequency = "Week"
+    name      = "vm-off",
+    frequency = "Day"
     interval  = 1
-    run_time  = "15:00:00"
+    run_time  = "18:00:00"
     start_vm  = false
-    week_days = ["Saturday"]
   },
-  {
-    name      = "vm-on-weekly",
-    frequency = "Week"
-    interval  = 1
-    run_time  = "05:00:00"
-    start_vm  = true
-    week_days = ["Monday"]
-  }
 ]
