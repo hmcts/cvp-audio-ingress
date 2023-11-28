@@ -20,18 +20,6 @@ module "sa" {
   account_replication_type = var.sa_account_replication_type
   access_tier              = var.sa_access_tier
 
-  policy = [
-    {
-      name = "RecordingRetention"
-      filters = {
-        prefix_match = ["${local.main_container_name}/"]
-        blob_types   = ["blockBlob"]
-      }
-      actions = {
-        version_delete_after_days_since_creation = var.sa_recording_retention
-      }
-    }
-  ]
   containers = [
     {
       name        = local.main_container_name
@@ -75,7 +63,7 @@ resource "azurerm_storage_management_policy" "sa" {
 #---------------------------------------------------
 resource "azurerm_management_lock" "sa" {
   count = var.env == "prod" ? 1 : 0
-  
+
   name       = "resource-sa"
   scope      = module.sa.storageaccount_id
   lock_level = "CanNotDelete"
