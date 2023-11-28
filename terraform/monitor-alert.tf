@@ -7,7 +7,7 @@ resource "azurerm_monitor_metric_alert" "cvp-backup-alert" {
 
   name                = "${local.service_name}-vm${count.index + 1}-backup-alert"
   resource_group_name = azurerm_resource_group.rg.name
-  scopes              = [azurerm_recovery_services_vault.backup_vault.id]
+  scopes              = [azurerm_recovery_services_vault.backup_vault[0].id]
   description         = "Alert will be triggered when a non-healthy backup event happens."
 
   frequency   = "PT1H"
