@@ -15,6 +15,7 @@ dynatrace_tenant              = "ebe20728"
 expiry_days                   = 15
 remaining_days                = 5
 sa_recording_retention        = 90
+sa_default_action             = "Allow"
 schedules = [
   {
     name      = "vm-off-weekly",
