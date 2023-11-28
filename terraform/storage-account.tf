@@ -10,7 +10,7 @@ module "sa" {
   storage_account_name = "${replace(lower(local.service_name), "-", "")}sa"
   common_tags          = module.ctags.common_tags
 
-  default_action = "Deny"
+  default_action = var.sa_default_action
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -20,18 +20,6 @@ module "sa" {
   account_replication_type = var.sa_account_replication_type
   access_tier              = var.sa_access_tier
 
-  policy = [
-    {
-      name = "RecordingRetention"
-      filters = {
-        prefix_match = ["${local.main_container_name}/"]
-        blob_types   = ["blockBlob"]
-      }
-      actions = {
-        version_delete_after_days_since_creation = var.sa_recording_retention
-      }
-    }
-  ]
   containers = [
     {
       name        = local.main_container_name
@@ -53,10 +41,29 @@ module "sa" {
   ]
 }
 
+resource "azurerm_storage_management_policy" "sa" {
+  storage_account_id = module.sa.storageaccount_id
+  rule {
+    name    = "RecordingRetention"
+    enabled = true
+    filters {
+      prefix_match = ["${local.main_container_name}/"]
+      blob_types   = ["blockBlob"]
+    }
+    actions {
+      base_blob {
+        delete_after_days_since_creation_greater_than = var.sa_recording_retention
+      }
+    }
+  }
+}
+
 #---------------------------------------------------
 # Lock to prevent deletion of storage account
 #---------------------------------------------------
 resource "azurerm_management_lock" "sa" {
+  count = var.env == "prod" ? 1 : 0
+
   name       = "resource-sa"
   scope      = module.sa.storageaccount_id
   lock_level = "CanNotDelete"

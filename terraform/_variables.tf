@@ -281,6 +281,12 @@ variable "sa_recording_retention" {
   # From shared.tfvars
 }
 
+variable "sa_default_action" {
+  type        = string
+  default     = "Deny"
+  description = "What is the default action of the networking for the storage account. Defaults to 'Deny'"
+}
+
 #---------------------------------------------------
 # Automation Account settings
 #---------------------------------------------------

@@ -16,6 +16,7 @@ os_disk_size                  = "512"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 10
 remaining_days                = 3
+sa_recording_retention        = 90 # 7 years
 schedules = [
   {
     name      = "vm-off",
