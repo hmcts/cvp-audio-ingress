@@ -74,6 +74,8 @@ resource "azurerm_storage_management_policy" "sa" {
 # Lock to prevent deletion of storage account
 #---------------------------------------------------
 resource "azurerm_management_lock" "sa" {
+  count = var.env == "prod" ? 1 : 0
+  
   name       = "resource-sa"
   scope      = module.sa.storageaccount_id
   lock_level = "CanNotDelete"
