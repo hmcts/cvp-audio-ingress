@@ -19,8 +19,7 @@ module "sa" {
   account_kind             = var.sa_account_kind
   account_replication_type = var.sa_account_replication_type
   access_tier              = var.sa_access_tier
-  retention_period         = var.env == "sbox" ? 7 : var.env == "stg" || var.env == "prod" ? 14 : null
-
+  retention_period         = var.retention_period
   containers = [
     {
       name        = local.main_container_name
