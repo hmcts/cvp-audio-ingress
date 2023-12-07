@@ -309,3 +309,9 @@ variable "dynatrace_tenant" {
   type        = string
   description = "Name Given To Dynatrace Tenant."
 }
+
+variable "retention_period" {
+  type        = number
+  default     = 365
+  description = "(Optional) Specifies the number of days that the blob should be retained, between 1 and 365 days. Defaults to 365"
+}
