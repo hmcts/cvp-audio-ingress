@@ -904,6 +904,89 @@ write_files:
         fi
   - owner: wowza:wowza
     permissions: 0775
+    path: /home/wowza/move-recordings.sh
+    content: |
+        #!/bin/bash
+
+        streams=$(find /usr/local/WowzaStreamingEngine/content/ -name "*.mp4" -not -path "/usr/local/WowzaStreamingEngine/content/azurecopy/*")
+
+        for stream in $streams; do
+        IFS="/" read -a myarray <<< $stream
+        echo "Copying..."
+        echo $stream
+        echo "to..."
+        echo "/usr/local/WowzaStreamingEngine/content/azurecopy/${myarray[5]}/${myarray[6]}"
+        cp $stream "/usr/local/WowzaStreamingEngine/content/azurecopy/${myarray[5]}/${myarray[6]}"
+        if [[ -f "/usr/local/WowzaStreamingEngine/content/azurecopy/${myarray[5]}/${myarray[6]}" ]]; then
+                echo "File moved OK, removing local file"
+                sudo rm $stream
+        else
+                echo "File didnt move!"
+        fi
+        done
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/get-recordings.sh
+    content: |
+        #!/bin/bash
+
+        files=$(find /usr/local/WowzaStreamingEngine/content/ -name "*.mp4" -not -path "/usr/local/WowzaStreamingEngine/content/azurecopy/*")
+        for file in $files; do
+                if [[ "$file" == *audiostream* ]]; then
+                        echo ""
+                        echo "++++++++++++++++++++++++++++++"
+                        echo "$file"
+                        echo ""
+
+                        IFS="/" read -ra myarray <<< $file
+                        room_name="${myarray[5]}"
+                        file_name="${myarray[6]}"
+
+                        IFS="_" read -ra file_array <<< $file_name
+                        case="${file_array[0]}"
+                        date="${file_array[1]}"
+
+                        echo "Case: $case"
+                        echo "Room: $room_name"
+                        echo "Started: $date"
+
+                        FILESIZE_1=$(stat -c%s "$file")
+                        sleep 1
+                        FILESIZE_2=$(stat -c%s "$file")
+                        if [ "$FILESIZE_1" != "$FILESIZE_2" ]; then
+                                echo "Status: In Progress"
+                                file_date_formatted="${date:0:4}-${date:5:2}-${date:8:2} ${date:11:2}:${date:14:2}:${date:17:2}"
+                                file_timestamp=$(date -u -d "$file_date_formatted" +%s)
+                                current_timestamp=$(date -u +%s)
+
+                                # Calculate the difference
+                                diff_seconds=$((current_timestamp - file_timestamp))
+                                diff_hours=$((diff_seconds / 3600))
+                                diff_minutes=$(( (diff_seconds % 3600) / 60 ))
+                                diff_seconds=$((diff_seconds % 60))
+
+                                echo "Duration: $diff_hours hours, $diff_minutes minutes, and $diff_seconds"
+                        else
+                                echo "Status: Not Recording"
+                                mod_date=$(date -r $file "+%m-%d-%Y %H:%M:%S")
+                                mod_file_date_formatted="${mod_date:6:4}-${mod_date:3:2}-${mod_date:0:2} ${mod_date:11:2}:${mod_date:14:2}:${mod_date:17:2}"
+                                mod_file_timestamp=$(date -u -d "$mod_file_date_formatted" +%s)
+
+                                file_date_formatted="${date:0:4}-${date:5:2}-${date:8:2} ${date:11:2}:${date:14:2}:${date:17:2}"
+                                file_timestamp=$(date -u -d "$file_date_formatted" +%s)
+
+                                # Calculate the difference
+                                diff_seconds=$((mod_file_timestamp - file_timestamp))
+                                diff_hours=$((diff_seconds / 3600))
+                                diff_minutes=$(( (diff_seconds % 3600) / 60 ))
+                                diff_seconds=$((diff_seconds % 60))
+
+                                echo "Duration: $diff_hours hours, $diff_minutes minutes, and $diff_seconds"
+                        fi
+                fi
+        done
+  - owner: wowza:wowza
+    permissions: 0775
     path: /home/wowza/log4j-fix.sh
     content: |
         #!/bin/bash
