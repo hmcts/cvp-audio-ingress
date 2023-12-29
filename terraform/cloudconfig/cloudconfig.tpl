@@ -934,9 +934,8 @@ write_files:
         for file in $files; do
                 if [[ "$file" == *audiostream* ]]; then
                         echo ""
-                        echo "++++++++++++++++++++++++++++++"
-                        echo "$file"
-                        echo ""
+                        echo "-----------------------------------------------"
+                        echo "File: $file"
 
                         IFS="/" read -ra myarray <<< $file
                         room_name="${myarray[5]}"
@@ -965,7 +964,7 @@ write_files:
                                 diff_minutes=$(( (diff_seconds % 3600) / 60 ))
                                 diff_seconds=$((diff_seconds % 60))
 
-                                echo "Duration: $diff_hours hours, $diff_minutes minutes, and $diff_seconds"
+                                echo "Duration: $diff_hours hours, $diff_minutes minutes, and $diff_seconds seconds"
                         else
                                 echo "Status: Not Recording"
                                 mod_date=$(date -r $file "+%m-%d-%Y %H:%M:%S")
@@ -981,7 +980,7 @@ write_files:
                                 diff_minutes=$(( (diff_seconds % 3600) / 60 ))
                                 diff_seconds=$((diff_seconds % 60))
 
-                                echo "Duration: $diff_hours hours, $diff_minutes minutes, and $diff_seconds"
+                                echo "Duration: $diff_hours hours, $diff_minutes minutes, and $diff_seconds seconds"
                         fi
                 fi
         done
