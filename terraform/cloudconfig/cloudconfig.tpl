@@ -1068,17 +1068,17 @@ write_files:
         timestamp=$(date +%Y%m%d)
 
         # Find the log files in the source directory
-        for file in "${log_files[@]}"
+        for file in "$${log_files[@]}"
         do
           # Append the timestamp to the filename
-          dest_file="$destination/${timestamp}_${HOSTNAME}_${file}"
-          src_file="$src_dir/${file}"
+          dest_file="$destination/$${timestamp}_$${HOSTNAME}_$${file}"
+          src_file="$src_dir/$${file}"
 
           # copy the file
           cp "$src_file" "$dest_file"
 
           dt=$(date +%Y%m%d_%H%M%S)
-          echo "$dt copied $file -> ./daily/${timestamp}_${HOSTNAME}_${file}"
+          echo "$dt copied $file -> ./daily/$${timestamp}_$${HOSTNAME}_$${file}"
         done
   - owner: wowza:wowza
     path: /home/wowza/get-sas.sh
