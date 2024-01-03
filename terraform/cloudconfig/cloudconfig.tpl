@@ -894,7 +894,7 @@ write_files:
         
             rm -rf $downloadedPfxPath || true
             rm -f $jksPath || true
-            
+
             az keyvault secret download --file $downloadedPfxPath --vault-name $keyVaultName --encoding base64 --name $certName
 
             keytool -storepasswd -new $jksPass -keystore $downloadedPfxPath -storepass "" -storetype PKCS12
@@ -1175,11 +1175,6 @@ write_files:
         echo "10 0 * * * /home/wowza/check-file-size.sh" >> $cronTaskPath
         fi
 
-        # Cron for nightly service restart
-        if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
-        0 5 * * * /home/wowza/wowza-restart.sh >> $logFolder/wowzaRestartLog.txt
-        fi
-
         # Set Up Cron Jobs for Wowza & Root.
         crontab -u wowza $cronTaskPath
         crontab $cronTaskPathRoot
@@ -1226,7 +1221,7 @@ write_files:
         /home/wowza/mount.sh $logMount $logTmp $logCfg
 
         # Install Certificates.
-        sudo /home/wowza/renew-cert.sh
+        /home/wowza/renew-cert.sh
 
         # Set Up CronJobs.
         /home/wowza/cron.sh $blobMount $blobTmp $blobCfg $logMount $logTmp $logCfg
