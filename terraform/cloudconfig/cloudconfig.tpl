@@ -917,9 +917,9 @@ write_files:
         echo "Copying..."
         echo $stream
         echo "to..."
-        echo "/usr/local/WowzaStreamingEngine/content/azurecopy/${myarray[5]}/${myarray[6]}"
-        cp $stream "/usr/local/WowzaStreamingEngine/content/azurecopy/${myarray[5]}/${myarray[6]}"
-        if [[ -f "/usr/local/WowzaStreamingEngine/content/azurecopy/${myarray[5]}/${myarray[6]}" ]]; then
+        echo "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}"
+        cp $stream "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}"
+        if [[ -f "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}" ]]; then
                 echo "File moved OK, removing local file"
                 sudo rm $stream
         else
@@ -940,12 +940,12 @@ write_files:
                         echo "File: $file"
 
                         IFS="/" read -ra myarray <<< $file
-                        room_name="${myarray[5]}"
-                        file_name="${myarray[6]}"
+                        room_name="$${myarray[5]}"
+                        file_name="$${myarray[6]}"
 
                         IFS="_" read -ra file_array <<< $file_name
-                        case="${file_array[0]}"
-                        date="${file_array[1]}"
+                        case="$${file_array[0]}"
+                        date="$${file_array[1]}"
 
                         echo "Case: $case"
                         echo "Room: $room_name"
@@ -956,7 +956,7 @@ write_files:
                         FILESIZE_2=$(stat -c%s "$file")
                         if [ "$FILESIZE_1" != "$FILESIZE_2" ]; then
                                 echo "Status: In Progress"
-                                file_date_formatted="${date:0:4}-${date:5:2}-${date:8:2} ${date:11:2}:${date:14:2}:${date:17:2}"
+                                file_date_formatted="$${date:0:4}-$${date:5:2}-$${date:8:2} $${date:11:2}:$${date:14:2}:$${date:17:2}"
                                 file_timestamp=$(date -u -d "$file_date_formatted" +%s)
                                 current_timestamp=$(date -u +%s)
 
@@ -970,10 +970,10 @@ write_files:
                         else
                                 echo "Status: Not Recording"
                                 mod_date=$(date -r $file "+%m-%d-%Y %H:%M:%S")
-                                mod_file_date_formatted="${mod_date:6:4}-${mod_date:3:2}-${mod_date:0:2} ${mod_date:11:2}:${mod_date:14:2}:${mod_date:17:2}"
+                                mod_file_date_formatted="$${mod_date:6:4}-$${mod_date:3:2}-$${mod_date:0:2} $${mod_date:11:2}:$${mod_date:14:2}:$${mod_date:17:2}"
                                 mod_file_timestamp=$(date -u -d "$mod_file_date_formatted" +%s)
 
-                                file_date_formatted="${date:0:4}-${date:5:2}-${date:8:2} ${date:11:2}:${date:14:2}:${date:17:2}"
+                                file_date_formatted="$${date:0:4}-$${date:5:2}-$${date:8:2} $${date:11:2}:$${date:14:2}:$${date:17:2}"
                                 file_timestamp=$(date -u -d "$file_date_formatted" +%s)
 
                                 # Calculate the difference
