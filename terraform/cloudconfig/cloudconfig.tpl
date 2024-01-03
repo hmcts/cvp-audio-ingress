@@ -1052,6 +1052,35 @@ write_files:
         dt=$(date)
         echo $HOSTNAME "Wowza Restart commanded at:" $dt#!/bin/bash
   - owner: wowza:wowza
+    path: /home/wowza/sync-logs.sh
+    permissions: 0775
+    content: |
+        #!/bin/bash
+
+        # Source directory where the log files are stored
+        src_dir="/usr/local/WowzaStreamingEngine/logs"
+        destination="/usr/local/WowzaStreamingEngine/azlogs/daily"
+        mkdir -p $destination
+
+        log_files=("wowzastreamingengine_access.log" "wowzastreamingengine_error.log" "wowzastreamingengine_stats.log")
+
+        # Get the current date and time
+        timestamp=$(date +%Y%m%d)
+
+        # Find the log files in the source directory
+        for file in "${log_files[@]}"
+        do
+          # Append the timestamp to the filename
+          dest_file="$destination/${timestamp}_${HOSTNAME}_${file}"
+          src_file="$src_dir/${file}"
+
+          # copy the file
+          cp "$src_file" "$dest_file"
+
+          dt=$(date +%Y%m%d_%H%M%S)
+          echo "$dt copied $file -> ./daily/${timestamp}_${HOSTNAME}_${file}"
+        done
+  - owner: wowza:wowza
     path: /home/wowza/get-sas.sh
     permissions: 0775
     content: |
@@ -1167,7 +1196,8 @@ write_files:
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
         destination="/usr/local/WowzaStreamingEngine/azlogs/$HOSTNAME"
         mkdir -p $destination
-        echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination" >> $cronTaskPath
+        echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination" >> $cronTaskPath # Old script, causing many files to be created
+        echo "*/5 * * * * /home/wowza/sync-logs.sh >> $logFolder/sync-logs.txt" >> $cronTaskPath # New script that shoudl only copy one file per log per day
 
         # Cron For Certs.
         if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
