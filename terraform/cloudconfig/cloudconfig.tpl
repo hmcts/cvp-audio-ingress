@@ -893,6 +893,8 @@ write_files:
             downloadedPfxPath="downloadedCert.pfx"
         
             rm -rf $downloadedPfxPath || true
+            rm -f $jksPath || true
+            
             az keyvault secret download --file $downloadedPfxPath --vault-name $keyVaultName --encoding base64 --name $certName
 
             keytool -storepasswd -new $jksPass -keystore $downloadedPfxPath -storepass "" -storetype PKCS12
