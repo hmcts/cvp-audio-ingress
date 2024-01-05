@@ -28,7 +28,7 @@ function test-stream {
     $accountName = "cvprecordings$($env)sa".ToLower()
     $wait = 2
     $n = 2
-    $wowzaApplication = "audiostream19"
+    $wowzaApplication = "audiostream1"
     $fileName= "testStream_$(Get-Date -Format "yyyyMMddHHmmss")"
 
     ##############################
