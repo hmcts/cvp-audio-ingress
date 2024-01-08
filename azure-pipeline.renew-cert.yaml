@@ -1,1 +1,44 @@
-#Renew cert
+parameters:
+  - name: subscriptionName
+    type: string
+  - name: product
+    type: string
+  - name: environment
+    type: string
+  - name: domain
+    type: string
+  - name: keyVaultName
+    type: string
+
+steps:
+
+  - task: AzureCLI@2
+    displayName: Add KeyVault FW Exception
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        while ( !$ip ) { $ip = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content }
+        write-host "Our IP address is: $ip"
+        az keyvault network-rule add --name $env:keyVaultName --ip-address "$IP/32"
+
+        $ready = 1; $retry = 0
+        while($ready -ne 0 -and $retry -lt 10) {
+          sleep (15 * $retry++)  
+          try{          
+            write-host "checking keyvault access"
+            az keyvault secret list --vault-name $env:keyVaultName | out-null
+            $ready = $LASTEXITCODE    
+          } catch {
+            $ready = 1
+          }        
+        }
+    env:
+      keyVaultName: ${{ parameters.keyVaultName }}
+
+  - template: purge.yaml
+    parameters:
+      subscriptionName: ${{ parameters.subscriptionName }}
+      keyVaultName: ${{ parameters.keyVaultName }}
+      certificateName: "${{ parameters.product }}-${{ parameters.environment }}-le-cert"
