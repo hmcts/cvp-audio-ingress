@@ -1,16 +1,41 @@
 parameters:
   - name: subscriptionName
     type: string
+    default: "DTS-SHAREDSERVICE-PROD"
   - name: product
     type: string
   - name: environment
-    type: string
+    default: "prod"
   - name: domain
     type: string
   - name: keyVaultName
     type: string
+    default: "acmedtssdsprod"
+  - name: certificateName
+    type: string
+    default: "wildcard-platform-hmcts-net"
 
 steps:
+  - task: AzureCLI@2
+    displayName: Purge ${{ parameters.certificateName }} from ${{ parameters.keyVaultName }}
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        $kvName="${{ parameters.keyVaultName }}"
+        $certName="${{ parameters.certificateName }}"
+
+        $certs=az keyvault certificate list-deleted --vault-name $kvName --query "[? name=='$certName']" -o json | ConvertFrom-Json
+
+        if ($null -ne $certs -and $certs.length -gt 0){
+          $cert=$certs[0]
+          Write-Host "Certificate Found"
+          az keyvault certificate purge --id $cert.recoveryId
+        } else {
+          Write-Host "Certificate NOT Found"
+        }
+
 
   - task: AzureCLI@2
     displayName: Add KeyVault FW Exception
@@ -37,11 +62,6 @@ steps:
     env:
       keyVaultName: ${{ parameters.keyVaultName }}
 
-  - template: purge.yaml
-    parameters:
-      subscriptionName: ${{ parameters.subscriptionName }}
-      keyVaultName: ${{ parameters.keyVaultName }}
-      certificateName: "${{ parameters.product }}-${{ parameters.environment }}-le-cert"
 
   - task: AzureCLI@2
     displayName: 'Check if Cert expired in ${{ parameters.keyVaultName }}'
