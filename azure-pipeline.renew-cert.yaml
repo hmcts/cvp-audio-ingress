@@ -75,7 +75,7 @@ steps:
         $env="${{ parameters.environment }}"
         $product="${{ parameters.product }}"
         $keyVaultName="${{ parameters.keyVaultName }}"
-        $certName="$product-$env-le-cert"
+        $certName="{{ parameters.certificateName }}"
 
         $exportedCerts = az keyvault certificate list --vault-name $keyVaultName --query "[? name=='$certName']" -o json | ConvertFrom-Json
 
@@ -205,7 +205,7 @@ steps:
         $env="${{ parameters.environment }}"
         $product="${{ parameters.product }}"
         $keyVaultName="${{ parameters.keyVaultName }}"
-        $certName="$product-$env-le-cert"
+        $certName="${{ parameters.certificateName }}"
         $password="$(packaged.pfxPass)"
         $pfxPath="$(packaged.pfxPath)"
 
