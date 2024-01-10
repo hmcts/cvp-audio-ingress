@@ -1,6 +1,10 @@
 trigger:
   - none
 
+schedules:
+- cron: "0 7 * * 1" 
+  displayName: Weekly Pipeline
+
 parameters:
 - name: env
   displayName: Wowza Environment
