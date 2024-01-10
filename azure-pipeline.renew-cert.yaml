@@ -1,1 +1,35 @@
-#Renew cert
+trigger:
+  - none
+
+parameters:
+- name: env
+  displayName: Wowza Environment
+  default: 'PROD'
+  type: string
+  values:
+  - 'STG'
+  - 'SBOX'
+  - 'PROD'
+
+variables:
+  - template: ../variables/variables-${{parameters.env}}.yaml
+
+resources:
+  repositories:
+    - repository: azTemplates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: master
+      endpoint: hmcts
+
+jobs:
+  - job: CertGen${{parameters.env}}
+    displayName: 'Generate Certificate for ${{parameters.env}}'
+    steps:
+      - template: templates\Azure\Certificates\Request.yaml@azTemplates
+        parameters:
+          subscriptionName: ${{variables.subscriptionName}}
+          product: "cvp"
+          environment: ${{parameters.env}}
+          domain: "${{ variables.dns }}"
+          keyVaultName: "cvp-${{parameters.env}}-kv"
