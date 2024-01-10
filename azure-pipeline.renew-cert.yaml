@@ -12,7 +12,7 @@ parameters:
   - 'PROD'
 
 variables:
-  - template: ../variables/variables-${{parameters.env}}.yaml
+  - template: ./variables/variables-${{parameters.env}}.yaml
 
 resources:
   repositories:
