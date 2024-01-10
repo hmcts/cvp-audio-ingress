@@ -30,6 +30,6 @@ jobs:
         parameters:
           subscriptionName: ${{variables.subscriptionName}}
           product: "cvp"
-          environment: ${{parameters.env}}
+          environment: ${{lower(parameters.env)}}
           domain: "${{ variables.dns }}"
-          keyVaultName: "cvp-${{parameters.env}}-kv"
+          keyVaultName: "cvp-${{lower(parameters.env)}}-kv"
