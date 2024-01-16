@@ -893,6 +893,8 @@ write_files:
             downloadedPfxPath="downloadedCert.pfx"
         
             rm -rf $downloadedPfxPath || true
+            rm -f $jksPath || true
+
             az keyvault secret download --file $downloadedPfxPath --vault-name $keyVaultName --encoding base64 --name $certName
 
             keytool -storepasswd -new $jksPass -keystore $downloadedPfxPath -storepass "" -storetype PKCS12
@@ -902,6 +904,88 @@ write_files:
         else
             echo "Certificate has NOT expired"
         fi
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/move-recordings.sh
+    content: |
+        #!/bin/bash
+
+        streams=$(find /usr/local/WowzaStreamingEngine/content/ -name "*.mp4" -not -path "/usr/local/WowzaStreamingEngine/content/azurecopy/*")
+
+        for stream in $streams; do
+        IFS="/" read -a myarray <<< $stream
+        echo "Copying..."
+        echo $stream
+        echo "to..."
+        echo "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}"
+        cp $stream "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}"
+        if [[ -f "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}" ]]; then
+                echo "File moved OK, removing local file"
+                sudo rm $stream
+        else
+                echo "File didnt move!"
+        fi
+        done
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/get-recordings.sh
+    content: |
+        #!/bin/bash
+
+        files=$(find /usr/local/WowzaStreamingEngine/content/ -name "*.mp4" -not -path "/usr/local/WowzaStreamingEngine/content/azurecopy/*")
+        for file in $files; do
+                if [[ "$file" == *audiostream* ]]; then
+                        echo ""
+                        echo "-----------------------------------------------"
+                        echo "File: $file"
+
+                        IFS="/" read -ra myarray <<< $file
+                        room_name="$${myarray[5]}"
+                        file_name="$${myarray[6]}"
+
+                        IFS="_" read -ra file_array <<< $file_name
+                        case="$${file_array[0]}"
+                        date="$${file_array[1]}"
+
+                        echo "Case: $case"
+                        echo "Room: $room_name"
+                        echo "Started: $date"
+
+                        FILESIZE_1=$(stat -c%s "$file")
+                        sleep 1
+                        FILESIZE_2=$(stat -c%s "$file")
+                        if [ "$FILESIZE_1" != "$FILESIZE_2" ]; then
+                                echo "Status: In Progress"
+                                file_date_formatted="$${date:0:4}-$${date:5:2}-$${date:8:2} $${date:11:2}:$${date:14:2}:$${date:17:2}"
+                                file_timestamp=$(date -u -d "$file_date_formatted" +%s)
+                                current_timestamp=$(date -u +%s)
+
+                                # Calculate the difference
+                                diff_seconds=$((current_timestamp - file_timestamp))
+                                diff_hours=$((diff_seconds / 3600))
+                                diff_minutes=$(( (diff_seconds % 3600) / 60 ))
+                                diff_seconds=$((diff_seconds % 60))
+
+                                echo "Duration: $diff_hours hours, $diff_minutes minutes, and $diff_seconds seconds"
+                        else
+                                echo "Status: Not Recording"
+                                mod_date=$(date -r $file "+%m-%d-%Y %H:%M:%S")
+                                mod_file_date_formatted="$${mod_date:6:4}-$${mod_date:3:2}-$${mod_date:0:2} $${mod_date:11:2}:$${mod_date:14:2}:$${mod_date:17:2}"
+                                mod_file_timestamp=$(date -u -d "$mod_file_date_formatted" +%s)
+
+                                file_date_formatted="$${date:0:4}-$${date:5:2}-$${date:8:2} $${date:11:2}:$${date:14:2}:$${date:17:2}"
+                                file_timestamp=$(date -u -d "$file_date_formatted" +%s)
+
+                                # Calculate the difference
+                                diff_seconds=$((mod_file_timestamp - file_timestamp))
+                                diff_hours=$((diff_seconds / 3600))
+                                diff_minutes=$(( (diff_seconds % 3600) / 60 ))
+                                diff_seconds=$((diff_seconds % 60))
+
+                                echo "Duration: $diff_hours hours, $diff_minutes minutes, and $diff_seconds seconds"
+                        fi
+                fi
+        done
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/log4j-fix.sh
@@ -967,6 +1051,35 @@ write_files:
         # Log the restart command 
         dt=$(date)
         echo $HOSTNAME "Wowza Restart commanded at:" $dt#!/bin/bash
+  - owner: wowza:wowza
+    path: /home/wowza/sync-logs.sh
+    permissions: 0775
+    content: |
+        #!/bin/bash
+
+        # Source directory where the log files are stored
+        src_dir="/usr/local/WowzaStreamingEngine/logs"
+        destination="/usr/local/WowzaStreamingEngine/azlogs/daily"
+        mkdir -p $destination
+
+        log_files=("wowzastreamingengine_access.log" "wowzastreamingengine_error.log" "wowzastreamingengine_stats.log")
+
+        # Get the current date and time
+        timestamp=$(date +%Y%m%d)
+
+        # Find the log files in the source directory
+        for file in "$${log_files[@]}"
+        do
+          # Append the timestamp to the filename
+          dest_file="$destination/$${timestamp}_$${HOSTNAME}_$${file}"
+          src_file="$src_dir/$${file}"
+
+          # copy the file
+          cp "$src_file" "$dest_file"
+
+          dt=$(date +%Y%m%d_%H%M%S)
+          echo "$dt copied $file -> ./daily/$${timestamp}_$${HOSTNAME}_$${file}"
+        done
   - owner: wowza:wowza
     path: /home/wowza/get-sas.sh
     permissions: 0775
@@ -1083,17 +1196,13 @@ write_files:
         wowzaSource="/usr/local/WowzaStreamingEngine/logs"
         destination="/usr/local/WowzaStreamingEngine/azlogs/$HOSTNAME"
         mkdir -p $destination
-        echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination" >> $cronTaskPath
+        echo "*/5 * * * * /usr/bin/rsync -avz $wowzaSource $destination" >> $cronTaskPath # Old script, causing many files to be created
+        echo "*/5 * * * * /home/wowza/sync-logs.sh >> $logFolder/sync-logs.txt" >> $cronTaskPath # New script that shoudl only copy one file per log per day
 
         # Cron For Certs.
         if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
         echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
         echo "10 0 * * * /home/wowza/check-file-size.sh" >> $cronTaskPath
-        fi
-
-        # Cron for nightly service restart
-        if [[ $HOSTNAME == *"prod"* ]] || [[ $HOSTNAME == *"stg"* ]]; then
-        0 5 * * * /home/wowza/wowza-restart.sh >> $logFolder/wowzaRestartLog.txt
         fi
 
         # Set Up Cron Jobs for Wowza & Root.
@@ -1142,7 +1251,7 @@ write_files:
         /home/wowza/mount.sh $logMount $logTmp $logCfg
 
         # Install Certificates.
-        sudo /home/wowza/renew-cert.sh
+        /home/wowza/renew-cert.sh
 
         # Set Up CronJobs.
         /home/wowza/cron.sh $blobMount $blobTmp $blobCfg $logMount $logTmp $logCfg
