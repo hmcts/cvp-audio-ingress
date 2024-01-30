@@ -4,7 +4,7 @@
 resource "azurerm_backup_policy_vm" "vm_backup" {
   count = var.env == "prod" ? var.vm_count : 0
 
-  name = "${local.service_name}-rsv-policy"
+  name = "${local.service_name}-vm-policy"
 
   resource_group_name            = azurerm_resource_group.rg.name
   recovery_vault_name            = azurerm_recovery_services_vault.backup_vault[0].name
