@@ -56,9 +56,7 @@ steps:
                 "autoUpgradeMinorVersion" = "false"
                 "protectedSettings" = [PSCustomObject]@{
                     "fileUris"           = @($scriptUrl)
-                    "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"
-                }
-            }
+                    "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"}}
             "tags" = [PSCustomObject]@{
                 "application"  = 'Cloud'
                 "BuiltFrom"    = 'hmcts/cvp-audio-ingress'
@@ -66,15 +64,13 @@ steps:
                 "environment"  = $env_long
                 "Platform"     = ''
                 "Video"        = ''
-                "expiresAfter" = $expDate
-            }    
-        }
+                "expiresAfter" = $expDate}}
 
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
         
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
-        Write-Host $restApiPutBodyJson
+        Write-Host restApiPutBodyJson
 
   - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
     parameters:
