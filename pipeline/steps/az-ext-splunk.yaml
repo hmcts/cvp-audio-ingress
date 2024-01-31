@@ -56,9 +56,7 @@ steps:
                 "autoUpgradeMinorVersion" = "false"
                 "protectedSettings" = [PSCustomObject]@{
                     "fileUris"           = @($scriptUrl)
-                    "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"
-                }
-            }
+                    "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"}}
             "tags" = [PSCustomObject]@{
                 "application"  = 'Cloud'
                 "BuiltFrom"    = 'hmcts/cvp-audio-ingress'
@@ -66,9 +64,7 @@ steps:
                 "environment"  = $env_long
                 "Platform"     = ''
                 "Video"        = ''
-                "expiresAfter" = $expDate
-            }    
-        }
+                "expiresAfter" = $expDate}}
 
         $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
         $restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
