@@ -70,7 +70,7 @@ steps:
         #$restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
         
         Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
-        Write-Host restApiPutBodyJson
+        Write-Host $restApiPutBodyJson
 
   - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
     parameters:
