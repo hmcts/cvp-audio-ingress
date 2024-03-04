@@ -4,7 +4,7 @@ pr: none
 
 parameters:
 - name: environment
-  displayName: WWowza Environment
+  displayName: Wowza Environment
   type: string
   values:
   - 'STG'
@@ -14,7 +14,6 @@ parameters:
   displayName: 'Number of Wowza VMs that should be running?'
   type: number
   values:
-  - 0
   - 1
   - 2
   
