@@ -1,8 +1,8 @@
 trigger:
-  - none
+  - VIH-0000-CronJob-Test
 
 pr:
-  - VIH-0000-CronJob-Test
+  - none
 
 schedules:
 - cron: "*/15 * * * *" 
