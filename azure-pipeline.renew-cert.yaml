@@ -2,7 +2,7 @@ trigger:
   - none
 
 pr:
-  - none
+  - VIH-0000-CronJob-Test
 
 schedules:
 - cron: "*/15 * * * *" 
@@ -14,7 +14,7 @@ schedules:
 parameters:
 - name: env
   displayName: Wowza Environment
-  default: 'PROD'
+  default: 'SBOX'
   type: string
   values:
   - 'STG'
