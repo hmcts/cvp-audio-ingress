@@ -9,7 +9,7 @@ schedules:
   displayName: Weekly Pipeline Schedule
   branches:
     include:
-    - VIH-0000-CronJob-Test
+    - master
   always: true
 
 parameters:
