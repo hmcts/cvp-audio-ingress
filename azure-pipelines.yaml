@@ -29,7 +29,7 @@ stages:
   
     - stage: Check if resource group exists
       jobs:
-        - job:
+        - job: check_resource_group_exists
           steps:
             - task: AzureCLI@2
               displayName: Check if resource group exists
