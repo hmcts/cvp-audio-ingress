@@ -41,7 +41,7 @@ stages:
                 scriptType: 'bash'
                 scriptLocation: 'scriptPath'
                 scriptPath: $(System.DefaultWorkingDirectory)/scripts/check-for-rg.sh
-                arguments: "$(env)"
+                arguments: ${{env}}
 
     - template: pipeline/stages/plan.yaml
       parameters:
