@@ -62,7 +62,7 @@ stages:
                 resourceGroupName: "managed-identities-${{variables.env}}-rg"
                 lockName: "${{variables.env}}-lock"
 
-            - ${{ if eq(parameters.resource_group_exists, 'true' ) }}:
+            - ${{ if eq(parameters.resource_group_exists, true ) }}:
               - template: templates\Azure\Storage\firewall-update.yaml@azTemplates 
                 parameters:
                   subscriptionName: ${{variables.subscriptionName}}
