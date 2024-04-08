@@ -27,8 +27,10 @@ stages:
 
   - ${{each env in parameters.envs}}:
   
-    - stage: check__resource_group_exists_${{ env }}
+    - stage: check_resource_group_exists_${{ env }}
       displayName: Check if resource group exists - ${{ env }}
+      pool:
+        vmImage: 'ubuntu-latest'
       jobs:
         - job:
           steps:
