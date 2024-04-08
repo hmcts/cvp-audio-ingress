@@ -26,9 +26,20 @@ stages:
   - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
+  
+    - task: AzureCLI@2
+      displayName: Check if resource group exists
+      inputs:
+        azureSubscription: ${{ parameters.serviceConnection }}
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: $(System.DefaultWorkingDirectory)/cvp-audio-ingress/scripts/check-for-rg.sh
+        arguments: "$(env)"
+
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
+        resource_group_exists: $(resource_group_exists)
         ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:
           runStage: 'false'
         ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release
@@ -42,6 +53,7 @@ stages:
     - template: pipeline/stages/deploy.yaml
       parameters:
         env: ${{env}}
+        resource_group_exists: $(resource_group_exists)
         ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + not release
           runStage: 'true' 
         ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
