@@ -32,9 +32,10 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       jobs:
-        - job:
+        - job: check_resource_group_exists
           steps:
             - task: AzureCLI@2.236.0
+              name: check_resource_group_exists
               displayName: Check if resource group exists
               inputs:
                 azureSubscription: "DTS-SHAREDSERVICES-${{env}}"
@@ -46,7 +47,7 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        resource_group_exists: $(resource_group_exists)
+        resource_group_exists: $[ stageDependencies.check_resource_group_exists_${{ env }}.check_resource_group_exists.outputs['check_resource_group_exists.resource_group_exists'] ]
         ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:
           runStage: 'false'
         ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release
