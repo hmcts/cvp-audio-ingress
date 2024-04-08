@@ -27,7 +27,7 @@ stages:
 
   - ${{each env in parameters.envs}}:
   
-    - stage: check__resource_group_exists-${{ env }}
+    - stage: check__resource_group_exists_${{ env }}
       displayName: Check if resource group exists - ${{ env }}
       jobs:
         - job:
