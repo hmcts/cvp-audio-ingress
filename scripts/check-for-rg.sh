@@ -1,5 +1,7 @@
 env=$1
-groups=$(az group list --subscription dts-sharedservices-${env} --query  "[?name=='cvp-recordings-${env}-rg'].{Name:name}")
+subscription=$(echo "dts-sharedservices-${env}")
+echo $subscription
+groups=$(az group list --subscription $subscription --query  "[?name=='cvp-recordings-${env}-rg'].{Name:name}")
 
 if [[ "${groups[@]}" == "[]" ]]; then
     #if the resource group doesn't exist, output false
