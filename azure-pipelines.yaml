@@ -27,9 +27,9 @@ stages:
 
   - ${{each env in parameters.envs}}:
   
-    - stage: Check if resource group exists
+    - stage: Check if resource group exists - ${{ env }}
       jobs:
-        - job: check_resource_group_exists
+        - job:
           steps:
             - task: AzureCLI@2
               displayName: Check if resource group exists
