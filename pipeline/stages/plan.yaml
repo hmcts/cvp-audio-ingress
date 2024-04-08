@@ -59,7 +59,7 @@ stages:
                 resourceGroupName: "managed-identities-${{variables.env}}-rg"
                 lockName: "${{variables.env}}-lock"
 
-            ${{ if ne(parameters.env, 'sbox' ) }}:
+            - ${{ if ne(parameters.env, 'sbox' ) }}:
               - template: templates\Azure\Storage\firewall-update.yaml@azTemplates 
                 parameters:
                   subscriptionName: ${{variables.subscriptionName}}
