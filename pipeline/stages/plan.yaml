@@ -60,6 +60,7 @@ stages:
                 lockName: "${{variables.env}}-lock"
 
             - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
+              continueOnError: true 
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
