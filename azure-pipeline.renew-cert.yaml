@@ -5,7 +5,7 @@ pr:
   - none
 
 schedules:
-- cron: "0 7 * * 1"  
+- cron: "0 7 * * 1" 
   displayName: Weekly Pipeline Schedule
   branches:
     include:
@@ -15,7 +15,7 @@ schedules:
 parameters:
 - name: env
   displayName: Wowza Environment
-  default: 'SBOX'
+  default: 'PROD'
   type: string
   values:
   - 'STG'
