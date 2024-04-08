@@ -61,7 +61,10 @@ stages:
 
             - template: templates\Azure\Storage\firewall-update.yaml@azTemplates 
               parameters:
-                continueOnError: true
+                ${{ if eq(parameters.env, sbox ) }}:
+                  alwaysRun: false
+                ${{ else }}:
+                  alwaysRun: true
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
