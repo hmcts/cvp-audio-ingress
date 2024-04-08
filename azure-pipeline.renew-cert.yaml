@@ -1,5 +1,5 @@
 trigger:
-  - VIH-0000-CronJob-Test
+  - none
 
 pr:
   - none
@@ -9,7 +9,7 @@ schedules:
   displayName: Weekly Pipeline Schedule
   branches:
     include:
-    - master
+    - VIH-0000-CronJob-Test
 
 parameters:
 - name: env
