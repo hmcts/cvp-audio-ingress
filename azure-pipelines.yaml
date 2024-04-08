@@ -68,6 +68,7 @@ stages:
     - template: pipeline/stages/test.yaml
       parameters:
         env: ${{env}}
+        resource_group_exists: $(resource_group_exists)
         ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + release
           runStage: 'true' 
         ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release

@@ -5,6 +5,9 @@ parameters:
   - name: runStage
     type: string
     default: 'false'
+  - name: resource_group_exists
+    type: string
+    default: 'true'
 
 stages:
   - ${{ if eq(parameters.runStage, true)}}:
@@ -29,6 +32,7 @@ stages:
                 loadBalancerName: '${{variables.product}}-recordings-${{parameters.env}}-lb'
 
         - job: VirtualMachineTest
+          condition: ${{ eq(parameters.resource_group_exists, 'true' )}}
           displayName: '${{parameters.env}} Virtual Machine Tests '
           steps:
 
