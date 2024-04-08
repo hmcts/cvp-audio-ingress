@@ -45,7 +45,7 @@ stages:
       jobs:
         - job: VmOn${{parameters.env}}
           displayName: 'Turn on VMs'
-          condition: eq(parameters.resource_group_exists, 'true' )
+          condition: ${{ eq(parameters.resource_group_exists, 'true' )}}
           steps:
             - template: templates/Azure/Vm/start-stop-vm.yaml@azTemplates
               parameters:
