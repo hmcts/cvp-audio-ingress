@@ -37,7 +37,7 @@ stages:
             - task: AzureCLI@2.236.0
               displayName: Check if resource group exists
               inputs:
-                azureSubscription: 'DTS-SHAREDSERVICES-${{env}}'
+                azureSubscription: DTS-SHAREDSERVICES-${{ env }}
                 scriptType: 'bash'
                 scriptLocation: 'scriptPath'
                 scriptPath: $(System.DefaultWorkingDirectory)/scripts/check-for-rg.sh
