@@ -40,7 +40,7 @@ stages:
                 azureSubscription: 'DTS-SHAREDSERVICES-${{env}}'
                 scriptType: 'bash'
                 scriptLocation: 'scriptPath'
-                scriptPath: $(System.DefaultWorkingDirectory)/cvp-audio-ingress/scripts/check-for-rg.sh
+                scriptPath: $(System.DefaultWorkingDirectory)/scripts/check-for-rg.sh
                 arguments: "$(env)"
 
     - template: pipeline/stages/plan.yaml
