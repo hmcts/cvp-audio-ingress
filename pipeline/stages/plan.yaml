@@ -59,16 +59,13 @@ stages:
                 resourceGroupName: "managed-identities-${{variables.env}}-rg"
                 lockName: "${{variables.env}}-lock"
 
-            - template: templates\Azure\Storage\firewall-update.yaml@azTemplates 
-              parameters:
-                ${{ if eq(parameters.env, 'sbox' ) }}:
-                  alwaysRun: false
-                ${{ else }}:
-                  alwaysRun: true
-                subscriptionName: ${{variables.subscriptionName}}
-                resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-                storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
-                action: Allow
+            ${{ if ne(parameters.env, 'sbox' ) }}:
+              - template: templates\Azure\Storage\firewall-update.yaml@azTemplates 
+                parameters:
+                  subscriptionName: ${{variables.subscriptionName}}
+                  resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+                  storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
+                  action: Allow
 
             - template: ../steps/tf-plan.yaml
               parameters:
