@@ -5,6 +5,9 @@ parameters:
   - name: runStage
     type: string
     default: 'false'
+  - name: resource_group_exists
+    type: string
+    default: 'true'
 
 stages:
   - ${{ if and(eq(parameters.runStage, true), ne(parameters.env, 'sbox') )}}:

@@ -8,6 +8,9 @@ parameters:
   - name: runStage
     type: string
     default: 'true'
+  - name: resource_group_exists
+    type: string
+    default: 'true'
 
 stages:
   - ${{ if eq(parameters.runStage, true)}}:
