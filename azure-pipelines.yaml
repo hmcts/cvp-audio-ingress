@@ -34,7 +34,7 @@ stages:
       jobs:
         - job:
           steps:
-            - task: AzureCLI@2
+            - task: AzureCLI@2.236.0
               displayName: Check if resource group exists
               inputs:
                 azureSubscription: 'DTS-SHAREDSERVICES-${{env}}'
