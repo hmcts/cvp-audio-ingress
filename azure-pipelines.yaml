@@ -27,14 +27,18 @@ stages:
 
   - ${{each env in parameters.envs}}:
   
-    - task: AzureCLI@2
-      displayName: Check if resource group exists
-      inputs:
-        azureSubscription: ${{ parameters.serviceConnection }}
-        scriptType: 'bash'
-        scriptLocation: 'scriptPath'
-        scriptPath: $(System.DefaultWorkingDirectory)/cvp-audio-ingress/scripts/check-for-rg.sh
-        arguments: "$(env)"
+    - stage: Check if resource group exists
+      jobs:
+        - job:
+          steps:
+            - task: AzureCLI@2
+              displayName: Check if resource group exists
+              inputs:
+                azureSubscription: ${{ parameters.serviceConnection }}
+                scriptType: 'bash'
+                scriptLocation: 'scriptPath'
+                scriptPath: $(System.DefaultWorkingDirectory)/cvp-audio-ingress/scripts/check-for-rg.sh
+                arguments: "$(env)"
 
     - template: pipeline/stages/plan.yaml
       parameters:
