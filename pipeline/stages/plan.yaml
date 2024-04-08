@@ -61,7 +61,7 @@ stages:
 
             - template: templates\Azure\Storage\firewall-update.yaml@azTemplates 
               parameters:
-                ${{ if eq(parameters.env, sbox ) }}:
+                ${{ if eq(parameters.env, 'sbox' ) }}:
                   alwaysRun: false
                 ${{ else }}:
                   alwaysRun: true
