@@ -37,7 +37,7 @@ stages:
             - task: AzureCLI@2
               displayName: Check if resource group exists
               inputs:
-                azureSubscription: 'DTS-SHAREDSERVICES-${{parameters.env}}'
+                azureSubscription: 'DTS-SHAREDSERVICES-${{env}}'
                 scriptType: 'bash'
                 scriptLocation: 'scriptPath'
                 scriptPath: $(System.DefaultWorkingDirectory)/cvp-audio-ingress/scripts/check-for-rg.sh
