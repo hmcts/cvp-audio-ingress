@@ -5,11 +5,12 @@ pr:
   - none
 
 schedules:
-- cron: "*/15 * * * *" 
+- cron: "0 7 * * 1"  
   displayName: Weekly Pipeline Schedule
   branches:
     include:
     - master
+  always: true
 
 parameters:
 - name: env
