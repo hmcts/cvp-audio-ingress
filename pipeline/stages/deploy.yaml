@@ -9,117 +9,95 @@ parameters:
     type: string
     default: 'true'
 
-stages:
-  - ${{ if and(eq(parameters.runStage, true), ne(parameters.env, 'sbox') )}}:
-    - stage: Wait${{parameters.env}}
-      displayName: '${{parameters.env}} Waiting for Approval'
-      condition: succeeded()
-      dependsOn: Plan${{parameters.env}}
-      pool:
-        vmImage: 'ubuntu-latest'
-      jobs:
-        - job: waitForValidation
-          displayName: '${{parameters.env}} Wait for external validation'
-          pool: server
-          timeoutInMinutes: 4320 # job times out in 3 days
-          steps:
-          - task: ManualValidation@0
-            timeoutInMinutes: 1440 # task times out in 1 day
-            inputs:
-              instructions: 'Please validate the Terraform Plan for PROD environment to resume'
-              onTimeout: 'reject'
-  - ${{ if eq(parameters.runStage, true)}}:
-    - stage: Apply${{parameters.env}}
-      displayName: 'Apply to ${{parameters.env}}'
-      pool:
-        vmImage: 'ubuntu-latest'
-      ${{ if eq(parameters.env, 'sbox')  }}:
-        dependsOn: Plan${{parameters.env}}
-      ${{ if ne(parameters.env, 'sbox') }}:
-        dependsOn: Wait${{parameters.env}}
-      condition: succeeded()
-      variables:
-        - template: ../variables/variables-common.yaml
-        - template: ../variables/variables-${{parameters.env}}.yaml
-        - group: cvp-${{parameters.env}}
-      jobs:
-        - job: VmOn${{parameters.env}}
-          displayName: 'Turn on VMs'
-          condition: ${{ eq(parameters.resource_group_exists, 'true' )}}
-          steps:
-            - template: templates/Azure/Vm/start-stop-vm.yaml@azTemplates
-              parameters:
-                env: ${{parameters.env}}
-                pipelineStart: true
-                subscriptionName: ${{variables.subscriptionName}}
+# stages:
+#   - ${{ if and(eq(parameters.runStage, true), ne(parameters.env, 'sbox') )}}:
+#     - stage: Wait${{parameters.env}}
+#       displayName: '${{parameters.env}} Waiting for Approval'
+#       condition: succeeded()
+#       dependsOn: Plan${{parameters.env}}
+#       pool:
+#         vmImage: 'ubuntu-latest'
+#       jobs:
+#         - job: waitForValidation
+#           displayName: '${{parameters.env}} Wait for external validation'
+#           pool: server
+#           timeoutInMinutes: 4320 # job times out in 3 days
+steps:
+  - task: ManualValidation@0
+    timeoutInMinutes: 1440 # task times out in 1 day
+    inputs:
+      instructions: 'Please validate the Terraform Plan for PROD environment to resume'
+      onTimeout: 'reject'
 
-        - job: ApplyTfToEnv
-          displayName: 'Terraform to ${{parameters.env}}'
-          dependsOn: 'VmOn${{parameters.env}}'
-          steps:
-            - template: ../steps/tf-install.yaml
-            - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-                storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
-                action: Allow
-            - template: ../steps/tf-apply.yaml
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                env: ${{variables.env}}
-                location: ${{variables.location}}
-                locationEng: ${{variables.locationEng}}
-                product: ${{variables.product}}
-                wowza_version: ${{variables.wowza_version}}
-                resourceGroup: "${{variables.product}}-recordings-${{parameters.env}}-rg"
-            - ${{ if eq(variables.sa_private, true) }}:
-              - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
-                parameters:
-                  subscriptionName: ${{variables.subscriptionName}}
-                  resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-                  storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
-                  action: Deny
-                  alwaysRun: true
+  - template: templates/Azure/Vm/start-stop-vm.yaml@azTemplates
+    parameters:
+      env: ${{parameters.env}}
+      pipelineStart: true
+      subscriptionName: ${{variables.subscriptionName}}
 
-        - job: ApplyExtToEnv
-          displayName: 'Extensions to ${{parameters.env}}'
-          dependsOn: ApplyTfToEnv
-          variables:
-            - template: ../variables/variables-common.yaml
-            - template: ../variables/variables-${{parameters.env}}.yaml
-            - name: currentBranch
-              ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-                value: $(System.PullRequest.SourceBranch)
-              ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-                value: $(Build.SourceBranch)
-          steps:
+  - template: ../steps/tf-install.yaml
+  - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
+    parameters:
+      subscriptionName: ${{variables.subscriptionName}}
+      resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+      storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
+      action: Allow
+  - template: ../steps/tf-apply.yaml
+    parameters:
+      subscriptionName: ${{variables.subscriptionName}}
+      env: ${{variables.env}}
+      location: ${{variables.location}}
+      locationEng: ${{variables.locationEng}}
+      product: ${{variables.product}}
+      wowza_version: ${{variables.wowza_version}}
+      resourceGroup: "${{variables.product}}-recordings-${{parameters.env}}-rg"
+  - ${{ if eq(variables.sa_private, true) }}:
+    - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
+      parameters:
+        subscriptionName: ${{variables.subscriptionName}}
+        resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+        storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
+        action: Deny
+        alwaysRun: true
+
+        # - job: ApplyExtToEnv
+        #   displayName: 'Extensions to ${{parameters.env}}'
+        #   dependsOn: ApplyTfToEnv
+        #   variables:
+        #     - template: ../variables/variables-common.yaml
+        #     - template: ../variables/variables-${{parameters.env}}.yaml
+        #     - name: currentBranch
+        #       ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        #         value: $(System.PullRequest.SourceBranch)
+        #       ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+        #         value: $(Build.SourceBranch)
+        #   steps:
           
-            - template: ../steps/az-get-vm-names.yaml
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                env: ${{variables.env}}
+  - template: ../steps/az-get-vm-names.yaml
+    parameters:
+      subscriptionName: ${{variables.subscriptionName}}
+      env: ${{variables.env}}
 
-            - template: ../steps/az-ext-splunk.yaml
-              parameters:
-                subscription: ${{variables.subscriptionName}}
-                vmNames: $(getvmnames.vmListString)
-                vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
-                env: ${{variables.env}}
-                kvName: ${{variables.cvp_kv}}
-                currentBranch: ${{variables.currentBranch}}
+  - template: ../steps/az-ext-splunk.yaml
+    parameters:
+      subscription: ${{variables.subscriptionName}}
+      vmNames: $(getvmnames.vmListString)
+      vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
+      env: ${{variables.env}}
+      kvName: ${{variables.cvp_kv}}
+      currentBranch: ${{variables.currentBranch}}
 
-            - template: ../steps/az-ext-oms.yaml
-              parameters:
-                subscription: ${{variables.subscriptionName}}
-                vmNames: $(getvmnames.vmListString)
-                vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-                env: ${{variables.env}}
+  - template: ../steps/az-ext-oms.yaml
+    parameters:
+      subscription: ${{variables.subscriptionName}}
+      vmNames: $(getvmnames.vmListString)
+      vmRgName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+      env: ${{variables.env}}
 
-            - template: ../steps/az-ext-dynatrace-api.yaml
-              parameters:
-                subscription: ${{variables.subscriptionName}}
-                vmNames: $(getvmnames.vmListString)
-                vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
-                env: ${{variables.env}}
+  - template: ../steps/az-ext-dynatrace-api.yaml
+    parameters:
+      subscription: ${{variables.subscriptionName}}
+      vmNames: $(getvmnames.vmListString)
+      vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
+      env: ${{variables.env}}
                 

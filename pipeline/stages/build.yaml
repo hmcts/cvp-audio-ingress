@@ -6,20 +6,11 @@ parameters:
     type: string
     default: 'always()'
 
-stages:
-  - stage: Build
-    condition: ${{ parameters.condition }}
-    pool:
-      vmImage: 'ubuntu-latest'
-    variables:
-      - template: ../variables/variables-common.yaml
-    jobs:
-      - job: BasicValidation
-        steps:
-          - template: ../steps/tf-install.yaml
-          - template: ../steps/tf-init.yaml
-            parameters:
-              useBackend: false
-          - template: templates/tests/terraform/allTests.yaml@azTemplates
-            parameters:
-              terraformPath: $(System.DefaultWorkingDirectory)
+steps:
+  - template: ../steps/tf-install.yaml
+  - template: ../steps/tf-init.yaml
+    parameters:
+      useBackend: false
+  - template: templates/tests/terraform/allTests.yaml@azTemplates
+    parameters:
+      terraformPath: $(System.DefaultWorkingDirectory)

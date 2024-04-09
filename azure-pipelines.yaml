@@ -23,10 +23,18 @@ variables:
 
 stages:
 
-  - template: pipeline/stages/build.yaml 
+  - stage: Build
+    condition: ${{ parameters.condition }}
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      - template: ../variables/variables-common.yaml
+    jobs:
+      - job: BasicValidation
+        steps:
+          - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
-  
     - stage: check_resource_group_exists_${{ env }}
       displayName: Check if resource group exists - ${{ env }}
       pool:
@@ -44,33 +52,112 @@ stages:
                 scriptPath: $(System.DefaultWorkingDirectory)/scripts/check-for-rg.sh
                 arguments: ${{env}}
 
-    - template: pipeline/stages/plan.yaml
-      parameters:
-        env: ${{env}}
-        resource_group_exists: $[ stageDependencies.check_resource_group_exists_${{ env }}.check_resource_group_exists.outputs['check_resource_group_exists.resource_group_exists'] ]
-        ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:
-          runStage: 'false'
-        ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release
-          runStage: 'true'
-          dependsOnEnv: 'sbox'
-        ${{ if and(eq(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # prod env + not release
-          runStage: 'true'
-          dependsOnEnv: 'stg'
+    - stage: 'Plan${{parameters.env}}'
+      displayName: 'Plan ${{parameters.env}}'
+      ${{ if eq(parameters.dependsOnEnv, '') }}:
+        dependsOn: Build
+      ${{ if eq(parameters.dependsOnEnv, 'sbox') }}:
+        dependsOn: 'Test${{parameters.dependsOnEnv}}'
+      ${{ if eq(parameters.dependsOnEnv, 'stg') }}:
+        dependsOn: 'Test${{parameters.dependsOnEnv}}'
+      pool:
+        vmImage: 'ubuntu-latest'
+      condition: succeeded()
+      variables:
+        - template: ../variables/variables-common.yaml
+        - template: ../variables/variables-${{parameters.env}}.yaml
+        - group: cvp-${{parameters.env}}
+      jobs:
+        - job: PlanToEnv${{parameters.env}}
+          displayName: 'Plan to ${{parameters.env}}'
+          steps:
+            - template: pipeline/stages/plan.yaml
+              parameters:
+                env: ${{env}}
+                resource_group_exists: $[ stageDependencies.check_resource_group_exists_${{ env }}.check_resource_group_exists.outputs['check_resource_group_exists.resource_group_exists'] ]
+                ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:
+                  runStage: 'false'
+                ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release
+                  runStage: 'true'
+                  dependsOnEnv: 'sbox'
+                ${{ if and(eq(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # prod env + not release
+                  runStage: 'true'
+                  dependsOnEnv: 'stg'
 
-    - template: pipeline/stages/deploy.yaml
-      parameters:
-        env: ${{env}}
-        resource_group_exists: $(resource_group_exists)
-        ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + not release
-          runStage: 'true' 
-        ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
-          runStage: 'true'
+        - job: CertGen${{parameters.env}}
+          displayName: 'Generate Certificate for ${{parameters.env}}'
+          steps:
+            - template: templates\Azure\Certificates\Request.yaml@azTemplates
+              parameters:
+                subscriptionName: ${{variables.subscriptionName}}
+                product: "cvp"
+                environment: ${{parameters.env}}
+                domain: "${{ variables.dns }}"
+                keyVaultName: "cvp-${{parameters.env}}-kv"
 
-    - template: pipeline/stages/test.yaml
-      parameters:
-        env: ${{env}}
-        resource_group_exists: $(resource_group_exists)
-        ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + release
-          runStage: 'true' 
-        ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
-          runStage: 'true'
+  - ${{ if and(eq(parameters.runStage, true), ne(parameters.env, 'sbox') )}}:
+    - stage: Wait${{parameters.env}}
+      displayName: '${{parameters.env}} Waiting for Approval'
+      condition: succeeded()
+      dependsOn: Plan${{parameters.env}}
+      pool:
+        vmImage: 'ubuntu-latest'
+      jobs:
+        - job: waitForValidation
+          displayName: '${{parameters.env}} Wait for external validation'
+          pool: server
+          timeoutInMinutes: 4320 # job times out in 3 days
+
+  - ${{ if eq(parameters.runStage, true)}}:
+    - stage: Apply${{parameters.env}}
+      displayName: 'Apply to ${{parameters.env}}'
+      pool:
+        vmImage: 'ubuntu-latest'
+      ${{ if eq(parameters.env, 'sbox')  }}:
+        dependsOn: Plan${{parameters.env}}
+      ${{ if ne(parameters.env, 'sbox') }}:
+        dependsOn: Wait${{parameters.env}}
+      condition: succeeded()
+      variables:
+        - template: ../variables/variables-common.yaml
+        - template: ../variables/variables-${{parameters.env}}.yaml
+        - group: cvp-${{parameters.env}}
+      jobs:
+        - job: Apply${{ env }}
+          steps:
+            - template: pipeline/stages/deploy.yaml
+              parameters:
+                env: ${{env}}
+                resource_group_exists: $(resource_group_exists)
+                ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + not release
+                  runStage: 'true' 
+                ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
+                  runStage: 'true'
+
+        - job: Test${{ env }}
+          steps:
+            - template: pipeline/stages/test.yaml
+              parameters:
+                env: ${{env}}
+                resource_group_exists: $(resource_group_exists)
+                ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + release
+                  runStage: 'true' 
+                ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
+                  runStage: 'true'
+
+        - ${{ if eq(variables.TURN_OFF_VM_POST_RUN, true) }}:
+          - job: 'StopVM${{parameters.env}}'
+            displayName: '${{parameters.env}} Turning Vm off'
+            dependsOn: [LoadBalancerTest, VirtualMachineTest]
+            pool:
+              vmImage: 'ubuntu-latest'
+            variables:
+              - template: ../variables/variables-common.yaml
+              - template: ../variables/variables-${{parameters.env}}.yaml
+              - group: cvp-${{parameters.env}}
+            steps:
+              - template: templates/Azure/Vm/start-stop-vm.yaml@azTemplates
+                parameters:
+                  env: ${{parameters.env}}
+                  pipelineStart: false
+                  subscriptionName: ${{variables.subscriptionName}}
