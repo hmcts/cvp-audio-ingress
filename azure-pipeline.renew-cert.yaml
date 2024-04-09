@@ -45,15 +45,6 @@ jobs:
           domain: "${{ variables.dns }}"
           keyVaultName: "cvp-${{lower(parameters.env)}}-kv"
 
-# Notification settings
-trigger: none  
-pr: none  
-
-# Notification block for email notifications
-pr:
-  branches:
-    include:
-    - VIH-0000-CronJob-Test
   - job: SendEmailOnFailure
     displayName: Send email notification on failure
     condition: failed()  # Notify when the pipeline fails
