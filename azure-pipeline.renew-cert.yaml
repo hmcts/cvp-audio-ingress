@@ -5,7 +5,7 @@ pr:
   - none
 
 schedules:
-- cron: "0 * * * *"  
+- cron: "0 8 * * *"  
   displayName: Weekly Pipeline Schedule
   branches:
     include:
@@ -44,12 +44,6 @@ jobs:
           environment: ${{lower(parameters.env)}}
           domain: "${{ variables.dns }}"
           keyVaultName: "cvp-${{lower(parameters.env)}}-kv"
-
-  - job: SendEmailOnFailure
-    displayName: Send email notification on failure
-    condition: failed()  # Notify when the pipeline fails
-    steps:
-    - task: SendGrid@1
       inputs:
         subject: 'Pipeline Failed: ${{ parameters.env }}'
         body: 'The pipeline for environment ${{ parameters.env }} has failed.'
