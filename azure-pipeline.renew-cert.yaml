@@ -44,7 +44,3 @@ jobs:
           environment: ${{lower(parameters.env)}}
           domain: "${{ variables.dns }}"
           keyVaultName: "cvp-${{lower(parameters.env)}}-kv"
-      inputs:
-        subject: 'Pipeline Failed: ${{ parameters.env }}'
-        body: 'The pipeline for environment ${{ parameters.env }} has failed.'
-        to: 'himesh.patel@hmcts.net'  
