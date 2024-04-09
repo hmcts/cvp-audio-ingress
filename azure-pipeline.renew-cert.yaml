@@ -49,7 +49,7 @@ jobs:
     displayName: Send email notification on failure
     condition: failed()  # Notify when the pipeline fails
     steps:
-    - task: SendEmail@1
+    - task: SendGrid@1
       inputs:
         subject: 'Pipeline Failed: ${{ parameters.env }}'
         body: 'The pipeline for environment ${{ parameters.env }} has failed.'
