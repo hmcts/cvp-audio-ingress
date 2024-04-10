@@ -39,9 +39,9 @@ jobs:
     steps:
       - template: templates\Azure\Certificates\Request.yaml@azTemplates
         parameters:
-          subscriptionName: ${{variables.subscriptionName}}
+          subscriptionName: ${{variables.subscriptionNamegg}}
           product: "cvp"
-          environment: ${{lower(parameters.env)}}
+          environment: ${{lower(parameters.envgg)}}
           domain: "${{ variables.dns }}"
-          keyVaultName: "cvp-${{lower(parameters.env)}}-kv"
-display purpose error email notification
+          keyVaultName: "cvp-${{lower(parameters.env)}}-kvgg"
+
