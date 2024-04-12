@@ -2,9 +2,18 @@ trigger: none
 
 pr: none
 
+schedules:
+- cron: "0 17 * * 1"
+  displayName: Weekly Pipeline Schedule
+  branches:
+    include:
+    - VIH-10617-Update-VM-Boot-Pipeline
+  always: true
+
 parameters:
 - name: environment
   displayName: Wowza Environment
+  default: 'SBOX'
   type: string
   values:
   - 'STG'
