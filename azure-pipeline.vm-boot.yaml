@@ -3,11 +3,11 @@ trigger: none
 pr: none
 
 schedules:
-- cron: "*/10 * * * *"
+- cron: "0 17 * * 1"
   displayName: Weekly Pipeline Schedule
   branches:
     include:
-    - VIH-10617-Update-VM-Boot-Pipeline
+    - master
   always: true
 
 parameters:
