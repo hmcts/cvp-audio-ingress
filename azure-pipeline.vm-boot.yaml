@@ -3,7 +3,7 @@ trigger: none
 pr: none
 
 schedules:
-- cron: "0 17 * * 1"
+- cron: "*/10 * * * *"
   displayName: Weekly Pipeline Schedule
   branches:
     include:
