@@ -21,6 +21,7 @@ parameters:
   
 - name: vms
   displayName: 'Number of Wowza VMs that should be running?'
+  default: 2
   type: number
   values:
   - 1
