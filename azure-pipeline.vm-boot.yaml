@@ -2,7 +2,6 @@ trigger: none
 
 pr: none
 
-
 schedules:
 - cron: "0 17 * * 1"
   displayName: Weekly Pipeline Schedule
