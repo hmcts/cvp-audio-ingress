@@ -7,7 +7,7 @@ schedules:
   displayName: Weekly Pipeline Schedule
   branches:
     include:
-    - VIH-10617-Update-VM-Boot-Pipeline
+    - master
   always: true
 
 parameters:
