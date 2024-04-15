@@ -2,9 +2,18 @@ trigger: none
 
 pr: none
 
+schedules:
+- cron: "0 17 * * 1"
+  displayName: Weekly Pipeline Schedule
+  branches:
+    include:
+    - master
+  always: true
+
 parameters:
 - name: environment
   displayName: Wowza Environment
+  default: 'SBOX'
   type: string
   values:
   - 'STG'
@@ -12,11 +21,12 @@ parameters:
   
 - name: vms
   displayName: 'Number of Wowza VMs that should be running?'
+  default: 1
   type: number
   values:
   - 1
   - 2
-  
+
 pool:
   vmImage: 'ubuntu-latest'
 
