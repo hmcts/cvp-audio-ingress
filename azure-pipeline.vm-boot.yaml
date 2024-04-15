@@ -2,15 +2,15 @@ trigger: none
 
 pr: none
 
-schedulesggg:
-- cron: "*/10 * * * *"
+schedules:
+- cron: "17 * * * 1"
   displayName: Weekly Pipeline Schedule
   branches:
     include:
-    - VIH-10617-Update-VM-Boot-Pipeline
+    - master
   always: true
 
-parametergggs:
+parameters:
 - name: environment
   displayName: Wowza Environment
   default: 'SBOX'
@@ -27,7 +27,7 @@ parametergggs:
   - 1
   - 2
 
-poogggl:
+pool:
   vmImage: 'ubuntu-latest'
 
 jobs:
