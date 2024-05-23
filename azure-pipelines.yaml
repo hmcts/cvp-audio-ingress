@@ -3,6 +3,14 @@ trigger:
 pr:
   - master
 
+schedules:
+- cron: "0 17 * * 1"
+  displayName: Weekly Pipeline Schedule
+  branches:
+    include:
+    - master
+  always: true
+
 resources:
   repositories:
     - repository: azTemplates
@@ -15,8 +23,8 @@ parameters:
   - name: envs
     displayName: Environments
     type: object
-    values: []
-    default: ['sbox','stg','prod']
+    values: ['sbox','stg','prod']
+    default: ['sbox']
 
 variables:
   - template: ./pipeline/variables/variables-common.yaml
