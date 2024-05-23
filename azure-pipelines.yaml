@@ -8,7 +8,7 @@ schedules:
   displayName: Weekly Pipeline Schedule
   branches:
     include:
-    - VIH-10702-sbox-schedule
+    - master
   always: true
 
 resources:
