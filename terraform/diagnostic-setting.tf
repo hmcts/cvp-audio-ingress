@@ -108,14 +108,6 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
   log_analytics_workspace_id = local.la_id
 
   log {
-    category = "LoadBalancerAlertEvent"
-    enabled  = true
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
     category = "LoadBalancerProbeHealthStatus"
     enabled  = true
     retention_policy {
