@@ -1,8 +1,6 @@
-trigger:
-  - none
+trigger: none
 
-pr:
-  - none
+pr: none
 
 schedules:
 - cron: "0 7 * * 1" 
@@ -13,17 +11,11 @@ schedules:
   always: true
 
 parameters:
-- name: env
+- name: envs
   displayName: Wowza Environment
-  default: 'PROD'
-  type: string
-  values:
-  - 'STG'
-  - 'SBOX'
-  - 'PROD'
-
-variables:
-  - template: ./pipeline/variables/variables-${{lower(parameters.env)}}.yaml
+  type: object
+  values: []
+  default: ['stg', 'prod']
 
 resources:
   repositories:
@@ -33,14 +25,19 @@ resources:
       ref: master
       endpoint: hmcts
 
+variables:
+- ${{ each env in parameters.envs }}:
+  - template: ./pipeline/variables/variables-${{ lower(env) }}.yaml
+
 jobs:
-  - job: CertGen${{parameters.env}}
-    displayName: 'Generate Certificate for ${{parameters.env}}'
+- ${{ each env in parameters.envs }}:
+  - job: CertGen${{ env }}
+    displayName: 'Generate Certificate for ${{ env }}'
     steps:
-      - template: templates\Azure\Certificates\Request.yaml@azTemplates
+      - template: templates/Azure/Certificates/Request.yaml@azTemplates
         parameters:
-          subscriptionName: ${{variables.subscriptionName}}
+          subscriptionName: ${{ variables.subscriptionName }}
           product: "cvp"
-          environment: ${{lower(parameters.env)}}
+          environment: ${{ lower(env) }}
           domain: "${{ variables.dns }}"
-          keyVaultName: "cvp-${{lower(parameters.env)}}-kv"
+          keyVaultName: "cvp-${{ lower(env) }}-kv"
