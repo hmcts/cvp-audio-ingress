@@ -34,7 +34,7 @@ jobs:
   - job: CertGen${{ env }}
     displayName: 'Generate Certificate for ${{ env }}'
     steps:
-      - template: templates/Azure/Certificates/Request.yaml@azTemplates
+      - template: templates\Azure\Certificates\Request.yaml@azTemplates
         parameters:
           subscriptionName: ${{ variables.subscriptionName }}
           product: "cvp"
