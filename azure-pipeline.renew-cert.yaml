@@ -34,7 +34,7 @@ jobs:
     variables:
       - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
     steps:
-      - template: templates/Azure/Certificates/Request.yaml@azTemplates
+      - template: templates\Azure\Certificates\Request.yaml@azTemplates
         parameters:
           subscriptionName: ${{variables.subscriptionName}}
           product: "cvp"
