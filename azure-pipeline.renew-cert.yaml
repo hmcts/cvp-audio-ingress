@@ -16,7 +16,7 @@ parameters:
 - name: envs
   displayName: Wowza Environment
   type: object
-  values: ['stg', 'prod']
+  values: ['stg', 'prod', 'sbox']
   default: ['stg', 'prod']
 
 resources:
