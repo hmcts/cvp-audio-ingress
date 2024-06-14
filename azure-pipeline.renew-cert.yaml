@@ -15,12 +15,13 @@ schedules:
 parameters:
 - name: env
   displayName: Wowza Environment
-  default: 'PROD'
-  type: string
-  values:
-  - 'STG'
-  - 'SBOX'
-  - 'PROD'
+  type: object
+  default:
+    - name: Stg
+    dependsOnEnv: ""
+    - name: Prod
+    dependsOnEnv: "Stg"
+
 
 variables:
   - template: ./pipeline/variables/variables-${{lower(parameters.env)}}.yaml
