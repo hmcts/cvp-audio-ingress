@@ -1,6 +1,8 @@
-trigger: none
+trigger:
+  - none
 
-pr: none
+pr:
+  - none
 
 schedules:
 - cron: "0 7 * * 1" 
@@ -36,8 +38,8 @@ jobs:
     steps:
       - template: templates\Azure\Certificates\Request.yaml@azTemplates
         parameters:
-          subscriptionName: ${{ variables.subscriptionName }}
+          subscriptionName: ${{variables.subscriptionName}}
           product: "cvp"
-          environment: ${{ lower(env) }}
+          environment: ${{lower(env)}}
           domain: "${{ variables.dns }}"
-          keyVaultName: "cvp-${{ lower(env) }}-kv"
+          keyVaultName: "cvp-${{lower(env)}}-kv"
