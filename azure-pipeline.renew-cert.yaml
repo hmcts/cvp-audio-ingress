@@ -32,12 +32,12 @@ jobs:
   - job: CertGen${{ env }}
     displayName: 'Generate Certificate for ${{ env }}'
     variables:
-      - template: ./pipeline/variables/variables-${{ lower(env) }}.yaml
+      - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
     steps:
       - template: templates/Azure/Certificates/Request.yaml@azTemplates
         parameters:
-          subscriptionName: ${{ variables.subscriptionName }}
+          subscriptionName: ${{variables.subscriptionName}}
           product: "cvp"
-          environment: ${{ lower(env) }}
+          environment: ${{lower(env)}}
           domain: "${{ variables.dns }}"
-          keyVaultName: "cvp-${{ lower(env) }}-kv"
+          keyVaultName: "cvp-${{lower(env)}}-kv"
