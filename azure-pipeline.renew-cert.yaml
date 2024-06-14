@@ -16,7 +16,7 @@ parameters:
 - name: envs
   displayName: Wowza Environment
   type: object
-  values: []
+  values: ['stg', 'prod']
   default: ['stg', 'prod']
 
 resources:
@@ -27,19 +27,17 @@ resources:
       ref: master
       endpoint: hmcts
 
-variables:
-- ${{ each env in parameters.envs }}:
-  - template: ./pipeline/variables/variables-${{ lower(env) }}.yaml
-
 jobs:
 - ${{ each env in parameters.envs }}:
   - job: CertGen${{ env }}
     displayName: 'Generate Certificate for ${{ env }}'
+    variables:
+      - template: ./pipeline/variables/variables-${{ lower(env) }}.yaml
     steps:
-      - template: templates\Azure\Certificates\Request.yaml@azTemplates
+      - template: templates/Azure/Certificates/Request.yaml@azTemplates
         parameters:
-          subscriptionName: ${{variables.subscriptionName}}
+          subscriptionName: ${{ variables.subscriptionName }}
           product: "cvp"
-          environment: ${{lower(env)}}
+          environment: ${{ lower(env) }}
           domain: "${{ variables.dns }}"
-          keyVaultName: "cvp-${{lower(env)}}-kv"
+          keyVaultName: "cvp-${{ lower(env) }}-kv"
