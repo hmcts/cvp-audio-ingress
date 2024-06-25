@@ -17,3 +17,9 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+  
+- task: AzurePowerShell@5
+  inputs:
+    ScriptType: 'FilePath'
+    ScriptPath: 'https://github.com/hmcts/cvp-audio-ingress/blob/master/test/run-tests.ps1'
+
