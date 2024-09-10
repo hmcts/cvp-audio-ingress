@@ -20,7 +20,7 @@ parameters:
   - 'SBOX'
   
 - name: vms
-  displayName: 'Number of Wowza VMs that should be running?'
+  displayName: 'Number of Wowza VM's that should be running?'
   default: 1
   type: number
   values:
