@@ -19,9 +19,6 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
   metric {
     category = "AllMetrics"
 
-    retention_policy {
-      enabled = true
-    }
   }
 }
 
@@ -37,18 +34,13 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-sa-diag-set" {
     category = "Capacity"
     enabled  = true
 
-    retention_policy {
-      enabled = false
-    }
+
   }
   metric {
 
     category = "Transaction"
     enabled  = true
 
-    retention_policy {
-      enabled = false
-    }
   }
 }
 
@@ -92,10 +84,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nic-diag-set" {
   metric {
     category = "AllMetrics"
     enabled  = true
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
+
   }
 }
 
@@ -111,8 +100,5 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
     category = "AllMetrics"
     enabled  = true
 
-    retention_policy {
-      enabled = false
-    }
   }
 }
