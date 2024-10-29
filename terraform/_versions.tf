@@ -6,5 +6,9 @@ terraform {
     azurerm  = "3.116.0"
     template = "~> 2.1"
     random   = ">= 2"
+    azapi = {
+      source  = "Azure/azapi"
+      version = "~> 1.15.0"
+    }
   }
 }
