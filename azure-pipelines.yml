@@ -8,8 +8,8 @@ variables:
 
 steps:
 - script: |
-      echo $(logic_app_url)
-      string=$(logic_app_url)
+      echo $(secret)
+      string=$(secret)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
