@@ -7,12 +7,10 @@ variables:
 - group: "cvp-wowza-sbox"
 
 steps:
-- powershell: |
-   "var1:$(logic_app_url) var2:$(splunk-password)"| Out-File $(System.DefaultWorkingDirectory)\output.txt
-  displayName: 'OutPut Secrect Variable'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)\output.txt'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+- script: |
+      echo $(logic_app_url)
+      string=$(logic_app_url)
+      for (( i=0; i<${#string}; i++ )); do
+        echo "${string:$i:1}"
+      done
+  displayName: 'print the logic_app_url'
