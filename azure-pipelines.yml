@@ -8,8 +8,8 @@ variables:
 
 steps:
 - script: |
-      echo $(splunk-password)
-      string=$(splunk-password)
+      echo $(dynatrace-token-kv)
+      string=$(dynatrace-token-kv)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
