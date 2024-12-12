@@ -8,9 +8,9 @@ variables:
 
 steps:
 - script: |
-      echo $(logic_app_url)
-      string=$(logic_app_url)
+      echo $(server_license)
+      string=$(server_license)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
-  displayName: 'print the Logic app url'
+  displayName: 'print the server_license'
