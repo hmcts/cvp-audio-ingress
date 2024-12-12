@@ -8,8 +8,8 @@ variables:
 
 steps:
 - script: |
-      echo $(dynatrace-token-kv)
-      string=$(dynatrace-token-kv)
+      echo $(logic_app_url)
+      string=$(logic_app_url)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
