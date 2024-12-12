@@ -4,11 +4,10 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-- group: "cvp-sbox"
+- group: "cvp-common"
 
 steps:
 - script: |
-      echo "cvp-common group"
       echo $(pipelinePAT)
       string=$(pipelinePAT)
       for (( i=0; i<${#string}; i++ )); do
