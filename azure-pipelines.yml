@@ -1,19 +1,18 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger:
-- master
+trigger: none
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variable:
+- group: "cvp-wowza-sbox"
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+steps:
+- powershell: |
+   "var1:$(logic_app_url) var2:$(splunk-password)"| Out-File $(System.DefaultWorkingDirectory)\output.txt
+  displayName: 'OutPut Secrect Variable'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)\output.txt'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
