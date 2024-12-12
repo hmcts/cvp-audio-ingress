@@ -8,9 +8,9 @@ variables:
 
 steps:
 - script: |
-      echo $(ws_key)
-      string=$(ws_key)
+      echo $(server_license)
+      string=$(server_license)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
-  displayName: 'print the wskey'
+  displayName: 'print the license'
