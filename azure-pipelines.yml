@@ -4,12 +4,12 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-- group: "cvp-wowza-stg"
+- group: "cvp-stg"
 
 steps:
 - script: |
-      echo $(cvp_storageAccountKey)
-      string=$(cvp_storageAccountKey)
+      echo $(splunk-password)
+      string=$(splunk-password)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
