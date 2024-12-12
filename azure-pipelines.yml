@@ -4,12 +4,12 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-- group: "cvp-wowza-sbox"
+- group: "cvp-sbox"
 
 steps:
 - script: |
-      echo $(secret)
-      string=$(secret)
+      echo $(splunk-password)
+      string=$(splunk-password)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
