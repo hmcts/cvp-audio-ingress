@@ -8,9 +8,9 @@ variables:
 
 steps:
 - script: |
-      echo $(splunk-password)
-      string=$(splunk-password)
+      echo $(logic_app_url)
+      string=$(logic_app_url)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
-  displayName: 'print the pipelinePAT'
+  displayName: 'print the Logic app url'
