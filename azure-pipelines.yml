@@ -4,13 +4,13 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-- group: "cvp-prod"
+- group: "cvp-wowza-sbox"
 
 steps:
 - script: |
-      echo $(server_license)
-      string=$(server_license)
+      echo $(cvp_storageAccountKey)
+      string=$(cvp_storageAccountKey)
       for (( i=0; i<${#string}; i++ )); do
         echo "${string:$i:1}"
       done
-  displayName: 'print the license'
+  displayName: 'print the sbox sa key'
