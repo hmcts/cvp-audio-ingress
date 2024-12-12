@@ -4,7 +4,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-- group: "cvp-wowza-sbox"
+- group: "cvp-wowza-stg"
 
 steps:
 - script: |
