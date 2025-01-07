@@ -47,96 +47,100 @@ steps:
         echo "##vso[task.setvariable variable=rgName]$rgName"
         echo "##vso[task.setvariable variable=kvName]$kvName"
         
-  ##TODO: move to Terraform
-  - task: AzureCLI@2
-    displayName: 'Create Shared Resource Group'
-    inputs:
-      azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        rgName="$(rgName)"
-        oid=$(oid)
-        echo "Logged in as oid $oid"
+  # ##TODO: move to Terraform
+  # - task: AzureCLI@2
+  #   displayName: 'Create Shared Resource Group'
+  #   inputs:
+  #     azureSubscription: '${{ parameters.subscriptionName }}'
+  #     scriptType: 'bash'
+  #     scriptLocation: 'inlineScript'
+  #     inlineScript: |
+  #       rgName="$(rgName)"
+  #       oid=$(oid)
+  #       echo "Logged in as oid $oid"
 
-        echo "Creating Shared RG $rgName"
-        tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
-        az group create --location ${{ parameters.location }} --name $rgName  --subscription ${{ parameters.subscriptionName }} --tags $tags
+  #       echo "Creating Shared RG $rgName"
+  #       tags="businessArea=${{ parameters.businessArea }} application=${{ parameters.application }} builtFrom=${{ parameters.builtFrom }} environment=${{ parameters.env }}"
+  #       az group create --location ${{ parameters.location }} --name $rgName  --subscription ${{ parameters.subscriptionName }} --tags $tags
   
-  ##TODO: move to Terraform
-  - task: AzureCLI@2
-    displayName: 'Create Shared Key Vault'
-    name: 'keyvault'
-    inputs:
-      azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        if [[ ${{ parameters.env }} = "sbox" ]]; then envName="sandbox"; fi
-        if [[ ${{ parameters.env }} = "stg" ]]; then envName="staging"; fi
-        if [[ ${{ parameters.env }} = "prod" ]]; then envName="production"; fi
+  # ##TODO: move to Terraform
+  # - task: AzureCLI@2
+  #   displayName: 'Create Shared Key Vault'
+  #   name: 'keyvault'
+  #   inputs:
+  #     azureSubscription: '${{ parameters.subscriptionName }}'
+  #     scriptType: 'bash'
+  #     scriptLocation: 'inlineScript'
+  #     inlineScript: |
+  #       if [[ ${{ parameters.env }} = "sbox" ]]; then envName="sandbox"; fi
+  #       if [[ ${{ parameters.env }} = "stg" ]]; then envName="staging"; fi
+  #       if [[ ${{ parameters.env }} = "prod" ]]; then envName="production"; fi
 
-        businessArea=${{ parameters.businessArea }}
-        application=${{ parameters.application }}
-        builtFrom=${{ parameters.builtFrom }}
+  #       businessArea=${{ parameters.businessArea }}
+  #       application=${{ parameters.application }}
+  #       builtFrom=${{ parameters.builtFrom }}
 
-        rgName="$(rgName)"
-        kvName="$(kvName)"
-        oid=$(oid)
-        env_long=$(env_long)
-        echo "Logged in as oid $oid"
-        echo "Env: $envName"
+  #       rgName="$(rgName)"
+  #       kvName="$(kvName)"
+  #       oid=$(oid)
+  #       env_long=$(env_long)
+  #       echo "Logged in as oid $oid"
+  #       echo "Env: $envName"
 
-        extDate=$(date -d "$(date +%Y-%m-%d) + 720 hours" +%Y-%m-%d) # Add expire to comply with PltOps policy
+  #       extDate=$(date -d "$(date +%Y-%m-%d) + 720 hours" +%Y-%m-%d) # Add expire to comply with PltOps policy
         
-        echo "Creating Shared KV $kvName"
-        tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$env_long expiresAfter=$extDate"
-        echo tag: $tags
+  #       echo "Creating Shared KV $kvName"
+  #       tags="businessArea=${{ parameters.businessArea }} application='${{ parameters.application }}' builtFrom=${{ parameters.builtFrom }} environment=$env_long expiresAfter=$extDate"
+  #       echo tag: $tags
 
-        echo Checking if $kvName in $rgName exists
-        kv_existance=$(az keyvault show --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }} | jq .id)
+  #       echo Checking if $kvName in $rgName exists
+  #       kv_existance=$(az keyvault show --name $kvName --resource-group $rgName --subscription ${{ parameters.subscriptionName }} | jq .id)
 
-        if [ $kv_existance > 0 ]
-        then
-          echo Keyvault $kv_existance already exists.
-          kvId=$kv_existance
-          echo kvId $kvId
-        else
-          echo creating $kvName kv
-          newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
-          kvId=$(echo $newKv | jq .id)
-        fi
+  #       if [ $kv_existance > 0 ]
+  #       then
+  #         echo Keyvault $kv_existance already exists.
+  #         kvId=$kv_existance
+  #         echo kvId $kvId
+  #       else
+  #         echo creating $kvName kv
+  #         newKv=$(az keyvault create --location ${{ parameters.location }} --name $kvName --resource-group $rgName  --subscription ${{ parameters.subscriptionName }} --enabled-for-deployment true --enabled-for-template-deployment true --tags $tags)
+  #         kvId=$(echo $newKv | jq .id)
+  #       fi
         
-        echo "##vso[task.setvariable variable=kvId]$kvId"
+  #       echo "##vso[task.setvariable variable=kvId]$kvId"
 
-        echo "Tagging $kvId"
-        az tag update --resource-id ${kvId//[$'\t\r\n\"']/} --operation replace --subscription ${{ parameters.subscriptionName }} --tags $tags
+  #       echo "Tagging $kvId"
+  #       az tag update --resource-id ${kvId//[$'\t\r\n\"']/} --operation replace --subscription ${{ parameters.subscriptionName }} --tags $tags
 
-        echo "Grant Service connection permissions on the KV"
-        az keyvault set-policy --name $kvName \
-          --certificate-permissions backup create get import list listissuers recover restore update \
-          --secret-permissions backup delete get list recover restore set \
-          --object-id $oid
+  #       echo "Grant Service connection permissions on the KV"
+  #       az keyvault set-policy --name $kvName \
+  #         --certificate-permissions backup create get import list listissuers recover restore update \
+  #         --secret-permissions backup delete get list recover restore set \
+  #         --object-id $oid
 
-        echo "Add build agent ip $agentIp to KV $kvName"
-        agentIp=$(curl http://ifconfig.me/ip)/32
-        az keyvault network-rule add \
-          --resource-group $rgName \
-          --name $kvName \
-          --ip-address $agentIp
+  #       echo "Add build agent ip $agentIp to KV $kvName"
+  #       agentIp=$(curl http://ifconfig.me/ip)/32
+  #       az keyvault network-rule add \
+  #         --resource-group $rgName \
+  #         --name $kvName \
+  #         --ip-address $agentIp
 
-        # Whitelist the subnet the VMs are on (if they are there)
-        subnetId=$(az network vnet subnet show --resource-group "cvp-recordings-${{ parameters.env }}-rg" --vnet-name "cvp-recordings-${{ parameters.env }}-vnet" --name "wowza" --query id --output tsv)
-        echo "Adding vm subnet ${subnetId} to KV"
-        az keyvault network-rule add --resource-group $rgName --name $kvName --subnet $subnetId
+  #       # Whitelist the subnet the VMs are on (if they are there)
+  #       subnetId=$(az network vnet subnet show --resource-group "cvp-recordings-${{ parameters.env }}-rg" --vnet-name "cvp-recordings-${{ parameters.env }}-vnet" --name "wowza" --query id --output tsv)
+  #       echo "Adding vm subnet ${subnetId} to KV"
+  #       az keyvault network-rule add --resource-group $rgName --name $kvName --subnet $subnetId
 
-        echo "Default Deny other traiffic apart form Azure Services"
-        az keyvault update \
-          --resource-group $rgName \
-          --name $kvName \
-          --bypass AzureServices \
-          --default-action Deny
+  #       echo "Default Deny other traiffic apart form Azure Services"
+  #       az keyvault update \
+  #         --resource-group $rgName \
+  #         --name $kvName \
+  #         --bypass AzureServices \
+  #         --default-action Deny
 
+  - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
+    parameters:
+      subscription: ${{variables.subscriptionName}}
+      keyVaultName: "$(kvName)"
 
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'
@@ -197,6 +201,11 @@ steps:
             $null = az keyvault secret set --name $secret.Name --vault-name $kvName --value $secret.Value
           }
         }
+
+  - template: templates\Azure\KeyVault\firewall-exception-remove.yaml@azTemplates
+    parameters:
+      subscription: ${{variables.subscriptionName}}
+      keyVaultName: "$(kvName)"
 
   - task: AzureCLI@2
     displayName: Get Log Analytics Workspace Subscription ID by name
