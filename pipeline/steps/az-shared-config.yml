@@ -139,7 +139,7 @@ steps:
 
   - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
     parameters:
-      subscription: ${{variables.subscriptionName}}
+      subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "$(kvName)"
 
   - task: AzureCLI@2
@@ -204,14 +204,14 @@ steps:
 
   - template: templates\Azure\KeyVault\firewall-exception-remove.yaml@azTemplates
     parameters:
-      subscription: ${{variables.subscriptionName}}
+      subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "$(kvName)"
 
   - task: AzureCLI@2
     displayName: Get Log Analytics Workspace Subscription ID by name
     name: log_analytics
     inputs:
-      azureSubscription: '${{ parameters.subscriptionName}}'
+      azureSubscription: '${{ parameters.subscriptionName }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
