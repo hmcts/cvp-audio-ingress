@@ -66,6 +66,11 @@ stages:
                 storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
                 action: Allow
 
+            - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
+              parameters:
+                subscription: ${{variables.subscriptionName}}
+                keyVaultName: "cvp-${{variables.env}}-kv"
+
             - template: ../steps/tf-plan.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
@@ -85,6 +90,11 @@ stages:
                   storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
                   action: Deny
                   alwaysRun: true
+
+            - template: templates\Azure\KeyVault\firewall-exception-remove.yaml@azTemplates
+              parameters:
+                subscription: ${{variables.subscriptionName}}
+                keyVaultName: "cvp-${{variables.env}}-kv"      
 
         - job: CertGen${{parameters.env}}
           displayName: 'Generate Certificate for ${{parameters.env}}'
