@@ -59,7 +59,7 @@ stages:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
-                action: Allow
+                action: Allow 
             - template: ../steps/tf-apply.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
