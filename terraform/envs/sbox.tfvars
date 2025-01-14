@@ -17,6 +17,7 @@ dynatrace_tenant              = "yrk32651"
 expiry_days                   = 3
 remaining_days                = 1
 sa_recording_retention        = 90
+sa_default_action             = "Allow"
 retention_period              = 7
 schedules = [
   {
