@@ -177,6 +177,11 @@ variable "dev_source_address_prefixes" {
   type = string
 }
 
+variable "route_table" {
+  description = "Route Table routes"
+  type        = list(map(string))
+}
+
 #---------------------------------------------------
 # SAS 
 #---------------------------------------------------
