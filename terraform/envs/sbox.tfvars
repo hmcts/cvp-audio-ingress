@@ -44,13 +44,13 @@ route_table = [
   {
     name                   = "wowza_licence_server_1"
     address_prefix         = "18.211.40.33/32"
-    next_hop_type          = "Internet"
-    next_hop_in_ip_address = null
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "10.10.200.36"
   },
   {
     name                   = "wowza_licence_server_2"
     address_prefix         = "75.101.235.42/32"
-    next_hop_type          = "Internet"
-    next_hop_in_ip_address = null
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "10.10.200.36"
   }
 ]
