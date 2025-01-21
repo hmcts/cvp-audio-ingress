@@ -40,5 +40,17 @@ route_table = [
     address_prefix         = "51.145.56.125/32"
     next_hop_type          = "Internet"
     next_hop_in_ip_address = null
+  },
+  {
+    name                   = "wowza_licence_server_1"
+    address_prefix         = "18.211.40.33/32"
+    next_hop_type          = "Internet"
+    next_hop_in_ip_address = null
+  },
+  {
+    name                   = "wowza_licence_server_2"
+    address_prefix         = "75.101.235.42/32"
+    next_hop_type          = "Internet"
+    next_hop_in_ip_address = null
   }
 ]
