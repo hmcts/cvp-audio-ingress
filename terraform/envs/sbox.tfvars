@@ -40,8 +40,8 @@ route_table = [
   }
 ]
 sa_allowed_subnets = [
-  "/subscriptions/b72ab7b7-723f-4b18-b6f6-03b0f2c6a1bb/resourceGroups/cft-sbox-network-rg/providers/Microsoft.Network/virtualNetworks/cft-sbox-vnet/subnets/aks-00",
-  "/subscriptions/b72ab7b7-723f-4b18-b6f6-03b0f2c6a1bb/resourceGroups/cft-sbox-network-rg/providers/Microsoft.Network/virtualNetworks/cft-sbox-vnet/subnets/aks-01"
+  # "/subscriptions/b72ab7b7-723f-4b18-b6f6-03b0f2c6a1bb/resourceGroups/cft-sbox-network-rg/providers/Microsoft.Network/virtualNetworks/cft-sbox-vnet/subnets/aks-00",
+  # "/subscriptions/b72ab7b7-723f-4b18-b6f6-03b0f2c6a1bb/resourceGroups/cft-sbox-network-rg/providers/Microsoft.Network/virtualNetworks/cft-sbox-vnet/subnets/aks-01"
 ]
 
 sa_allowed_ips = [
@@ -50,4 +50,9 @@ sa_allowed_ips = [
   "51.149.249.32/29", #AnyConnect VPN egress range
   "194.33.249.0/29",  #AnyConnect VPN egress backup range
   "194.33.248.0/29"   #AnyConnect VPN egress backup range
+]
+
+hrs_aks_source_address_prefixes = [
+  "10.50.64.0/20", # cft-demo-vnet aks-00
+  "10.50.80.0/20"  # cft-demo-vnet aks-01
 ]

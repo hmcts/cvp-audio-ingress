@@ -95,6 +95,18 @@ module "nsg" {
       protocol                     = "Tcp"
       source_address_prefixes      = var.anyconnect_vpn_source_address_prefixes
       source_port_range            = "*"
+    },
+    {
+      access                       = "Allow"
+      description                  = "Allow HTTPS from HRS AKS Subnets"
+      destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
+      destination_port_range       = "443"
+      direction                    = "Inbound"
+      name                         = "Allow_HRS_AKS_HTTPS"
+      priority                     = 1800
+      protocol                     = "Tcp"
+      source_address_prefixes      = var.hrs_aks_source_address_prefixes
+      source_port_range            = "*"
     }
   ]
 }

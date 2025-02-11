@@ -57,3 +57,8 @@ sa_allowed_ips = [
   "194.33.249.0/29",  #AnyConnect VPN egress backup range
   "194.33.248.0/29"   #AnyConnect VPN egress backup range
 ]
+
+hrs_aks_source_address_prefixes = [
+  "10.10.128.0/20", # cft-aat-vnet aks-00
+  "10.10.144.0/20"  # cft-aat-vnet aks-01
+]
