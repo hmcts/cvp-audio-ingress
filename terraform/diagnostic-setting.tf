@@ -10,6 +10,10 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
     category = "AllMetrics"
 
   }
+
+  enabled_log {
+    category = "AuditEvent"
+  }
 }
 
 #---------------------------------------------------
