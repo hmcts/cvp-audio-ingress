@@ -24,7 +24,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: VIH-10876-investigate_kv_firewall_ip_additions
       endpoint: hmcts
 
 jobs:
@@ -34,10 +34,18 @@ jobs:
     variables:
       - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
     steps:
+      - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
+        parameters:
+          subscription: ${{ variables.subscriptionName }}
+          keyVaultName: "cvp-${{ parameters.env }}-kv"
       - template: templates\Azure\Certificates\Request.yaml@azTemplates
         parameters:
-          subscriptionName: ${{variables.subscriptionName}}
+          subscriptionName: ${{ variables.subscriptionName }}
           product: "cvp"
           environment: ${{lower(env)}}
           domain: "${{ variables.dns }}"
           keyVaultName: "cvp-${{lower(env)}}-kv"
+      - template: templates\Azure\KeyVault\firewall-exception-remove.yaml@azTemplates
+        parameters:
+          subscription: ${{ variables.subscriptionName }}
+          keyVaultName: "cvp-${{ parameters.env }}-kv"
