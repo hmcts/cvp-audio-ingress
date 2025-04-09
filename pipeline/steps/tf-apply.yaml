@@ -19,7 +19,7 @@ parameters:
     default: 'linux-paid-4-8'
   - name: wowza_version
     type: string
-    default: '4.9.3'
+    default: '4.8.28'
   - name: wowza_publisher
     type: string
     default: 'wowza'

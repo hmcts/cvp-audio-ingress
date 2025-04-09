@@ -3,6 +3,7 @@ variables:
   env_long: 'production'
   dns: 'cvp-recording.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-PROD'
+  wowza_version: '4.8.28'
   kv_name_prefix : 'cft-apps'
   ws_sub_name: "DCD-CNP-Prod"
   dynatrace_token: 'dynatrace-prod-api-key'
