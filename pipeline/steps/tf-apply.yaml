@@ -16,7 +16,7 @@ parameters:
     default: $(location)
   - name: wowza_sku
     type: string
-    default: 'linux-paid-4-9'
+    default: 'linux-paid-4-8'
   - name: wowza_version
     type: string
     default: '4.9.3'
