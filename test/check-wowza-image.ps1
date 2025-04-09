@@ -5,7 +5,7 @@ Param (
     [string]$locName="uksouth",
     [string]$pubName="wowza",
     [string]$offerName="wowzastreamingengine",
-    [string]$skuName="linux-paid-4-8"
+    [string]$skuName="linux-paid-4-9"
 
 )
 
