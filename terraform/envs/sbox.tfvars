@@ -1,6 +1,7 @@
 environment                   = "sbox"
 env                           = "sbox"
 vm_count                      = 1
+wowza_version                 = "4.9.3"
 dns_zone_name                 = "shared-services.uk.south.sbox.hmcts.internal"
 dns_resource_group            = "cvp-sharedinfra-sbox"
 address_space                 = "10.50.11.0/28"
