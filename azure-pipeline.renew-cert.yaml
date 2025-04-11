@@ -34,10 +34,11 @@ jobs:
     variables:
       - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
     steps:
-      - template: templates\Azure\Certificates\Request.yaml@azTemplates
+      - template: templates\Azure\Certificates\Request-test.yaml@azTemplates
         parameters:
           subscriptionName: ${{variables.subscriptionName}}
           product: "cvp"
           environment: ${{lower(env)}}
           domain: "${{ variables.dns }}"
           keyVaultName: "cvp-${{lower(env)}}-kv"
+          resourceGroupName: "cvp-sharedinfra-${{lower(env)}}"
