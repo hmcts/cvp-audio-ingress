@@ -13,11 +13,11 @@ parameters:
   - 'PROD'
 - name: scheduleName
   displayName: Automation Schedule Name
-  default: 'cvp-vm-off-weekly-15-00-00'
+  default: 'cvp-vm-off-18-00-00'
   type: string
   values:
-  - 'cvp-vm-off-weekly-15-00-00'
   - 'cvp-vm-off-18-00-00'
+  - 'cvp-vm-off-weekly-15-00-00'
 
 pool:
   vmImage: 'ubuntu-latest'

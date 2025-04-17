@@ -4,5 +4,11 @@ param (
 )
 
 $automationAccountName = "cvp-recordings-$env-aa"
-Set-AzAutomationSchedule -AutomationAccountName $automationAccountName `
--Name $scheduleName -IsEnabled $false -ResourceGroupName "cvp-recordings-$env-rg"
+$resourceGroupName = "cvp-recordings-$env-rg"
+
+# Disable the automation schedule
+az automation schedule update `
+  --automation-account-name "$automationAccountName" `
+  --name "$scheduleName" `
+  --resource-group "$resourceGroupName" `
+  --is-enabled false
