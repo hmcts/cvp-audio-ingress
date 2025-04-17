@@ -42,4 +42,4 @@ jobs:
       scriptType: 'pscore'
       scriptLocation: 'scriptPath'
       scriptPath: 'scripts/update-vmAutomationRunbook.ps1'
-      arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }} -isEnabled ${{ variables.isEnabled }}'
+      arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }} -status ${{ variables.isEnabled }}'
