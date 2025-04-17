@@ -30,13 +30,13 @@ pool:
   vmImage: 'ubuntu-latest'
 
 jobs:
-- job: DisableAutomationSchedule
-  displayName: Disable Automation Schedule
+- job: SetAutomationSchedule
+  displayName: Set Automation Schedule
   variables:
     isEnabled: ${{ eq(parameters.setStatus, 'enabled') }}
   steps:
   - task: AzureCLI@2
-    displayName: Disable Automation Schedule
+    displayName: Set Automation Schedule
     inputs:
       azureSubscription: 'DTS-SHAREDSERVICES-${{parameters.environment}}'
       scriptType: 'pscore'
