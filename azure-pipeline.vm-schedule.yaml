@@ -8,8 +8,8 @@ parameters:
   default: 'SBOX'
   type: string
   values:
-  - 'STG'
   - 'SBOX'
+  - 'STG'
   - 'PROD'
 - name: scheduleName
   displayName: Automation Schedule Name
@@ -32,5 +32,5 @@ jobs:
       azureSubscription: 'DTS-SHAREDSERVICES-${{parameters.environment}}'
       scriptType: 'pscore'
       scriptLocation: 'scriptPath'
-      scriptPath: 'scripts/disable-vmStatus.ps1'
+      scriptPath: 'scripts/disable-vmAutomationRunbook.ps1'
       arguments: '-env ${{ lower(parameters.environment) }} -env ${{ parameters.scheduleName }}'
