@@ -33,4 +33,4 @@ jobs:
       scriptType: 'pscore'
       scriptLocation: 'scriptPath'
       scriptPath: 'scripts/disable-vmAutomationRunbook.ps1'
-      arguments: '-env ${{ lower(parameters.environment) }} -env ${{ parameters.scheduleName }}'
+      arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }}'
