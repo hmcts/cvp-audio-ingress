@@ -18,6 +18,13 @@ parameters:
   values:
   - 'cvp-vm-off-18-00-00'
   - 'cvp-vm-off-weekly-15-00-00'
+- name: setStatus
+  displayName: Set Schedule Status
+  default: 'enabled'
+  type: string
+  values:
+  - 'enabled'
+  - 'disabled'  
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -33,4 +40,4 @@ jobs:
       scriptType: 'pscore'
       scriptLocation: 'scriptPath'
       scriptPath: 'scripts/disable-vmAutomationRunbook.ps1'
-      arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }}'
+      arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }} -isEnabled ${{ if eq(parameters.setStatus, "enabled") }} true ${{ else }} false ${{ end }}'
