@@ -39,5 +39,5 @@ jobs:
       azureSubscription: 'DTS-SHAREDSERVICES-${{parameters.environment}}'
       scriptType: 'pscore'
       scriptLocation: 'scriptPath'
-      scriptPath: 'scripts/disable-vmAutomationRunbook.ps1'
+      scriptPath: 'scripts/update-vmAutomationRunbook.ps1'
       arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }} -isEnabled ${{ if eq(parameters.setStatus, "enabled") }} true ${{ else }} false ${{ end }}'
