@@ -1,0 +1,36 @@
+trigger: none
+
+pr: none
+
+parameters:
+- name: environment
+  displayName: Wowza Environment
+  default: 'SBOX'
+  type: string
+  values:
+  - 'STG'
+  - 'SBOX'
+  - 'PROD'
+- name: scheduleName
+  displayName: Automation Schedule Name
+  default: 'cvp-vm-off-weekly-15-00-00'
+  type: string
+  values:
+  - 'cvp-vm-off-weekly-15-00-00'
+  - 'cvp-vm-off-18-00-00'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+- job: DisableAutomationSchedule
+  displayName: Disable Automation Schedule
+  steps:
+  - task: AzureCLI@2
+    displayName: Disable Automation Schedule
+    inputs:
+      azureSubscription: 'DTS-SHAREDSERVICES-${{parameters.environment}}'
+      scriptType: 'pscore'
+      scriptLocation: 'scriptPath'
+      scriptPath: 'scripts/disable-vmStatus.ps1'
+      arguments: '-env ${{ lower(parameters.environment) }} -env ${{ parameters.scheduleName }}'
