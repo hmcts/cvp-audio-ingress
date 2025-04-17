@@ -32,6 +32,8 @@ pool:
 jobs:
 - job: DisableAutomationSchedule
   displayName: Disable Automation Schedule
+  variables:
+    isEnabled: ${{ eq(parameters.setStatus, 'enabled') }}
   steps:
   - task: AzureCLI@2
     displayName: Disable Automation Schedule
@@ -40,4 +42,4 @@ jobs:
       scriptType: 'pscore'
       scriptLocation: 'scriptPath'
       scriptPath: 'scripts/update-vmAutomationRunbook.ps1'
-      arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }} -isEnabled ${{ if eq(parameters.setStatus, "enabled") }} true ${{ else }} false ${{ end }}'
+      arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }} -isEnabled ${{ variables.isEnabled }}'
