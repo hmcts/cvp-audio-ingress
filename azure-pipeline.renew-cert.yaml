@@ -29,6 +29,17 @@ resources:
 
 jobs:
 - ${{ each env in parameters.envs }}:
+ - job: FW Enable
+    displayName: 'Enable fw for ${{ env }}'
+    variables:
+      - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
+    steps:
+    - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
+      parameters:
+        subscription: ${{ parameters.subscriptionName }}
+        keyVaultName: "cvp-${{ parameters.env }}-kv"
+        resourceGroup: "cvp-sharedinfra-${{ parameters.env }}"
+
   - job: CertGen${{ env }}
     displayName: 'Generate Certificate for ${{ env }}'
     variables:
@@ -42,3 +53,14 @@ jobs:
           domain: "${{ variables.dns }}"
           keyVaultName: "cvp-${{lower(env)}}-kv"
           resourceGroupName: "cvp-sharedinfra-${{lower(env)}}"
+  
+   - job: FW Disable
+    displayName: 'Disable fw for for ${{ env }}'
+    variables:
+      - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
+    steps:
+      - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
+        parameters:
+          subscription: ${{ parameters.subscriptionName }}
+          keyVaultName: "cvp-${{ parameters.env }}-kv"
+          resourceGroup: "cvp-sharedinfra-${{ parameters.env }}"
