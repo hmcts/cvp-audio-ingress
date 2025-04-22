@@ -19,9 +19,6 @@ parameters:
   values: ['stg', 'prod', 'sbox']
   default: ['stg', 'prod']
 
-- name: subscriptionName
-  type: string
-
 resources:
   repositories:
     - repository: azTemplates
@@ -39,7 +36,7 @@ jobs:
     steps:
       - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
         parameters:
-          subscription: ${{ parameters.subscriptionName }}
+          subscription: ${{ variables.subscriptionName }}
           keyVaultName: "cvp-${{ env }}-kv"
           resourceGroup: "cvp-sharedinfra-${{ env }}"
 
@@ -54,7 +51,7 @@ jobs:
 
       - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
         parameters:
-          subscription: ${{ parameters.subscriptionName }}
+          subscription: ${{ variables.subscriptionName }}
           keyVaultName: "cvp-${{ env }}-kv"
           resourceGroup: "cvp-sharedinfra-${{ env }}"
 
