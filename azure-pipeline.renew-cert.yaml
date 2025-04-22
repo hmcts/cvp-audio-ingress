@@ -19,6 +19,9 @@ parameters:
   values: ['stg', 'prod', 'sbox']
   default: ['stg', 'prod']
 
+- name: subscriptionName
+  type: string
+
 resources:
   repositories:
     - repository: azTemplates
