@@ -29,38 +29,38 @@ resources:
 
 jobs:
 - ${{ each env in parameters.envs }}:
- - job: FW Enable
+  - job: FW_Enable_${{ env }}
     displayName: 'Enable fw for ${{ env }}'
     variables:
-      - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
+      - template: ./pipeline/variables/variables-${{ lower(env) }}.yaml
     steps:
-    - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
-      parameters:
-        subscription: ${{ parameters.subscriptionName }}
-        keyVaultName: "cvp-${{ parameters.env }}-kv"
-        resourceGroup: "cvp-sharedinfra-${{ parameters.env }}"
-
-  - job: CertGen${{ env }}
-    displayName: 'Generate Certificate for ${{ env }}'
-    variables:
-      - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
-    steps:
-      - template: templates\Azure\Certificates\Request-test.yaml@azTemplates
-        parameters:
-          subscriptionName: ${{variables.subscriptionName}}
-          product: "cvp"
-          environment: ${{lower(env)}}
-          domain: "${{ variables.dns }}"
-          keyVaultName: "cvp-${{lower(env)}}-kv"
-          resourceGroupName: "cvp-sharedinfra-${{lower(env)}}"
-  
-   - job: FW Disable
-    displayName: 'Disable fw for for ${{ env }}'
-    variables:
-      - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
-    steps:
-      - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
+      - template: templates/Azure/KeyVault/firewall-enable.yaml@azTemplates
         parameters:
           subscription: ${{ parameters.subscriptionName }}
-          keyVaultName: "cvp-${{ parameters.env }}-kv"
-          resourceGroup: "cvp-sharedinfra-${{ parameters.env }}"
+          keyVaultName: "cvp-${{ env }}-kv"
+          resourceGroup: "cvp-sharedinfra-${{ env }}"
+
+  - job: CertGen_${{ env }}
+    displayName: 'Generate Certificate for ${{ env }}'
+    variables:
+      - template: ./pipeline/variables/variables-${{ lower(env) }}.yaml
+    steps:
+      - template: templates/Azure/Certificates/Request-test.yaml@azTemplates
+        parameters:
+          subscriptionName: ${{ variables.subscriptionName }}
+          product: "cvp"
+          environment: ${{ lower(env) }}
+          domain: "${{ variables.dns }}"
+          keyVaultName: "cvp-${{ lower(env) }}-kv"
+          resourceGroupName: "cvp-sharedinfra-${{ lower(env) }}"
+
+  - job: FW_Disable_${{ env }}
+    displayName: 'Disable fw for ${{ env }}'
+    variables:
+      - template: ./pipeline/variables/variables-${{ lower(env) }}.yaml
+    steps:
+      - template: templates/Azure/KeyVault/firewall-disable.yaml@azTemplates
+        parameters:
+          subscription: ${{ parameters.subscriptionName }}
+          keyVaultName: "cvp-${{ env }}-kv"
+          resourceGroup: "cvp-sharedinfra-${{ env }}"
