@@ -47,7 +47,7 @@ jobs:
           environment: ${{ lower(env) }}
           domain: "${{ variables.dns }}"
           keyVaultName: "cvp-${{ lower(env) }}-kv"
-          resourceGroupName: "cvp-sharedinfra-${{ lower(env) }}"
+          #resourceGroupName: "cvp-sharedinfra-${{ lower(env) }}"
 
       - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
         parameters:
