@@ -24,7 +24,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: VIH-10876-Add-fw-files
+      ref: master
       endpoint: hmcts
 
 jobs:
