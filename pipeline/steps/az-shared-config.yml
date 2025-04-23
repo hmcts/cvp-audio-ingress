@@ -130,7 +130,7 @@ steps:
           --bypass AzureServices \
           --default-action Deny
 
-  - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
+  - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "cvp-${{ parameters.env }}-kv"
