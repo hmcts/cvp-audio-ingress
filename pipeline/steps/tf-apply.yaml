@@ -31,7 +31,7 @@ parameters:
     default: $(system.defaultWorkingDirectory)
 
 steps:
-  - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
+  - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "cvp-${{ parameters.env }}-kv"
@@ -69,7 +69,7 @@ steps:
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: '${{ parameters.env }}.tfplan -no-color'
 
-  - template: templates\Azure\KeyVault\firewall-exception-remove.yaml@azTemplates
+  - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "cvp-${{ parameters.env }}-kv"

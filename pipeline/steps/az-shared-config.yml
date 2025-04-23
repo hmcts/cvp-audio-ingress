@@ -130,10 +130,10 @@ steps:
           --bypass AzureServices \
           --default-action Deny
 
-  - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
+  - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscriptionName }}
-      keyVaultName: "$(kvName)"
+      keyVaultName: "cvp-${{ parameters.env }}-kv"
 
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'

@@ -97,7 +97,7 @@ steps:
       targetPath: '${{ parameters.workingDirectory }}/terraform/${{ parameters.env }}.tfplan'
       artifact: '${{ parameters.env }}.tfplan'
 
-  - template: templates\Azure\KeyVault\firewall-exception-remove.yaml@azTemplates
+  - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "cvp-${{ parameters.env }}-kv"
