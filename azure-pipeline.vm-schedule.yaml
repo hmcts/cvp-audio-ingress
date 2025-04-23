@@ -1,0 +1,45 @@
+trigger: none
+
+pr: none
+
+parameters:
+- name: environment
+  displayName: Wowza Environment
+  default: 'SBOX'
+  type: string
+  values:
+  - 'SBOX'
+  - 'STG'
+  - 'PROD'
+- name: scheduleName
+  displayName: Automation Schedule Name
+  default: 'cvp-vm-off-18-00-00'
+  type: string
+  values:
+  - 'cvp-vm-off-18-00-00'
+  - 'cvp-vm-off-weekly-15-00-00'
+- name: setStatus
+  displayName: Set Schedule Status
+  default: 'enabled'
+  type: string
+  values:
+  - 'enabled'
+  - 'disabled'  
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+- job: SetAutomationSchedule
+  displayName: Set Automation Schedule
+  variables:
+    isEnabled: ${{ eq(parameters.setStatus, 'enabled') }}
+  steps:
+  - task: AzureCLI@2
+    displayName: Set Automation Schedule
+    inputs:
+      azureSubscription: 'DTS-SHAREDSERVICES-${{parameters.environment}}'
+      scriptType: 'pscore'
+      scriptLocation: 'scriptPath'
+      scriptPath: 'scripts/update-vmAutomationRunbook.ps1'
+      arguments: '-env ${{ lower(parameters.environment) }} -scheduleName ${{ parameters.scheduleName }} -status ${{ variables.isEnabled }}'
