@@ -16,7 +16,7 @@ parameters:
 
 steps:
 
-  - template: templates\Azure\KeyVault\firewall-exception-add.yaml@azTemplates
+  - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscription }}
       keyVaultName: ${{ parameters.kvName }}
@@ -81,7 +81,7 @@ steps:
       extPublisher: "Microsoft.Azure.Extensions"
       restApiPutBodyJson: $(splunkSettings.restApiPutBodyJson)
 
-  - template: templates\Azure\KeyVault\firewall-exception-remove.yaml@azTemplates
+  - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
     parameters:
       subscription: ${{ parameters.subscription }}
       keyVaultName: ${{ parameters.kvName }}
