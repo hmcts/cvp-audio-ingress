@@ -101,4 +101,3 @@ steps:
     parameters:
       subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "cvp-${{ parameters.env }}-kv"
-      resourceGroup: "cvp-sharedinfra-${{ parameters.env }}"

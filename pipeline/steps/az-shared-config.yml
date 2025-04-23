@@ -134,7 +134,6 @@ steps:
     parameters:
       subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "cvp-${{ parameters.env }}-kv"
-      resourceGroup: "cvp-sharedinfra-${{ parameters.env }}"
 
   - task: AzureCLI@2
     displayName: 'Create SSH Credentials'

@@ -34,11 +34,6 @@ jobs:
     variables:
       - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
     steps:
-      - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
-        parameters:
-          subscription: ${{ variables.subscriptionName }}
-          keyVaultName: "cvp-${{ env }}-kv"
-          resourceGroup: "cvp-sharedinfra-${{ env }}"
 
       - template: templates\Azure\Certificates\Request.yaml@azTemplates
         parameters:
@@ -47,11 +42,5 @@ jobs:
           environment: ${{ lower(env) }}
           domain: "${{ variables.dns }}"
           keyVaultName: "cvp-${{ lower(env) }}-kv"
-          #resourceGroupName: "cvp-sharedinfra-${{ lower(env) }}"
 
-      - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
-        parameters:
-          subscription: ${{ variables.subscriptionName }}
-          keyVaultName: "cvp-${{ env }}-kv"
-          resourceGroup: "cvp-sharedinfra-${{ env }}"
 

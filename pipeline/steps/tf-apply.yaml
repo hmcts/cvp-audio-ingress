@@ -35,7 +35,6 @@ steps:
     parameters:
       subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "cvp-${{ parameters.env }}-kv"
-      resourceGroup: "cvp-sharedinfra-${{ parameters.env }}"
 
   - template: tf-init.yaml
     parameters:
@@ -74,4 +73,3 @@ steps:
     parameters:
       subscription: ${{ parameters.subscriptionName }}
       keyVaultName: "cvp-${{ parameters.env }}-kv"
-      resourceGroup: "cvp-sharedinfra-${{ parameters.env }}"
