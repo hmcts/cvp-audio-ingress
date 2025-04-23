@@ -85,14 +85,3 @@ stages:
                   storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
                   action: Deny
                   alwaysRun: true  
-
-        - job: CertGen${{parameters.env}}
-          displayName: 'Generate Certificate for ${{parameters.env}}'
-          steps:
-            - template: templates\Azure\Certificates\Request.yaml@azTemplates
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                product: "cvp"
-                environment: ${{parameters.env}}
-                domain: "${{ variables.dns }}"
-                keyVaultName: "cvp-${{parameters.env}}-kv"
