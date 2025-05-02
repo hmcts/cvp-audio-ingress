@@ -59,7 +59,7 @@ stages:
                 subscriptionName: ${{variables.subscriptionName}}
                 resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
                 storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
-                action: Allow
+                action: Allow 
             - template: ../steps/tf-apply.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
@@ -84,12 +84,26 @@ stages:
           variables:
             - template: ../variables/variables-common.yaml
             - template: ../variables/variables-${{parameters.env}}.yaml
+            - name: currentBranch
+              ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+                value: $(System.PullRequest.SourceBranch)
+              ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+                value: $(Build.SourceBranch)
           steps:
           
             - template: ../steps/az-get-vm-names.yaml
               parameters:
                 subscriptionName: ${{variables.subscriptionName}}
                 env: ${{variables.env}}
+
+            - template: ../steps/az-ext-splunk.yaml
+              parameters:
+                subscription: ${{variables.subscriptionName}}
+                vmNames: $(getvmnames.vmListString)
+                vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
+                env: ${{variables.env}}
+                kvName: ${{variables.cvp_kv}}
+                currentBranch: ${{variables.currentBranch}}
 
             - template: ../steps/az-ext-oms.yaml
               parameters:
@@ -104,3 +118,4 @@ stages:
                 vmNames: $(getvmnames.vmListString)
                 vmRgName: "${{upper(variables.product)}}-RECORDINGS-${{upper(variables.env)}}-RG"
                 env: ${{variables.env}}
+                

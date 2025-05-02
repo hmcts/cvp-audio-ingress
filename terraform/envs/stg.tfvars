@@ -1,34 +1,65 @@
 environment                   = "stg"
 env                           = "stg"
 vm_count                      = 2
+wowza_version                 = "4.9.3"
 dns_zone_name                 = "shared-services.uk.south.stg.hmcts.internal"
 dns_resource_group            = "shared-services_stg_network_resource_group"
 address_space                 = "10.50.11.32/28"
 lb_IPaddress                  = "10.50.11.41"
 rtmps_source_address_prefixes = ["10.11.72.32/27", "10.49.72.32/27"]
-vpn_source_address_prefixes   = ["10.99.19.4"]
 ws_name                       = "hmcts-nonprod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
-vm_size                       = "Standard_F8s_v2"
+vm_size                       = "Standard_D4ds_v5"
+os_disk_type                  = "StandardSSD_LRS"
+os_disk_size                  = "512"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 10
 remaining_days                = 3
+retention_period              = 14
 schedules = [
   {
-    name      = "vm-off-weekly",
-    frequency = "Week"
+    name      = "vm-off",
+    frequency = "Day"
     interval  = 1
-    run_time  = "15:00:00"
+    run_time  = "18:00:00"
     start_vm  = false
-    week_days = ["Saturday"]
+  },
+]
+route_table = [
+  {
+    name                   = "default"
+    address_prefix         = "0.0.0.0/0"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "10.11.72.36"
   },
   {
-    name      = "vm-on-weekly",
-    frequency = "Week"
-    interval  = 1
-    run_time  = "05:00:00"
-    start_vm  = true
-    week_days = ["Monday"]
+    name                   = "azure_control_plane"
+    address_prefix         = "51.145.56.125/32"
+    next_hop_type          = "Internet"
+    next_hop_in_ip_address = null
+  },
+  {
+    name                   = "soc-prod-vnet"
+    address_prefix         = "10.146.0.0/21"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "10.11.8.36"
   }
+]
+sa_allowed_subnets = [
+  "/subscriptions/d025fece-ce99-4df2-b7a9-b649d3ff2060/resourceGroups/cft-demo-network-rg/providers/Microsoft.Network/virtualNetworks/cft-demo-vnet/subnets/aks-00",
+  "/subscriptions/d025fece-ce99-4df2-b7a9-b649d3ff2060/resourceGroups/cft-demo-network-rg/providers/Microsoft.Network/virtualNetworks/cft-demo-vnet/subnets/aks-01"
+]
+
+sa_allowed_ips = [
+  "128.77.75.64/26",  #GlobalProtect VPN egress range
+  "51.149.249.0/29",  #AnyConnect VPN egress range
+  "51.149.249.32/29", #AnyConnect VPN egress range
+  "194.33.249.0/29",  #AnyConnect VPN egress backup range
+  "194.33.248.0/29"   #AnyConnect VPN egress backup range
+]
+
+hrs_aks_source_address_prefixes = [
+  "10.10.128.0/20", # cft-aat-vnet aks-00
+  "10.10.144.0/20"  # cft-aat-vnet aks-01
 ]

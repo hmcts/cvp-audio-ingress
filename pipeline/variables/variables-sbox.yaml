@@ -3,13 +3,15 @@ variables:
   env_long: 'sandbox'
   dns: 'cvp-recording.sandbox.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-SBOX'
+  wowza_version: '4.9.3'
   kv_name_prefix : 'cftapps'
   ws_sub_name: "DCD-CFT-Sandbox"
   dynatrace_token: 'dynatrace-nonprod-token'
   infra_kv: 'infra-vault-sandbox'
+  cvp_kv: "cvp-sbox-kv"
   ws_name: "hmcts-sandbox"
   ws_rg: "oms-automation"
   dynatrace_host_group: "SBOX_DTS_CVP"
   dynatrace_tenant_id: "yrk32651"
-  TURN_OFF_VM_POST_RUN: true 
+  TURN_OFF_VM_POST_RUN: true
   sa_private: false

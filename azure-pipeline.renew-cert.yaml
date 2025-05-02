@@ -1,0 +1,46 @@
+trigger:
+  - none
+
+pr:
+  - none
+
+schedules:
+- cron: "0 7 * * Mon,Wed,Fri,Sun" 
+  displayName: Weekly Pipeline Schedule
+  branches:
+    include:
+    - master
+  always: true
+
+parameters:
+- name: envs
+  displayName: Wowza Environment
+  type: object
+  values: ['stg', 'prod', 'sbox']
+  default: ['stg', 'prod']
+
+resources:
+  repositories:
+    - repository: azTemplates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: master
+      endpoint: hmcts
+
+jobs:
+- ${{ each env in parameters.envs }}:
+  - job: CertGen${{ env }}
+    displayName: 'Generate Certificate for ${{ env }}'
+    variables:
+      - template: .\pipeline\variables\variables-${{ lower(env) }}.yaml
+    steps:
+
+      - template: templates\Azure\Certificates\Request.yaml@azTemplates
+        parameters:
+          subscriptionName: ${{ variables.subscriptionName }}
+          product: "cvp"
+          environment: ${{ lower(env) }}
+          domain: "${{ variables.dns }}"
+          keyVaultName: "cvp-${{ lower(env) }}-kv"
+
+

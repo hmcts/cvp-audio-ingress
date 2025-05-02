@@ -1,0 +1,44 @@
+trigger: none
+
+pr: none
+
+schedules:
+- cron: "0 17 * * 1"
+  displayName: Weekly Pipeline Schedule
+  branches:
+    include:
+    - master
+  always: true
+
+parameters:
+- name: environment
+  displayName: Wowza Environment
+  default: 'SBOX'
+  type: string
+  values:
+  - 'STG'
+  - 'SBOX'
+  
+- name: vms
+  displayName: 'Number of Wowza VMs that should be running?'
+  default: 1
+  type: number
+  values:
+  - 1
+  - 2
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+- job: SetWowzaVMs
+  displayName: Set Wowza VMs
+  steps:
+  - task: AzureCLI@2
+    displayName: Spin up VMs
+    inputs:
+      azureSubscription: 'DTS-SHAREDSERVICES-${{parameters.environment}}'
+      scriptType: 'pscore'
+      scriptLocation: 'scriptPath'
+      scriptPath: 'scripts/set-vmStatus.ps1'
+      arguments: '-env ${{ parameters.environment }} -vm_number ${{ parameters.vms }} -buildNumber $(Build.BuildNumber)'

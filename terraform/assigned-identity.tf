@@ -69,4 +69,4 @@ resource "azurerm_role_assignment" "cvp-auto-acct-mi-role" {
   depends_on = [
     azurerm_role_definition.vm-status-control # Required otherwise terraform destroy will fail
   ]
-} 
+}

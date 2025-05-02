@@ -3,13 +3,15 @@ variables:
   env_long: 'staging'
   dns: 'cvp-recording.aat.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-STG'
+  wowza_version: '4.9.3'
   kv_name_prefix : 'cftapps'
   ws_sub_name: "DCD-CNP-DEV"
   dynatrace_token: 'dynatrace-nonprod-token'
   infra_kv: 'infra-vault-nonprod'
+  cvp_kv: "cvp-stg-kv"
   ws_name: "hmcts-nonprod"
   ws_rg: "oms-automation"
   dynatrace_host_group: "AAT_DTS_CVP"
   dynatrace_tenant_id: "yrk32651"
-  TURN_OFF_VM_POST_RUN: false 
-  sa_private: true
+  TURN_OFF_VM_POST_RUN: true 
+  sa_private: false

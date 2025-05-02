@@ -42,7 +42,7 @@ variable "vm_count" {
 
 variable "vm_size" {
   type        = string
-  default     = "Standard_F16s_v2"
+  default     = "Standard_D8ds_v5"
   description = "Size of VM. Defaults to \"Standard_F16s_v2\"."
   # From <env>.tfvars
 }
@@ -167,14 +167,42 @@ variable "rtmps_source_address_prefixes" {
   # From <env>.tfvars
 }
 
-variable "vpn_source_address_prefixes" {
+variable "f5_vpn_source_address_prefixes" {
   type        = list(string)
-  description = "(Required) IP addresses of VPN"
-  # From <env>.tfvars
+  description = "(Required) IP addresses of F5 VPN"
+  default     = ["10.99.72.4"]
+}
+
+variable "globalconnect_vpn_source_address_prefixes" {
+  type        = list(string)
+  description = "(Required) IP addresses of GlobalConnect VPN"
+  default     = ["128.77.75.64/26"]
+}
+
+variable "anyconnect_vpn_source_address_prefixes" {
+  type        = list(string)
+  description = "(Required) IP addresses of AnyConnect VPN"
+  default = [
+    "51.149.249.0/29",
+    "51.149.249.32/29",
+    "194.33.249.0/29",
+    "194.33.248.0/29"
+  ]
+}
+
+variable "hrs_aks_source_address_prefixes" {
+  type        = list(string)
+  description = "(Required) IP addresses of HRS AKS"
+  default = []
 }
 
 variable "dev_source_address_prefixes" {
   type = string
+}
+
+variable "route_table" {
+  description = "Route Table routes"
+  type        = list(map(string))
 }
 
 #---------------------------------------------------
@@ -278,7 +306,43 @@ variable "sa_account_replication_type" {
 variable "sa_recording_retention" {
   type        = number
   description = "(Required) How long to retain the recordings in blob in days."
-  # From shared.tfvars
+  default     = 90
+}
+
+variable "sa_allowed_subnets" {
+  description = "Resource IDs of subnets to allow through storage firewall"
+  type        = list(string)
+  default     = null
+}
+
+variable "sa_allowed_ips" {
+  type        = list(string)
+  description = "(Optional) List of public IP addresses which will have access to storage account."
+  default     = []
+}
+
+variable "sa_default_action" {
+  type        = string
+  default     = "Deny"
+  description = "What is the default action of the networking for the storage account. Defaults to 'Deny'"
+}
+
+variable "delete_after_days_since_creation_greater_than" {
+  type        = number
+  default     = 90
+  description = "Number of days to keep an ingest file for before deleting it. Default 90 days"
+}
+
+variable "sa_policy_enabled" {
+  type        = bool
+  default     = true
+  description = "Status of the storage account lifecycle policy. Default 'true'"
+}
+
+variable "retention_period" {
+  type        = number
+  default     = 365
+  description = "(Optional) Specifies the number of days that the blob should be retained, between 1 and 365 days. Defaults to 365"
 }
 
 #---------------------------------------------------

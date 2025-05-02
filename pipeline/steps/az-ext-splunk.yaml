@@ -1,0 +1,89 @@
+parameters:
+  - name: subscription
+    type: string
+  - name: vmNames
+    type: string
+  - name: vmRgName
+    type: string
+  - name: env
+    type: string
+    default: ''
+  - name: kvName
+    type: string
+  - name: currentBranch
+    type: string
+
+
+steps:
+
+  - template: templates\Azure\KeyVault\firewall-disable.yaml@azTemplates
+    parameters:
+      subscription: ${{ parameters.subscription }}
+      keyVaultName: ${{ parameters.kvName }}
+
+  - task: AzureCLI@2
+    displayName: Get Settings for Splunk Extension
+    name: splunkSettings
+    condition: always()
+    inputs:
+      azureSubscription: ${{ parameters.subscription }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+
+        $env = "${{ parameters.env }}"
+        $env_long = "$env:ENV_LONG"
+
+        $infraKvName = "${{ parameters.kvName }}"
+        Write-Host infraKvName
+        Write-Host $infraKvName
+
+        $splunk_password=az keyvault secret show --id https://$infraKvName.vault.azure.net/secrets/splunk-password  --query "value" -o tsv
+
+        $scriptUrl = "https://raw.githubusercontent.com/hmcts/cvp-audio-ingress/${{ parameters.currentBranch }}/scripts/install-splunk-forwarder-service.sh"
+        Write-Host "Getting script from:"
+        Write-Host $scriptUrl
+
+        $date = (Get-date).AddHours(720)
+        $expDate = Get-Date $date -Format yyyy-MM-dd
+
+        $restApiPutBody =  [PSCustomObject]@{
+            "location" = "uksouth"
+            "properties" = [PSCustomObject]@{
+                "publisher"               = "Microsoft.Azure.Extensions"
+                "type"                    = "CustomScript"
+                "typeHandlerVersion"      = "2.1"
+                "autoUpgradeMinorVersion" = "false"
+                "protectedSettings" = [PSCustomObject]@{
+                    "fileUris"           = @($scriptUrl)
+                    "commandToExecute"   = "./install-splunk-forwarder-service.sh splunkadmin $splunk_password dynatrace_forwarders"}}
+            "tags" = [PSCustomObject]@{
+                "application"  = 'Cloud'
+                "BuiltFrom"    = 'hmcts/cvp-audio-ingress'
+                "BusinessArea" = 'Cross-Cutting'
+                "environment"  = $env_long
+                "Platform"     = ''
+                "Video"        = ''
+                "expiresAfter" = $expDate}}
+
+        $restApiPutBodyJson = $restApiPutBody | ConvertTo-Json -Compress -Depth 100
+        #$restApiPutBodyJson = $restApiPutBodyJson -replace "`"", "\`""
+        
+        Write-Host "##vso[task.setvariable variable=restApiPutBodyJson;isOutput=true;issecret=true]$restApiPutBodyJson"
+        Write-Host $restApiPutBodyJson
+
+  - template: templates\Azure\Vm\install-ext-by-api.yaml@azTemplates
+    parameters:
+      subscription: ${{ parameters.subscription }}
+      rgName: ${{ parameters.vmRgName }}
+      vmName: ${{ parameters.vmNames }}
+      extName: "splunk-uf"
+      extPublisher: "Microsoft.Azure.Extensions"
+      restApiPutBodyJson: $(splunkSettings.restApiPutBodyJson)
+
+  - template: templates\Azure\KeyVault\firewall-enable.yaml@azTemplates
+    parameters:
+      subscription: ${{ parameters.subscription }}
+      keyVaultName: ${{ parameters.kvName }}
+
+

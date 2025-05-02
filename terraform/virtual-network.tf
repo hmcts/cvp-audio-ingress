@@ -19,6 +19,4 @@ resource "azurerm_subnet" "sn" {
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = [var.address_space]
   service_endpoints    = ["Microsoft.KeyVault"]
-
-  enforce_private_link_endpoint_network_policies = true
 }

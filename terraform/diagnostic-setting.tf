@@ -6,22 +6,9 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
   target_resource_id         = data.azurerm_key_vault.cvp_kv.id
   log_analytics_workspace_id = local.la_id
 
-  log {
-    category = "AuditEvent"
-    enabled  = false
-
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
-  }
-
   metric {
     category = "AllMetrics"
 
-    retention_policy {
-      enabled = true
-    }
   }
 }
 
@@ -37,18 +24,12 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-sa-diag-set" {
     category = "Capacity"
     enabled  = true
 
-    retention_policy {
-      enabled = false
-    }
+
   }
   metric {
-
     category = "Transaction"
     enabled  = true
 
-    retention_policy {
-      enabled = false
-    }
   }
 }
 
@@ -60,22 +41,12 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
   target_resource_id         = module.nsg.network_security_group_id
   log_analytics_workspace_id = local.la_id
 
-  log {
+  enabled_log {
     category = "NetworkSecurityGroupEvent"
-    enabled  = true
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
   }
 
-  log {
+  enabled_log {
     category = "NetworkSecurityGroupRuleCounter"
-    enabled  = true
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
   }
 }
 
@@ -92,10 +63,7 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nic-diag-set" {
   metric {
     category = "AllMetrics"
     enabled  = true
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
+
   }
 }
 
@@ -107,28 +75,9 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-lb-diag-set" {
   target_resource_id         = azurerm_lb.cvp.id
   log_analytics_workspace_id = local.la_id
 
-  log {
-    category = "LoadBalancerAlertEvent"
-    enabled  = true
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "LoadBalancerProbeHealthStatus"
-    enabled  = true
-    retention_policy {
-      enabled = false
-    }
-  }
-
   metric {
     category = "AllMetrics"
     enabled  = true
 
-    retention_policy {
-      enabled = false
-    }
   }
 }

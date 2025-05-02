@@ -1,3 +1,10 @@
+## FFMPEG is required to run this script:
+## https://ffmpeg.org/download.html
+## or via Chocolatey for Windows: choco install ffmpeg
+## or via Linux package managers:
+## sudo snap install ffmpeg  
+## sudo apt install ffmpeg
+
 Param (
     [Parameter(Mandatory)]
     [ValidateSet("SBOX","PROD","STG")]
@@ -11,7 +18,7 @@ $env_string = switch ($env) {
     Default {""}
 }
 
-$hostName = "cvp-recording$($env_string).platform.hmcts.net"
+$hostName = "cvp-recording$($env_string).platform.hmcts.net" # Use hosts file entry for Prod
 $sub = "DTS-SHAREDSERVICES-$($env)"
 $is_error = $false
 $sampleFileSource="https://filesamples.com/samples/video/mp4/sample_640x360.mp4"  

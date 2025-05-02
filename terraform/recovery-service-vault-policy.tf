@@ -2,10 +2,12 @@
 # VM backup policy
 #---------------------------------------------------
 resource "azurerm_backup_policy_vm" "vm_backup" {
-  name = "${local.service_name}-rsv-policy"
+  count = var.env == "prod" ? 1 : 0
+
+  name = "${local.service_name}-vm-policy"
 
   resource_group_name            = azurerm_resource_group.rg.name
-  recovery_vault_name            = azurerm_recovery_services_vault.backup_vault.name
+  recovery_vault_name            = azurerm_recovery_services_vault.backup_vault[0].name
   timezone                       = "UTC"
   instant_restore_retention_days = 5
 

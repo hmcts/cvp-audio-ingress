@@ -18,5 +18,5 @@ module "vm_automation" {
   depends_on = [
     azurerm_automation_account.cvp
   ]
-  
+
 }
