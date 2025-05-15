@@ -1,7 +1,7 @@
 environment                   = "prod"
 env                           = "prod"
 vm_count                      = 2
-wowza_version                 = "4.8.28"
+wowza_version                 = "4.9.3"
 dns_zone_name                 = "shared-services.uk.south.prod.hmcts.internal"
 dns_resource_group            = "shared-services_prod_network_resource_group"
 address_space                 = "10.50.11.48/28"
