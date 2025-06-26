@@ -111,7 +111,10 @@ steps:
 
         echo "Tagging $kvId"
         az tag update --resource-id ${kvId//[$'\t\r\n\"']/} --operation replace --subscription ${{ parameters.subscriptionName }} --tags $tags
-
+        
+        echo "Enabling purge protection on $kvName"
+        az keyvault update --name $kvName --resource-group $rgName --enable-purge-protection true
+        
         echo "Grant Service connection permissions on the KV"
         az keyvault set-policy --name $kvName \
           --certificate-permissions backup create get import list listissuers recover restore update \
