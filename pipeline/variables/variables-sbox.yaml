@@ -3,7 +3,7 @@ variables:
   env_long: 'sandbox'
   dns: 'cvp-recording.sandbox.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-SBOX'
-  wowza_version: '4.9.3'
+  wowza_version: '4.9.4'
   kv_name_prefix : 'cftapps'
   ws_sub_name: "DCD-CFT-Sandbox"
   dynatrace_token: 'dynatrace-nonprod-token'
