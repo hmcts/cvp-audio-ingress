@@ -1,6 +1,6 @@
 #---------------------------------------------------
 # General settings
-#---------------------------------------------------
+#----------------------------------------------------
 variable "location" {
   type        = string
   description = "(Required) The azure resource location."
