@@ -2,7 +2,7 @@
 # Dynatrace alert (via module)
 #---------------------------------------------------
 module "dynatrace_runbook" {
-  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-new-dynatrace-alert.git?ref=v1.0.0"
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-new-dynatrace-alert.git?ref=v1.0.1"
 
   automation_account_name = azurerm_automation_account.cvp.name
   resource_group_name     = azurerm_resource_group.rg.name
