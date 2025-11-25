@@ -3,7 +3,7 @@ variables:
   env_long: 'staging'
   dns: 'cvp-recording.aat.platform.hmcts.net'
   subscriptionName: 'DTS-SHAREDSERVICES-STG'
-  wowza_version: '4.9.4'
+  wowza_version: '4.9.6'
   kv_name_prefix : 'cftapps'
   ws_sub_name: "DCD-CNP-DEV"
   dynatrace_token: 'dynatrace-nonprod-token'
