@@ -31,7 +31,7 @@ route_table = [
     name                   = "default"
     address_prefix         = "0.0.0.0/0"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.11.72.37"
+    next_hop_in_ip_address = "10.11.72.36"
   },
   {
     name                   = "azure_control_plane"
