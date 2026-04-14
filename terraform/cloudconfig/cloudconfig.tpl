@@ -928,6 +928,59 @@ write_files:
         done
   - owner: wowza:wowza
     permissions: 0775
+    path: /home/wowza/missing-recordings.sh
+    content: |
+        #!/bin/bash
+
+        # extras: all non-audiostream recordings go to /azurecopy/missing
+
+        streams=$(find /usr/local/WowzaStreamingEngine/content/ -name "*.mp4" -not -path "/usr/local/WowzaStreamingEngine/content/azurecopy/*")
+
+        for stream in $streams; do
+            IFS="/" read -a myarray <<< "$stream"
+            stream_prefix="$${myarray[5]}"
+            stream_file="$${myarray[6]}"
+
+            # ensure we have expected layout
+            if [[ -z "$stream_prefix" || -z "$stream_file" ]]; then
+                echo "Fallback-move: unexpected layout, moving to missing: $stream"
+                target_dir="/usr/local/WowzaStreamingEngine/content/azurecopy/missing"
+                mkdir -p "$target_dir"
+                target="$target_dir/$(basename "$stream")"
+                echo " -> $target"
+                cp "$stream" "$target"
+                if [[ -f "$target" ]]; then
+                    echo "File moved OK, removing local file"
+                    sudo rm "$stream"
+                else
+                    echo "File didnt move!" >&2
+                fi
+                continue
+            fi
+
+            # Use missing fallback for non-audiostream prefixes
+            if [[ "$stream_prefix" =~ ^audiostream ]]; then
+                echo "Skipping audiostream review path"
+                continue
+            fi
+
+            echo "Fallback-move: non-audiostream recording found: $stream"
+            target_dir="/usr/local/WowzaStreamingEngine/content/azurecopy/missing"
+            mkdir -p "$target_dir"
+
+            target="$target_dir/$stream_file"
+            echo " -> $target"
+            cp "$stream" "$target"
+
+            if [[ -f "$target" ]]; then
+                echo "File moved OK, removing local file"
+                sudo rm "$stream"
+            else
+                echo "File didnt move!" >&2
+            fi
+        done     
+  - owner: wowza:wowza
+    permissions: 0775
     path: /home/wowza/get-recordings.sh
     content: |
         #!/bin/bash
@@ -1204,6 +1257,9 @@ write_files:
         echo "10 0 * * * /home/wowza/check-cert.sh" >> $cronTaskPath
         echo "10 0 * * * /home/wowza/check-file-size.sh" >> $cronTaskPath
         fi
+
+        # Cron for moving missing recordings
+        echo "*/30 * * * * /home/wowza/missing-recordings.sh >> $logFolder/missing-recordings.log 2>&1" >> $cronTaskPath
 
         # Set Up Cron Jobs for Wowza & Root.
         crontab -u wowza $cronTaskPath
