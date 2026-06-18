@@ -697,6 +697,7 @@ write_files:
 
       max=$1
       prefix="audiostream"
+      crime_prefix="crimeaudiostream"
       suffix=""
 
       echo "Ensuring there are $${max} Applications setup"
