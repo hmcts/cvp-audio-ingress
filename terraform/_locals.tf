@@ -2,6 +2,7 @@ locals {
   service_name              = "${var.product}-recordings-${var.env}"
   domain_dns_prefix         = var.env == "stg" ? "aat" : var.env == "sbox" ? "sandbox" : var.env == "stg" ? "staging" : var.env
   main_container_name       = "recordings"
+  main_crime_container_name = "crime_recordings"
   wowza_logs_container_name = "wowzalogs"
   splunk_admin_username     = "splunkadmin"
   la_id                     = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
