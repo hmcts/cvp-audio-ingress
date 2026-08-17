@@ -18,6 +18,7 @@ parameters:
   values:
   - 'cvp-vm-off-18-00-00'
   - 'cvp-vm-off-weekly-15-00-00'
+  - 'cvp-vm-on-08-00-00'
 - name: setStatus
   displayName: Set Schedule Status
   default: 'enabled'
