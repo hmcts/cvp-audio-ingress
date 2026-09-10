@@ -3,7 +3,7 @@ terraform {
   }
   required_version = ">= 1.3.7"
   required_providers {
-    azurerm  = "3.117.1"
+    azurerm  = "5.5.0"
     template = "~> 2.1"
     random   = ">= 2"
     azapi = {
