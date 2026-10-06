@@ -58,16 +58,19 @@ locals {
       protocol      = "Tcp"
       frontend_port = 443
       backend_port  = 443
+      enable_floating_ip = true
     }
     WowzaManager = {
       protocol      = "Tcp"
       frontend_port = 8090
       backend_port  = 8090
+      enable_floating_ip = true
     }
     WowzaAPI = {
       protocol      = "Tcp"
       frontend_port = 8087
       backend_port  = 8087
+      enable_floating_ip = true
     }
   }
 }
