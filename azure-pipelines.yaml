@@ -3,13 +3,13 @@ trigger:
 pr:
   - none
 
-schedules:
-- cron: "0 17 * * 1"
-  displayName: Weekly Pipeline Schedule
-  branches:
-    include:
-    - master
-  always: true
+# schedules:
+# - cron: "0 17 * * 1"
+#   displayName: Weekly Pipeline Schedule
+#   branches:
+#     include:
+#     - master
+#   always: true
 
 resources:
   repositories:
