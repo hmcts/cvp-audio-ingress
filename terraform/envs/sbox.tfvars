@@ -12,6 +12,7 @@ ws_rg                         = "oms-automation"
 num_applications              = 20
 vm_size                       = "Standard_D4ds_v5"
 os_disk_type                  = "StandardSSD_LRS"
+sa_default_action             = "Allow"
 os_disk_size                  = "512"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 3
