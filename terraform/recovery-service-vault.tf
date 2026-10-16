@@ -11,6 +11,6 @@ resource "azurerm_recovery_services_vault" "backup_vault" {
 
   sku                 = "Standard"
   storage_mode_type   = "LocallyRedundant"
-  soft_delete_enabled = false
+  soft_delete_enabled = true
   tags                = module.ctags.common_tags
 }
