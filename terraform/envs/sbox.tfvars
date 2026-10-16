@@ -1,7 +1,7 @@
 environment                   = "sbox"
 env                           = "sbox"
 vm_count                      = 1
-wowza_version                 = "4.9.6"
+wowza_version                 = "4.9.7"
 dns_zone_name                 = "shared-services.uk.south.sbox.hmcts.internal"
 dns_resource_group            = "cvp-sharedinfra-sbox"
 address_space                 = "10.50.11.0/28"
@@ -12,6 +12,7 @@ ws_rg                         = "oms-automation"
 num_applications              = 20
 vm_size                       = "Standard_D4ds_v5"
 os_disk_type                  = "StandardSSD_LRS"
+sa_default_action             = "Allow"
 os_disk_size                  = "512"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 3
