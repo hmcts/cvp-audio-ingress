@@ -1,14 +1,13 @@
 locals {
-  service_name                    = "${var.product}-recordings-${var.env}"
-  domain_dns_prefix               = var.env == "stg" ? "aat" : var.env == "sbox" ? "sandbox" : var.env == "stg" ? "staging" : var.env
-  main_container_name             = "recordings"
-  crime_container_name            = "crime-recordings"
-  cft_container_name              = "cft-recordings"
-  crime_car_container_name        = "crime-car-recordings"
-  wowza_logs_container_name       = "wowzalogs"
-  wowza_crime_logs_container_name = "wowzacrimelogs"
-  splunk_admin_username           = "splunkadmin"
-  la_id                           = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
+  service_name              = "${var.product}-recordings-${var.env}"
+  domain_dns_prefix         = var.env == "stg" ? "aat" : var.env == "sbox" ? "sandbox" : var.env == "stg" ? "staging" : var.env
+  main_container_name       = "recordings"
+  crime_container_name      = "crime-recordings"
+  cft_container_name        = "cft-recordings"
+  crime_car_container_name  = "crime-car-recordings"
+  wowza_logs_container_name = "wowzalogs"
+  splunk_admin_username     = "splunkadmin"
+  la_id                     = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
   sas_tokens = {
     "recordings-rlw" = {
       permissions     = "rlw"
@@ -46,14 +45,6 @@ locals {
       permissions     = "rlw"
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.crime_car_container_name
-      blob            = ""
-      expiry_days     = var.expiry_days
-      remaining_days  = var.remaining_days
-    }
-    "crime-wowzalogas-rlw" = {
-      permissions     = "rlw"
-      storage_account = "${replace(lower(local.service_name), "-", "")}sa"
-      container       = local.wowza_crime_logs_container_name
       blob            = ""
       expiry_days     = var.expiry_days
       remaining_days  = var.remaining_days

@@ -43,10 +43,6 @@ module "sa" {
       name        = local.crime_car_container_name
       access_type = "private"
     },
-    {
-      name        = local.wowza_crime_logs_container_name
-      access_type = "private"
-    },
     // Keep these containers until all recordings have been migrated to `recordings` container
     {
       name        = "${local.main_container_name}01"
