@@ -1,13 +1,14 @@
 locals {
-  service_name              = "${var.product}-recordings-${var.env}"
-  domain_dns_prefix         = var.env == "stg" ? "aat" : var.env == "sbox" ? "sandbox" : var.env == "stg" ? "staging" : var.env
-  main_container_name       = "recordings"
-  crime_container_name      = "crime-recordings"
-  crime_car_container_name  = "crime-car-recordings"
-  wowza_logs_container_name = "wowzalogs"
+  service_name                    = "${var.product}-recordings-${var.env}"
+  domain_dns_prefix               = var.env == "stg" ? "aat" : var.env == "sbox" ? "sandbox" : var.env == "stg" ? "staging" : var.env
+  main_container_name             = "recordings"
+  crime_container_name            = "crime-recordings"
+  cft_container_name              = "cft-recordings"
+  crime_car_container_name        = "crime-car-recordings"
+  wowza_logs_container_name       = "wowzalogs"
   wowza_crime_logs_container_name = "wowzacrimelogs"
-  splunk_admin_username     = "splunkadmin"
-  la_id                     = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
+  splunk_admin_username           = "splunkadmin"
+  la_id                           = replace(data.azurerm_log_analytics_workspace.log_analytics.id, "resourcegroups", "resourceGroups")
   sas_tokens = {
     "recordings-rlw" = {
       permissions     = "rlw"
@@ -25,10 +26,18 @@ locals {
       expiry_days     = var.expiry_days
       remaining_days  = var.remaining_days
     }
-   "crime-recordings-rlw" = {
+    "crime-recordings-rlw" = {
       permissions     = "rlw"
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.crime_container_name
+      blob            = ""
+      expiry_days     = var.expiry_days
+      remaining_days  = var.remaining_days
+    }
+    "cft-recordings-rlw" = {
+      permissions     = "rlw"
+      storage_account = "${replace(lower(local.service_name), "-", "")}sa"
+      container       = local.cft_container_name
       blob            = ""
       expiry_days     = var.expiry_days
       remaining_days  = var.remaining_days
@@ -55,21 +64,21 @@ locals {
   peering_vpn_resourcegroup = "rg-mgmt"
   lb-rules = {
     wowza = {
-      protocol      = "Tcp"
-      frontend_port = 443
-      backend_port  = 443
+      protocol           = "Tcp"
+      frontend_port      = 443
+      backend_port       = 443
       enable_floating_ip = true
     }
     WowzaManager = {
-      protocol      = "Tcp"
-      frontend_port = 8090
-      backend_port  = 8090
+      protocol           = "Tcp"
+      frontend_port      = 8090
+      backend_port       = 8090
       enable_floating_ip = true
     }
     WowzaAPI = {
-      protocol      = "Tcp"
-      frontend_port = 8087
-      backend_port  = 8087
+      protocol           = "Tcp"
+      frontend_port      = 8087
+      backend_port       = 8087
       enable_floating_ip = true
     }
   }

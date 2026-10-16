@@ -193,7 +193,7 @@ variable "anyconnect_vpn_source_address_prefixes" {
 variable "hrs_aks_source_address_prefixes" {
   type        = list(string)
   description = "(Required) IP addresses of HRS AKS"
-  default = []
+  default     = []
 }
 
 variable "dev_source_address_prefixes" {

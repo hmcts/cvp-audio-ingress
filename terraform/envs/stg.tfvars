@@ -13,6 +13,7 @@ num_applications              = 3500
 vm_size                       = "Standard_D4ds_v5"
 os_disk_type                  = "StandardSSD_LRS"
 os_disk_size                  = "512"
+sa_default_action             = "Allow"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 10
 remaining_days                = 3
