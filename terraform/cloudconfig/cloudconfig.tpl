@@ -645,6 +645,269 @@ write_files:
                 </Application>
         </Root>
   - owner: wowza:wowza
+    path: /home/wowza/Application-crime.xml
+    content: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Root version="1">
+                <Application>
+                        <Name></Name>
+                        <AppType>Live</AppType>
+                        <Description></Description>
+                        <!-- Uncomment to set application level timeout values
+                        <ApplicationTimeout>60000</ApplicationTimeout>
+                        <PingTimeout>12000</PingTimeout>
+                        <ValidationFrequency>8000</ValidationFrequency>
+                        <MaximumPendingWriteBytes>0</MaximumPendingWriteBytes>
+                        <MaximumSetBufferTime>60000</MaximumSetBufferTime>
+                        <MaximumStorageDirDepth>25</MaximumStorageDirDepth>
+                        -->
+                        <Connections>
+                                <AutoAccept>true</AutoAccept>
+                                <AllowDomains></AllowDomains>
+                        </Connections>
+                        <!--
+                    StorageDir path variables
+
+                    $${com.wowza.wms.AppHome} - Application home directory
+                    $${com.wowza.wms.ConfigHome} - Configuration home directory
+                    $${com.wowza.wms.context.VHost} - Virtual host name
+                    $${com.wowza.wms.context.VHostConfigHome} - Virtual host config directory
+                    $${com.wowza.wms.context.Application} - Application name
+                    $${com.wowza.wms.context.ApplicationInstance} - Application instance name
+
+                -->
+                        <Streams>
+                                <StreamType>live</StreamType>
+                                <StorageDir>$${com.wowza.wms.context.VHostConfigHome}/content/$${com.wowza.wms.context.Application}</StorageDir>
+                                <KeyDir>$${com.wowza.wms.context.VHostConfigHome}/keys</KeyDir>
+                                <!-- LiveStreamPacketizers (separate with commas): cupertinostreamingpacketizer, smoothstreamingpacketizer, sanjosestreamingpacketizer, mpegdashstreamingpacketizer, cupertinostreamingrepeater, smoothstreamingrepeater, sanjosestreamingrepeater, mpegdashstreamingrepeater, dvrstreamingpacketizer, dvrstreamingrepeater -->
+                                <LiveStreamPacketizers></LiveStreamPacketizers>
+                                <!-- Properties defined here will override any properties defined in conf/Streams.xml for any streams types loaded by this application -->
+                                <Properties>
+                                </Properties>
+                        </Streams>
+                        <Transcoder>
+                                <!-- To turn on transcoder set to: transcoder -->
+                                <LiveStreamTranscoder></LiveStreamTranscoder>
+                                <!-- [templatename].xml or $${SourceStreamName}.xml -->
+                                <Templates>$${SourceStreamName}.xml,transrate.xml</Templates>
+                                <ProfileDir>$${com.wowza.wms.context.VHostConfigHome}/transcoder/profiles</ProfileDir>
+                                <TemplateDir>$${com.wowza.wms.context.VHostConfigHome}/transcoder/templates</TemplateDir>
+                                <Properties>
+                                </Properties>
+                        </Transcoder>
+                        <DVR>
+                                <!-- As a single server or as an origin, use dvrstreamingpacketizer in LiveStreamPacketizers above -->
+                                <!-- Or, in an origin-edge configuration, edges use dvrstreamingrepeater in LiveStreamPacketizers above -->
+                                <!-- As an origin, also add dvrchunkstreaming to HTTPStreamers below -->
+                                <!-- If this is a dvrstreamingrepeater, define Application/Repeater/OriginURL to point back to the origin -->
+                                <!-- To turn on DVR recording set Recorders to dvrrecorder.  This works with dvrstreamingpacketizer  -->
+                                <Recorders></Recorders>
+                                <!-- As a single server or as an origin, set the Store to dvrfilestorage-->
+                                <!-- edges should have this empty -->
+                                <Store></Store>
+                                <!--  Window Duration is length of live DVR window in seconds.  0 means the window is never trimmed. -->
+                                <WindowDuration>0</WindowDuration>
+                                <!-- Storage Directory is top level location where dvr is stored.  e.g. c:/temp/dvr -->
+                                <StorageDir>$${com.wowza.wms.context.VHostConfigHome}/dvr</StorageDir>
+                                <!-- valid ArchiveStrategy values are append, version, delete -->
+                                <ArchiveStrategy>append</ArchiveStrategy>
+                                <!-- Properties for DVR -->
+                                <Properties>
+                                </Properties>
+                        </DVR>
+                        <TimedText>
+                                <!-- VOD caption providers (separate with commas): vodcaptionprovidermp4_3gpp, vodcaptionproviderttml, vodcaptionproviderwebvtt,  vodcaptionprovidersrt, vodcaptionproviderscc -->
+                                <VODTimedTextProviders></VODTimedTextProviders>
+                                <!-- Properties for TimedText -->
+                                <Properties>
+                                </Properties>
+                        </TimedText>
+                        <MediaCache>
+                                <MediaCacheSourceList></MediaCacheSourceList>
+                        </MediaCache>
+                        <SharedObjects>
+                                <StorageDir>$${com.wowza.wms.context.VHostConfigHome}/applications/$${com.wowza.wms.context.Application}/sharedobjects/$${com.wowza.wms.context.ApplicationInstance}</StorageDir>
+                        </SharedObjects>
+                        <Client>
+                                <IdleFrequency>-1</IdleFrequency>
+                                <Access>
+                                        <StreamReadAccess>*</StreamReadAccess>
+                                        <StreamWriteAccess>*</StreamWriteAccess>
+                                        <StreamAudioSampleAccess></StreamAudioSampleAccess>
+                                        <StreamVideoSampleAccess></StreamVideoSampleAccess>
+                                        <SharedObjectReadAccess>*</SharedObjectReadAccess>
+                                        <SharedObjectWriteAccess>*</SharedObjectWriteAccess>
+                                </Access>
+                        </Client>
+                        <RTP>
+                                <!-- RTP/Authentication/[type]Methods defined in Authentication.xml. Default setup includes; none, basic, digest -->
+                                <Authentication>
+                                        <PublishMethod>block</PublishMethod>
+                                        <PlayMethod>none</PlayMethod>
+                                </Authentication>
+                                <!-- RTP/AVSyncMethod. Valid values are: senderreport, systemclock, rtptimecode -->
+                                <AVSyncMethod>senderreport</AVSyncMethod>
+                                <MaxRTCPWaitTime>0</MaxRTCPWaitTime>
+                                <IdleFrequency>75</IdleFrequency>
+                                <RTSPSessionTimeout>90000</RTSPSessionTimeout>
+                                <RTSPMaximumPendingWriteBytes>0</RTSPMaximumPendingWriteBytes>
+                                <RTSPBindIpAddress></RTSPBindIpAddress>
+                                <RTSPConnectionIpAddress>0.0.0.0</RTSPConnectionIpAddress>
+                                <RTSPOriginIpAddress>127.0.0.1</RTSPOriginIpAddress>
+                                <IncomingDatagramPortRanges>*</IncomingDatagramPortRanges>
+                                <!-- Properties defined here will override any properties defined in conf/RTP.xml for any depacketizers loaded by this application -->
+                                <Properties>
+                                </Properties>
+                        </RTP>
+                        <MediaCaster>
+                                <RTP>
+                                        <RTSP>
+                                                <!-- udp, interleave -->
+                                                <RTPTransportMode>interleave</RTPTransportMode>
+                                        </RTSP>
+                                </RTP>
+                                <StreamValidator>
+                                        <Enable>true</Enable>
+                                        <ResetNameGroups>true</ResetNameGroups>
+                                        <StreamStartTimeout>20000</StreamStartTimeout>
+                                        <StreamTimeout>12000</StreamTimeout>
+                                        <VideoStartTimeout>0</VideoStartTimeout>
+                                        <VideoTimeout>0</VideoTimeout>
+                                        <AudioStartTimeout>0</AudioStartTimeout>
+                                        <AudioTimeout>0</AudioTimeout>
+                                        <VideoTCToleranceEnable>false</VideoTCToleranceEnable>
+                                        <VideoTCPosTolerance>3000</VideoTCPosTolerance>
+                                        <VideoTCNegTolerance>-500</VideoTCNegTolerance>
+                                        <AudioTCToleranceEnable>false</AudioTCToleranceEnable>
+                                        <AudioTCPosTolerance>3000</AudioTCPosTolerance>
+                                        <AudioTCNegTolerance>-500</AudioTCNegTolerance>
+                                        <DataTCToleranceEnable>false</DataTCToleranceEnable>
+                                        <DataTCPosTolerance>3000</DataTCPosTolerance>
+                                        <DataTCNegTolerance>-500</DataTCNegTolerance>
+                                        <AVSyncToleranceEnable>false</AVSyncToleranceEnable>
+                                        <AVSyncTolerance>1500</AVSyncTolerance>
+                                        <DebugLog>false</DebugLog>
+                                </StreamValidator>
+                                <!-- Properties defined here will override any properties defined in conf/MediaCasters.xml for any MediaCasters loaded by this applications -->
+                                <Properties>
+                                </Properties>
+                        </MediaCaster>
+                        <MediaReader>
+                                <!-- Properties defined here will override any properties defined in conf/MediaReaders.xml for any MediaReaders loaded by this applications -->
+                                <Properties>
+                                </Properties>
+                        </MediaReader>
+                        <MediaWriter>
+                                <!-- Properties defined here will override any properties defined in conf/MediaWriter.xml for any MediaWriter loaded by this applications -->
+                                <Properties>
+                                </Properties>
+                        </MediaWriter>
+                        <LiveStreamPacketizer>
+                                <!-- Properties defined here will override any properties defined in conf/LiveStreamPacketizers.xml for any LiveStreamPacketizers loaded by this applications -->
+                                <Properties>
+                                </Properties>
+                        </LiveStreamPacketizer>
+                        <HTTPStreamer>
+                                <!-- Properties defined here will override any properties defined in conf/HTTPStreamers.xml for any HTTPStreamer loaded by this applications -->
+                                <Properties>
+                                </Properties>
+                        </HTTPStreamer>
+                        <Manager>
+                                <!-- Properties defined are used by the Manager -->
+                                <Properties>
+                                </Properties>
+                        </Manager>
+                        <Repeater>
+                                <OriginURL></OriginURL>
+                                <QueryString><![CDATA[]]></QueryString>
+                        </Repeater>
+                        <StreamRecorder>
+                                <Properties>
+                                    <Property>
+                                        <Name>streamRecorderFileVersionDelegate</Name>
+                                        <Value>LiveStreamRecordFileVersionDelegate</Value>
+                                        <Type>String</Type>
+                                    </Property>
+                                    <Property>
+                                        <Name>streamRecorderFileVersionTemplate</Name>
+                                        <Value>$${SourceStreamName}_$${SegmentTime}</Value> <!-- test-->
+                                        <Type>String</Type>
+                                    </Property>
+                                    <Property>
+                                        <Name>streamRecorderSegmentationType</Name>
+                                        <Value>duration</Value>
+                                        <Type>String</Type>
+                                    </Property>
+                                    <Property>
+                                        <Name>streamRecorderSegmentDuration</Name>
+                                        <Value>60000</Value> <!-- milliseconds change back to 3600000 = 1 hour -->
+                                        <Type>long</Type>
+                                    </Property>
+                                </Properties>
+                        </StreamRecorder>
+                        <Modules>
+                                <Module>
+                                        <Name>base</Name>
+                                        <Description>Base</Description>
+                                        <Class>com.wowza.wms.module.ModuleCore</Class>
+                                </Module>
+                                <Module>
+                                        <Name>logging</Name>
+                                        <Description>Client Logging</Description>
+                                        <Class>com.wowza.wms.module.ModuleClientLogging</Class>
+                                </Module>
+                                <Module>
+                                        <Name>flvplayback</Name>
+                                        <Description>FLVPlayback</Description>
+                                        <Class>com.wowza.wms.module.ModuleFLVPlayback</Class>
+                                </Module>
+                                <Module>
+                                        <Name>ModuleCoreSecurity</Name>
+                                        <Description>Core Security Module for Applications</Description>
+                                        <Class>com.wowza.wms.security.ModuleCoreSecurity</Class>
+                                </Module>
+                                <Module>
+                                        <Name>ModuleMediaWriterFileMover</Name>
+                                        <Description>ModuleMediaWriterFileMover</Description>
+                                        <Class>com.wowza.wms.module.ModuleMediaWriterFileMover</Class>
+                                </Module>
+                                <Module>
+                                        <Name>ModuleAutoRecord</Name>
+                                        <Description>Auto-record streams that are published to this application instance.</Description>
+                                        <Class>com.wowza.wms.plugin.ModuleAutoRecord</Class>
+                                </Module>
+                        </Modules>
+                        <!-- Properties defined here will be added to the IApplication.getProperties() and IApplicationInstance.getProperties() collections -->
+                        <Properties>
+                                <Property>
+                                        <Name>securityPublishRequirePassword</Name>
+                                        <Value>false</Value>
+                                        <Type>Boolean</Type>
+                                </Property>
+                                <Property>
+                                        <Name>securityPublishBlockDuplicateStreamNames</Name>
+                                        <Value>true</Value>
+                                        <Type>Boolean</Type>
+                                </Property>
+                                <Property>
+                                        <Name>fileMoverDestinationPath</Name>
+                                        <Value>$${com.wowza.wms.context.VHostConfigHome}/content/azurecopy/$${com.wowza.wms.context.Application}</Value>
+                                </Property>
+                                <Property>
+                                        <Name>fileMoverDeleteOriginal</Name>
+                                        <Value>true</Value>
+                                        <Type>Boolean</Type>
+                                </Property>
+                                <Property>
+                                        <Name>fileMoverVersionFile</Name>
+                                        <Value>true</Value>
+                                        <Type>Boolean</Type>
+                                </Property>
+                        </Properties>
+                </Application>
+        </Root>
+  - owner: wowza:wowza
     path: /usr/local/WowzaStreamingEngine/conf/admin.password
     content: |
       # Admin password file (format [username][space][password])
@@ -693,7 +956,7 @@ write_files:
     permissions: 0775
     path: /home/wowza/dir-creator.sh
     content: |
-      #!/bin/bash
+     #!/bin/bash
 
       max=$1
       prefix="audiostream"
@@ -759,6 +1022,30 @@ write_files:
       cd /usr/local/WowzaStreamingEngine/conf/ || exit
       appDirs=$(ls -d $${prefix}*)
       echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/dir-creator-crime.sh
+    content: |
+      #!/bin/bash
+
+      prefix="$1"
+      if [ -z "$prefix" ]; then
+        prefix="audiostream"
+      fi
+      if [ "$${prefix}" != "audiostream*" ]; then
+        sharedDir="crimeaudiostream"
+        echo "Using shared crime directory $${sharedDir} for prefix $${prefix}"
+
+        rm -Rf /usr/local/WowzaStreamingEngine/applications/$${sharedDir}
+        rm -Rf /usr/local/WowzaStreamingEngine/conf/$${sharedDir}
+        rm -Rf /usr/local/WowzaStreamingEngine/content/$${sharedDir}
+
+        mkdir -p /usr/local/WowzaStreamingEngine/applications/$${sharedDir}
+        mkdir -p /usr/local/WowzaStreamingEngine/conf/$${sharedDir}
+        mkdir -p /usr/local/WowzaStreamingEngine/content/$${sharedDir}
+
+        cp -v -f /home/wowza/Application-crime.xml /usr/local/WowzaStreamingEngine/conf/$${sharedDir}/Application.xml
+      fi
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/check-file-size.sh
@@ -913,18 +1200,94 @@ write_files:
         streams=$(find /usr/local/WowzaStreamingEngine/content/ -name "*.mp4" -not -path "/usr/local/WowzaStreamingEngine/content/azurecopy/*")
 
         for stream in $streams; do
-        IFS="/" read -a myarray <<< $stream
-        echo "Copying..."
-        echo $stream
-        echo "to..."
-        echo "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}"
-        cp $stream "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}"
-        if [[ -f "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}" ]]; then
-                echo "File moved OK, removing local file"
-                sudo rm $stream
-        else
-                echo "File didnt move!"
-        fi
+            if [[ "$stream" == *audiostream* ]]; then
+                IFS="/" read -a myarray <<< "$stream"
+                echo "Copying..."
+                echo "$stream"
+                echo "to..."
+                echo "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}"
+                cp "$stream" "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}"
+                if [[ -f "/usr/local/WowzaStreamingEngine/content/azurecopy/$${myarray[5]}/$${myarray[6]}" ]]; then
+                        sudo rm "$stream"
+                else
+                        echo "File didnt move!"
+                fi
+            fi
+        done
+  - owner: wowza:wowza
+    permissions: 0775
+    path: /home/wowza/move-recordings-crime.sh
+    content: |
+        #!/bin/bash
+
+        streams=$(find /usr/local/WowzaStreamingEngine/content/ -name "*.mp4" -not -path "/usr/local/WowzaStreamingEngine/content/crime-azurecopy/*")
+
+        # Read connection details for crime recordings
+        connFile="/home/wowza/connection-crime.cfg"
+        accountName=$(grep -E "^accountName " $connFile | awk '{print $2}' | tr -d '[:space:]' || true)
+        sasToken=$(grep -E "^sasToken " $connFile | awk '{print $2}' | tr -d '[:space:]' || true)
+        container=$(grep -E "^containerName " $connFile | awk '{print $2}' | tr -d '[:space:]' || true)
+        
+        for stream in $streams; do
+            if [[ "$stream" == *crimestream* ]]; then
+                IFS="/" read -a myarray <<< "$stream"
+                echo "Copying crime recording..."
+                echo "$stream"
+
+                file_dir="$${myarray[5]}"
+                file_name="$${myarray[6]}"
+                targetBase="/usr/local/WowzaStreamingEngine/content/crime-azurecopy"
+
+                target="$targetBase/$file_dir/$file_name"
+                echo "to..."
+                echo "$target"
+                mkdir -p "$(dirname "$target")"
+                cp "$stream" "$target"
+                if [[ -f "$target" ]]; then
+                    echo "Crime file moved OK, attempting to set blob metadata"
+                    # Calculate MD5 checksum of the original recording
+                    checksum=$(md5sum "$stream" | awk '{print $1}')
+                    echo "MD5: $checksum"
+                    
+                    # Build blob name relative to container
+                    blobName="$${file_dir}/$${file_name}"
+                    if [[ -n "$accountName" && -n "$sasToken" && -n "$container" ]]; then
+                        # Check if blob exists before updating metadata
+                        blobExists=false
+                        maxRetries=24
+                        retryCount=0
+                        while [ "$blobExists" = false ] && [ "$retryCount" -lt "$maxRetries" ]; do
+                            if az storage blob exists \
+                                --account-name "$accountName" \
+                                --container-name "$container" \
+                                --name "$blobName" \
+                                --sas-token "$sasToken" \
+                                --query "exists" -o tsv | grep -q "true"; then
+                                blobExists=true
+                            else
+                                retryCount=$((retryCount + 1))
+                                echo "Blob $blobName does not exist yet. Retry $retryCount/$maxRetries. Waiting 5 seconds...""
+                                sleep 5
+                            fi
+                        done
+                        az storage blob metadata update \
+                            --account-name "$accountName" \
+                            --container-name "$container" \
+                            --name "$blobName" \
+                            --metadata \
+                            checksum="$checksum" \
+                            checksumAlgorithm="MD5" \
+                            --sas-token "$sasToken" \
+                            || echo "Failed to update blob metadata for $blobName"
+                    else
+                        echo "Missing storage connection details; skipping metadata update"
+                    fi
+
+                    sudo rm "$stream"
+                else
+                    echo "Crime file didnt move!"
+                fi
+            fi
         done
   - owner: wowza:wowza
     permissions: 0775
@@ -1132,6 +1495,46 @@ write_files:
 
         fi
 
+        # CRIME RECORDINGS #
+
+        secret_sas_crime_recordings="cvp-sas-crime-recordings--rlw"
+        containerNameCrimeRecordings="crime-recordings"
+        tempFileCrimeRecordings="/home/wowza/connection-crime_temp.cfg"
+        connFileCrimeRecordings="/home/wowza/connection-crime.cfg"
+
+        crimeBlobMount="/usr/local/WowzaStreamingEngine/content/crime-azurecopy"
+        crimeBlobTmp="/mnt/blobfusecrime"
+
+        echo "Getting crime recordings SAS..."
+        sas_crime_recordings=$(az keyvault secret show --vault-name $keyVaultName --name $secret_sas_crime_recordings --query "value" --output tsv)
+        sas_crime_recordings=$${sas_crime_recordings//[$'\"']/}
+        sas_crime_recordings=$(echo "$sas_crime_recordings" | tr -d '[:space:]')
+
+        echo "AKV:$sas_crime_recordings"
+
+        sas_crime_recordings_line=$(grep -E "^sasToken" $connFileCrimeRecordings 2>/dev/null || true)
+        sas_crime_recordings_current=$(echo "$sas_crime_recordings_line" | awk -F' ' '{print $2}' | tr -d '[:space:]')
+
+        echo "CFG:$sas_crime_recordings_current"
+
+        if [ "$sas_crime_recordings" == "$sas_crime_recordings_current" ]; then
+                echo "No change to crime recordings SAS"
+        else
+                echo "Crime recordings SAS has changed, need to update and remount"
+                echo accountName $accountName >> $tempFileCrimeRecordings
+                echo authType SAS >> $tempFileCrimeRecordings
+                echo sasToken $sas_crime_recordings >> $tempFileCrimeRecordings
+                echo containerName $containerNameCrimeRecordings >> $tempFileCrimeRecordings
+                sudo mv $tempFileCrimeRecordings $connFileCrimeRecordings
+
+                echo "Remove crime mount"
+                sudo fusermount -u $crimeBlobMount || true
+
+                echo "Mounting crime blob"
+                sudo blobfuse $crimeBlobMount --tmp-path=$crimeBlobTmp -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120 --config-file=$connFileCrimeRecordings -o allow_other -o nonempty
+
+        fi
+
         # LOGS #
 
         secret_sas_wowzalogs="cvp-sas-wowzalogs--rlw"
@@ -1185,6 +1588,7 @@ write_files:
         logFolder='/home/wowza/logs'
         mkdir -p $logFolder
         echo "5-59/10 * * * * /home/wowza/mount.sh $1 $2 $3 >> $logFolder/wowza_mount.log 2>&1" >> $cronTaskPathRoot
+        echo "5-59/10 * * * * /home/wowza/mount.sh $7 $8 $9 >> $logFolder/crime_mount.log 2>&1" >> $cronTaskPathRoot
         echo "*/10 * * * * /home/wowza/mount.sh $4 $5 $6 >> $logFolder/log_mount.log 2>&1" >> $cronTaskPathRoot
         echo "0 0 * * * /home/wowza/renew-cert.sh >> $logFolder/renew-cert.log 2>&1" >> $cronTaskPathRoot
 
@@ -1222,6 +1626,9 @@ write_files:
         blobMount="/usr/local/WowzaStreamingEngine/content/azurecopy"
         blobTmp="/mnt/blobfusetmp"
         blobCfg="/home/wowza/connection.cfg"
+        crimeBlobMount="/usr/local/WowzaStreamingEngine/content/crime-azurecopy"
+        crimeBlobTmp="/mnt/blobfusecrime"
+        crimeBlobCfg="/home/wowza/connection-crime.cfg"
         logMount="/usr/local/WowzaStreamingEngine/azlogs"
         logTmp="/mnt/blobfusetmplogs"
         logCfg="/home/wowza/connection-logs.cfg"
@@ -1242,19 +1649,21 @@ write_files:
 
         # Create Wowza Apps
         /home/wowza/dir-creator.sh ${numApplications}
+        /home/wowza/dir-creator-crime.sh ${numApplications}
 
         # Update blobfuse connection configuration.
         /home/wowza/get-sas.sh
 
-        # Mount Drives For Wowza & Logs.
+        # Mount Drives For Wowza, Crime, & Logs.
         /home/wowza/mount.sh $blobMount $blobTmp $blobCfg
+        /home/wowza/mount.sh $crimeBlobMount $crimeBlobTmp $crimeBlobCfg
         /home/wowza/mount.sh $logMount $logTmp $logCfg
 
         # Install Certificates.
         /home/wowza/renew-cert.sh
 
         # Set Up CronJobs.
-        /home/wowza/cron.sh $blobMount $blobTmp $blobCfg $logMount $logTmp $logCfg
+        /home/wowza/cron.sh $blobMount $blobTmp $blobCfg $logMount $logTmp $logCfg $crimeBlobMount $crimeBlobTmp $crimeBlobCfg
 
         # Restart Wowza and WSEM
         sudo service WowzaStreamingEngine restart
