@@ -14,7 +14,6 @@ vm_size                       = "Standard_D4ds_v5"
 dynatrace_tenant              = "ebe20728"
 expiry_days                   = 15
 remaining_days                = 5
-sa_default_action             = "Allow"
 retention_period              = 30
 schedules = [
   {
