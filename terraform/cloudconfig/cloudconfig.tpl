@@ -1028,24 +1028,77 @@ write_files:
     content: |
       #!/bin/bash
 
-      prefix="$1"
-      if [ -z "$prefix" ]; then
-        prefix="audiostream"
+      max=$1
+      prefix="crimeaudiostream"
+      prefix="audiostream"
+      suffix=""
+
+      echo "Ensuring there are $${max} crime application/content directories setup"
+
+      echo "Removing legacy crime applications"
+      rm -Rf /usr/local/WowzaStreamingEngine/applications/crimeaudiostream*
+
+      currentAppCount=$(ls -d /usr/local/WowzaStreamingEngine/applications/$${prefix}* 2>/dev/null | wc -l)
+
+      echo "Currently $${currentAppCount} crime applications defined."
+
+      if (( max < currentAppCount )) ; then
+        ((toDelete = "$currentAppCount - $max"))
+        echo "Need to delete $${toDelete} crime Application(s)"
+
+        start=$max
+        end=$currentAppCount
+
+        for ((i=start; i<=end; i++)) ; do
+          file="$${prefix}$${i}$${suffix}"
+          rm -Rf /usr/local/WowzaStreamingEngine/applications/$${file}
+          rm -Rf /usr/local/WowzaStreamingEngine/conf/$${file}
+          rm -Rf /usr/local/WowzaStreamingEngine/content/$${file}
+        done
       fi
-      if [ "$${prefix}" != "audiostream*" ]; then
-        sharedDir="crimeaudiostream"
-        echo "Using shared crime directory $${sharedDir} for prefix $${prefix}"
 
-        rm -Rf /usr/local/WowzaStreamingEngine/applications/$${sharedDir}
-        rm -Rf /usr/local/WowzaStreamingEngine/conf/$${sharedDir}
-        rm -Rf /usr/local/WowzaStreamingEngine/content/$${sharedDir}
+      targetDir="/usr/local/WowzaStreamingEngine/applications/"
+      n=1
+      set -- # this sets $@ [the argv array] to an empty list.
 
-        mkdir -p /usr/local/WowzaStreamingEngine/applications/$${sharedDir}
-        mkdir -p /usr/local/WowzaStreamingEngine/conf/$${sharedDir}
-        mkdir -p /usr/local/WowzaStreamingEngine/content/$${sharedDir}
+      while [ "$n" -le "$max" ]; do
+        set -- "$@" "$${targetDir}/$${prefix}$${n}$${suffix}"
+        n=$(( n + 1 ));
+      done
 
-        cp -v -f /home/wowza/Application-crime.xml /usr/local/WowzaStreamingEngine/conf/$${sharedDir}/Application.xml
-      fi
+      mkdir -p "$@"
+
+      targetDir="/usr/local/WowzaStreamingEngine/conf/"
+      n=1
+      set -- # this sets $@ [the argv array] to an empty list.
+
+      while [ "$n" -le "$max" ]; do
+        set -- "$@" "$${targetDir}/$${prefix}$${n}$${suffix}"
+        n=$(( n + 1 ));
+      done
+
+      mkdir -p "$@"
+
+      targetDir="/usr/local/WowzaStreamingEngine/content/"
+      n=1
+      set -- # this sets $@ [the argv array] to an empty list.
+
+      while [ "$n" -le "$max" ]; do
+        set -- "$@" "$${targetDir}/$${prefix}$${n}$${suffix}"
+        n=$(( n + 1 ));
+      done
+
+      mkdir -p "$@"
+
+      # Copy Applications.xml file
+      cd /usr/local/WowzaStreamingEngine/conf/ || exit
+      appDirs=$(ls -d $${prefix}*)
+      echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
+      for appDir in $${appDirs}; do
+        if [ "$${appDir}" = "audiostream999" ]; then
+          cp -v -f /home/wowza/Application-crime.xml "$${appDir}/Application.xml"
+        fi
+      done
   - owner: wowza:wowza
     permissions: 0775
     path: /home/wowza/check-file-size.sh
