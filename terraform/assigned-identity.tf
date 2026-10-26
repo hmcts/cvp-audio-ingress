@@ -9,6 +9,24 @@ resource "azurerm_user_assigned_identity" "mi" {
 }
 
 #---------------------------------------------------
+# MI for function app 
+#---------------------------------------------------
+resource "azurerm_user_assigned_identity" "mi_function" {
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  name                = "cvp-function-app-${var.env}-mi"
+}
+
+#---------------------------------------------------
+# Allow the Function to read and update blob data
+#---------------------------------------------------
+resource "azurerm_role_assignment" "mi_sa_function" {
+  scope                = module.sa.storageaccount_id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_user_assigned_identity.mi_function.principal_id
+}
+
+#---------------------------------------------------
 # Add role assignment to read identity
 #---------------------------------------------------
 resource "azurerm_role_assignment" "mi" {
