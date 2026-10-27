@@ -47,7 +47,7 @@ try {
     Write-Host "StartTime: $startTime"
 
     # Authenticate using the Function App's managed identity
-    Connect-AzAccount -Identity | Out-Null
+    Connect-AzAccount -Identity -AccountId $env:AZURE_CLIENT_ID
 
     $accountName = $uri.Host.Split('.')[0]
     $context = New-AzStorageContext `

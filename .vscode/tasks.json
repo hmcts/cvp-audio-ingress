@@ -2,14 +2,84 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "func",
-			"label": "func: host start",
-			"command": "host start",
-			"problemMatcher": "$func-powershell-watch",
-			"isBackground": true,
+			"label": "clean (functions)",
+			"command": "dotnet",
+			"args": [
+				"clean",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+			"type": "process",
+			"problemMatcher": "$msCompile",
 			"options": {
-				"cwd": "${workspaceFolder}/functions"
+				"cwd": "${workspaceFolder}/function\\recording-process"
 			}
+		},
+		{
+			"label": "build (functions)",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+			"type": "process",
+			"dependsOn": "clean (functions)",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": "$msCompile",
+			"options": {
+				"cwd": "${workspaceFolder}/function\\recording-process"
+			}
+		},
+		{
+			"label": "clean release (functions)",
+			"command": "dotnet",
+			"args": [
+				"clean",
+				"--configuration",
+				"Release",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+			"type": "process",
+			"problemMatcher": "$msCompile",
+			"options": {
+				"cwd": "${workspaceFolder}/function\\recording-process"
+			}
+		},
+		{
+			"label": "publish (functions)",
+			"command": "dotnet",
+			"args": [
+				"publish",
+				"--configuration",
+				"Release",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+			"type": "process",
+			"dependsOn": "clean release (functions)",
+			"problemMatcher": "$msCompile",
+			"options": {
+				"cwd": "${workspaceFolder}/function\\recording-process"
+			}
+		},
+		{
+			"type": "func",
+			"dependsOn": "build (functions)",
+			"options": {
+				"cwd": "${workspaceFolder}/function\\recording-process/bin/Debug/net10.0"
+			},
+			"command": "host start",
+			"args": [
+				"--dotnet-isolated-debug",
+				"--enable-json-output"
+			],
+			"isBackground": true,
+			"problemMatcher": "$func-dotnet-watch"
 		}
 	]
 }

@@ -841,7 +841,7 @@ write_files:
                                     </Property>
                                     <Property>
                                         <Name>streamRecorderSegmentDuration</Name>
-                                        <Value>60000</Value> <!-- milliseconds change back to 3600000 = 1 hour -->
+                                        <Value>1800000</Value> <!-- milliseconds change back to 3600000 = 1 hour -->
                                         <Type>long</Type>
                                     </Property>
                                 </Properties>
@@ -892,7 +892,7 @@ write_files:
                                 </Property>
                                 <Property>
                                         <Name>fileMoverDestinationPath</Name>
-                                        <Value>$${com.wowza.wms.context.VHostConfigHome}/content/azurecopy/$${com.wowza.wms.context.Application}</Value>
+                                        <Value>$${com.wowza.wms.context.VHostConfigHome}/content/crime-azurecopy/$${com.wowza.wms.context.Application}</Value>
                                 </Property>
                                 <Property>
                                         <Name>fileMoverDeleteOriginal</Name>
@@ -1029,14 +1029,13 @@ write_files:
       #!/bin/bash
 
       max=$1
-      prefix="crimeaudiostream"
       prefix="audiostream"
       suffix=""
 
       echo "Ensuring there are $${max} crime application/content directories setup"
 
       echo "Removing legacy crime applications"
-      rm -Rf /usr/local/WowzaStreamingEngine/applications/crimeaudiostream*
+      rm -Rf /usr/local/WowzaStreamingEngine/applications/hmcts*
 
       currentAppCount=$(ls -d /usr/local/WowzaStreamingEngine/applications/$${prefix}* 2>/dev/null | wc -l)
 
