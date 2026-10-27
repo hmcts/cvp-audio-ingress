@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "recording_process": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7050",
+      "launchBrowser": false
+    }
+  }
+}
