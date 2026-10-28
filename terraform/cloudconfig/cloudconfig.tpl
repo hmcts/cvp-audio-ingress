@@ -1709,13 +1709,6 @@ write_files:
         [[ -f "/wse-plugin-autorecord.zip" ]] && echo "wse-plugin-autorecord.zip aready downloaded" || wget https://www.wowza.com/downloads/forums/collection/wse-plugin-autorecord.zip && unzip wse-plugin-autorecord.zip && mv lib/wse-plugin-autorecord.jar /usr/local/WowzaStreamingEngine/lib/ && chown wowza: /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar && chmod 775 /usr/local/WowzaStreamingEngine/lib/wse-plugin-autorecord.jar
         sudo /home/wowza/log4j-fix.sh
 
-        # Compile and install the crime-only segment end-time listener.
-        mkdir -p /home/wowza/crime-segment-listener-classes || exit 1
-        javac -source 8 -target 8 -cp '/usr/local/WowzaStreamingEngine/lib/*' -d /home/wowza/crime-segment-listener-classes /home/wowza/CrimeSegmentEndTimeListener.java || exit 1
-        jar cf /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar -C /home/wowza/crime-segment-listener-classes . || exit 1
-        chown wowza:wowza /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar || exit 1
-        chmod 0644 /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar || exit 1
-
         # Create Wowza Apps
         /home/wowza/dir-creator.sh ${numApplications}
         /home/wowza/dir-creator-crime.sh ${numApplications}
@@ -1727,6 +1720,13 @@ write_files:
         /home/wowza/mount.sh $blobMount $blobTmp $blobCfg
         /home/wowza/mount.sh $crimeBlobMount $crimeBlobTmp $crimeBlobCfg
         /home/wowza/mount.sh $logMount $logTmp $logCfg
+
+         # Compile and install the crime-only segment end-time listener.
+        mkdir -p /home/wowza/crime-segment-listener-classes
+        javac -source 8 -target 8 -cp '/usr/local/WowzaStreamingEngine/lib/*' -d /home/wowza/crime-segment-listener-classes /home/wowza/CrimeSegmentEndTimeListener.java
+        jar cf /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar -C /home/wowza/crime-segment-listener-classes . 
+        chown wowza:wowza /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar
+        chmod 0644 /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar 
 
         # Install Certificates.
         /home/wowza/renew-cert.sh
