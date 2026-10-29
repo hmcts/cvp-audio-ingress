@@ -1722,9 +1722,9 @@ write_files:
         /home/wowza/mount.sh $logMount $logTmp $logCfg
 
          # Compile and install the crime-only segment end-time listener.
-        mkdir -p /home/wowza/crime-segment-listener-classes
-        javac -source 8 -target 8 -cp '/usr/local/WowzaStreamingEngine/lib/*' -d /home/wowza/crime-segment-listener-classes /home/wowza/CrimeSegmentEndTimeListener.java
-        jar cf /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar -C /home/wowza/crime-segment-listener-classes . 
+        mkdir -p /home/wowza/crime-segment-listener-classes || exit 1
+        javac -source 8 -target 8 -cp '/usr/local/WowzaStreamingEngine/lib/*' -d /home/wowza/crime-segment-listener-classes /home/wowza/CrimeSegmentEndTimeListener.java || exit 1
+        jar cf /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar -C /home/wowza/crime-segment-listener-classes . || exit 1
         chown wowza:wowza /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar
         chmod 0644 /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar 
 

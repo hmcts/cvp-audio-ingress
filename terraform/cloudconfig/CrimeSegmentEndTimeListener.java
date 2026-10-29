@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import com.wowza.wms.livestreamrecord.manager.IStreamRecorder;
 import com.wowza.wms.livestreamrecord.manager.IStreamRecorderActionNotify;
+import com.wowza.wms.stream.IMediaStream;
 
 public class CrimeSegmentEndTimeListener implements IStreamRecorderActionNotify
 {
@@ -21,6 +22,37 @@ public class CrimeSegmentEndTimeListener implements IStreamRecorderActionNotify
 
     private final Map<IStreamRecorder, Long> segmentStartTimes = new ConcurrentHashMap<>();
 
+    @Override
+    public void onCreateRecorder(IStreamRecorder recorder)
+    {
+
+    }
+
+    @Override
+    public void onStartRecorder(IStreamRecorder recorder)
+    {
+
+    }
+
+    @Override
+    public void onStopRecorder(IStreamRecorder recorder)
+    {
+
+    }
+
+    @Override
+    public void onSplitRecorder(IStreamRecorder recorder)
+    {
+        
+    }
+
+    @Override
+    public void onSwitchRecorder(
+        IStreamRecorder recorder,
+        IMediaStream newStream)
+    {
+    }
+    
     @Override
     public void onSegmentStart(IStreamRecorder recorder)
     {
