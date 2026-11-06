@@ -1,12 +1,15 @@
 #cloud-config
-apt_sources:
-  - source: "deb [arch=amd64 trusted=yes] https://packages.microsoft.com/ubuntu/18.04/prod bionic main"
+apt:
+  sources:
+    microsoft-prod.list:
+      source: "deb [arch=amd64 signed-by=$KEY_FILE] https://packages.microsoft.com/ubuntu/22.04/prod jammy main"
+      keyid: "BC528686B50D79E339D3721CEB3E94ADBE1229CF"
 package_upgrade: true
 packages:
   - blobfuse
   - fuse
   - acl
-  - openjdk-11-jdk-headless
+  - openjdk-17-jdk-headless
 write_files:
   - owner: wowza:wowza
     path: /home/wowza/CrimeSegmentEndTimeListener.java
@@ -938,7 +941,7 @@ write_files:
       httpsKeyStorePassword=${certPassword}
   - owner: wowza:wowza
     path: /home/wowza/mount.sh
-    permissions: 0775
+    permissions: '0775'
     content: |
         #!/bin/bash
 
@@ -964,7 +967,7 @@ write_files:
 
         rm -f $mountsTmp
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/dir-creator.sh
     content: |
      #!/bin/bash
@@ -1034,7 +1037,7 @@ write_files:
       appDirs=$(ls -d $${prefix}*)
       echo "$${appDirs}" | xargs -n 1 cp -v -f /home/wowza/Application.xml
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/dir-creator-crime.sh
     content: |
       #!/bin/bash
@@ -1110,7 +1113,7 @@ write_files:
         fi
       done
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/check-file-size.sh
     content: |
         #!/bin/bash
@@ -1158,7 +1161,7 @@ write_files:
                 }" >> $logPath
         fi
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/check-cert.sh
     content: |
         #!/bin/bash
@@ -1213,7 +1216,7 @@ write_files:
                 echo "Wowza Certificate Has NOT Expired" >> $logPath
         fi
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/renew-cert.sh
     content: |
         #!/bin/bash
@@ -1255,7 +1258,7 @@ write_files:
             echo "Certificate has NOT expired"
         fi
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/move-recordings.sh
     content: |
         #!/bin/bash
@@ -1278,7 +1281,7 @@ write_files:
             fi
         done
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/move-recordings-crime.sh
     content: |
         #!/bin/bash
@@ -1352,7 +1355,7 @@ write_files:
             fi
         done
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/get-recordings.sh
     content: |
         #!/bin/bash
@@ -1412,7 +1415,7 @@ write_files:
                 fi
         done
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/log4j-fix.sh
     content: |
         #!/bin/bash
@@ -1462,7 +1465,7 @@ write_files:
         ## Start Wowza
         sudo service WowzaStreamingEngine start
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/wowza-restart.sh
     content: |
         #!/bin/bash
@@ -1478,7 +1481,7 @@ write_files:
         echo $HOSTNAME "Wowza Restart commanded at:" $dt#!/bin/bash
   - owner: wowza:wowza
     path: /home/wowza/sync-logs.sh
-    permissions: 0775
+    permissions: '0775'
     content: |
         #!/bin/bash
 
@@ -1507,7 +1510,7 @@ write_files:
         done
   - owner: wowza:wowza
     path: /home/wowza/get-sas.sh
-    permissions: 0775
+    permissions: '0775'
     content: |
         #!/bin/bash
 
@@ -1638,7 +1641,7 @@ write_files:
         fi
   - owner: wowza:wowza
     path: /home/wowza/cron.sh
-    permissions: 0775
+    permissions: '0775'
     content: |
         #!/bin/bash
         # Prepare Script.
@@ -1680,7 +1683,7 @@ write_files:
         rm -f $cronTaskPathRoot
 # PLEASE LEAVE THIS AT THE BOTTOM
   - owner: wowza:wowza
-    permissions: 0775
+    permissions: '0775'
     path: /home/wowza/runcmd.sh
     content: |
         #!/bin/bash
@@ -1721,12 +1724,13 @@ write_files:
         /home/wowza/mount.sh $crimeBlobMount $crimeBlobTmp $crimeBlobCfg
         /home/wowza/mount.sh $logMount $logTmp $logCfg
 
-         # Compile and install the crime-only segment end-time listener.
+        # Compile and install the crime-only segment end-time listener.
         mkdir -p /home/wowza/crime-segment-listener-classes || exit 1
-        javac -source 8 -target 8 -cp '/usr/local/WowzaStreamingEngine/lib/*' -d /home/wowza/crime-segment-listener-classes /home/wowza/CrimeSegmentEndTimeListener.java || exit 1
-        jar cf /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar -C /home/wowza/crime-segment-listener-classes . || exit 1
-        chown wowza:wowza /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar
-        chmod 0644 /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar 
+        /usr/lib/jvm/java-17-openjdk-amd64/bin/javac --release 17 -cp '/usr/local/WowzaStreamingEngine/lib/*' -d /home/wowza/crime-segment-listener-classes /home/wowza/CrimeSegmentEndTimeListener.java || exit 1
+        /usr/lib/jvm/java-17-openjdk-amd64/bin/jar cf /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar -C /home/wowza/crime-segment-listener-classes . || exit 1
+        chown wowza:wowza /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar || exit 1
+        chmod 0644 /usr/local/WowzaStreamingEngine/lib/cvp-crime-segment-endtime.jar || exit 1
+        echo "Crime segment end-time listener compiled and installed successfully"
 
         # Install Certificates.
         /home/wowza/renew-cert.sh
