@@ -1,9 +1,6 @@
 #cloud-config
-apt:
-  sources:
-    microsoft-prod.list:
-      source: "deb [arch=amd64 signed-by=$KEY_FILE] https://packages.microsoft.com/ubuntu/22.04/prod jammy main"
-      keyid: "BC528686B50D79E339D3721CEB3E94ADBE1229CF"
+apt_sources:
+  - source: "deb [arch=amd64 trusted=yes] https://packages.microsoft.com/ubuntu/18.04/prod bionic main"
 package_upgrade: true
 packages:
   - blobfuse
