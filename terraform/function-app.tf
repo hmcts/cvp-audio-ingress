@@ -34,11 +34,15 @@ resource "azapi_resource" "function_app_crime" {
           }
         }
         scaleAndConcurrency = {
-          instanceMemoryMB = 2048
+          instanceMemoryMB     = 2048
+          maximumInstanceCount = 100
         }
         runtime = {
           name    = "dotnet-isolated"
           version = "10.0"
+        }
+        siteUpdateStrategy = {
+          "type" : "Recreate"
         }
       }
       siteConfig = {
