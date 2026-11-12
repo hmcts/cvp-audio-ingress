@@ -66,16 +66,32 @@ stages:
                 command: publish
                 publishWebProjects: false
                 projects: '$(Build.SourcesDirectory)/function/recording-process/recording-process.csproj'
-                arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/recording-process'
+                arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/recording-publish'
+                modifyOutputPath: false
 
             - task: ArchiveFiles@2
               displayName: Package recording function
               inputs:
-                rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/recording-process'
+                rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/recording-publish'
                 includeRootFolder: false
                 archiveType: zip
                 archiveFile: '$(Build.ArtifactStagingDirectory)/recording-process.zip'
                 replaceExistingArchive: true
+
+            - bash: |
+                set -euo pipefail
+                package="$(Build.ArtifactStagingDirectory)/recording-process.zip"
+
+                echo "Contents of $package:"
+                unzip -l "$package"
+
+                for required_file in host.json functions.metadata worker.config.json; do
+                  if ! unzip -Z1 "$package" | grep -Fxq "$required_file"; then
+                    echo "ERROR: $required_file is missing from the package root." >&2
+                    exit 1
+                  fi
+                done
+              displayName: Verify recording function package
 
             - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
               parameters:
