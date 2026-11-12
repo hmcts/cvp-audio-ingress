@@ -33,6 +33,9 @@ resource "azapi_resource" "function_app_crime" {
             }
           }
         }
+        scaleAndConcurrency = {
+          instanceMemoryMB = 2048
+        }
         runtime = {
           name    = "dotnet-isolated"
           version = "10.0"
