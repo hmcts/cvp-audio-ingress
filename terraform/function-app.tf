@@ -53,10 +53,6 @@ resource "azapi_resource" "function_app_crime" {
             value = local.function_storage_connection_string
           },
           {
-            name  = "FUNCTIONS_WORKER_RUNTIME"
-            value = "dotnet-isolated"
-          },
-          {
             name  = "AZURE_CLIENT_ID"
             value = azurerm_user_assigned_identity.mi_function.client_id
           },
