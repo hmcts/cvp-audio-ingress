@@ -272,7 +272,7 @@ variable "sa_access_tier" {
 
 variable "sa_account_kind" {
   type        = string
-  default     = "BlobStorage"
+  default     = "StorageV2"
   description = "Defines the Kind of account. Valid options are Storage, StorageV2 and BlobStorage. Changing this forces a new resource to be created. Defaults to BlobStorage."
 
   validation {

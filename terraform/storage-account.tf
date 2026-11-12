@@ -154,7 +154,7 @@ resource "azurerm_eventgrid_event_subscription" "eventgrid_crime" {
   included_event_types = ["Microsoft.Storage.BlobCreated"]
 
   azure_function_endpoint {
-    function_id = "${azurerm_function_app.function_app_crime.id}/functions/ProcessRecording"
+    function_id = "${azapi_resource.function_app_crime.id}/functions/ProcessRecording"
   }
 
   subject_filter {
