@@ -9,11 +9,8 @@ module "app_service_plan" {
   env                 = var.env
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  kind                = "FunctionApp"
+  asp_sku_size        = var.asp_sku_size
+  asp_capacity        = var.asp_capacity
   common_tags         = var.common_tags
-  
-  sku {
-    tier = "FlexConsumption"
-    size = "FC1"
-  }
+
 }

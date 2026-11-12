@@ -346,6 +346,21 @@ variable "retention_period" {
 }
 
 #---------------------------------------------------
+# App Service Plan settings
+#---------------------------------------------------
+variable "asp_sku_size" {
+  type        = string
+  default     = "FC1"
+  description = "App Service Plan SKU size. Defaults to \"FC1\"."
+}
+
+variable "asp_capacity" {
+  type        = number
+  default     = 1
+  description = "App Service Plan capacity. Defaults to 1."
+}
+
+#---------------------------------------------------
 # Automation Account settings
 #---------------------------------------------------
 
