@@ -41,9 +41,6 @@ resource "azapi_resource" "function_app_crime" {
           name    = "dotnet-isolated"
           version = "10.0"
         }
-        siteUpdateStrategy = {
-          type = "Recreate"
-        }
       }
       siteConfig = {
         appSettings = [
