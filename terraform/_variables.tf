@@ -272,6 +272,17 @@ variable "sa_access_tier" {
 
 variable "sa_account_kind" {
   type        = string
+  default     = "BlobStorage"
+  description = "Defines the Kind of account. Valid options are Storage, StorageV2 and BlobStorage. Changing this forces a new resource to be created. Defaults to BlobStorage."
+
+  validation {
+    condition     = can(regex("^(Storage|StorageV2|BlobStorage)$", var.sa_account_kind))
+    error_message = "Invalid input, options: \"Storage\", \"StorageV2\", \"BlobStorage\"."
+  }
+}
+
+variable "sa_account_kind_pexip" {
+  type        = string
   default     = "StorageV2"
   description = "Defines the Kind of account. Valid options are Storage, StorageV2 and BlobStorage. Changing this forces a new resource to be created. Defaults to BlobStorage."
 

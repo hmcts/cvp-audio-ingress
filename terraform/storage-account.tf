@@ -88,19 +88,11 @@ module "sa_pexip" {
   location            = azurerm_resource_group.rg.location
 
   account_tier             = var.sa_account_tier
-  account_kind             = var.sa_account_kind
+  account_kind             = var.sa_account_kind_pexip
   account_replication_type = var.sa_account_replication_type
   access_tier              = var.sa_access_tier
   retention_period         = var.retention_period
   containers = [
-    {
-      name        = local.main_container_name
-      access_type = "private"
-    },
-    {
-      name        = local.wowza_logs_container_name
-      access_type = "private"
-    },
     {
       name        = local.crime_container_name
       access_type = "private"
@@ -111,15 +103,6 @@ module "sa_pexip" {
     },
     {
       name        = local.crime_car_container_name
-      access_type = "private"
-    },
-    // Keep these containers until all recordings have been migrated to `recordings` container
-    {
-      name        = "${local.main_container_name}01"
-      access_type = "private"
-    },
-    {
-      name        = "${local.main_container_name}02"
       access_type = "private"
     }
   ]
