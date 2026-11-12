@@ -3,7 +3,7 @@
 #---------------------------------------------------
 
 module "app_service_plan" {
-  source = "git@github.com:hmcts/cnp-module-app-service-plan?ref=master"
+  source = "git::https://github.com/hmcts/cnp-module-app-service-plan?ref=master"
 
   asp_name            = "${var.product}-recordings-${var.env}-asp"
   env                 = var.env
