@@ -64,7 +64,8 @@ stages:
               displayName: Publish recording function
               inputs:
                 command: publish
-                projects: 'function/recording-process/recording-process.csproj'
+                publishWebProjects: false
+                projects: '$(Build.SourcesDirectory)/function/recording-process/recording-process.csproj'
                 arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/recording-process'
 
             - task: ArchiveFiles@2
