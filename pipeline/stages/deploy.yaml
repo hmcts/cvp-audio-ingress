@@ -69,18 +69,9 @@ stages:
                 arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/recording-publish'
                 modifyOutputPath: false
 
-            - task: ArchiveFiles@2
-              displayName: Package recording function
-              inputs:
-                rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/recording-publish'
-                includeRootFolder: false
-                archiveType: zip
-                archiveFile: '$(Build.ArtifactStagingDirectory)/recording-process.zip'
-                replaceExistingArchive: true
-
             - bash: |
                 set -euo pipefail
-                package="$(Build.ArtifactStagingDirectory)/recording-process.zip"
+                package="$(Build.ArtifactStagingDirectory)/recording-publish/recording-publish.zip"
 
                 echo "Contents of $package:"
                 unzip -l "$package"
@@ -115,7 +106,7 @@ stages:
                 azureSubscription: ${{variables.subscriptionName}}
                 appType: functionAppLinux
                 appName: "${{variables.product}}-recordings-${{variables.env}}-facrimetest"
-                package: '$(Build.ArtifactStagingDirectory)/recording-process.zip'
+                package: '$(Build.ArtifactStagingDirectory)/recording-publish/recording-publish.zip'
                 isFlexConsumption: true
 
             - ${{ if eq(variables.sa_private, true) }}:
