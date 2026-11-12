@@ -42,7 +42,7 @@ resource "azapi_resource" "function_app_crime" {
           version = "10.0"
         }
         siteUpdateStrategy = {
-          "type" : "Recreate"
+          type = "Recreate"
         }
       }
       siteConfig = {
