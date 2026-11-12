@@ -142,6 +142,27 @@ resource "azurerm_storage_management_policy" "sa_pexip" {
   }
 }
 
+
+#---------------------------------------------------
+# Event Grid Subscription for crime recording blobs
+#---------------------------------------------------
+
+resource "azurerm_eventgrid_event_subscription" "eventgrid_crime" {
+  name  = "${replace(lower(local.service_name), "-", "")}crime-aees"
+  scope = module.sa.storageaccount_id
+
+  included_event_types = ["Microsoft.Storage.BlobCreated"]
+
+  azure_function_endpoint {
+    function_id = "${azurerm_function_app.function_app_crime.id}/functions/ProcessRecording"
+  }
+
+  subject_filter {
+    subject_begins_with = "/blobServices/default/containers/${local.crime_container_name}/"
+    subject_ends_with   = ".mp4"
+  }
+}
+
 #---------------------------------------------------
 # Lock to prevent deletion of storage account
 #---------------------------------------------------

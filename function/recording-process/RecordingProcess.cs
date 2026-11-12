@@ -112,15 +112,8 @@ public class ProcessRecording
 
         string startMetadata = FormatMetadataTime(startUtc);
         string endMetadata = FormatMetadataTime(endUtc);
-        string startSuffix = FormatFilenameTime(startUtc);
-        string endSuffix = FormatFilenameTime(endUtc);
 
-        // Remove the original timestamp from the filename.
-        string stem = Path.GetFileNameWithoutExtension(originalFileName);
-        int timestampSeparator = stem.LastIndexOf('_');
-        string cleanStem = stem.Substring(0, timestampSeparator);
-
-        string newFileName = $"{cleanStem}--{startSuffix}--{endSuffix}.mp4";
+        string newFileName = $"{Guid.NewGuid():D}.mp4";
 
         // This uses COURTHOUSE as in the supplied example.
         // For a courtroom folder instead, replace courthouse with courtroom.
@@ -259,9 +252,6 @@ public class ProcessRecording
 
     private static string FormatMetadataTime(DateTimeOffset time) =>
         time.UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);
-
-    private static string FormatFilenameTime(DateTimeOffset time) =>
-        time.UtcDateTime.ToString("yyyy-MM-dd'T'HH.mm.ss'Z'", CultureInfo.InvariantCulture);
 
     private readonly record struct Mp4Box(string Type, long DataStart, long End);
 
