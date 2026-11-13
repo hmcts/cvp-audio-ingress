@@ -66,7 +66,7 @@ resource "azapi_resource" "function_app_crime" {
           },
           {
             name  = "AzureWebJobsSecretStorageKeyVaultUri"
-            value = azurerm_key_vault.function_keys[0].vault_uri
+            value = azurerm_key_vault.function_keys.vault_uri
           },
           {
             name  = "AzureWebJobsSecretStorageKeyVaultClientId"
