@@ -62,7 +62,7 @@ resource "azapi_resource" "function_app_crime" {
           },
           {
             name  = "CRIME_DESTINATION_CONTAINER"
-            value = local.crime_container_name
+            value = local.crime_package_container_name
           },
           {
             name  = "RECORDING_DRY_RUN"
