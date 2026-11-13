@@ -124,16 +124,12 @@ public class ProcessRecording
             courthouse,
             newFileName);
 
-        string destinationStorageUrl =
-            Environment.GetEnvironmentVariable("CRIME_DESTINATION_STORAGE_URL")
-            ?? throw new InvalidOperationException("CRIME_DESTINATION_STORAGE_URL is not configured.");
-        string destinationContainerName =
-            Environment.GetEnvironmentVariable("CRIME_DESTINATION_CONTAINER")
-            ?? throw new InvalidOperationException("CRIME_DESTINATION_CONTAINER is not configured.");
-
-        var destinationService = new BlobServiceClient(new Uri(destinationStorageUrl), Credential);
-        var destinationContainer = destinationService.GetBlobContainerClient(destinationContainerName);
-        var destination = destinationContainer.GetBlobClient(newBlobName);
+        // Same account and container, with a different blob name.
+        var destinationUri = new BlobUriBuilder(source.Uri)
+        {
+            BlobName = newBlobName
+        }.ToUri();
+        var destination = new BlobClient(destinationUri, Credential);
 
         var metadata = new Dictionary<string, string>(
             sourceProperties.Metadata ?? new Dictionary<string, string>(),
@@ -164,37 +160,30 @@ public class ProcessRecording
         {
             _logger.LogInformation(
                 "DRY RUN: {Source} -> {Destination}; duration {DurationSeconds}s; end {End}",
-                source.Uri, destination.Uri, duration.TotalSeconds, endMetadata);
+                source.Name, newBlobName, duration.TotalSeconds, endMetadata);
             return;
         }
 
         try
         {
-            var download = await source.DownloadStreamingAsync(
-                new BlobDownloadOptions
+            var copy = await destination.StartCopyFromUriAsync(
+                source.Uri,
+                new BlobCopyFromUriOptions
                 {
-                    Conditions = new BlobRequestConditions { IfMatch = sourceProperties.ETag }
+                    Metadata = metadata,
+                    SourceConditions = new BlobRequestConditions
+                    {
+                        IfMatch = sourceProperties.ETag
+                    },
+                    DestinationConditions = new BlobRequestConditions
+                    {
+                        IfNoneMatch = ETag.All
+                    }
                 },
                 cancellationToken);
 
-            await using Stream content = download.Value.Content;
-            await destination.UploadAsync(
-                content,
-                new BlobUploadOptions
-                {
-                    HttpHeaders = new BlobHttpHeaders
-                    {
-                        CacheControl = sourceProperties.CacheControl,
-                        ContentDisposition = sourceProperties.ContentDisposition,
-                        ContentEncoding = sourceProperties.ContentEncoding,
-                        ContentLanguage = sourceProperties.ContentLanguage,
-                        ContentType = sourceProperties.ContentType,
-                        ContentHash = sourceProperties.ContentHash
-                    },
-                    Metadata = metadata,
-                    Conditions = new BlobRequestConditions { IfNoneMatch = ETag.All }
-                },
-                cancellationToken);
+            // A same-account copy often completes immediately, but do not assume it.
+            await copy.WaitForCompletionAsync(cancellationToken);
         }
         catch (RequestFailedException ex) when (ex.Status == 412)
         {
@@ -208,10 +197,18 @@ public class ProcessRecording
         BlobProperties destinationProperties = (await destination.GetPropertiesAsync(
             cancellationToken: cancellationToken)).Value;
 
+        if (destinationProperties.CopyStatus == CopyStatus.Pending)
+        {
+            throw new InvalidOperationException(
+                $"Destination copy is still pending: {newBlobName}. Leave source intact.");
+        }
+
         var copiedMetadata = new Dictionary<string, string>(
             destinationProperties.Metadata, StringComparer.OrdinalIgnoreCase);
 
-        if (destinationProperties.ContentLength != sourceProperties.ContentLength ||
+        if (destinationProperties.CopyStatus == CopyStatus.Failed ||
+            destinationProperties.CopyStatus == CopyStatus.Aborted ||
+            destinationProperties.ContentLength != sourceProperties.ContentLength ||
             !copiedMetadata.TryGetValue("processedSourceETag", out string? copiedETag) ||
             copiedETag != sourceProperties.ETag.ToString() ||
             !copiedMetadata.TryGetValue("recordingEndTimeUtc", out string? copiedEnd) ||
@@ -231,7 +228,7 @@ public class ProcessRecording
 
         _logger.LogInformation(
             "Organised recording {Source} -> {Destination}. Start: {Start}; End: {End}; DurationSeconds: {Duration}",
-            source.Uri, destination.Uri, startMetadata, endMetadata, duration.TotalSeconds);
+            source.Name, newBlobName, startMetadata, endMetadata, duration.TotalSeconds);
     }
 
     private static DateTimeOffset ParseStartUtc(Match match)

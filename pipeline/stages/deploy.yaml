@@ -105,7 +105,7 @@ stages:
               inputs:
                 azureSubscription: ${{variables.subscriptionName}}
                 appType: functionAppLinux
-                appName: "${{variables.product}}-recordings-${{variables.env}}-crime-fa"
+                appName: "${{variables.product}}-recordings-${{variables.env}}-facrimetest"
                 package: '$(Build.ArtifactStagingDirectory)/recording-publish/recording-publish.zip'
                 isFlexConsumption: true
 
