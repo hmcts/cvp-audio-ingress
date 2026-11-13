@@ -9,7 +9,7 @@ resource "azurerm_key_vault" "function_keys" {
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = "standard"
 
-  rbac_authorization_enabled    = false
+  enable_rbac_authorization    = false
   public_network_access_enabled = true
 
   tags = module.ctags.common_tags
