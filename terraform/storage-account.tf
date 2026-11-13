@@ -114,7 +114,7 @@ resource "azurerm_storage_management_policy" "sa_pexip" {
     name    = "RecordingRetention"
     enabled = var.sa_policy_enabled
     filters {
-      prefix_match = ["${local.main_container_name}/"]
+      prefix_match = ["${local.crime_container_name}/"]
       blob_types   = ["blockBlob"]
     }
     actions {

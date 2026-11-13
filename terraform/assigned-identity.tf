@@ -26,6 +26,12 @@ resource "azurerm_role_assignment" "mi_sa_function" {
   principal_id         = azurerm_user_assigned_identity.mi_function.principal_id
 }
 
+resource "azurerm_role_assignment" "mi_sa_pexip_function" {
+  scope                = module.sa_pexip.storageaccount_id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_user_assigned_identity.mi_function.principal_id
+}
+
 #---------------------------------------------------
 # Add role assignment to read identity
 #---------------------------------------------------

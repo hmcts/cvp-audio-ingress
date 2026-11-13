@@ -3,12 +3,12 @@
 #---------------------------------------------------
 
 locals {
-  function_storage_connection_string = "DefaultEndpointsProtocol=https;AccountName=${module.sa.storageaccount_name};AccountKey=${module.sa.storageaccount_primary_access_key};EndpointSuffix=core.windows.net"
+  function_storage_connection_string = "DefaultEndpointsProtocol=https;AccountName=${module.sa_pexip.storageaccount_name};AccountKey=${module.sa_pexip.storageaccount_primary_access_key};EndpointSuffix=core.windows.net"
 }
 
 resource "azapi_resource" "function_app_crime" {
   type      = "Microsoft.Web/sites@2024-04-01"
-  name      = "${var.product}-recordings-${var.env}-facrimetest"
+  name      = "${var.product}-recordings-${var.env}-crime-fa"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
 
@@ -26,7 +26,7 @@ resource "azapi_resource" "function_app_crime" {
         deployment = {
           storage = {
             type  = "blobContainer"
-            value = "https://${module.sa.storageaccount_name}.blob.core.windows.net/recordings01"
+            value = "https://${module.sa_pexip.storageaccount_name}.blob.core.windows.net/${local.crime_container_name}"
             authentication = {
               type                               = "StorageAccountConnectionString"
               storageAccountConnectionStringName = "DEPLOYMENT_STORAGE_CONNECTION_STRING"
@@ -55,6 +55,14 @@ resource "azapi_resource" "function_app_crime" {
           {
             name  = "AZURE_CLIENT_ID"
             value = azurerm_user_assigned_identity.mi_function.client_id
+          },
+          {
+            name  = "CRIME_DESTINATION_STORAGE_URL"
+            value = "https://${module.sa_pexip.storageaccount_name}.blob.core.windows.net"
+          },
+          {
+            name  = "CRIME_DESTINATION_CONTAINER"
+            value = local.crime_container_name
           },
           {
             name  = "RECORDING_DRY_RUN"
