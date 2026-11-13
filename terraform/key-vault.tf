@@ -3,7 +3,7 @@
 #---------------------------------------------------
 resource "azurerm_key_vault" "function_keys" {
 
-  name                = "${var.product}-function-{var.env}-kv"
+  name                = "${var.product}function{var.env}kv"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tenant_id           = data.azurerm_client_config.current.tenant_id
