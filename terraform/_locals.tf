@@ -34,7 +34,7 @@ locals {
       expiry_days     = var.expiry_days
       remaining_days  = var.remaining_days
     }
-    "crime-function-packages-rlw" = {
+    "crime-functionpackages-rlw" = {
       permissions     = "rlw"
       storage_account = "${replace(lower(local.service_name), "-", "")}sa"
       container       = local.crime_package_container_name
