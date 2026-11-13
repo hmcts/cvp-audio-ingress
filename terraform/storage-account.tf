@@ -108,10 +108,6 @@ module "sa_pexip" {
     {
       name        = local.crime_package_container_name
       access_type = "private"
-    },
-    {
-      name        = local.function_container_name
-      access_type = "private"
     }
   ]
 }
