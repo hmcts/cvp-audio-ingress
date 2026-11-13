@@ -59,25 +59,11 @@ resource "azapi_resource" "function_app_crime" {
           {
             name  = "RECORDING_DRY_RUN"
             value = "false"
-          },
-          {
-            name  = "AzureWebJobsSecretStorageType"
-            value = "keyvault"
-          },
-          {
-            name  = "AzureWebJobsSecretStorageKeyVaultUri"
-            value = azurerm_key_vault.function_keys.vault_uri
-          },
-          {
-            name  = "AzureWebJobsSecretStorageKeyVaultClientId"
-            value = azurerm_user_assigned_identity.mi_function.client_id
           }
         ]
       }
     }
   }
-  depends_on = [
-  azurerm_key_vault_access_policy.function_keys
-]
+
   tags = module.ctags.common_tags
 }
