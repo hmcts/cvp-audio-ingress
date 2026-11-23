@@ -60,3 +60,10 @@ hrs_aks_source_address_prefixes = [
 ]
 
 darts_environments = ["stg", "ithc", "test", "demo"]
+
+darts_principal_ids = {
+  stg  = "b31f6666-e2e4-4a0b-9399-b64446b1e412"
+  ithc = "5e3cf4f8-afb3-4d4d-b490-28b6d6dd1b1b"
+  test = "e3b0ce09-718a-4875-946c-1b726162d5c3"
+  demo = "368abf58-4c9d-42da-977d-981db124bc2e"
+}

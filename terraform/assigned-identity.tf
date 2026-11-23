@@ -40,43 +40,43 @@ resource "azurerm_user_assigned_identity" "mi_function" {
 #---------------------------------------------------
 # Retrieve Darts MI
 #---------------------------------------------------
-data "azurerm_user_assigned_identity" "darts_stg" {
-  provider = azurerm.sharedservices_stg
-  count    = contains(var.darts_environments, "stg") ? 1 : 0
-
-  resource_group_name = "managed-identities-stg-rg"
-  name                = "darts-stg-mi"
-}
-
-data "azurerm_user_assigned_identity" "darts_ithc" {
-  provider = azurerm.sharedservices_ithc
-  count    = contains(var.darts_environments, "ithc") ? 1 : 0
-
-  resource_group_name = "managed-identities-ithc-rg"
-  name                = "darts-ithc-mi"
-}
-
-data "azurerm_user_assigned_identity" "darts_test" {
-  provider = azurerm.sharedservices_test
-  count    = contains(var.darts_environments, "test") ? 1 : 0
-
-  resource_group_name = "managed-identities-test-rg"
-  name                = "darts-test-mi"
-}
-
-data "azurerm_user_assigned_identity" "darts_demo" {
-  provider = azurerm.sharedservices_demo
-  count    = contains(var.darts_environments, "demo") ? 1 : 0
-
-  resource_group_name = "managed-identities-demo-rg"
-  name                = "darts-demo-mi"
-}
-
+#data "azurerm_user_assigned_identity" "darts_stg" {
+#  provider = azurerm.sharedservices_stg
+#  count    = contains(var.darts_environments, "stg") ? 1 : 0
+#
+#  resource_group_name = "managed-identities-stg-rg"
+#  name                = "darts-stg-mi"
+#}
+#
+#data "azurerm_user_assigned_identity" "darts_ithc" {
+#  provider = azurerm.sharedservices_ithc
+#  count    = contains(var.darts_environments, "ithc") ? 1 : 0
+#
+#  resource_group_name = "managed-identities-ithc-rg"
+#  name                = "darts-ithc-mi"
+#}
+#
+#data "azurerm_user_assigned_identity" "darts_test" {
+#  provider = azurerm.sharedservices_test
+#  count    = contains(var.darts_environments, "test") ? 1 : 0
+#
+#  resource_group_name = "managed-identities-test-rg"
+#  name                = "darts-test-mi"
+#}
+#
+#data "azurerm_user_assigned_identity" "darts_demo" {
+#  provider = azurerm.sharedservices_demo
+#  count    = contains(var.darts_environments, "demo") ? 1 : 0
+#
+#  resource_group_name = "managed-identities-demo-rg"
+#  name                = "darts-demo-mi"
+#}
+#
 #---------------------------------------------------
 # Allow the Darts MIs to read blob data
 #---------------------------------------------------
 resource "azurerm_role_assignment" "darts" {
-  for_each = local.darts_principal_ids
+  for_each = var.darts_principal_ids
 
   scope                = module.sa.storageaccount_id
   role_definition_name = "Storage Blob Data Reader"

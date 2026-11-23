@@ -397,3 +397,8 @@ variable "darts_environments" {
   type    = set(string)
   default = ["stg"]
 }
+
+variable "darts_principal_ids" {
+  type    = map(string)
+  default = {}
+}
