@@ -31,3 +31,27 @@ provider "azurerm" {
   client_secret   = var.network_client_secret
   tenant_id       = var.network_tenant_id
 }
+
+provider "azurerm" {
+  alias = "sharedservices_ithc"
+  features {}
+  subscription_id = "ba71a911-e0d6-4776-a1a6-079af1df7139"
+}
+
+provider "azurerm" {
+  alias = "sharedservices_stg"
+  features {}
+  subscription_id = "ba71a911-e0d6-4776-a1a6-079af1df7139"
+}
+
+provider "azurerm" {
+  alias = "sharedservices_demo"
+  features {}
+  subscription_id = "ba71a911-e0d6-4776-a1a6-079af1df7139"
+}
+
+provider "azurerm" {
+  alias = "sharedservices_test"
+  features {}
+  subscription_id = "ba71a911-e0d6-4776-a1a6-079af1df7139"
+}

@@ -20,11 +20,36 @@ resource "azurerm_user_assigned_identity" "mi_function" {
 #---------------------------------------------------
 # Retrieve Darts MI
 #---------------------------------------------------
-data "azurerm_user_assigned_identity" "darts" {
-  for_each = var.darts_environments
+data "azurerm_user_assigned_identity" "darts_stg" {
+  provider = azurerm.sharedservices_stg
+  count    = contains(var.darts_environments, "stg") ? 1 : 0
 
-  resource_group_name = "managed-identities-${each.key}-rg"
-  name                = "darts-${each.key}-mi"
+  resource_group_name = "managed-identities-stg-rg"
+  name                = "darts-stg-mi"
+}
+
+data "azurerm_user_assigned_identity" "darts_ithc" {
+  provider = azurerm.sharedservices_ithc
+  count    = contains(var.darts_environments, "ithc") ? 1 : 0
+
+  resource_group_name = "managed-identities-ithc-rg"
+  name                = "darts-ithc-mi"
+}
+
+data "azurerm_user_assigned_identity" "darts_test" {
+  provider = azurerm.sharedservices_test
+  count    = contains(var.darts_environments, "test") ? 1 : 0
+
+  resource_group_name = "managed-identities-test-rg"
+  name                = "darts-test-mi"
+}
+
+data "azurerm_user_assigned_identity" "darts_demo" {
+  provider = azurerm.sharedservices_demo
+  count    = contains(var.darts_environments, "demo") ? 1 : 0
+
+  resource_group_name = "managed-identities-demo-rg"
+  name                = "darts-demo-mi"
 }
 
 #---------------------------------------------------
