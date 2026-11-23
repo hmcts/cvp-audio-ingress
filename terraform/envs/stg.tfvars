@@ -64,3 +64,5 @@ hrs_aks_source_address_prefixes = [
   "10.10.128.0/20", # cft-aat-vnet aks-00
   "10.10.144.0/20"  # cft-aat-vnet aks-01
 ]
+
+darts_environments = ["stg", "ithc", "test", "demo"]

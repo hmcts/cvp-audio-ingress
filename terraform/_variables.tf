@@ -389,3 +389,11 @@ variable "dynatrace_tenant" {
   type        = string
   description = "Name Given To Dynatrace Tenant."
 }
+
+#---------------------------------------------------
+# DARTS Environments for MIs
+#---------------------------------------------------
+variable "darts_environments" {
+  type    = set(string)
+  default = ["stg"]
+}

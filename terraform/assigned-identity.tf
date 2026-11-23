@@ -18,6 +18,27 @@ resource "azurerm_user_assigned_identity" "mi_function" {
 }
 
 #---------------------------------------------------
+# Retrieve Darts MI
+#---------------------------------------------------
+data "azurerm_user_assigned_identity" "darts" {
+  for_each = var.darts_environments
+
+  resource_group_name = "managed-identities-${each.key}-rg"
+  name                = "darts-${each.key}-mi"
+}
+
+#---------------------------------------------------
+# Allow the Darts MIs to read blob data
+#---------------------------------------------------
+resource "azurerm_role_assignment" "darts" {
+  for_each = data.azurerm_user_assigned_identity.darts
+
+  scope                = module.sa.storageaccount_id
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = each.value.principal_id
+}
+
+#---------------------------------------------------
 # Allow the Function to read and update blob data
 #---------------------------------------------------
 resource "azurerm_role_assignment" "mi_sa_function" {
