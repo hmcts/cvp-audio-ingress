@@ -73,21 +73,4 @@ locals {
       enable_floating_ip = true
     }
   }
-  darts_principal_ids = merge(
-    contains(var.darts_environments, "stg") ? {
-      stg = data.azurerm_user_assigned_identity.darts_stg[0].principal_id
-    } : {},
-
-    contains(var.darts_environments, "ithc") ? {
-      ithc = data.azurerm_user_assigned_identity.darts_ithc[0].principal_id
-    } : {},
-
-    contains(var.darts_environments, "test") ? {
-      test = data.azurerm_user_assigned_identity.darts_test[0].principal_id
-    } : {},
-
-    contains(var.darts_environments, "demo") ? {
-      demo = data.azurerm_user_assigned_identity.darts_demo[0].principal_id
-    } : {}
-  )
 }
