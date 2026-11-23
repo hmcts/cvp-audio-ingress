@@ -1,3 +1,23 @@
+locals {
+  darts_principal_ids = merge(
+    contains(var.darts_environments, "stg") ? {
+      stg = data.azurerm_user_assigned_identity.darts_stg[0].principal_id
+    } : {},
+
+    contains(var.darts_environments, "ithc") ? {
+      ithc = data.azurerm_user_assigned_identity.darts_ithc[0].principal_id
+    } : {},
+
+    contains(var.darts_environments, "test") ? {
+      test = data.azurerm_user_assigned_identity.darts_test[0].principal_id
+    } : {},
+
+    contains(var.darts_environments, "demo") ? {
+      demo = data.azurerm_user_assigned_identity.darts_demo[0].principal_id
+    } : {}
+  )
+}
+
 #---------------------------------------------------
 # User assigned Identity
 #---------------------------------------------------
@@ -56,11 +76,11 @@ data "azurerm_user_assigned_identity" "darts_demo" {
 # Allow the Darts MIs to read blob data
 #---------------------------------------------------
 resource "azurerm_role_assignment" "darts" {
-  for_each = data.azurerm_user_assigned_identity.darts
+  for_each = local.darts_principal_ids
 
   scope                = module.sa.storageaccount_id
   role_definition_name = "Storage Blob Data Reader"
-  principal_id         = each.value.principal_id
+  principal_id         = each.value
 }
 
 #---------------------------------------------------
