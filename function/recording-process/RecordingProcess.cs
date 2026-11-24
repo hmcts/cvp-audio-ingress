@@ -113,7 +113,7 @@ public class ProcessRecording
         string startMetadata = FormatMetadataTime(startUtc);
         string endMetadata = FormatMetadataTime(endUtc);
 
-        string newFileName = $"{Guid.NewGuid():D}.mp4";
+        string newFileName = $"{CreateRecordingGuid(source.Uri, sourceProperties.ETag):D}.mp4";
 
         // This uses COURTHOUSE as in the supplied example.
         // For a courtroom folder instead, replace courthouse with courtroom.
@@ -133,17 +133,18 @@ public class ProcessRecording
 
         var metadata = new Dictionary<string, string>(
             sourceProperties.Metadata ?? new Dictionary<string, string>(),
-            StringComparer.OrdinalIgnoreCase)
-        {
-            ["originalFilename"] = source.Name,
-            ["Courtroom"] = courtroom,
-            ["Courthouse"] = courthouse,
-            ["recordingStartTimeUtc"] = startMetadata,
-            ["recordingEndTimeUtc"] = endMetadata,
-            ["checksumAlgorithm"] = "MD5",
-            // Allows retries to identify the exact source version copied.
-            ["processedSourceETag"] = sourceProperties.ETag.ToString()
-        };
+            StringComparer.OrdinalIgnoreCase);
+
+        metadata.Remove("Courtroom");
+        metadata.Remove("Courthouse");
+
+        metadata["originalFilename"] = source.Name;
+        metadata["courtroom"] = courtroom;
+        metadata["courthouse"] = courthouse;
+        metadata["recordingStartTimeUtc"] = startMetadata;
+        metadata["recordingEndTimeUtc"] = endMetadata;
+        metadata["checksumAlgorithm"] = "MD5";
+        metadata["processedSourceETag"] = sourceProperties.ETag.ToString();
 
         if (sourceProperties.ContentHash is { Length: > 0 } hash)
         {
@@ -206,8 +207,7 @@ public class ProcessRecording
         var copiedMetadata = new Dictionary<string, string>(
             destinationProperties.Metadata, StringComparer.OrdinalIgnoreCase);
 
-        if (destinationProperties.CopyStatus == CopyStatus.Failed ||
-            destinationProperties.CopyStatus == CopyStatus.Aborted ||
+        if (destinationProperties.CopyStatus != CopyStatus.Success ||
             destinationProperties.ContentLength != sourceProperties.ContentLength ||
             !copiedMetadata.TryGetValue("processedSourceETag", out string? copiedETag) ||
             copiedETag != sourceProperties.ETag.ToString() ||
@@ -221,14 +221,25 @@ public class ProcessRecording
                 $"Destination verification failed for {newBlobName}; source has NOT been deleted.");
         }
 
-        // Protect against deleting a source that was replaced after the copy.
-        await source.DeleteAsync(
-            conditions: new BlobRequestConditions { IfMatch = sourceProperties.ETag },
-            cancellationToken: cancellationToken);
+    // Protect against deleting a source that was replaced after the copy.
+    await source.DeleteAsync(
+        conditions: new BlobRequestConditions { IfMatch = sourceProperties.ETag },
+        cancellationToken: cancellationToken);
 
-        _logger.LogInformation(
-            "Organised recording {Source} -> {Destination}. Start: {Start}; End: {End}; DurationSeconds: {Duration}",
-            source.Name, newBlobName, startMetadata, endMetadata, duration.TotalSeconds);
+    // Remove the temporary ETag metadata after successful copy and deletion.
+    copiedMetadata.Remove("processedSourceETag");
+
+    await destination.SetMetadataAsync(
+        copiedMetadata,
+        conditions: new BlobRequestConditions
+        {
+            IfMatch = destinationProperties.ETag
+        },
+        cancellationToken: cancellationToken);
+
+    _logger.LogInformation(
+    "Organised recording {Source} -> {Destination}. Start: {Start}; End: {End}; DurationSeconds: {Duration}",
+    source.Name, newBlobName, startMetadata, endMetadata, duration.TotalSeconds);
     }
 
     private static DateTimeOffset ParseStartUtc(Match match)
@@ -387,4 +398,29 @@ public class ProcessRecording
         await stream.ReadExactlyAsync(result.AsMemory(), ct);
         return result;
     }
+
+    private static Guid CreateRecordingGuid(Uri sourceUri, ETag sourceETag)
+{
+    // Standard UUID namespace for URLs.
+    Guid namespaceId =
+        new("6ba7b811-9dad-11d1-80b4-00c04fd430c8");
+
+    byte[] namespaceBytes = namespaceId.ToByteArray(bigEndian: true);
+
+    byte[] nameBytes = Encoding.UTF8.GetBytes(
+        $"{sourceUri.AbsoluteUri}|{sourceETag}");
+
+    byte[] input = new byte[namespaceBytes.Length + nameBytes.Length];
+
+    namespaceBytes.CopyTo(input, 0);
+    nameBytes.CopyTo(input, namespaceBytes.Length);
+
+    byte[] hash = System.Security.Cryptography.SHA1.HashData(input);
+
+    // Set UUID version 5 and RFC variant bits.
+    hash[6] = (byte)((hash[6] & 0x0F) | 0x50);
+    hash[8] = (byte)((hash[8] & 0x3F) | 0x80);
+
+    return new Guid(hash.AsSpan(0, 16), bigEndian: true);
+}
 }
